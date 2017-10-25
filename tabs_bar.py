@@ -6,6 +6,8 @@ from loremipsum import get_sentences
 
 app = dash.Dash()
 
+app.scripts.config.serve_locally = True
+
 import flask
 import glob
 import os
@@ -25,61 +27,42 @@ def serve_image(image_path):
     return flask.send_from_directory(image_directory, image_name)
 
 
-app.scripts.config.serve_locally = True
-
-vertical = True
-
-if not vertical:
-    app.layout = html.Div([
+app.layout = html.Div([
+    html.Div(
         dcc.Tabs(
             tabs=[
-                {'label': 'Market Value', 'icon': list_of_images[0], 'value': 1},
-                {'label': 'Usage Over Time', 'value': 2},
-                {'label': 'Predictions', 'value': 3},
-                {'label': 'Target Pricing', 'value': 4},
+                {'value': 1, 'icon': 'assets/white_graphic.svg'},
+                {'value': 2, 'icon': 'assets/white_graphic.svg'},
+                {'value': 3, 'icon': 'assets/white_graphic.svg'},
+                {'value': 4, 'icon': 'assets/white_graphic.svg'},
             ],
             value=3,
             id='tabs',
-            vertical=vertical
+            vertical=True,
+            style={
+                'height': '100vh',
+                'borderRight': 'thin lightgrey solid',
+                'textAlign': 'left',
+                'backgroundColor': '#072146'
+            },
+            tabsStyle={
+                'backgroundColor': '#004481',
+                'color': 'white',
+                'margin': '5px',
+                'borderStyle': 'none'
+            }
         ),
-        html.Div(id='tab-output')
-    ], style={
-        'width': '80%',
-        'fontFamily': 'Sans-Serif',
-        'margin-left': 'auto',
-        'margin-right': 'auto'
-    })
-
-else:
-    app.layout = html.Div([
-        html.Div(
-            dcc.Tabs(
-                tabs=[
-                    {'label': 'Market Value', 'value': 1, 'icon': 'assets/blue_graphic.svg'},
-                    {'label': 'Usage Over Time', 'value': 2},
-                    {'label': 'Predictions', 'value': 3},
-                    {'label': 'Target Pricing', 'value': 4},
-                ],
-                value=3,
-                id='tabs',
-                vertical=vertical,
-                style={
-                    'height': '100vh',
-                    'borderRight': 'thin lightgrey solid',
-                    'textAlign': 'left'
-                }
-            ),
-            style={'width': '20%', 'float': 'left'}
-        ),
-        html.Div(
-            html.Div(id='tab-output'),
-            style={'width': '80%', 'float': 'right'}
-        )
-    ], style={
-        'fontFamily': 'Sans-Serif',
-        'margin-left': 'auto',
-        'margin-right': 'auto',
-    })
+        style={'float': 'left'}
+    ),
+    html.Div(
+        html.Div(id='tab-output'),
+        style={'width': '95%', 'float': 'right'}
+    )
+], style={
+    'fontFamily': 'Sans-Serif',
+    'margin-left': 'auto',
+    'margin-right': 'auto',
+})
 
 
 @app.callback(Output('tab-output', 'children'), [Input('tabs', 'value')])
