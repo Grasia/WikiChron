@@ -1,3 +1,15 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+   tabs_bar.py
+
+   Descp:
+
+   Created on: 24-oct-2017
+
+   Copyright 2017 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
+"""
+
 import dash
 from dash.dependencies import Input, Output
 import dash_core_components as dcc
