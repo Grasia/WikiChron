@@ -18,31 +18,31 @@ import plotly.graph_objs as go
 app = dash.Dash()
 
 app.layout = html.Div(children=[
-   html.H1(children='WIKI NAME'),
-   html.Hr(),
+    html.H1(children='WIKI NAME'),
+    html.Hr(),
 
-   html.Div(id='selection-div',
-      className='container',
-      children=[
-         html.Div(id='first-row',
-            className='row',
-            children=[
-               html.Strong(
-                  'You are comparing:',
-                  className='three columns'
-                  ),
+    html.Div(id='selection-div',
+        className='container',
+        children=[
+            html.Div(id='first-row',
+                className='row',
+                children=[
+                    html.Strong(
+                    'You are comparing:',
+                    className='three columns'
+                    ),
 
-              html.Div(id='wikis-selection-div',
-                  children=[
-                     html.Strong('Wikis:', className='two columns'),
+            html.Div(id='wikis-selection-div',
+                children=[
+                    html.Strong('Wikis:', className='two columns'),
 
-                     dcc.Dropdown(
+                    dcc.Dropdown(
                         id='wikis-selection-dropdown',
                         className='six columns',
                         options=[
-                          {'label': 'Wikipedia', 'value': '1'},
-                          {'label': 'Wiki 4', 'value': '2'},
-                          {'label': 'Wiki 5', 'value': '3'}
+                            {'label': 'Wikipedia', 'value': '1'},
+                            {'label': 'Wiki 4', 'value': '2'},
+                            {'label': 'Wiki 5', 'value': '3'}
                         ],
                         multi=True,
                         searchable=False,
