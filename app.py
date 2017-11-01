@@ -9,6 +9,9 @@
 
    Copyright 2017 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
+import flask
+import glob
+import os
 
 import dash
 import dash_core_components as dcc
@@ -21,6 +24,12 @@ from side_bar import generate_side_bar
 app = dash.Dash()
 
 app.scripts.config.serve_locally = True
+#~ app.css.config.serve_locally = True
+
+#~ app.css.append_css({'external_url': 'dash.css'})
+#~ app.css.append_css({'external_url': 'app.css'})
+app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
+#~ app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
 
 tabs=[
     {'value': 1, 'icon': 'assets/white_graphic.svg'},
@@ -38,14 +47,33 @@ app.layout = html.Div(id='app-layout',
     ]
 );
 
-app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
-app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
+def start_css_server():
+    # Add a static styles route that serves css from desktop
+    # Be *very* careful here - you don't want to serve arbitrary files
+    # from your computer or server
+    static_css_route = '/styles/'
+    css_directory = os.path.dirname(os.path.realpath(__file__)) + static_css_route
+    stylesheets = ['app.css']
+
+    @app.server.route('{}<css_path>.css'.format(static_css_route))
+    def serve_stylesheet(css_path):
+        css_name = '{}.css'.format(css_path)
+        if css_name not in stylesheets:
+            raise Exception(
+                '"{}" is excluded from the allowed static files'.format(
+                    css_path
+                )
+            )
+        print (stylesheet)
+        print (css_name)
+        return flask.send_from_directory(css_directory, css_name)
+
+
+    for stylesheet in stylesheets:
+        app.css.append_css({"external_url": "/styles/{}".format(stylesheet)})
 
 
 def start_image_server():
-    import flask
-    import glob
-    import os
 
     static_image_route = '/assets/'
     image_directory = os.path.dirname(os.path.realpath(__file__)) + static_image_route
@@ -66,5 +94,6 @@ if __name__ == '__main__':
     print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
 
     start_image_server()
+    start_css_server()
 
     app.run_server(debug=True)
