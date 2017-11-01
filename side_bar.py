@@ -13,6 +13,7 @@
 import dash
 from dash.dependencies import Input, Output
 import dash_core_components as dcc
+import grasia_dash_components as gdc
 import dash_html_components as html
 from loremipsum import get_sentences
 
@@ -77,41 +78,36 @@ def wikis_tab():
 
 def metrics_tab():
     return html.Div(
-            children=[
-                html.P(html.Strong('Please, select the charts you wish to see and when you finish click on compare')),
-                html.Div(
-                    id='metric-1',
-                    className='aside-category accordion',
-                    children=[
-                        html.H3('Pages'),
-                        #~ html.Img(src='assets/ico_minus.svg'),
-                        html.Div(
-                            dcc.Checklist(
-                                className='aside-checklist-category',
-                                options=[
-                                    {'label': 'Total', 'value': '1'},
-                                    {'label': 'New', 'value': '2'},
-                                    {'label': 'Total per user', 'value': '3'},
-                                    {'label': 'Edited', 'value': '4'},
-                                ],
-                                values=['3'],
-                                labelClassName='aside-checklist-option',
-                                labelStyle={'display': 'block'}
-                            ),
-                        )
-                    ],
-                    style= {
-                        #~ 'display': 'flex',
-                        #~ 'justify-content': 'space-between'
-                    }
-                ),
-            ],
-            style={'color': 'white'},
-            id='wikis-tab-container'
+        children=[
+            html.P(html.Strong('Please, select the charts you wish to see and when you finish click on compare')),
+            gdc.Accordion(
+                id='pages-metric',
+                className='aside-category',
+                label='Pages',
+                children=[
+                    dcc.Checklist(
+                        className='aside-checklist-category',
+                        options=[
+                            {'label': 'Wiki 1', 'value': '1'},
+                            {'label': 'Wiki 2', 'value': '2'},
+                            {'label': 'Wikipedia', 'value': '3'},
+                            {'label': 'Wiki 4', 'value': '4'},
+                            {'label': 'Wiki 5', 'value': '5'},
+                            {'label': 'Wiki 6', 'value': '6'}
+                        ],
+                        values=['3,4,5'],
+                        labelClassName='aside-checklist-option',
+                        labelStyle={'display': 'block'}
+                    )
+                ]
+            )
+        ],
+        style={'color': 'white'},
+        id='wikis-tab-container'
     );
 
 app.layout = html.Div(id='side-bar',
-            style={'backgroundColor': '#004481', 'width': '280px'},
+            style={'backgroundColor': '#004481', 'width': '280px', 'height': '100vh'},
             children=[
                 fold_button(),
                 dcc.Tabs(
@@ -164,7 +160,7 @@ def serve_image(image_path):
 
 #~ app.scripts.append_script({ "external_url": "https://code.jquery.com/jquery-1.12.4.js"})
 #~ app.scripts.append_script({ "external_url": "https://code.jquery.com/ui/1.12.1/jquery-ui.js"})
-app.scripts.append_script({ "external_url": "app.js"})
+#~ app.scripts.append_script({ "external_url": "app.js"})
 
 if __name__ == '__main__':
     app.run_server(debug=True)
