@@ -20,7 +20,7 @@ def generate_main_content():
     return html.Div(id='main',
         style={'width': '100%'},
         children=[
-            html.H1(children='WIKI CHRON'),
+            html.H1(children='WIKI CHRON', className='container'),
             html.Hr(),
 
             html.Div(id='selection-div',
@@ -28,6 +28,7 @@ def generate_main_content():
                 children=[
                     html.Div(id='first-row',
                         className='row',
+                        style={'marginBottom': '15px'},
                         children=[
                             html.Strong(
                             'You are comparing:',
@@ -40,7 +41,7 @@ def generate_main_content():
 
                             dcc.Dropdown(
                                 id='wikis-selection-dropdown',
-                                className='six columns',
+                                className='seven columns',
                                 options=[
                                     {'label': 'Wikipedia', 'value': '1'},
                                     {'label': 'Wiki 4', 'value': '2'},
@@ -53,42 +54,46 @@ def generate_main_content():
                          ]),
                     ]),
 
-                html.Div(id='metrics-selection-div', className='row', children=[
-                    html.P(className='three columns'),
-                    html.Strong('Metrics:', className='two columns', style={'marginLeft': '0'}),
+                html.Div(id='metrics-selection-div',
+                        className='row',
+                        children=[
+                            html.P(className='three columns'),
+                            html.Strong('Metrics:', className='two columns', style={'marginLeft': '0'}),
 
-                    dcc.Dropdown(
-                        id='metrics-selection-dropdown',
-                        className='six columns',
-                        options=[
-                            {'label': 'Total per user', 'value': '1'},
-                            {'label': 'Metric 3', 'value': '2'},
-                            {'label': 'Metric 4', 'value': '3'},
-                            {'label': 'Metric 5', 'value': '4'}
-                        ],
-                        multi=True,
-                        searchable=False,
-                        value="1,2,3,4"
-                    ),
-                 ])
+                            dcc.Dropdown(
+                                id='metrics-selection-dropdown',
+                                className='seven columns',
+                                options=[
+                                    {'label': 'Total per user', 'value': '1'},
+                                    {'label': 'Metric 3', 'value': '2'},
+                                    {'label': 'Metric 4', 'value': '3'},
+                                    {'label': 'Metric 5', 'value': '4'}
+                                ],
+                                multi=True,
+                                searchable=False,
+                                value="1,2,3,4"
+                            ),
+                         ])
              ]),
 
             html.Hr(),
 
-            html.Div(id='date-slider-div', children=[
+            html.Div(id='date-slider-div',
+                    className='container',
+                    children=[
 
-                html.Strong(
-                    'Select your temporary range:'),
+                        html.Strong(
+                            'Select your temporary range:'),
 
-                dcc.RangeSlider(
-                    id='dates-slider',
-                    count=1,
-                    min=-5,
-                    max=10,
-                    step=0.5,
-                    value=[-3, 7]
-                )
-           ]),
+                        dcc.RangeSlider(
+                            id='dates-slider',
+                            count=1,
+                            min=-5,
+                            max=10,
+                            step=0.5,
+                            value=[-3, 7]
+                        )
+                   ]),
 
             dcc.Graph(
                 id='graph-1',
