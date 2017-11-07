@@ -21,9 +21,15 @@ from tabs_bar import generate_tabs_bar
 from main import generate_main_content
 from side_bar import generate_side_bar
 
+port = 8888
 app = dash.Dash()
 
 app.scripts.config.serve_locally = True
+
+app.scripts.append_script({
+    "external_url": "app.js"
+})
+
 #~ app.css.config.serve_locally = True
 
 #~ app.css.append_css({'external_url': 'dash.css'})
@@ -96,4 +102,4 @@ if __name__ == '__main__':
     start_image_server()
     start_css_server()
 
-    app.run_server(debug=True)
+    app.run_server(debug=True, port=port)

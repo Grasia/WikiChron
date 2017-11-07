@@ -141,6 +141,7 @@ def generate_side_bar():
 if __name__ == '__main__':
 
     print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
+    print('Using version ' + gdc.__version__ + ' of Grasia Dash Components.')
 
     app = dash.Dash()
 
