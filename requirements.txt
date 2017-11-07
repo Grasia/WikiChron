@@ -4,3 +4,4 @@ grasia_dash_components=='0.0.2'
 dash_html_components==0.8.0
 loremipsum==1.0.5
 plotly==2.1.0
+pandas==0.21.0
