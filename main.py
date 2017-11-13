@@ -17,35 +17,75 @@ import dash_html_components as html
 import plotly.graph_objs as go
 import pandas as pd
 
-wikis = ['recipes']
+wikis = ['recipes', 'eslagunanegra_pages_full', 'cocktails', 'zelda']
 
-df = pd.read_csv('data/eslagunanegra_pages_full.csv',
-                delimiter=';', quotechar='|',
-                index_col='revision_id')
-df['timestamp']=pd.to_datetime(df['timestamp'],format='%Y-%m-%dT%H:%M:%SZ')
-#~ df.set_index(df['timestamp'], inplace=True) # generate a datetime index
-#~ print(df.info())
+def get_data_from_csv(csv):
+    print('Loading csv for ' + csv)
+    df = pd.read_csv('data/' + csv + '.csv',
+                    delimiter=';', quotechar='|',
+                    index_col='revision_id')
+    df['timestamp']=pd.to_datetime(df['timestamp'],format='%Y-%m-%dT%H:%M:%SZ')
+    #~ df.set_index(df['timestamp'], inplace=True) # generate a datetime index
+    #~ print(df.info())
+    print('!!Loaded csv for ' + csv)
+    return df
 
-monthly = df.groupby(pd.Grouper(key='timestamp',freq='M'))
-edites_pages_monthly = monthly.page_id.count()
 
-def generate_graph():
+def generate_graphs():
 
-    return dcc.Graph(
+    wikis_data = []
+    for wiki in wikis:
+        wikis_data.append(get_data_from_csv(wiki))
+
+    data_edits_pages_monthly = []
+    for i, data in enumerate(wikis_data):
+        monthly_data = data.groupby(pd.Grouper(key='timestamp',freq='M'))
+        edits = monthly_data.page_id.count()
+        data_edits_pages_monthly.append(
+            go.Scatter(
+                    x=edits.index,
+                    y=edits.data,
+                    name=wikis[i]
+                    )
+        )
+
+    monthly_users = []
+    for data in wikis_data:
+        monthly_users.append(data.drop_duplicates('contributor_id'))
+
+    data_new_users_monthly = []
+    for i,wiki in enumerate(wikis):
+        monthly_new_users = monthly_users[i].groupby(pd.Grouper(key='timestamp',freq='M')).contributor_id.count()
+        data_new_users_monthly.append(
+            go.Scatter(
+                    x=monthly_new_users.index,
+                    y=monthly_new_users.data,
+                    name=wiki
+                    )
+        )
+
+
+    return html.Div([
+            dcc.Graph(
                 id='graph-1',
                 figure={
-                    'data': [
-                        go.Scatter(
-                            x=edites_pages_monthly.index,
-                            y=edites_pages_monthly.data,
-                            name='value'
-                        )
-                    ],
+                    'data': data_edits_pages_monthly,
+                    'layout': {
+                        'title': 'Monthly edits'
+                    }
+                }
+            ),
+            dcc.Graph(
+                id='graph-2',
+                figure={
+                    'data': data_new_users_monthly,
                     'layout': {
                         'title': 'Monthly new users'
                     }
                 }
-            )
+            )],
+        id='graphs'
+    )
 
 
 def generate_main_content():
@@ -127,7 +167,7 @@ def generate_main_content():
                         )
                    ]),
 
-            generate_graph()
+            generate_graphs()
         ]
     );
 
