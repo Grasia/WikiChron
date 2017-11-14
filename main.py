@@ -67,28 +67,7 @@ def generate_graphs():
                     )
         )
 
-
-    return html.Div([
-            dcc.Graph(
-                id='graph-1',
-                figure={
-                    'data': data_edits_pages_monthly,
-                    'layout': {
-                        'title': 'Monthly edits'
-                    }
-                }
-            ),
-            dcc.Graph(
-                id='graph-2',
-                figure={
-                    'data': data_new_users_monthly,
-                    'layout': {
-                        'title': 'Monthly new users'
-                    }
-                }
-            )],
-        id='graphs'
-    )
+    return html.Div(id='graphs')
 
 
 def generate_main_content():
@@ -194,13 +173,13 @@ if __name__ == '__main__':
         Input('metrics-selection-dropdown', 'value')])
     def update_graphs(selected_wikis, selected_metrics):
 
-        for i in range(len(wikis)):
-            if i in selected_wikis:
-                data_edits_pages_monthly[i]['visible'] = True
-                data_new_users_monthly[i]['visible'] = True
+        for wiki in range(len(wikis)):
+            if wiki in selected_wikis:
+                for metric in range(len(metrics)):
+                    data[metric][wiki]['visible'] = True
             else:
-                data_edits_pages_monthly[i]['visible'] = "legendonly"
-                data_new_users_monthly[i]['visible'] = "legendonly"
+                for metric in range(len(metrics)):
+                    data[metric][wiki]['visible'] = "legendonly"
 
         graphs = []
 
@@ -215,7 +194,7 @@ if __name__ == '__main__':
                             'title': metric
                         }
                     }
-                )
+                    )
                 )
 
         return html.Div(
