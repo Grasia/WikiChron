@@ -25,6 +25,7 @@ metrics = ['edits_monthly', 'users_new']
 
 data_edits_pages_monthly = []
 data_new_users_monthly = []
+data = [data_edits_pages_monthly, data_new_users_monthly]
 
 
 def get_data_from_csv(csv):
@@ -189,8 +190,9 @@ if __name__ == '__main__':
 
     @app.callback(
         Output('graphs', 'children'),
-        [Input('wikis-selection-dropdown', 'value')])
-    def update_graphs(selected_wikis):
+        [Input('wikis-selection-dropdown', 'value'),
+        Input('metrics-selection-dropdown', 'value')])
+    def update_graphs(selected_wikis, selected_metrics):
 
         for i in range(len(wikis)):
             if i in selected_wikis:
@@ -200,26 +202,25 @@ if __name__ == '__main__':
                 data_edits_pages_monthly[i]['visible'] = "legendonly"
                 data_new_users_monthly[i]['visible'] = "legendonly"
 
-        return html.Div([
-                dcc.Graph(
-                    id='graph-1',
+        graphs = []
+
+        for i, metric in enumerate(metrics):
+            if (i in selected_metrics):
+                graphs.append(
+                    dcc.Graph(
+                    id='graph-{}'.format(i),
                     figure={
-                        'data': data_edits_pages_monthly,
+                        'data': data[i],
                         'layout': {
-                            'title': 'Monthly edits'
+                            'title': metric
                         }
                     }
-                ),
-                dcc.Graph(
-                    id='graph-2',
-                    figure={
-                        'data': data_new_users_monthly,
-                        'layout': {
-                            'title': 'Monthly new users'
-                        }
-                    }
-                )],
-            id='graphs'
+                )
+                )
+
+        return html.Div(
+            id='graphs',
+            children=graphs
         )
 
     app.run_server(debug=True, port=8053)
