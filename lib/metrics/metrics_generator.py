@@ -10,8 +10,8 @@
    Copyright 2017 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
 
-from metrics.metric import Metric, MetricCategory
-from metrics import stats
+from .metric import Metric, MetricCategory
+from . import stats
 
 def generate_metrics():
     metrics = []

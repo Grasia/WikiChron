@@ -10,7 +10,7 @@
    Copyright 2017 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
 
-from metrics.metrics_generator import generate_metrics
+from .metrics_generator import generate_metrics
 
 print('Generating available metrics...')
 available_metrics = generate_metrics()

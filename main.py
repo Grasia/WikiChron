@@ -18,17 +18,18 @@ import plotly.graph_objs as go
 import pandas as pd
 from dash.dependencies import Input, Output
 
-wikis = ['eslagunanegra_pages_full', 'cocktails', 'zelda']
+# Local imports:
+import lib.interface as lib
+
+wikis = ['eslagunanegra_pages_full', 'cocktails']
 wikis_df = []
 
-metrics = ['edits_monthly', 'users_new']
-
-data_edits_pages_monthly = []
-data_new_users_monthly = []
-data = [data_edits_pages_monthly, data_new_users_monthly]
+data = [] # matrix of panda series, being rows => metric and columns => wiki
+graphs = []
 
 
-def get_data_from_csv(csv):
+def get_dataframe_from_csv(csv):
+    """ Read and parse a csv and return the corresponding pandas dataframe"""
     print('Loading csv for ' + csv)
     df = pd.read_csv('data/' + csv + '.csv',
                     delimiter=';', quotechar='|',
@@ -40,37 +41,34 @@ def get_data_from_csv(csv):
     return df
 
 
-def generate_graphs():
+def load_data(dataframes, metrics):
+    """ Load analyzed data by every metric for every dataframe and store it in data[] """
 
-    for i, data in enumerate(wikis_df):
-        monthly_data = data.groupby(pd.Grouper(key='timestamp',freq='M'))
-        edits = monthly_data.page_id.count()
-        data_edits_pages_monthly.append(
-            go.Scatter(
-                    x=edits.index,
-                    y=edits.data,
-                    name=wikis[i]
-                    )
-        )
+    return [ lib.compute_metric_on_dataframes(metric, dataframes) for metric in metrics]
 
-    monthly_users = []
-    for data in wikis_df:
-        monthly_users.append(data.drop_duplicates('contributor_id'))
+def generate_graphs(metrics, wikis):
+    """ Turn over data[] into plotly graphs objects and store it in graphs[] """
 
-    for i,wiki in enumerate(wikis):
-        monthly_new_users = monthly_users[i].groupby(pd.Grouper(key='timestamp',freq='M')).contributor_id.count()
-        data_new_users_monthly.append(
-            go.Scatter(
-                    x=monthly_new_users.index,
-                    y=monthly_new_users.data,
-                    name=wiki
-                    )
-        )
+    graphs_list = [[None for j in range(len(wikis))] for i in range(len(metrics))]
 
-    return html.Div(id='graphs')
+    for i in range(len(metrics)):
+        for j in range(len(wikis)):
+            graphs_list[i][j] = go.Scatter(
+                                x=data[i][j].index,
+                                y=data[i][j].data,
+                                name=wikis[j]
+                                )
+
+    return graphs_list
 
 
-def generate_main_content():
+def generate_main_content(wikis, metrics):
+    global wikis_df, data, graphs;
+
+    wikis_df = [get_dataframe_from_csv(wiki) for wiki in wikis]
+
+    data = load_data(wikis_df, metrics)
+    graphs = generate_graphs(metrics, wikis)
 
     wikis_dropdown_options = []
     for index, wiki in enumerate(wikis):
@@ -78,8 +76,7 @@ def generate_main_content():
 
     metrics_dropdown_options = []
     for index, metric in enumerate(metrics):
-        metrics_dropdown_options.append({'label': metric, 'value': index})
-
+        metrics_dropdown_options.append({'label': metric.text, 'value': index})
 
     return html.Div(id='main',
         style={'width': '100%'},
@@ -151,21 +148,24 @@ def generate_main_content():
                         )
                    ]),
 
-            generate_graphs()
+            html.Div(id='graphs')
         ]
     );
 
 
 
 if __name__ == '__main__':
+
+    available_metrics = lib.get_available_metrics()
+    metrics = []
+    metrics.append(available_metrics[0])
+    metrics.append(available_metrics[1])
+
     app = dash.Dash()
     app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
     app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
 
-    for wiki in wikis:
-        wikis_df.append(get_data_from_csv(wiki))
-
-    app.layout = generate_main_content()
+    app.layout = generate_main_content(wikis, metrics)
 
     @app.callback(
         Output('graphs', 'children'),
@@ -173,25 +173,25 @@ if __name__ == '__main__':
         Input('metrics-selection-dropdown', 'value')])
     def update_graphs(selected_wikis, selected_metrics):
 
-        for wiki in range(len(wikis)):
-            if wiki in selected_wikis:
-                for metric in range(len(metrics)):
-                    data[metric][wiki]['visible'] = True
+        for wiki_idx in range(len(wikis)):
+            if wiki_idx in selected_wikis:
+                for metric_idx in range(len(metrics)):
+                    graphs[metric_idx][wiki_idx]['visible'] = True
             else:
-                for metric in range(len(metrics)):
-                    data[metric][wiki]['visible'] = "legendonly"
+                for metric_idx in range(len(metrics)):
+                    graphs[metric_idx][wiki_idx]['visible'] = "legendonly"
 
-        graphs = []
+        dash_graphs = []
 
         for i, metric in enumerate(metrics):
             if (i in selected_metrics):
-                graphs.append(
+                dash_graphs.append(
                     dcc.Graph(
                     id='graph-{}'.format(i),
                     figure={
-                        'data': data[i],
+                        'data': graphs[i],
                         'layout': {
-                            'title': metric
+                            'title': metric.text
                         }
                     }
                     )
@@ -199,7 +199,7 @@ if __name__ == '__main__':
 
         return html.Div(
             id='graphs',
-            children=graphs
+            children=dash_graphs
         )
 
     app.run_server(debug=True, port=8053)
