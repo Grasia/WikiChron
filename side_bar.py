@@ -103,6 +103,35 @@ def metrics_tab():
         id='wikis-tab-container'
     );
 
+def compare_button():
+    buttonStyle = {
+                    'border': 'None',
+                    'height': '57px',
+                    'width': '256px',
+                    'borderRadius': '4px',
+                    'backgroundColor': '#49A5E6',
+                    'color' : 'white',
+                    'fontFamily': 'Roboto',
+                    'fontSize': '24px',
+                    'fontWeight': 'bold',
+                    'lineHeight': '28px',
+                }
+
+    return (
+        html.Div(
+            html.Button('COMPARE',
+                        id='compare-button',
+                        style= buttonStyle
+            ),
+            style = {
+                'display': 'flex',
+                'justifyContent': 'center',
+                'alignItems': 'center',
+                'height': '80px'
+            }
+        )
+    )
+
 def generate_side_bar():
     return html.Div(id='side-bar',
         style={'backgroundColor': '#004481', 'width': '280px', 'height': '100%'},
@@ -113,27 +142,28 @@ def generate_side_bar():
                     {'value': 1, 'label': 'WIKIS'},
                     {'value': 2, 'label': 'METRICS'}
                 ],
-            value=2,
-            id='side-bar-tabs',
-            vertical=False,
-            style={
-                'width': '100%',
-                'textAlign': 'center',
-                'border': 'none',
-            },
-            tabsStyle={
-                'width': '50%',
-                'height': '70px',
-                'borderRadius': '3px',
-                'backgroundColor': '#004481',
-                'color': 'white',
-                'borderStyle': 'none',
-                'fontSize': '18px',
-                'lineHeight': '21px',
-                'justifyContent': 'center',
-                'flexDirection': 'column'
-            }),
-            metrics_tab()
+                value=2,
+                id='side-bar-tabs',
+                vertical=False,
+                style={
+                    'width': '100%',
+                    'textAlign': 'center',
+                    'border': 'none',
+                },
+                tabsStyle={
+                    'width': '50%',
+                    'height': '70px',
+                    'borderRadius': '3px',
+                    'backgroundColor': '#004481',
+                    'color': 'white',
+                    'borderStyle': 'none',
+                    'fontSize': '18px',
+                    'lineHeight': '21px',
+                    'justifyContent': 'center',
+                    'flexDirection': 'column'
+                }),
+            metrics_tab(),
+            compare_button(),
         ]
     );
 
