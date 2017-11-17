@@ -19,9 +19,13 @@ import dash_html_components as html
 import plotly.graph_objs as go
 from tabs_bar import generate_tabs_bar
 from main import generate_main_content
-from side_bar import generate_side_bar
+import side_bar
+
+# Local imports:
+import lib.interface as lib
 
 port = 8888
+global app;
 app = dash.Dash()
 
 app.scripts.config.serve_locally = True
@@ -44,14 +48,17 @@ tabs=[
     {'value': 4, 'icon': 'assets/white_graphic.svg'},
 ]
 
-app.layout = html.Div(id='app-layout',
-    style={'display': 'flex'},
-    children=[
-        generate_tabs_bar(tabs),
-        generate_side_bar(),
-        generate_main_content()
-    ]
-);
+
+def set_layout():
+    app.layout = html.Div(id='app-layout',
+        style={'display': 'flex'},
+        children=[
+            generate_tabs_bar(tabs),
+            side_bar.generate_side_bar(lib.get_available_metrics()),
+            #~ generate_main_content()
+        ]
+    );
+    return
 
 def start_css_server():
     # Add a static styles route that serves css from desktop
@@ -101,5 +108,8 @@ if __name__ == '__main__':
 
     start_image_server()
     start_css_server()
+
+    set_layout()
+    side_bar.bind_callbacks(app)
 
     app.run_server(debug=True, port=port)
