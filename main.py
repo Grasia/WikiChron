@@ -21,8 +21,10 @@ from dash.dependencies import Input, Output
 # Local imports:
 import lib.interface as lib
 
-wikis = ['eslagunanegra_pages_full', 'cocktails']
 wikis_df = []
+global wikis, metrics
+wikis = []
+metrics = []
 
 data = [] # matrix of panda series, being rows => metric and columns => wiki
 graphs = []
@@ -62,8 +64,11 @@ def generate_graphs(metrics, wikis):
     return graphs_list
 
 
-def generate_main_content(wikis, metrics):
-    global wikis_df, data, graphs;
+def generate_main_content(wikis_arg, metrics_arg):
+    global wikis_df, data, graphs, wikis, metrics;
+    wikis = wikis_arg;
+    metrics = metrics_arg;
+
 
     wikis_df = [get_dataframe_from_csv(wiki) for wiki in wikis]
 
@@ -152,21 +157,7 @@ def generate_main_content(wikis, metrics):
         ]
     );
 
-
-
-if __name__ == '__main__':
-
-    available_metrics = lib.get_available_metrics()
-    metrics = []
-    metrics.append(available_metrics[0])
-    metrics.append(available_metrics[1])
-
-    app = dash.Dash()
-    app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
-    app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
-
-    app.layout = generate_main_content(wikis, metrics)
-
+def bind_callbacks(app):
     @app.callback(
         Output('graphs', 'children'),
         [Input('wikis-selection-dropdown', 'value'),
@@ -201,5 +192,24 @@ if __name__ == '__main__':
             id='graphs',
             children=dash_graphs
         )
+
+    return
+
+if __name__ == '__main__':
+
+    wikis = ['eslagunanegra_pages_full', 'cocktails']
+
+    available_metrics = lib.get_available_metrics()
+    metrics = []
+    metrics.append(available_metrics[0])
+    metrics.append(available_metrics[1])
+
+    app = dash.Dash()
+    app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
+    app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
+
+    app.layout = generate_main_content(wikis, metrics)
+
+    bind_callbacks(app)
 
     app.run_server(debug=True, port=8053)

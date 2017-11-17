@@ -12,27 +12,31 @@
 import flask
 import glob
 import os
+import json
 
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 from tabs_bar import generate_tabs_bar
-from main import generate_main_content
+import main
 import side_bar
+
 
 # Local imports:
 import lib.interface as lib
 
 port = 8888
 global app;
-app = dash.Dash()
+app = dash.Dash('WikiChron')
+app.config['suppress_callback_exceptions']=True
 
 app.scripts.config.serve_locally = True
 
-app.scripts.append_script({
-    "external_url": "app.js"
-})
+#~ app.scripts.append_script({
+    #~ "external_url": "app.js"
+#~ })
 
 #~ app.css.config.serve_locally = True
 
@@ -57,9 +61,24 @@ def set_layout():
         children=[
             generate_tabs_bar(tabs),
             side_bar.generate_side_bar(wikis, available_metrics),
-            #~ generate_main_content()
+            html.Div(id='main-root', style={'flex': 'auto'})
         ]
     );
+    return
+
+def init_app_callbacks():
+
+    @app.callback(Output('main-root', 'children'),
+    [Input('sidebar-selection', 'children')])
+    def load_main_graphs(selection_json):
+        if selection_json:
+            selection = json.loads(selection_json)
+            wikis = selection['wikis']
+            metrics = [lib.metrics_dict[metric] for metric in selection['metrics']]
+            return main.generate_main_content(wikis, metrics)
+        else:
+            print('There is no selection of wikis & metrics yet')
+
     return
 
 def start_css_server():
@@ -113,5 +132,7 @@ if __name__ == '__main__':
 
     set_layout()
     side_bar.bind_callbacks(app)
+    main.bind_callbacks(app)
+    init_app_callbacks()
 
     app.run_server(debug=True, port=port)

@@ -11,10 +11,11 @@
 """
 
 import dash
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import grasia_dash_components as gdc
 import dash_html_components as html
+import json
 
 global app;
 
@@ -39,7 +40,7 @@ def fold_button():
 
 def wikis_tab(wikis):
 
-    wikis_options = [{'label': wiki, 'value': i} for i, wiki in enumerate(wikis)]
+    wikis_options = [{'label': wiki, 'value': wiki} for wiki in wikis]
 
     return html.Div([
         html.Div(
@@ -58,9 +59,10 @@ def wikis_tab(wikis):
                     #~ }
                 #~ ),
                 dcc.Checklist(
+                    id='wikis-checklist-selection',
                     className='aside-checklist-category',
                     options=wikis_options,
-                    values=['3,4,5'],
+                    values=['zelda'],
                     labelClassName='aside-checklist-option',
                     labelStyle={'display': 'block'}
                 ),
@@ -82,9 +84,10 @@ def metrics_tab(metrics):
             children=[
                 html.P(html.Strong('Please, select the charts you wish to see and when you finish click on compare')),
                 dcc.Checklist(
+                            id='metrics-checklist-selection',
                             className='aside-checklist-category',
                             options=metrics_options,
-                            values=[],
+                            values=['edits_monthly'],
                             labelClassName='aside-checklist-option',
                             labelStyle={'display': 'block'}
                         )
@@ -143,7 +146,7 @@ def compare_button():
 
 def generate_side_bar(wikis, metrics):
     return html.Div(id='side-bar',
-        style={'backgroundColor': '#004481', 'width': '280px', 'height': '100%'},
+        style={'backgroundColor': '#004481', 'flex': '0 0 280px', 'height': '100vh'},
         children=[
             fold_button(),
             dcc.Tabs(
@@ -173,6 +176,7 @@ def generate_side_bar(wikis, metrics):
                 }),
             wikis_tab(wikis),
             metrics_tab(metrics),
+            html.Div(id='sidebar-selection', style={'color': 'white','display': 'block'})
         ]
     );
 
@@ -194,6 +198,18 @@ def bind_callbacks(app):
             return {'display':'block'}
         else:
             return {'display':'none'}
+
+    @app.callback(Output('sidebar-selection', 'children'),
+               [Input('compare-button', 'n_clicks')],
+               [State('wikis-checklist-selection', 'values'),
+               State('metrics-checklist-selection', 'values')]
+               )
+    def compare_selection(n_clicks, wikis_selection, metrics_selection):
+        if (len(wikis_selection) > 0 and len(metrics_selection) > 0 ):
+            selection = { 'wikis': wikis_selection, 'metrics': metrics_selection}
+            return json.dumps(selection)
+        else:
+            print('You have to select at least one wiki and at least one metric')
 
     return
 

@@ -23,6 +23,15 @@ def generate_metrics():
 
     return metrics
 
+def generate_dict_metrics(list_of_metrics):
+    metrics = {}
+
+    for metric in list_of_metrics:
+        metrics[metric.code] = metric
+
+    return metrics
+
+
 def main():
     print (generate_metrics())
     return

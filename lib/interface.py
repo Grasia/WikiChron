@@ -11,6 +11,8 @@
 """
 
 from .metrics import available_metrics as _available_metrics
+from .metrics import metrics_dict
+
 
 def get_available_metrics():
    """ Return a list of the currently available metrics. """
