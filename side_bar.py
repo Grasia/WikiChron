@@ -37,33 +37,29 @@ def fold_button():
         }
     );
 
-def wikis_tab():
+def wikis_tab(wikis):
+
+    wikis_options = [{'label': wiki, 'value': i} for i, wiki in enumerate(wikis)]
+
     return html.Div([
         html.Div(
             children=[
-                html.P(html.Strong('You can compare between 3 wikis')),
-                html.Div(
-                    id='category-1',
-                    className='aside-category',
-                    children=[
-                        html.H3('Category 1'),
-                        html.Img(src='assets/ico_minus.svg')
-                    ],
-                    style= {
-                        'display': 'flex',
-                        'justify-content': 'space-between'
-                    }
-                ),
+                html.P(html.Strong(('You can compare between {} wikis').format(len(wikis)))),
+                #~ html.Div(
+                    #~ id='category-1',
+                    #~ className='aside-category',
+                    #~ children=[
+                        #~ html.H3('Category 1'),
+                        #~ html.Img(src='assets/ico_minus.svg')
+                    #~ ],
+                    #~ style= {
+                        #~ 'display': 'flex',
+                        #~ 'justify-content': 'space-between'
+                    #~ }
+                #~ ),
                 dcc.Checklist(
                     className='aside-checklist-category',
-                    options=[
-                        {'label': 'Wiki 1', 'value': '1'},
-                        {'label': 'Wiki 2', 'value': '2'},
-                        {'label': 'Wikipedia', 'value': '3'},
-                        {'label': 'Wiki 4', 'value': '4'},
-                        {'label': 'Wiki 5', 'value': '5'},
-                        {'label': 'Wiki 6', 'value': '6'}
-                    ],
+                    options=wikis_options,
                     values=['3,4,5'],
                     labelClassName='aside-checklist-option',
                     labelStyle={'display': 'block'}
@@ -145,7 +141,7 @@ def compare_button():
         )
     )
 
-def generate_side_bar(metrics):
+def generate_side_bar(wikis, metrics):
     return html.Div(id='side-bar',
         style={'backgroundColor': '#004481', 'width': '280px', 'height': '100%'},
         children=[
@@ -175,7 +171,7 @@ def generate_side_bar(metrics):
                     'justifyContent': 'center',
                     'flexDirection': 'column'
                 }),
-            wikis_tab(),
+            wikis_tab(wikis),
             metrics_tab(metrics),
         ]
     );
@@ -237,7 +233,8 @@ if __name__ == '__main__':
 #~ app.scripts.append_script({ "external_url": "app.js"})
 
     from lib.interface import get_available_metrics
-    app.layout = generate_side_bar(get_available_metrics())
+    example_wikis = ['eslagunanegra_pages_full', 'cocktails', 'zelda']
+    app.layout = generate_side_bar(example_wikis, get_available_metrics())
     bind_callbacks(app)
 
     app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})

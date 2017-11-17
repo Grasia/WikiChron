@@ -41,20 +41,22 @@ app.scripts.append_script({
 app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
 #~ app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
 
-tabs=[
+tabs = [
     {'value': 1, 'icon': 'assets/white_graphic.svg'},
     {'value': 2, 'icon': 'assets/white_graphic.svg'},
     {'value': 3, 'icon': 'assets/white_graphic.svg'},
     {'value': 4, 'icon': 'assets/white_graphic.svg'},
 ]
 
+wikis = ['eslagunanegra_pages_full', 'cocktails', 'zelda']
+available_metrics = lib.get_available_metrics()
 
 def set_layout():
     app.layout = html.Div(id='app-layout',
         style={'display': 'flex'},
         children=[
             generate_tabs_bar(tabs),
-            side_bar.generate_side_bar(lib.get_available_metrics()),
+            side_bar.generate_side_bar(wikis, available_metrics),
             #~ generate_main_content()
         ]
     );
