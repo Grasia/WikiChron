@@ -21,11 +21,12 @@ class MetricCategory(Enum):
 class Metric:
     """ Class for ADT Metric. """
 
-    def __init__(self, code, text, category, func):
+    def __init__(self, code, text, category, func, descp):
         self.code = code
         self.text = text
         self.category = category
         self.func = func
+        self.descp = descp
 
 
     def calculate(self, pandas_data_frame):
