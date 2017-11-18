@@ -62,7 +62,7 @@ def wikis_tab(wikis):
                     id='wikis-checklist-selection',
                     className='aside-checklist-category',
                     options=wikis_options,
-                    values=['zelda'],
+                    values=['eslagunanegra_pages_full'],
                     labelClassName='aside-checklist-option',
                     labelStyle={'display': 'block'}
                 ),

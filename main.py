@@ -11,6 +11,8 @@ Title, plots and filter elements.
    Copyright 2017 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
 
+import os
+
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -20,6 +22,9 @@ from dash.dependencies import Input, Output
 
 # Local imports:
 import lib.interface as lib
+
+global data_dir;
+data_dir = 'data/';
 
 wikis_df = []
 global wikis, metrics
@@ -33,7 +38,7 @@ graphs = []
 def get_dataframe_from_csv(csv):
     """ Read and parse a csv and return the corresponding pandas dataframe"""
     print('Loading csv for ' + csv)
-    df = pd.read_csv('data/' + csv + '.csv',
+    df = pd.read_csv(os.path.join(data_dir, csv + '.csv'),
                     delimiter=';', quotechar='|',
                     index_col='revision_id')
     df['timestamp']=pd.to_datetime(df['timestamp'],format='%Y-%m-%dT%H:%M:%SZ')
@@ -68,7 +73,6 @@ def generate_main_content(wikis_arg, metrics_arg):
     global wikis_df, data, graphs, wikis, metrics;
     wikis = wikis_arg;
     metrics = metrics_arg;
-
 
     wikis_df = [get_dataframe_from_csv(wiki) for wiki in wikis]
 
