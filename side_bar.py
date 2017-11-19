@@ -62,7 +62,7 @@ def wikis_tab(wikis):
                     id='wikis-checklist-selection',
                     className='aside-checklist-category',
                     options=wikis_options,
-                    values=['eslagunanegra_pages_full'],
+                    values=[],
                     labelClassName='aside-checklist-option',
                     labelStyle={'display': 'block'}
                 ),
@@ -87,7 +87,7 @@ def metrics_tab(metrics):
                             id='metrics-checklist-selection',
                             className='aside-checklist-category',
                             options=metrics_options,
-                            values=['edits_monthly'],
+                            values=[],
                             labelClassName='aside-checklist-option',
                             labelStyle={'display': 'block'}
                         )
@@ -146,7 +146,7 @@ def compare_button():
 
 def generate_side_bar(wikis, metrics):
     return html.Div(id='side-bar',
-        style={'backgroundColor': '#004481', 'flex': '0 0 280px', 'height': '100vh'},
+        style={'backgroundColor': '#004481', 'flex': '0 0 280px'},
         children=[
             fold_button(),
             dcc.Tabs(

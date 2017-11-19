@@ -12,15 +12,70 @@
 
 import pandas as pd
 
+# Pages
+
+def pages_new(data):
+    pages = data.drop_duplicates('page_id')
+    return pages.groupby(pd.Grouper(key='timestamp',freq='M')).size()
+
+def pages_accum(data):
+    return (pages_new(data).cumsum())
+
+def pages_main_new(data):
+    pages = data.drop_duplicates('page_id')
+    main_pages = pages[pages['page_ns'] == 0]
+    return main_pages.groupby(pd.Grouper(key='timestamp',freq='M')).size()
+
+def pages_main_accum(data):
+    return (pages_main_new(data).cumsum())
+
+def pages_edited(data):
+    monthly_data = data.groupby([pd.Grouper(key='timestamp',freq='M')])
+    return (monthly_data.apply(lambda x: len(x.page_id.unique())))
+
+########################################################################
+
 # Editions
 
-def edits_monthly(data):
-   monthly_data = data.groupby(pd.Grouper(key='timestamp',freq='M'))
-   return (monthly_data.page_id.count())
+def edits(data):
+    monthly_data = data.groupby(pd.Grouper(key='timestamp',freq='M'))
+    return (monthly_data.size())
+
+def edits_accum(data):
+    return (edits(data).cumsum())
+
+def edits_main_content(data):
+    edits_main_data = data[data['page_ns'] == 0]
+    return (edits(edits_main_data))
+
+def edits_main_content_accum(data):
+    return (edits_main_content(data).cumsum())
+
+def edits_article_talk(data):
+    edits_talk_data = data[data['page_ns'] == 1]
+    return (edits(edits_talk_data))
+
+def edits_user_talk(data):
+    edits_talk_data = data[data['page_ns'] == 3]
+    return (edits(edits_talk_data))
+
+########################################################################
 
 # Users
 
 def users_new(data):
-  monthly_users = data.drop_duplicates('contributor_id')
-  return monthly_users.groupby(pd.Grouper(key='timestamp',freq='M')).contributor_id.count()
+    users = data.drop_duplicates('contributor_id')
+    return users.groupby(pd.Grouper(key='timestamp',freq='M')).size()
+
+def users_accum(data):
+    return (users_new(data).cumsum())
+
+def users_new_anonymous(data):
+    users = data.drop_duplicates('contributor_id')
+    anonymous_users = users[users['contributor_name'] == 'Anonymous']
+    return anonymous_users.groupby(pd.Grouper(key='timestamp',freq='M')).size()
+
+def users_anonymous_accum(data):
+    return (users_new_anonymous(data).cumsum())
+
 
