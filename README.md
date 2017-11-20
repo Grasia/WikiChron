@@ -17,3 +17,7 @@ In order to do this, place your xml file in the data/ directory and run the foll
 `python3 dump_parser.py data/<name_of_your.xml>`
 
 It will create a new csv file with the same name of your xml in the data/ dir folder.
+
+dump_parser.py also support several xml files at once. For instance, you might want to process all xml files in the data folder:
+
+`python3 dump_parser.py data/*.xml`
