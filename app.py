@@ -16,6 +16,7 @@ import json
 
 import dash
 import dash_core_components as dcc
+import grasia_dash_components as gdc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
@@ -52,7 +53,7 @@ tabs = [
     {'value': 4, 'icon': 'assets/white_graphic.svg'},
 ]
 
-wikis = ['eslagunanegra_pages_full', 'cocktails', 'zelda']
+wikis = ['eslagunanegra_pages_full', 'es.shamanking.wikia.com', 'cocktails', 'zelda']
 available_metrics = lib.get_available_metrics()
 
 def set_layout():
@@ -126,6 +127,7 @@ def start_image_server():
 
 if __name__ == '__main__':
     print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
+    print('Using version ' + gdc.__version__ + ' of Grasia Dash Components.')
 
     start_image_server()
     start_css_server()

@@ -149,14 +149,17 @@ def generate_side_bar(wikis, metrics):
         style={'backgroundColor': '#004481', 'flex': '0 0 280px'},
         children=[
             fold_button(),
-            dcc.Tabs(
+            gdc.Tabs(
                 tabs=[
                     {'value': 'wikis', 'label': 'WIKIS'},
                     {'value': 'metrics', 'label': 'METRICS'}
                 ],
-                value='metrics',
+                value='wikis',
                 id='side-bar-tabs',
                 vertical=False,
+                selectedTabStyle={
+                    'backgroundColor': '#004481',
+                },
                 style={
                     'width': '100%',
                     'textAlign': 'center',
@@ -166,9 +169,10 @@ def generate_side_bar(wikis, metrics):
                     'width': '50%',
                     'height': '70px',
                     'borderRadius': '3px',
-                    'backgroundColor': '#004481',
+                    'backgroundColor': '#072146',
                     'color': 'white',
-                    'borderStyle': 'none',
+                    'borderLeftStyle': 'none',
+                    'borderRightStyle': 'none',
                     'fontSize': '18px',
                     'lineHeight': '21px',
                     'justifyContent': 'center',
