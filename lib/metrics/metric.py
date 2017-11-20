@@ -17,6 +17,7 @@ class MetricCategory(Enum):
     EDITIONS = 'Editions'
     USERS = 'Users'
     SIZE = 'Size'
+    COMBINED = 'Combined'
 
 class Metric:
     """ Class for ADT Metric. """

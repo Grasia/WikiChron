@@ -31,7 +31,17 @@ def generate_metrics():
     metrics.append(Metric('edits_user_talk', 'Edits in user talk', MetricCategory.EDITIONS, stats.edits_user_talk, 'Editions to user discussion pages'))
 
     # Users
-    metrics.append(Metric('users_new', 'Monthly new users', MetricCategory.USERS, stats.users_new, 'Users who have made at least one edition grouped by the month they did her first edit.'))
+    metrics.append(Metric('users_active', 'Active users', MetricCategory.USERS, stats.users_active, 'Number of users who have contributed for each month.'))
+    metrics.append(Metric('users_new', 'Monthly new users', MetricCategory.USERS, stats.users_new, 'Users who have made at least one edition grouped by the month they did their first edit.'))
+    metrics.append(Metric('users_accum', 'Total users (accumulated)', MetricCategory.USERS, stats.users_accum, 'Users who have made at least one edition accumulated at every month.'))
+    metrics.append(Metric('users_new_anonymous', 'Monthly anonymous users.', MetricCategory.USERS, stats.users_new_anonymous, 'Anonymous users who made at least one edition grouped by the month they did their first edit. Anonymous are identified by their ip.'))
+    metrics.append(Metric('users_anonymous_accum', 'Total users (accumulated)', MetricCategory.USERS, stats.users_anonymous_accum, 'Anonymous users who have made at least one edition accumulated at every month. Anonymous are identified by their ip.'))
+
+    # Combined
+    metrics.append(Metric('edits_per_users_accum', 'Edits per users (accumulated)', MetricCategory.COMBINED, stats.edits_per_users_accum, 'Number of total edits per number of users'))
+    metrics.append(Metric('edits_per_users_monthly', 'Edits per users (monthly)', MetricCategory.COMBINED, stats.edits_per_users_monthly, 'Number of edits for every month per number of active users that month'))
+    metrics.append(Metric('edits_per_pages_accum', 'Edits per pages (accumulated)', MetricCategory.COMBINED, stats.edits_per_pages_accum, 'Number of total edits per number of total pages'))
+    metrics.append(Metric('edits_per_page_monthly', 'Edits per pages edited (monthly)', MetricCategory.COMBINED, stats.edits_per_pages_monthly, 'Number of edits for every month per number of pages edited that month'))
 
     return metrics
 

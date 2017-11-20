@@ -63,6 +63,10 @@ def edits_user_talk(data):
 
 # Users
 
+def users_active(data):
+    monthly_data = data.groupby(pd.Grouper(key='timestamp',freq='M'))
+    return (monthly_data.apply(lambda x: len(x.contributor_id.unique())))
+
 def users_new(data):
     users = data.drop_duplicates('contributor_id')
     return users.groupby(pd.Grouper(key='timestamp',freq='M')).size()
@@ -77,5 +81,21 @@ def users_new_anonymous(data):
 
 def users_anonymous_accum(data):
     return (users_new_anonymous(data).cumsum())
+
+########################################################################
+
+# Combined
+
+def edits_per_users_accum(data):
+    return (edits_accum(data) / users_accum(data))
+
+def edits_per_users_monthly(data):
+    return (edits(data) / users_active(data))
+
+def edits_per_pages_accum(data):
+    return (edits_accum(data) / pages_accum(data))
+
+def edits_per_pages_monthly(data):
+    return (edits(data) / pages_edited(data))
 
 
