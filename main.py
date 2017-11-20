@@ -23,8 +23,9 @@ from dash.dependencies import Input, Output
 # Local imports:
 import lib.interface as lib
 
+# get csv data location (data/ by default)
 global data_dir;
-data_dir = 'data/';
+data_dir = os.environ.get('WIKICHRON_DATA_DIR')
 
 wikis_df = []
 global wikis, metrics
@@ -200,6 +201,8 @@ def bind_callbacks(app):
     return
 
 if __name__ == '__main__':
+
+    os.getenv('WIKICHRON_DATA_DIR', 'data')
 
     wikis = ['eslagunanegra_pages_full', 'cocktails']
 

@@ -13,6 +13,7 @@ import flask
 import glob
 import os
 import json
+import glob
 
 import dash
 import dash_core_components as dcc
@@ -24,10 +25,17 @@ from tabs_bar import generate_tabs_bar
 import main
 import side_bar
 
-
 # Local imports:
 import lib.interface as lib
 
+
+# get csv data location (data/ by default)
+global data_dir;
+if not 'WIKICHRON_DATA_DIR' in os.environ:
+    os.environ['WIKICHRON_DATA_DIR'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+data_dir = os.environ['WIKICHRON_DATA_DIR']
+
+# global app config
 port = 8888
 global app;
 app = dash.Dash('WikiChron')
@@ -53,8 +61,14 @@ tabs = [
     {'value': 4, 'icon': 'assets/white_graphic.svg'},
 ]
 
-wikis = ['eslagunanegra_pages_full', 'es.shamanking.wikia.com', 'cocktails', 'zelda']
 available_metrics = lib.get_available_metrics()
+
+def get_available_wikis(data_dir):
+    wikis = glob.glob(os.path.join(data_dir,'*.csv'))
+    for i, wiki in enumerate(wikis):
+        base_filename = os.path.basename(wiki)
+        wikis[i] = os.path.splitext(base_filename)[0]
+    return wikis
 
 def set_layout():
     app.layout = html.Div(id='app-layout',
@@ -66,6 +80,8 @@ def set_layout():
         ]
     );
     return
+
+wikis = get_available_wikis(data_dir)
 
 def init_app_callbacks():
 
