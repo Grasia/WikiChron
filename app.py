@@ -29,6 +29,10 @@ import side_bar
 import lib.interface as lib
 
 
+# production or development flag:
+production = True
+debug = not production
+
 # get csv data location (data/ by default)
 global data_dir;
 if not 'WIKICHRON_DATA_DIR' in os.environ:
@@ -39,6 +43,7 @@ data_dir = os.environ['WIKICHRON_DATA_DIR']
 port = 8888
 global app;
 app = dash.Dash('WikiChron')
+server = app.server
 app.config['suppress_callback_exceptions']=True
 
 app.scripts.config.serve_locally = True
@@ -141,7 +146,7 @@ def start_image_server():
         return flask.send_from_directory(image_directory, image_name)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__' or production:
     print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
     print('Using version ' + gdc.__version__ + ' of Grasia Dash Components.')
 
@@ -153,4 +158,4 @@ if __name__ == '__main__':
     main.bind_callbacks(app)
     init_app_callbacks()
 
-    app.run_server(debug=True, port=port)
+    app.run_server(debug=debug, port=port)

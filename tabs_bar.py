@@ -15,7 +15,6 @@ from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import grasia_dash_components as gdc
 import dash_html_components as html
-from loremipsum import get_sentences
 
 def generate_tabs_bar(tabs):
     return html.Div([
