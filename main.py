@@ -25,7 +25,7 @@ import lib.interface as lib
 
 # get csv data location (data/ by default)
 global data_dir;
-data_dir = os.environ.get('WIKICHRON_DATA_DIR')
+data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 
 wikis_df = []
 global wikis, metrics
@@ -202,7 +202,7 @@ def bind_callbacks(app):
 
 if __name__ == '__main__':
 
-    os.getenv('WIKICHRON_DATA_DIR', 'data')
+    data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 
     wikis = ['eslagunanegra_pages_full', 'cocktails']
 
