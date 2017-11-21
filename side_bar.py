@@ -180,7 +180,7 @@ def generate_side_bar(wikis, metrics):
                 }),
             wikis_tab(wikis),
             metrics_tab(metrics),
-            html.Div(id='sidebar-selection', style={'color': 'white','display': 'block'})
+            html.Div(id='sidebar-selection', style={'color': 'white','display': 'none'})
         ]
     );
 
