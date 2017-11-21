@@ -145,17 +145,16 @@ def start_image_server():
             raise Exception('"{}" is excluded from the allowed static files'.format(image_path))
         return flask.send_from_directory(image_directory, image_name)
 
+print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
+print('Using version ' + gdc.__version__ + ' of Grasia Dash Components.')
 
-if __name__ == '__main__' or production:
-    print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
-    print('Using version ' + gdc.__version__ + ' of Grasia Dash Components.')
+start_image_server()
+start_css_server()
 
-    start_image_server()
-    start_css_server()
+set_layout()
+side_bar.bind_callbacks(app)
+main.bind_callbacks(app)
+init_app_callbacks()
 
-    set_layout()
-    side_bar.bind_callbacks(app)
-    main.bind_callbacks(app)
-    init_app_callbacks()
-
+if __name__ == '__main__':
     app.run_server(debug=debug)
