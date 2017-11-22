@@ -3,7 +3,16 @@ Data visualization tool for wikis.
 
 It analyzes the history dump of a wiki and give you nice graphs plotting that data.
 
-# Usage
+# Development
+
+## Install
+### Dependencies
+* Python 3.5.2 or later
+* pip3
+* [Dash framework](https://plot.ly/dash)
+
+### Install instructions
+Simply run: `pip3 install -r requirements.txt`
 
 ## Get a wiki history dump
 First, download a xml file with the full history of the wikis you want to analyze (you can use [this nice script](https://github.com/Akronix/wikia_dump_downloader) to do so).
@@ -20,7 +29,9 @@ dump_parser.py also support several xml files at once. For instance, you might w
 `python3 dump_parser.py data/*.xml`
 
 ## Run the application
-`python3 app.py`
+Use: `python3 app.py`
+
+The webapp will be locally available in http://127.0.0.1:8000/
 
 Optionally, you can specify a directory with the csv data of the wikis you want to analyze with the environment variable: `WIKICHRON_DATA_DIR`.
 
@@ -30,11 +41,5 @@ For instance, suppose that your data is stored in `/var/tmp`, you might launch w
 
 It will show all the files ending in .csv as wikis available to analyze and plot.
 
-# Install
-## Dependencies
-* Python 3.5.2 or later
-* pip3
-* [Dash framework](https://plot.ly/dash)
-
-## Install instructions
-Simply run: `pip3 install -r requirements.txt`
+# Deployment
+The easiest way is to follow the Dash instructions: https://plot.ly/dash/deployment

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
    app.py
@@ -40,7 +40,7 @@ if not 'WIKICHRON_DATA_DIR' in os.environ:
 data_dir = os.environ['WIKICHRON_DATA_DIR']
 
 # global app config
-#~ port = 8888
+port = 8888
 global app;
 app = dash.Dash('WikiChron')
 server = app.server
@@ -157,4 +157,4 @@ main.bind_callbacks(app)
 init_app_callbacks()
 
 if __name__ == '__main__':
-    app.run_server(debug=debug)
+    app.run_server(debug=debug, port=port)
