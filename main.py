@@ -35,6 +35,7 @@ metrics = []
 data = [] # matrix of panda series, being rows => metric and columns => wiki
 graphs = []
 
+use_relative_time = True
 
 def get_dataframe_from_csv(csv):
     """ Read and parse a csv and return the corresponding pandas dataframe"""
@@ -61,8 +62,13 @@ def generate_graphs(metrics, wikis):
 
     for i in range(len(metrics)):
         for j in range(len(wikis)):
+            if use_relative_time:
+                x_axis = [i for i in range(len(data[i][j].index))] # aligned relative months
+            else:
+                x_axis = data[i][j].index # natural months
+
             graphs_list[i][j] = go.Scatter(
-                                x=data[i][j].index,
+                                x=x_axis,
                                 y=data[i][j].data,
                                 name=wikis[j]
                                 )
