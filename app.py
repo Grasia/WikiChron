@@ -9,24 +9,27 @@
 
    Copyright 2017 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
+# built-in imports
 import flask
 import glob
 import os
 import json
 import glob
 
+# packages imports
 import dash
 import dash_core_components as dcc
 import grasia_dash_components as gdc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
-from tabs_bar import generate_tabs_bar
-import main
-import side_bar
 
 # Local imports:
 import lib.interface as lib
+from tabs_bar import generate_tabs_bar
+import main
+import side_bar
+from version import __version__
 
 
 # production or development flag:
@@ -145,6 +148,7 @@ def start_image_server():
             raise Exception('"{}" is excluded from the allowed static files'.format(image_path))
         return flask.send_from_directory(image_directory, image_name)
 
+print('¡¡¡¡ Welcome to WikiChron ' + __version__ +' !!!!')
 print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
 print('Using version ' + gdc.__version__ + ' of Grasia Dash Components.')
 
