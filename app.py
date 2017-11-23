@@ -33,7 +33,7 @@ from version import __version__
 
 
 # production or development flag:
-production = True
+production = False
 debug = not production
 
 # get csv data location (data/ by default)

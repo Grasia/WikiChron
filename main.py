@@ -34,8 +34,12 @@ metrics = []
 
 data = [] # matrix of panda series, being rows => metric and columns => wiki
 graphs = []
+#~ metric_data = []
 
 use_relative_time = True
+if use_relative_time:
+    # TOREDESIGN ONE DAY:
+    wikis_months_from_creation = []
 
 def get_dataframe_from_csv(csv):
     """ Read and parse a csv and return the corresponding pandas dataframe"""
@@ -53,24 +57,48 @@ def get_dataframe_from_csv(csv):
 def load_data(dataframes, metrics):
     """ Load analyzed data by every metric for every dataframe and store it in data[] """
 
-    return [ lib.compute_metric_on_dataframes(metric, dataframes) for metric in metrics]
+    metrics_by_wiki = []
+    for df in dataframes:
+        metrics_by_wiki.append(lib.compute_metrics_on_dataframe(metrics, df))
+
+    # reversing row=>wikis, column=>metrics to row=>metrics, column=>wikis
+    wiki_by_metrics = []
+    for metric_idx in range(len(metrics)):
+        metric_row = [metrics_by_wiki[wiki_idx].pop(0) for wiki_idx in range(len(metrics_by_wiki))]
+        wiki_by_metrics.append(metric_row)
+
+    return wiki_by_metrics
+    #~ old:
+    #~ return [ lib.compute_metric_on_dataframes(metric, dataframes) for metric in metrics]
 
 def generate_graphs(metrics, wikis):
     """ Turn over data[] into plotly graphs objects and store it in graphs[] """
 
     graphs_list = [[None for j in range(len(wikis))] for i in range(len(metrics))]
 
-    for i in range(len(metrics)):
-        for j in range(len(wikis)):
+    #~ global metric_data
+    for metric_idx in range(len(metrics)):
+        for wiki_idx in range(len(wikis)):
+            metric_data = data[metric_idx][wiki_idx]
             if use_relative_time:
-                x_axis = [i for i in range(len(data[i][j].index))] # aligned relative months
+                x_axis = len(metric_data.index)
+                #~ global wikis_months_from_creation;
+                # aligned x axis (time)
+                #~ x_axis = [month_index for month_index in range(len(wikis_months_from_creation[wiki_idx].index))] # aligned relative months using age of the wiki (from birth date)
+                #~ total_months = len(x_axis)
+                #~ months_for_this_metric = len(data[metric_idx][wiki_idx].index)
+                # aligned metric data
+                #~ metric_data = data[metric_idx][wiki_idx].shift(total_months - months_for_this_metric)
+                #~ metric_data = metric_data.fillna(0)
+                #~ metric_data = metric_data.reindex(wikis_months_from_creation[wiki_idx].index, fill_value=0)
+                #~ import pdb; pdb.set_trace()
             else:
-                x_axis = data[i][j].index # natural months
+                x_axis = metric_data.index # natural months
 
-            graphs_list[i][j] = go.Scatter(
+            graphs_list[metric_idx][wiki_idx] = go.Scatter(
                                 x=x_axis,
-                                y=data[i][j].data,
-                                name=wikis[j]
+                                y=metric_data.data,
+                                name=wikis[wiki_idx]
                                 )
 
     return graphs_list
@@ -84,6 +112,11 @@ def generate_main_content(wikis_arg, metrics_arg):
     wikis_df = [get_dataframe_from_csv(wiki) for wiki in wikis]
 
     data = load_data(wikis_df, metrics)
+    #~ if use_relative_time:
+        #~ global wikis_months_from_creation;
+        # getting months from date of creation of the wiki (birth date)
+        #~ edits_metric = lib.metrics_dict['edits']
+        #~ wikis_months_from_creation = lib.compute_metric_on_dataframes(edits_metric, wikis_df)
     graphs = generate_graphs(metrics, wikis)
 
     wikis_dropdown_options = []

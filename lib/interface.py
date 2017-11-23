@@ -12,6 +12,7 @@
 
 from .metrics import available_metrics as _available_metrics
 from .metrics import metrics_dict
+from .metrics import stats
 
 
 def get_available_metrics():
@@ -26,8 +27,11 @@ def compute_metrics_on_dataframe(metrics, df):
       df -- Dataframe to compute and calculate the metrics on.
       Return a list of panda series corresponding to the provided metrics.
    """
+   stats.init_stats(df) #TOIMPROVE
    return [ metric.calculate(df) for metric in metrics ]
 
+# deprecated:
+# Too inefficient with the current implementation
 def compute_metric_on_dataframes(metric, dfs):
    """
       Get the requested metric computed on given list of dataframes.
@@ -36,5 +40,10 @@ def compute_metric_on_dataframes(metric, dfs):
       dfs -- list of dataframes to compute metric over.
       Return a list of panda series corresponding to the provided metric on different dataframes.
    """
-   return [ metric.calculate(df) for df in dfs]
+   metric_on_dataframes = []
+   for df in dfs:
+      stats.init_stats(df)
+      metric_on_dataframes.append(metric.calculate(df))
+   return metric_on_dataframes
+   #~ return [ metric.calculate(df) for df in dfs]
 
