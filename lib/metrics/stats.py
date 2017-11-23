@@ -87,6 +87,14 @@ def users_new_anonymous(data):
 def users_anonymous_accum(data):
     return (users_new_anonymous(data).cumsum())
 
+def users_new_registered(data):
+    users = data.drop_duplicates('contributor_id')
+    anonymous_users = users[users['contributor_name'] != 'Anonymous']
+    return anonymous_users.groupby(pd.Grouper(key='timestamp',freq='M')).size()
+
+def users_registered_accum(data):
+    return (users_new_registered(data).cumsum())
+
 ########################################################################
 
 # Combined

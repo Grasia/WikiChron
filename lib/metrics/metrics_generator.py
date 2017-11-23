@@ -37,6 +37,8 @@ def generate_metrics():
     metrics.append(Metric('users_accum', 'Total users (accumulated)', MetricCategory.USERS, stats.users_accum, 'Users who have made at least one edition accumulated at every month.'))
     metrics.append(Metric('users_new_anonymous', 'Monthly anonymous users.', MetricCategory.USERS, stats.users_new_anonymous, 'Anonymous users who made at least one edition grouped by the month they did their first edit. Anonymous are identified by their ip.'))
     metrics.append(Metric('users_anonymous_accum', 'Total anonymous users (accumulated)', MetricCategory.USERS, stats.users_anonymous_accum, 'Anonymous users who have made at least one edition accumulated at every month. Anonymous are identified by their ip.'))
+    metrics.append(Metric('users_new_registered', 'Monthly new registered users', MetricCategory.USERS, stats.users_new_registered, 'New users registration per month who have made at least one edition.'))
+    metrics.append(Metric('users_registered_accum', 'Total registered users (accumulated)', MetricCategory.USERS, stats.users_registered_accum, 'Total registered users at every month. Note that users have to have made at least one edition and they have to be logged with their account when they did that edition.'))
 
     # Combined
     metrics.append(Metric('edits_per_users_accum', 'Edits per users (accumulated)', MetricCategory.COMBINED, stats.edits_per_users_accum, 'Number of total edits per number of users'))
