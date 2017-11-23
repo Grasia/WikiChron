@@ -33,6 +33,11 @@ def pages_edited(data):
     monthly_data = data.groupby([pd.Grouper(key='timestamp',freq='M')])
     return (monthly_data.apply(lambda x: len(x.page_id.unique())))
 
+def main_edited(data):
+    main_pages = data[data['page_ns'] == 0]
+    monthly_data = main_pages.groupby([pd.Grouper(key='timestamp',freq='M')])
+    return (monthly_data.apply(lambda x: len(x.page_id.unique())))
+
 ########################################################################
 
 # Editions

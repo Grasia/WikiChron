@@ -20,7 +20,8 @@ def generate_metrics():
     metrics.append(Metric('pages_accum', 'New pages (accumulated)', MetricCategory.PAGES, stats.pages_accum, 'Total of pages accumulated at every month'))
     metrics.append(Metric('pages_main_new', 'New articles monthly', MetricCategory.PAGES, stats.pages_main_new, 'Number of new articles (main content) created per month'))
     metrics.append(Metric('pages_main_accum', 'New articles (accumulated)', MetricCategory.PAGES, stats.pages_main_accum, 'Total of articles (main content) at every month'))
-    metrics.append(Metric('pages_edited', 'Pages edited monthly', MetricCategory.PAGES, stats.pages_edited, 'Number of different pages with edits per month'))
+    metrics.append(Metric('pages_edited', 'Pages edited monthly', MetricCategory.PAGES, stats.pages_edited, 'Number of different pages edited per month'))
+    metrics.append(Metric('main_edited', 'Articles edited monthly', MetricCategory.PAGES, stats.main_edited, 'Number of different articles edited per month'))
 
     # Editions
     metrics.append(Metric('edits', 'Global edits monthly', MetricCategory.EDITIONS, stats.edits, 'Editions to any part of the wiki grouped by month'))
