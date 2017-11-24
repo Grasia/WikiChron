@@ -10,14 +10,19 @@
    Copyright 2017 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
 
+import json
+import os
+
 import dash
 from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import grasia_dash_components as gdc
 import dash_html_components as html
-import json
 
 global app;
+
+global debug;
+debug = 'DEBUG' in os.environ
 
 def fold_button():
     return html.Div(
@@ -160,6 +165,12 @@ def compare_button():
         )
     )
 
+def selection_result_container():
+    if debug:
+        return html.Div(id='sidebar-selection', style={'display': 'block'})
+    else:
+        return html.Div(id='sidebar-selection', style={'display': 'none'})
+
 def generate_side_bar(wikis, metrics):
     return html.Div(id='side-bar',
         style={'backgroundColor': '#004481', 'flex': '0 0 280px', 'color': 'white'},
@@ -196,7 +207,7 @@ def generate_side_bar(wikis, metrics):
                 }),
             wikis_tab(wikis),
             metrics_tab(metrics),
-            html.Div(id='sidebar-selection', style={'display': 'block'})
+            selection_result_container()
         ]
     );
 
@@ -250,7 +261,6 @@ if __name__ == '__main__':
     def start_image_server():
         import flask
         import glob
-        import os
 
         static_image_route = '/assets/'
         image_directory = os.path.dirname(os.path.realpath(__file__)) + static_image_route

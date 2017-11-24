@@ -23,6 +23,9 @@ from dash.dependencies import Input, Output
 # Local imports:
 import lib.interface as lib
 
+global debug
+debug = 'DEBUG' in os.environ
+
 # get csv data location (data/ by default)
 global data_dir;
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
@@ -239,4 +242,4 @@ if __name__ == '__main__':
 
     bind_callbacks(app)
 
-    app.run_server(debug=True, port=8053)
+    app.run_server(debug=debug, port=8053)

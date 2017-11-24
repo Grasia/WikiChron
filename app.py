@@ -32,9 +32,9 @@ import side_bar
 from version import __version__
 
 
-# production or development flag:
-production = False
-debug = not production
+# production or development (DEBUG) flag:
+global debug;
+debug = 'DEBUG' in os.environ
 
 # get csv data location (data/ by default)
 global data_dir;
