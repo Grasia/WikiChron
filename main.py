@@ -34,7 +34,6 @@ metrics = []
 
 data = [] # matrix of panda series, being rows => metric and columns => wiki
 graphs = []
-#~ metric_data = []
 
 use_relative_time = True
 if use_relative_time:
@@ -61,7 +60,7 @@ def load_data(dataframes, metrics):
     for df in dataframes:
         metrics_by_wiki.append(lib.compute_metrics_on_dataframe(metrics, df))
 
-    # reversing row=>wikis, column=>metrics to row=>metrics, column=>wikis
+    # transposing matrix row=>wikis, column=>metrics to row=>metrics, column=>wikis
     wiki_by_metrics = []
     for metric_idx in range(len(metrics)):
         metric_row = [metrics_by_wiki[wiki_idx].pop(0) for wiki_idx in range(len(metrics_by_wiki))]
@@ -81,17 +80,7 @@ def generate_graphs(metrics, wikis):
         for wiki_idx in range(len(wikis)):
             metric_data = data[metric_idx][wiki_idx]
             if use_relative_time:
-                x_axis = len(metric_data.index)
-                #~ global wikis_months_from_creation;
-                # aligned x axis (time)
-                #~ x_axis = [month_index for month_index in range(len(wikis_months_from_creation[wiki_idx].index))] # aligned relative months using age of the wiki (from birth date)
-                #~ total_months = len(x_axis)
-                #~ months_for_this_metric = len(data[metric_idx][wiki_idx].index)
-                # aligned metric data
-                #~ metric_data = data[metric_idx][wiki_idx].shift(total_months - months_for_this_metric)
-                #~ metric_data = metric_data.fillna(0)
-                #~ metric_data = metric_data.reindex(wikis_months_from_creation[wiki_idx].index, fill_value=0)
-                #~ import pdb; pdb.set_trace()
+                x_axis = len(metric_data.index) # relative to the age of the wiki in months
             else:
                 x_axis = metric_data.index # natural months
 
@@ -112,11 +101,6 @@ def generate_main_content(wikis_arg, metrics_arg):
     wikis_df = [get_dataframe_from_csv(wiki) for wiki in wikis]
 
     data = load_data(wikis_df, metrics)
-    #~ if use_relative_time:
-        #~ global wikis_months_from_creation;
-        # getting months from date of creation of the wiki (birth date)
-        #~ edits_metric = lib.metrics_dict['edits']
-        #~ wikis_months_from_creation = lib.compute_metric_on_dataframes(edits_metric, wikis_df)
     graphs = generate_graphs(metrics, wikis)
 
     wikis_dropdown_options = []
