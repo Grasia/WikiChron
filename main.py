@@ -51,23 +51,24 @@ def get_dataframe_from_csv(csv):
     return df
 
 
-def load_data(dataframes, metrics, relative_time):
+def load_data(dataframes, metrics):
+#~ def load_data(dataframes, metrics, relative_time):
     """ Load analyzed data by every metric for every dataframe and store it in data[] """
 
-    if not relative_time: # natural time index
-        return [ lib.compute_metric_on_dataframes(metric, dataframes) for metric in metrics]
-    else: # relative time index
-        metrics_by_wiki = []
-        for df in dataframes:
-            metrics_by_wiki.append(lib.compute_metrics_on_dataframe(metrics, df))
+    #~ if not relative_time: # natural time index
+        #~ return [ lib.compute_metric_on_dataframes(metric, dataframes) for metric in metrics]
+    #~ else: # relative time index
+    metrics_by_wiki = []
+    for df in dataframes:
+        metrics_by_wiki.append(lib.compute_metrics_on_dataframe(metrics, df))
 
-        # transposing matrix row=>wikis, column=>metrics to row=>metrics, column=>wikis
-        wiki_by_metrics = []
-        for metric_idx in range(len(metrics)):
-            metric_row = [metrics_by_wiki[wiki_idx].pop(0) for wiki_idx in range(len(metrics_by_wiki))]
-            wiki_by_metrics.append(metric_row)
+    # transposing matrix row=>wikis, column=>metrics to row=>metrics, column=>wikis
+    wiki_by_metrics = []
+    for metric_idx in range(len(metrics)):
+        metric_row = [metrics_by_wiki[wiki_idx].pop(0) for wiki_idx in range(len(metrics_by_wiki))]
+        wiki_by_metrics.append(metric_row)
 
-        return wiki_by_metrics
+    return wiki_by_metrics
 
 def generate_graphs(metrics, wikis, relative_time):
     """ Turn over data[] into plotly graphs objects and store it in graphs[] """
@@ -99,7 +100,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time):
 
     wikis_df = [get_dataframe_from_csv(wiki) for wiki in wikis]
 
-    data = load_data(wikis_df, metrics, relative_time)
+    data = load_data(wikis_df, metrics)
     graphs = generate_graphs(metrics, wikis, relative_time)
 
     wikis_dropdown_options = []

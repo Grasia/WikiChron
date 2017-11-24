@@ -28,6 +28,9 @@ def calculate_index_all_months(data):
 # Pages
 
 def pages_new(data, index):
+    # We use the fact that data is sorted first by page_title and them by revision_id
+    # If we drop publicates we will get the first revision for each page_title, which
+    #  corresponds with the date it was created.
     pages = data.drop_duplicates('page_id')
     series = pages.groupby(pd.Grouper(key='timestamp',freq='M')).size()
     if index is not None:
