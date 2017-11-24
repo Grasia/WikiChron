@@ -75,6 +75,21 @@ def wikis_tab(wikis):
         id='wikis-tab'
     );
 
+def select_time_axis_control():
+    return (html.Div([
+        html.Hr(),
+        dcc.RadioItems(
+            options=[
+                {'label': 'Relative dates', 'value': 'relative'},
+                {'label': 'Absolute dates', 'value': 'absolute'}
+            ],
+            value='relative',
+            id='time-axis-selection'
+        ),
+        html.Hr()
+        ])
+    )
+
 def metrics_tab(metrics):
 
     metrics_options = [{'label': metric.text, 'value': metric.code} for metric in metrics]
@@ -110,6 +125,7 @@ def metrics_tab(metrics):
             style={'color': 'white'},
             id='metrics-tab-container',
             ),
+        select_time_axis_control(),
         compare_button()
         ],
         id='metrics-tab'
@@ -146,7 +162,7 @@ def compare_button():
 
 def generate_side_bar(wikis, metrics):
     return html.Div(id='side-bar',
-        style={'backgroundColor': '#004481', 'flex': '0 0 280px'},
+        style={'backgroundColor': '#004481', 'flex': '0 0 280px', 'color': 'white'},
         children=[
             fold_button(),
             gdc.Tabs(
@@ -180,7 +196,7 @@ def generate_side_bar(wikis, metrics):
                 }),
             wikis_tab(wikis),
             metrics_tab(metrics),
-            html.Div(id='sidebar-selection', style={'color': 'white','display': 'none'})
+            html.Div(id='sidebar-selection', style={'display': 'block'})
         ]
     );
 
@@ -206,11 +222,13 @@ def bind_callbacks(app):
     @app.callback(Output('sidebar-selection', 'children'),
                [Input('compare-button', 'n_clicks')],
                [State('wikis-checklist-selection', 'values'),
-               State('metrics-checklist-selection', 'values')]
+               State('metrics-checklist-selection', 'values'),
+               State('time-axis-selection', 'value'),
+               ]
                )
-    def compare_selection(n_clicks, wikis_selection, metrics_selection):
+    def compare_selection(n_clicks, wikis_selection, metrics_selection, time_axis_selection):
         if (len(wikis_selection) > 0 and len(metrics_selection) > 0 ):
-            selection = { 'wikis': wikis_selection, 'metrics': metrics_selection}
+            selection = { 'wikis': wikis_selection, 'metrics': metrics_selection, 'time': time_axis_selection}
             return json.dumps(selection)
         else:
             print('You have to select at least one wiki and at least one metric')

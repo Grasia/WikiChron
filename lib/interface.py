@@ -21,29 +21,24 @@ def get_available_metrics():
 
 def compute_metrics_on_dataframe(metrics, df):
    """
-      Get the requested metrics computed on a dataframe.
+      Get the requested metrics computed on a dataframe in relative dates.
 
       metrics -- list of metric objects
       df -- Dataframe to compute and calculate the metrics on.
       Return a list of panda series corresponding to the provided metrics.
    """
-   stats.init_stats(df) #TOIMPROVE
-   return [ metric.calculate(df) for metric in metrics ]
+   index = stats.calculate_index_all_months(df) #TOIMPROVE
+   return [ metric.calculate(df, index) for metric in metrics ]
 
-# deprecated:
 # Too inefficient with the current implementation
+# TOIMPROVE
 def compute_metric_on_dataframes(metric, dfs):
    """
-      Get the requested metric computed on given list of dataframes.
+      Get the requested metric computed on given list of dataframe in absolute dates.
 
       metric -- metric to compute
       dfs -- list of dataframes to compute metric over.
       Return a list of panda series corresponding to the provided metric on different dataframes.
    """
-   metric_on_dataframes = []
-   for df in dfs:
-      stats.init_stats(df)
-      metric_on_dataframes.append(metric.calculate(df))
-   return metric_on_dataframes
-   #~ return [ metric.calculate(df) for df in dfs]
+   return [ metric.calculate(df) for df in dfs]
 

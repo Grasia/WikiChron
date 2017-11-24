@@ -30,11 +30,11 @@ class Metric:
         self.descp = descp
 
 
-    def calculate(self, pandas_data_frame):
+    def calculate(self, pandas_data_frame, index=None):
         """
         Calculate the metric data using the pandas_data_frame.
 
         Return a pandas series
         """
-        return self.func(pandas_data_frame)
+        return self.func(pandas_data_frame, index)
 

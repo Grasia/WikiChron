@@ -35,11 +35,6 @@ metrics = []
 data = [] # matrix of panda series, being rows => metric and columns => wiki
 graphs = []
 
-use_relative_time = True
-if use_relative_time:
-    # TOREDESIGN ONE DAY:
-    wikis_months_from_creation = []
-
 def get_dataframe_from_csv(csv):
     """ Read and parse a csv and return the corresponding pandas dataframe"""
     print('Loading csv for ' + csv)
@@ -53,24 +48,25 @@ def get_dataframe_from_csv(csv):
     return df
 
 
-def load_data(dataframes, metrics):
+def load_data(dataframes, metrics, relative_time):
     """ Load analyzed data by every metric for every dataframe and store it in data[] """
 
-    metrics_by_wiki = []
-    for df in dataframes:
-        metrics_by_wiki.append(lib.compute_metrics_on_dataframe(metrics, df))
+    if not relative_time: # natural time index
+        return [ lib.compute_metric_on_dataframes(metric, dataframes) for metric in metrics]
+    else: # relative time index
+        metrics_by_wiki = []
+        for df in dataframes:
+            metrics_by_wiki.append(lib.compute_metrics_on_dataframe(metrics, df))
 
-    # transposing matrix row=>wikis, column=>metrics to row=>metrics, column=>wikis
-    wiki_by_metrics = []
-    for metric_idx in range(len(metrics)):
-        metric_row = [metrics_by_wiki[wiki_idx].pop(0) for wiki_idx in range(len(metrics_by_wiki))]
-        wiki_by_metrics.append(metric_row)
+        # transposing matrix row=>wikis, column=>metrics to row=>metrics, column=>wikis
+        wiki_by_metrics = []
+        for metric_idx in range(len(metrics)):
+            metric_row = [metrics_by_wiki[wiki_idx].pop(0) for wiki_idx in range(len(metrics_by_wiki))]
+            wiki_by_metrics.append(metric_row)
 
-    return wiki_by_metrics
-    #~ old:
-    #~ return [ lib.compute_metric_on_dataframes(metric, dataframes) for metric in metrics]
+        return wiki_by_metrics
 
-def generate_graphs(metrics, wikis):
+def generate_graphs(metrics, wikis, relative_time):
     """ Turn over data[] into plotly graphs objects and store it in graphs[] """
 
     graphs_list = [[None for j in range(len(wikis))] for i in range(len(metrics))]
@@ -79,7 +75,7 @@ def generate_graphs(metrics, wikis):
     for metric_idx in range(len(metrics)):
         for wiki_idx in range(len(wikis)):
             metric_data = data[metric_idx][wiki_idx]
-            if use_relative_time:
+            if relative_time:
                 x_axis = len(metric_data.index) # relative to the age of the wiki in months
             else:
                 x_axis = metric_data.index # natural months
@@ -93,15 +89,15 @@ def generate_graphs(metrics, wikis):
     return graphs_list
 
 
-def generate_main_content(wikis_arg, metrics_arg):
+def generate_main_content(wikis_arg, metrics_arg, relative_time):
     global wikis_df, data, graphs, wikis, metrics;
     wikis = wikis_arg;
     metrics = metrics_arg;
 
     wikis_df = [get_dataframe_from_csv(wiki) for wiki in wikis]
 
-    data = load_data(wikis_df, metrics)
-    graphs = generate_graphs(metrics, wikis)
+    data = load_data(wikis_df, metrics, relative_time)
+    graphs = generate_graphs(metrics, wikis, relative_time)
 
     wikis_dropdown_options = []
     for index, wiki in enumerate(wikis):
@@ -227,7 +223,7 @@ if __name__ == '__main__':
 
     data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 
-    wikis = ['eslagunanegra_pages_full', 'cocktails']
+    wikis = ['eslagunanegra_pages_full', 'cocktails', 'es.shamanking.wikia.com']
 
     available_metrics = lib.get_available_metrics()
     metrics = []
@@ -238,7 +234,8 @@ if __name__ == '__main__':
     app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
     app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
 
-    app.layout = generate_main_content(wikis, metrics)
+    relative_time = False
+    app.layout = generate_main_content(wikis, metrics, relative_time)
 
     bind_callbacks(app)
 

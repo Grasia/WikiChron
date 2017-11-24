@@ -100,7 +100,12 @@ def init_app_callbacks():
             selection = json.loads(selection_json)
             wikis = selection['wikis']
             metrics = [lib.metrics_dict[metric] for metric in selection['metrics']]
-            return main.generate_main_content(wikis, metrics)
+            time = selection['time']
+            if time == 'relative':
+                relative_time = True
+            else:
+                relative_time = False
+            return main.generate_main_content(wikis, metrics, relative_time)
         else:
             print('There is no selection of wikis & metrics yet')
 
