@@ -32,7 +32,7 @@ def fold_button():
                 'cursor': 'pointer',
                 'marginRight': '23px',
                 'marginTop': '30px',
-                'marginBotton': '30px'
+                'marginBottom': '30px'
             },
             children=[html.Img(id='fold-img', src='assets/fold_arrow.svg')],
         ),

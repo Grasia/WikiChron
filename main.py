@@ -114,7 +114,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time):
     return html.Div(id='main',
         style={'width': '100%'},
         children=[
-            html.H1(children='WIKI CHRON', className='container'),
+            html.H1('WIKI CHRON', className='container', id='tool-title'),
             html.Hr(),
 
             html.Div(id='selection-div',
