@@ -140,7 +140,18 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
     return html.Div(id='main',
         style={'width': '100%'},
         children=[
-            html.H1('WIKI CHRON', className='container', id='tool-title'),
+
+            html.Div(id='header',
+                className='container',
+                style={'display': 'flex', 'align-items': 'center', 'justify-content': 'space-between'},
+                children=[
+                    html.H1('WIKI CHRON', id='tool-title'),
+                    html.A(
+                        html.Img(src='assets/ico-github.svg'),
+                        href='https://github.com/Grasia/WikiChron',
+                        style={'margin-left': 'auto'},
+                    ),
+            ]),
             html.Hr(),
 
             html.Div(id='selection-div',
