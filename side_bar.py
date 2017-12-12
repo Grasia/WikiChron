@@ -154,7 +154,7 @@ def compare_button():
         html.Div(
             html.Button('COMPARE',
                         id='compare-button',
-                        style= buttonStyle
+                        style=buttonStyle
             ),
             style = {
                 'display': 'flex',
@@ -238,11 +238,10 @@ def bind_callbacks(app):
                ]
                )
     def compare_selection(n_clicks, wikis_selection, metrics_selection, time_axis_selection):
-        if (len(wikis_selection) > 0 and len(metrics_selection) > 0 ):
+        print('Number of clicks: ' + str(n_clicks))
+        if (n_clicks != None):
             selection = { 'wikis': wikis_selection, 'metrics': metrics_selection, 'time': time_axis_selection}
             return json.dumps(selection)
-        else:
-            print('You have to select at least one wiki and at least one metric')
 
     return
 

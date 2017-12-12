@@ -78,11 +78,32 @@ def get_available_wikis(data_dir):
         wikis[i] = os.path.splitext(base_filename)[0]
     return wikis
 
+def generate_welcome_page():
+
+    container_style = {
+        'display': 'flex',
+        'flex-direction': 'column',
+        'justify-content': 'center',
+        'align-items': 'center',
+        'padding-top': '15%'
+    }
+
+    return html.Div(id='welcome-container',
+            className='container',
+            style=container_style,
+            children=[
+                html.Div(html.Img(src='assets/welcome_graphs.svg')),
+                html.H2('Welcome to WikiChron'),
+                html.P('Select some wikis and metrics from the sidebar on the left and press compare to start.',
+                        style={'font-size': 'large'})
+            ]
+    )
+
 def set_layout():
     app.layout = html.Div(id='app-layout',
         style={'display': 'flex'},
         children=[
-            generate_tabs_bar(tabs),
+            #~ generate_tabs_bar(tabs),
             side_bar.generate_side_bar(wikis, available_metrics),
             html.Div(id='main-root', style={'flex': 'auto'})
         ]
@@ -98,18 +119,24 @@ def init_app_callbacks():
     def load_main_graphs(selection_json):
         if selection_json:
             selection = json.loads(selection_json)
-            wikis = selection['wikis']
-            metrics = [lib.metrics_dict[metric] for metric in selection['metrics']]
-            time = selection['time']
-            if time == 'relative':
-                relative_time = True
+
+            if selection['wikis'] and selection['metrics']:
+                wikis = selection['wikis']
+                metrics = [lib.metrics_dict[metric] for metric in selection['metrics']]
+                time = selection['time']
+                if time == 'relative':
+                    relative_time = True
+                else:
+                    relative_time = False
+                return main.generate_main_content(wikis, metrics, relative_time)
+
             else:
-                relative_time = False
-            return main.generate_main_content(wikis, metrics, relative_time)
+                print('You have to select at least one wiki and at least one metric')
+                # show warning dialog
+                return generate_welcome_page()
         else:
             print('There is no selection of wikis & metrics yet')
-
-    return
+            return generate_welcome_page()
 
 def start_css_server():
     # Add a static styles route that serves css from desktop
