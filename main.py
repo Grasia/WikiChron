@@ -38,6 +38,11 @@ metrics = []
 data = [] # matrix of panda series, being rows => metric and columns => wiki
 graphs = []
 
+global min_time, max_time; # global variables to store the max and min values for the time axis.
+
+global relative_time; # flag to know when we're plotting in relative dates
+global times_axis; # datetime index of the oldest wiki from the selected subset of wikis.
+
 def get_dataframe_from_csv(csv):
     """ Read and parse a csv and return the corresponding pandas dataframe"""
     print('Loading csv for ' + csv)
@@ -73,6 +78,8 @@ def load_data(dataframes, metrics):
 def generate_graphs(metrics, wikis, relative_time):
     """ Turn over data[] into plotly graphs objects and store it in graphs[] """
 
+    global min_time, max_time, times_axis;
+
     graphs_list = [[None for j in range(len(wikis))] for i in range(len(metrics))]
 
     #~ global metric_data
@@ -90,13 +97,22 @@ def generate_graphs(metrics, wikis, relative_time):
                                 name=wikis[wiki_idx]
                                 )
 
+    oldest_wiki = max(data[0],key = lambda wiki: len(wiki))
+    min_time = 0
+    max_time = len (oldest_wiki)
+    if relative_time:
+        times_axis = list(range(min_time, max_time))
+    else:
+        times_axis = oldest_wiki.index
+
     return graphs_list
 
 
-def generate_main_content(wikis_arg, metrics_arg, relative_time):
-    global wikis_df, data, graphs, wikis, metrics;
+def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
+    global wikis_df, data, graphs, wikis, metrics, min_time, max_time, relative_time;
     wikis = wikis_arg;
     metrics = metrics_arg;
+    relative_time = relative_time_arg;
 
     wikis_df = [get_dataframe_from_csv(wiki) for wiki in wikis]
 
@@ -110,6 +126,16 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time):
     metrics_dropdown_options = []
     for index, metric in enumerate(metrics):
         metrics_dropdown_options.append({'label': metric.text, 'value': index})
+
+    number_of_marks = int(len(times_axis) / 9);
+    subset_times = times_axis[0::number_of_marks]
+    #~ last_element = times_axis[max_time-1]
+    if relative_time:
+        range_slider_marks = {x: str(x) for x in subset_times}
+        #~ range_slider_marks[max_time] = str(last_element)
+    else:
+        range_slider_marks = {i*number_of_marks: x.strftime('%b %Y') for i, x in enumerate(subset_times)}
+        #~ range_slider_marks[max_time] = last_element.strftime('%b %Y')
 
     return html.Div(id='main',
         style={'width': '100%'},
@@ -170,14 +196,17 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time):
                         html.Strong(
                             'Select your temporary range:'),
 
-                        dcc.RangeSlider(
-                            id='dates-slider',
-                            min=-5,
-                            max=10,
-                            step=None,
-                            value=[0, 7],
-                            disabled=True
-                            #~ marks={str(year): str(year) for year in df['year'].unique()}
+                        html.Div(
+                            dcc.RangeSlider(
+                                id='dates-slider',
+                                min=min_time,
+                                max=max_time-1,
+                                step=1,
+                                value=[min_time, max_time-1],
+                                allowCross=False,
+                                marks=range_slider_marks,
+                            ),
+                            style={'height': '35px'}
                         )
                    ]),
 
@@ -189,8 +218,10 @@ def bind_callbacks(app):
     @app.callback(
         Output('graphs', 'children'),
         [Input('wikis-selection-dropdown', 'value'),
-        Input('metrics-selection-dropdown', 'value')])
-    def update_graphs(selected_wikis, selected_metrics):
+        Input('metrics-selection-dropdown', 'value'),
+        Input('dates-slider', 'value')])
+    def update_graphs(selected_wikis, selected_metrics, selected_timerange):
+        global relative_time;
 
         for wiki_idx in range(len(wikis)):
             if wiki_idx in selected_wikis:
@@ -202,6 +233,10 @@ def bind_callbacks(app):
 
         dash_graphs = []
 
+        if not relative_time:
+            selected_timerange[0] = times_axis[selected_timerange[0]]
+            selected_timerange[1] = times_axis[selected_timerange[1]]
+
         for i, metric in enumerate(metrics):
             if (i in selected_metrics):
                 dash_graphs.append(
@@ -210,7 +245,8 @@ def bind_callbacks(app):
                     figure={
                         'data': graphs[i],
                         'layout': {
-                            'title': metric.text
+                            'title': metric.text,
+                            'xaxis': {'range': selected_timerange }
                         }
                     }
                     )
