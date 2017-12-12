@@ -76,6 +76,8 @@ def wikis_tab(wikis):
             className='container',
             id='wikis-tab-container'
             ),
+        html.Hr(),
+        compare_button()
         ],
         id='wikis-tab'
     );
