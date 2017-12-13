@@ -150,6 +150,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
                         html.Img(src='assets/ico-github.svg'),
                         href='https://github.com/Grasia/WikiChron',
                         style={'margin-left': 'auto'},
+                        target='_blank'
                     ),
             ]),
             html.Hr(),
