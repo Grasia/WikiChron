@@ -43,7 +43,7 @@ if not 'WIKICHRON_DATA_DIR' in os.environ:
 data_dir = os.environ['WIKICHRON_DATA_DIR']
 
 # global app config
-port = 8888
+port = 8880;
 global app;
 app = dash.Dash('WikiChron')
 server = app.server
