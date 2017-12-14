@@ -17,11 +17,11 @@ import pandas as pd
 # deprecated
 #~ def init_stats(data):
     #~ global index;
-    #~ monthly_data = data.groupby(pd.Grouper(key='timestamp',freq='M'))
+    #~ monthly_data = data.groupby(pd.Grouper(key='timestamp',freq='MS'))
     #~ index = monthly_data.size().index
 
 def calculate_index_all_months(data):
-    monthly_data = data.groupby(pd.Grouper(key='timestamp',freq='M'))
+    monthly_data = data.groupby(pd.Grouper(key='timestamp',freq='MS'))
     index = monthly_data.size().index
     return index
 
@@ -32,7 +32,7 @@ def pages_new(data, index):
     # If we drop publicates we will get the first revision for each page_title, which
     #  corresponds with the date it was created.
     pages = data.drop_duplicates('page_id')
-    series = pages.groupby(pd.Grouper(key='timestamp',freq='M')).size()
+    series = pages.groupby(pd.Grouper(key='timestamp',freq='MS')).size()
     if index is not None:
         series = series.reindex(index, fill_value=0)
     return series
@@ -43,7 +43,7 @@ def pages_accum(data, index):
 def pages_main_new(data, index):
     pages = data.drop_duplicates('page_id')
     main_pages = pages[pages['page_ns'] == 0]
-    series = main_pages.groupby(pd.Grouper(key='timestamp',freq='M')).size()
+    series = main_pages.groupby(pd.Grouper(key='timestamp',freq='MS')).size()
     if index is not None:
         series = series.reindex(index, fill_value=0)
     return series
@@ -53,7 +53,7 @@ def pages_main_accum(data, index):
     return (pages_main_new(data, index).cumsum())
 
 def pages_edited(data, index):
-    monthly_data = data.groupby([pd.Grouper(key='timestamp',freq='M')])
+    monthly_data = data.groupby([pd.Grouper(key='timestamp',freq='MS')])
     series = monthly_data.apply(lambda x: len(x.page_id.unique()))
     if index is not None:
         series = series.reindex(index, fill_value=0)
@@ -61,7 +61,7 @@ def pages_edited(data, index):
 
 def main_edited(data, index):
     main_pages = data[data['page_ns'] == 0]
-    monthly_data = main_pages.groupby([pd.Grouper(key='timestamp',freq='M')])
+    monthly_data = main_pages.groupby([pd.Grouper(key='timestamp',freq='MS')])
     series = monthly_data.apply(lambda x: len(x.page_id.unique()))
     if index is not None:
         series = series.reindex(index, fill_value=0)
@@ -72,7 +72,7 @@ def main_edited(data, index):
 # Editions
 
 def edits(data, index):
-    monthly_data = data.groupby(pd.Grouper(key='timestamp',freq='M'))
+    monthly_data = data.groupby(pd.Grouper(key='timestamp',freq='MS'))
     series = monthly_data.size()
     if index is not None:
         series = series.reindex(index, fill_value=0)
@@ -101,7 +101,7 @@ def edits_user_talk(data, index):
 # Users
 
 def users_active(data, index):
-    monthly_data = data.groupby(pd.Grouper(key='timestamp',freq='M'))
+    monthly_data = data.groupby(pd.Grouper(key='timestamp',freq='MS'))
     series = monthly_data.apply(lambda x: len(x.contributor_id.unique()))
     if index is not None:
         series = series.reindex(index, fill_value=0)
@@ -109,7 +109,7 @@ def users_active(data, index):
 
 def users_new(data, index):
     users = data.drop_duplicates('contributor_id')
-    series = users.groupby(pd.Grouper(key='timestamp',freq='M')).size()
+    series = users.groupby(pd.Grouper(key='timestamp',freq='MS')).size()
     if index is not None:
         series = series.reindex(index, fill_value=0)
     return series
@@ -120,7 +120,7 @@ def users_accum(data, index):
 def users_new_anonymous(data, index):
     users = data.drop_duplicates('contributor_id')
     anonymous_users = users[users['contributor_name'] == 'Anonymous']
-    series = anonymous_users.groupby(pd.Grouper(key='timestamp',freq='M')).size()
+    series = anonymous_users.groupby(pd.Grouper(key='timestamp',freq='MS')).size()
     if index is not None:
         series = series.reindex(index, fill_value=0)
     return series
@@ -131,7 +131,7 @@ def users_anonymous_accum(data, index):
 def users_new_registered(data, index):
     users = data.drop_duplicates('contributor_id')
     anonymous_users = users[users['contributor_name'] != 'Anonymous']
-    series =  anonymous_users.groupby(pd.Grouper(key='timestamp',freq='M')).size()
+    series =  anonymous_users.groupby(pd.Grouper(key='timestamp',freq='MS')).size()
     if index is not None:
         series = series.reindex(index, fill_value=0)
     return series
