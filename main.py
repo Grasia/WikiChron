@@ -12,6 +12,7 @@ Title, plots and filter elements.
 """
 
 import os
+import time
 
 import dash
 import dash_core_components as dcc
@@ -46,6 +47,7 @@ global times_axis; # datetime index of the oldest wiki from the selected subset 
 def get_dataframe_from_csv(csv):
     """ Read and parse a csv and return the corresponding pandas dataframe"""
     print('Loading csv for ' + csv)
+    time_start_loading_one_csv = time.perf_counter()
     df = pd.read_csv(os.path.join(data_dir, csv + '.csv'),
                     delimiter=';', quotechar='|',
                     index_col='revision_id')
@@ -53,6 +55,9 @@ def get_dataframe_from_csv(csv):
     #~ df.set_index(df['timestamp'], inplace=True) # generate a datetime index
     #~ print(df.info())
     print('!!Loaded csv for ' + csv)
+    time_end_loading_one_csv = time.perf_counter() - time_start_loading_one_csv
+    print(' * [Timing] Loading {} : {} seconds'.format(csv, time_end_loading_one_csv) )
+
     return df
 
 
@@ -114,10 +119,17 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
     metrics = metrics_arg;
     relative_time = relative_time_arg;
 
+    time_start_loading_csvs = time.perf_counter()
     wikis_df = [get_dataframe_from_csv(wiki) for wiki in wikis]
+    time_end_loading_csvs = time.perf_counter() - time_start_loading_csvs
+    print(' * [Timing] Loading csvs : {} seconds'.format(time_end_loading_csvs) )
 
     data = load_data(wikis_df, metrics)
+
+    time_start_generating_graphs = time.perf_counter()
     graphs = generate_graphs(metrics, wikis, relative_time)
+    time_end_generating_graphs = time.perf_counter() - time_start_generating_graphs
+    print(' * [Timing] Generating graphs : {} seconds'.format(time_end_generating_graphs) )
 
     wikis_dropdown_options = []
     for index, wiki in enumerate(wikis):
