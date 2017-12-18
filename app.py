@@ -15,8 +15,9 @@ import glob
 import os
 import json
 import glob
+import time
 
-# packages imports
+# Dash framework imports
 import dash
 import dash_core_components as dcc
 import grasia_dash_components as gdc
@@ -185,6 +186,8 @@ print('¡¡¡¡ Welcome to WikiChron ' + __version__ +' !!!!')
 print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
 print('Using version ' + gdc.__version__ + ' of Grasia Dash Components.')
 
+time_start_app = time.perf_counter()
+
 start_image_server()
 start_css_server()
 
@@ -192,6 +195,9 @@ set_layout()
 side_bar.bind_callbacks(app)
 main.bind_callbacks(app)
 init_app_callbacks()
+
+time_loaded_app = time.perf_counter() - time_start_app
+print(' * [Timing] Loading the app: {} seconds'.format(time_loaded_app) )
 
 if __name__ == '__main__':
     app.run_server(debug=debug, port=port)
