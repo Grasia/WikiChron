@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
 body {
   margin: 0px;
-  font-family: 'Roboto';
+  font-family: 'Roboto', sans-serif;
 }
 p {
     margin-top: 0.75rem;
