@@ -50,12 +50,12 @@ app = dash.Dash('WikiChron')
 server = app.server
 app.config['suppress_callback_exceptions']=True
 
-app.scripts.config.serve_locally = True
+#app.scripts.config.serve_locally = True
 
 app.scripts.append_script({
     "external_url": "js/piwik.js",
     # Equivalent online (codepen:)
-    #~ "external_url": "https://codepen.io/akronix/pen/rpQgqQ.js"
+    #"external_url": "https://codepen.io/akronix/pen/rpQgqQ.js"
 })
 
 #~ app.css.config.serve_locally = True
