@@ -1,7 +1,10 @@
-window.onload = function() {
-  document.getElementById('fold-img-container').onclick = hideSideBar ;
+document.addEventListener("DOMContentLoaded", setEvents);
+
+function setEvents() {
+    console.log('Hello');
+    document.getElementById('fold-img-container').onclick = hideSideBar;
 }
 
 function hideSideBar() {
-  document.getElementById('side-bar').style({display: none});
+  document.getElementById('side-bar').style.display = 'none';
 }

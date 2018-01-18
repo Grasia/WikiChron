@@ -52,9 +52,11 @@ app.config['suppress_callback_exceptions']=True
 
 app.scripts.config.serve_locally = True
 
-#~ app.scripts.append_script({
-    #~ "external_url": "app.js"
-#~ })
+app.scripts.append_script({
+    "external_url": "js/piwik.js",
+    # Equivalent online (codepen:)
+    #~ "external_url": "https://codepen.io/akronix/pen/rpQgqQ.js"
+})
 
 #~ app.css.config.serve_locally = True
 
@@ -133,12 +135,17 @@ def init_app_callbacks():
                 return main.generate_main_content(wikis, metrics, relative_time)
 
             else:
-                print('You have to select at least one wiki and at least one metric')
-                # show warning dialog
+                # User should never reach here, but who knows what an evil mind can do :/
+                print('Warning: You have to select at least one wiki and at least one metric')
                 return generate_welcome_page()
         else:
             print('There is no selection of wikis & metrics yet')
             return generate_welcome_page()
+
+@app.server.route('/js/<path:path>')
+def start_js_server(path):
+    static_folder = os.path.dirname(os.path.realpath(__file__)) + '/js/'
+    return flask.send_from_directory(static_folder, path)
 
 def start_css_server():
     # Add a static styles route that serves css from desktop
@@ -167,7 +174,6 @@ def start_css_server():
 
 
 def start_image_server():
-
     static_image_route = '/assets/'
     image_directory = os.path.dirname(os.path.realpath(__file__)) + static_image_route
     list_of_images = [os.path.basename(x) for x in glob.glob('{}*.svg'.format(image_directory))]
