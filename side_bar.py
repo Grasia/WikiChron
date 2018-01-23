@@ -99,13 +99,16 @@ def select_time_axis_control():
 
 def metrics_tab(metrics):
 
-    metrics_options = [{'label': metric.text, 'value': metric.code} for metric in metrics]
+    def group_metrics_in_accordion(metrics, metric_category):
 
-    return html.Div([
-        html.Div(
-            children=[
-                html.P(html.Strong('Please, select the charts you wish to see and when you finish click on compare')),
-                dcc.Checklist(
+        metrics_options = [{'label': metric.text, 'value': metric.code} for metric in metrics]
+
+        return gdc.Accordion(
+                    id='{}-metrics'.format(metric_category.name),
+                    className='aside-category',
+                    label=metric_category.name,
+                    children=[
+                        dcc.Checklist(
                             id='metrics-checklist-selection',
                             className='aside-checklist-category',
                             options=metrics_options,
@@ -113,6 +116,49 @@ def metrics_tab(metrics):
                             labelClassName='aside-checklist-option',
                             labelStyle={'display': 'block'}
                         )
+                    ],
+                    style={'display': 'block'}
+                )
+
+
+    #~ metrics_options = [{'label': metric.text, 'value': metric.code} for metric in metrics]
+
+    metrics_by_category = {}
+
+    for metric in metrics:
+        if metric.category not in metrics_by_category:
+            metrics_by_category[metric.category] = [metric]
+        else:
+            metrics_by_category[metric.category].append(metric)
+
+    accordions = []
+    for category, metrics_categorized in metrics_by_category.items():
+        accordions.append(group_metrics_in_accordion(metrics_categorized, category))
+
+    #~ for metric_category in metric_categories:
+        #~ metrics_with_this_category = [metric for metric in metrics if metric.category.name == metric_category ]
+        #~ metrics_by_category.append(group_metrics_in_accordion(metrics_with_this_category, metric_category))
+
+    side_bar_children = []
+    side_bar_children.append(
+                html.P(
+                    html.Strong('Please, select the charts you wish to see and when you finish click on compare')
+                )
+    )
+
+    side_bar_children += accordions
+
+    return html.Div([
+        html.Div(
+            children=side_bar_children,
+                #~ dcc.Checklist(
+                            #~ id='metrics-checklist-selection',
+                            #~ className='aside-checklist-category',
+                            #~ options=metrics_options,
+                            #~ values=[],
+                            #~ labelClassName='aside-checklist-option',
+                            #~ labelStyle={'display': 'block'}
+                        #~ ),
                 #~ gdc.Accordion(
                     #~ id='pages-metric',
                     #~ className='aside-category',
@@ -127,7 +173,6 @@ def metrics_tab(metrics):
                         #~ )
                     #~ ]
                 #~ )
-            ],
             className='container',
             style={'color': 'white'},
             id='metrics-tab-container',
