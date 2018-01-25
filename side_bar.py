@@ -114,8 +114,8 @@ def metrics_tab(metrics):
                     id='{}-metrics'.format(metric_category.name),
                     className='aside-category',
                     label=metric_category.value,
-                    itemClassName='metric_category_label',
-                    childrenClassName='metric_category_list',
+                    itemClassName='metric-category-label',
+                    childrenClassName='metric-category-list',
                     accordionFixedWidth='300',
                     defaultCollapsed=True,
                     children=[
