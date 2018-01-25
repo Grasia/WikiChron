@@ -13,11 +13,11 @@
 from enum import Enum, unique
 @unique
 class MetricCategory(Enum):
-    PAGES = 'Pages'
-    EDITIONS = 'Editions'
+    PAGES = 'New Pages'
+    EDITIONS = 'Edits'
     USERS = 'Users'
-    SIZE = 'Size'
-    COMBINED = 'Combined'
+    RATIOS = 'Ratios'
+    INEQUALITY = 'Inequality'
 
 class Metric:
     """ Class for ADT Metric. """

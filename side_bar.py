@@ -113,7 +113,7 @@ def metrics_tab(metrics):
         return gdc.Accordion(
                     id='{}-metrics'.format(metric_category.name),
                     className='aside-category',
-                    label=metric_category.name,
+                    label=metric_category.value,
                     itemClassName='metric_category_label',
                     childrenClassName='metric_category_list',
                     accordionFixedWidth='300',
