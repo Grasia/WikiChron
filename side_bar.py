@@ -12,6 +12,7 @@
 
 import json
 import os
+import itertools
 
 import dash
 from dash.dependencies import Input, Output, State
@@ -104,6 +105,11 @@ def select_time_axis_control():
         ])
     )
 
+
+def generate_metrics_accordion_id(category_name):
+    return '{}-metrics'.format(category_name);
+
+
 def metrics_tab(metrics):
 
     def group_metrics_in_accordion(metrics, metric_category):
@@ -111,7 +117,7 @@ def metrics_tab(metrics):
         metrics_options = [{'label': metric.text, 'value': metric.code} for metric in metrics]
 
         return gdc.Accordion(
-                    id='{}-metrics'.format(metric_category.name),
+                    id=generate_metrics_accordion_id(metric_category.name) + '-accordion',
                     className='aside-category',
                     label=metric_category.value,
                     itemClassName='metric-category-label',
@@ -120,7 +126,7 @@ def metrics_tab(metrics):
                     defaultCollapsed=True,
                     children=[
                         dcc.Checklist(
-                            id='metrics-checklist-selection',
+                            id=generate_metrics_accordion_id(metric_category.name),
                             className='aside-checklist-category',
                             options=metrics_options,
                             values=[],
@@ -267,6 +273,9 @@ def generate_side_bar(wikis, metrics):
     );
 
 
+category_names = ['PAGES', 'EDITIONS', 'USERS', 'RATIOS']
+
+
 def bind_callbacks(app):
 
     @app.callback(Output('wikis-tab', 'style'),
@@ -285,16 +294,17 @@ def bind_callbacks(app):
         else:
             return {'display':'none'}
 
+    # Note that we need one State parameter for each category metric that is created dynamically
     @app.callback(Output('sidebar-selection', 'children'),
                [Input('compare-button', 'n_clicks')],
                [State('wikis-checklist-selection', 'values'),
-               State('metrics-checklist-selection', 'values'),
-               State('time-axis-selection', 'value'),
-               ]
+                State('time-axis-selection', 'value')]
+               + [State(generate_metrics_accordion_id(name), 'values') for name in category_names]
                )
-    def compare_selection(n_clicks, wikis_selection, metrics_selection, time_axis_selection):
+    def compare_selection(n_clicks, wikis_selection, time_axis_selection, *metrics_selection_l):
         print('Number of clicks: ' + str(n_clicks))
-        if (n_clicks > 0 ):
+        if (n_clicks > 0):
+            metrics_selection = list(itertools.chain.from_iterable(metrics_selection_l)) # reduce a list of lists into one list.
             selection = { 'wikis': wikis_selection, 'metrics': metrics_selection, 'time': time_axis_selection}
             return json.dumps(selection)
 
