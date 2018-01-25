@@ -1,9 +1,13 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import 'https://fonts.googleapis.com/css?family=Roboto';
+
+
+/* General */
 
 body {
   margin: 0px;
   font-family: 'Roboto', sans-serif;
 }
+
 p {
     margin-top: 0.75rem;
     margin-bottom: 0.75rem;
@@ -17,6 +21,47 @@ p {
     font-weight: 900;
     margin-top: 22px;
 }
+
+input[type=checkbox] {
+  transform: scale(1.5);
+  margin-right: 12px;
+}
+
+/* Dash */
+
 ._dash-undo-redo {
     display: none;
+}
+
+/* Sidebar */
+
+#side-bar {
+    background-color: #004481;
+    flex: 0 0 300px;
+    color: white;
+    font-size: 16px;
+}
+
+.metric_category_label {
+    /* in hex without opacity: background-color: #072146;*/
+    background-color: rgba(7,33,70,0.3);
+    padding: 5px;
+    color: #FFF;
+    font-size: 18px;
+    padding-left: 16px;
+}
+
+.aside-checklist-category,
+.metric_category_list {
+    padding: 5px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.sidebar-info-paragraph {
+    font-size: 15px;
+}
+
+.aside-checklist-option {
+    padding: 4px;
 }

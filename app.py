@@ -48,15 +48,17 @@ port = 8880;
 global app;
 app = dash.Dash('WikiChron')
 server = app.server
-app.config['suppress_callback_exceptions']=True
+app.config['suppress_callback_exceptions'] = True
 
-#app.scripts.config.serve_locally = True
+if debug:
+    app.scripts.config.serve_locally = True
 
-app.scripts.append_script({
-    "external_url": "js/piwik.js",
-    # Equivalent online (codepen:)
-    #"external_url": "https://codepen.io/akronix/pen/rpQgqQ.js"
-})
+else:
+    app.scripts.append_script({
+        "external_url": "js/piwik.js",
+        # Equivalent online (codepen:)
+        #"external_url": "https://codepen.io/akronix/pen/rpQgqQ.js"
+    })
 
 #~ app.css.config.serve_locally = True
 

@@ -50,7 +50,10 @@ def wikis_tab(wikis):
     return html.Div([
         html.Div(
             children=[
-                html.P(html.Strong(('You can compare between {} wikis').format(len(wikis)))),
+                html.P(
+                    html.Strong(('You can compare between {} wikis').format(len(wikis))),
+                    className="sidebar-info-paragraph"
+                    ),
                 #~ html.Div(
                     #~ id='category-1',
                     #~ className='aside-category',
@@ -85,13 +88,17 @@ def wikis_tab(wikis):
 def select_time_axis_control():
     return (html.Div([
         html.Hr(),
-        dcc.RadioItems(
-            options=[
-                {'label': 'Relative dates', 'value': 'relative'},
-                {'label': 'Absolute dates', 'value': 'absolute'}
+        html.Div([
+            dcc.RadioItems(
+                options=[
+                    {'label': 'Relative dates', 'value': 'relative'},
+                    {'label': 'Absolute dates', 'value': 'absolute'}
+                ],
+                value='relative',
+                id='time-axis-selection'
+            ),
             ],
-            value='relative',
-            id='time-axis-selection'
+            className="container"
         ),
         html.Hr()
         ])
@@ -107,6 +114,10 @@ def metrics_tab(metrics):
                     id='{}-metrics'.format(metric_category.name),
                     className='aside-category',
                     label=metric_category.name,
+                    itemClassName='metric_category_label',
+                    childrenClassName='metric_category_list',
+                    accordionFixedWidth='300',
+                    defaultCollapsed=True,
                     children=[
                         dcc.Checklist(
                             id='metrics-checklist-selection',
@@ -131,26 +142,24 @@ def metrics_tab(metrics):
         else:
             metrics_by_category[metric.category].append(metric)
 
-    accordions = []
+    metrics_checklist = []
     for category, metrics_categorized in metrics_by_category.items():
-        accordions.append(group_metrics_in_accordion(metrics_categorized, category))
+        metrics_checklist.append(group_metrics_in_accordion(metrics_categorized, category))
 
     #~ for metric_category in metric_categories:
         #~ metrics_with_this_category = [metric for metric in metrics if metric.category.name == metric_category ]
         #~ metrics_by_category.append(group_metrics_in_accordion(metrics_with_this_category, metric_category))
 
-    side_bar_children = []
-    side_bar_children.append(
+    intro_metrics_paragraph = html.Div(
                 html.P(
-                    html.Strong('Please, select the charts you wish to see and when you finish click on compare')
-                )
-    )
-
-    side_bar_children += accordions
+                    html.Strong('Please, select the charts you wish to see and when you finish click on compare'),
+                    className="sidebar-info-paragraph"
+                ),
+                className="container")
 
     return html.Div([
         html.Div(
-            children=side_bar_children,
+            children = [intro_metrics_paragraph] + metrics_checklist,
                 #~ dcc.Checklist(
                             #~ id='metrics-checklist-selection',
                             #~ className='aside-checklist-category',
@@ -173,7 +182,6 @@ def metrics_tab(metrics):
                         #~ )
                     #~ ]
                 #~ )
-            className='container',
             style={'color': 'white'},
             id='metrics-tab-container',
             ),
@@ -221,7 +229,6 @@ def selection_result_container():
 
 def generate_side_bar(wikis, metrics):
     return html.Div(id='side-bar',
-        style={'backgroundColor': '#004481', 'flex': '0 0 280px', 'color': 'white'},
         children=[
             fold_button(),
             gdc.Tabs(
