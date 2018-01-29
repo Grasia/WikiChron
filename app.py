@@ -193,6 +193,7 @@ def start_image_server():
 print('¡¡¡¡ Welcome to WikiChron ' + __version__ +' !!!!')
 print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
 print('Using version ' + gdc.__version__ + ' of Grasia Dash Components.')
+print('Using version ' + html.__version__ + ' of Dash Html Components.')
 
 time_start_app = time.perf_counter()
 
