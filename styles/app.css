@@ -33,6 +33,12 @@ input[type=checkbox] {
     display: none;
 }
 
+/* Main */
+
+.control-text {
+    font-size: 16px;
+}
+
 /* Sidebar */
 
 #side-bar {
@@ -60,6 +66,7 @@ input[type=checkbox] {
 
 .sidebar-info-paragraph {
     font-size: 15px;
+    margin: 15px 0 15px 0px;
 }
 
 .aside-checklist-option {

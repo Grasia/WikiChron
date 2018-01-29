@@ -150,6 +150,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
         #~ range_slider_marks[max_time] = last_element.strftime('%b %Y')
 
     return html.Div(id='main',
+        className='control-text',
         style={'width': '100%'},
         children=[
 
@@ -181,7 +182,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
 
                     html.Div(id='wikis-selection-div',
                         children=[
-                            html.Strong('Wikis:', className='two columns'),
+                            html.Span('Wikis:', className='two columns'),
 
                             dcc.Dropdown(
                                 id='wikis-selection-dropdown',
@@ -198,7 +199,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
                         className='row',
                         children=[
                             html.P(className='three columns'),
-                            html.Strong('Metrics:', className='two columns', style={'marginLeft': '0'}),
+                            html.Span('Metrics:', className='two columns', style={'marginLeft': '0'}),
 
                             dcc.Dropdown(
                                 id='metrics-selection-dropdown',
