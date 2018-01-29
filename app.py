@@ -56,6 +56,7 @@ if debug:
 else:
     app.scripts.append_script({
         "external_url": "js/piwik.js",
+        #~ "external_url": "js/app.js",
         # Equivalent online (codepen:)
         #"external_url": "https://codepen.io/akronix/pen/rpQgqQ.js"
     })

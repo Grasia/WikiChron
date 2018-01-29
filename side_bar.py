@@ -44,7 +44,7 @@ def fold_button():
                 'marginTop': '30px',
                 'marginBottom': '30px'
             },
-            children=[html.Img(id='fold-img', src='assets/fold_arrow.svg')],
+            #~ children=[html.Img(id='fold-img', src='assets/fold_arrow.svg')],
         ),
         id='fold-container',
         style={
@@ -201,6 +201,7 @@ def generate_side_bar(wikis, metrics):
     return html.Div(id='side-bar',
         children=[
             fold_button(),
+            #~ html.Div(style={'backgroundColor': '#072146', 'height': '15px'}),
             gdc.Tabs(
                 tabs=[
                     {'value': 'wikis', 'label': 'WIKIS'},
