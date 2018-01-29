@@ -19,11 +19,21 @@ from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import grasia_dash_components as gdc
 import dash_html_components as html
+from lib.metrics.metric import MetricCategory
+
+# GLOBAL VARIABLES
 
 global app;
 
 global debug;
 debug = 'DEBUG' in os.environ
+
+global metric_categories_order;
+metric_categories_order = [MetricCategory.PAGES, MetricCategory.EDITIONS, MetricCategory.USERS, MetricCategory.RATIOS]
+
+
+# CODE
+
 
 def fold_button():
     return html.Div(
@@ -140,17 +150,24 @@ def metrics_tab(metrics):
 
     #~ metrics_options = [{'label': metric.text, 'value': metric.code} for metric in metrics]
 
+    # group metrics in a dict w/ key: category, value: [metrics]
     metrics_by_category = {}
-
     for metric in metrics:
         if metric.category not in metrics_by_category:
             metrics_by_category[metric.category] = [metric]
         else:
             metrics_by_category[metric.category].append(metric)
 
+    # Generate accordions containing a checklist following the order
+    #   defined by metric_categories_order list.
     metrics_checklist = []
-    for category, metrics_categorized in metrics_by_category.items():
-        metrics_checklist.append(group_metrics_in_accordion(metrics_categorized, category))
+    for category in metric_categories_order:
+        metrics_checklist.append(
+                group_metrics_in_accordion(
+                    metrics_by_category[category],
+                    category
+                )
+            )
 
     #~ for metric_category in metric_categories:
         #~ metrics_with_this_category = [metric for metric in metrics if metric.category.name == metric_category ]
