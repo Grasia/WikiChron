@@ -34,7 +34,6 @@ metric_categories_order = [MetricCategory.PAGES, MetricCategory.EDITIONS, Metric
 
 # CODE
 
-
 def fold_button():
     return html.Div(
         html.Div(
@@ -65,18 +64,6 @@ def wikis_tab(wikis):
                     html.Strong(('You can compare between {} wikis').format(len(wikis))),
                     className="sidebar-info-paragraph"
                     ),
-                #~ html.Div(
-                    #~ id='category-1',
-                    #~ className='aside-category',
-                    #~ children=[
-                        #~ html.H3('Category 1'),
-                        #~ html.Img(src='assets/ico_minus.svg')
-                    #~ ],
-                    #~ style= {
-                        #~ 'display': 'flex',
-                        #~ 'justify-content': 'space-between'
-                    #~ }
-                #~ ),
                 dcc.Checklist(
                     id='wikis-checklist-selection',
                     className='aside-checklist-category',
@@ -148,8 +135,6 @@ def metrics_tab(metrics):
                 )
 
 
-    #~ metrics_options = [{'label': metric.text, 'value': metric.code} for metric in metrics]
-
     # group metrics in a dict w/ key: category, value: [metrics]
     metrics_by_category = {}
     for metric in metrics:
@@ -169,10 +154,6 @@ def metrics_tab(metrics):
                 )
             )
 
-    #~ for metric_category in metric_categories:
-        #~ metrics_with_this_category = [metric for metric in metrics if metric.category.name == metric_category ]
-        #~ metrics_by_category.append(group_metrics_in_accordion(metrics_with_this_category, metric_category))
-
     intro_metrics_paragraph = html.Div(
                 html.P(
                     html.Strong('Please, select the charts you wish to see and when you finish click on compare'),
@@ -183,28 +164,6 @@ def metrics_tab(metrics):
     return html.Div([
         html.Div(
             children = [intro_metrics_paragraph] + metrics_checklist,
-                #~ dcc.Checklist(
-                            #~ id='metrics-checklist-selection',
-                            #~ className='aside-checklist-category',
-                            #~ options=metrics_options,
-                            #~ values=[],
-                            #~ labelClassName='aside-checklist-option',
-                            #~ labelStyle={'display': 'block'}
-                        #~ ),
-                #~ gdc.Accordion(
-                    #~ id='pages-metric',
-                    #~ className='aside-category',
-                    #~ label='Pages',
-                    #~ children=[
-                        #~ dcc.Checklist(
-                            #~ className='aside-checklist-category',
-                            #~ options=metrics_options,
-                            #~ values=[],
-                            #~ labelClassName='aside-checklist-option',
-                            #~ labelStyle={'display': 'block'}
-                        #~ )
-                    #~ ]
-                #~ )
             style={'color': 'white'},
             id='metrics-tab-container',
             ),
