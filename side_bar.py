@@ -346,9 +346,16 @@ if __name__ == '__main__':
 
     from lib.interface import get_available_metrics
     example_wikis = ['eslagunanegra_pages_full', 'cocktails', 'zelda']
-    app.layout = generate_side_bar(example_wikis, get_available_metrics())
+    app.layout = html.Div(id='app-layout',
+        style={'display': 'flex'},
+        children=[
+            generate_side_bar(example_wikis, get_available_metrics()),
+        ]
+    );
     bind_callbacks(app)
 
     app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
+    app.css.append_css({"external_url": "https://codepen.io/akronix/pen/rpQgqQ.css"})
+
     app.run_server(port=8052, debug=True)
 
