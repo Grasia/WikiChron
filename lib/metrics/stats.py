@@ -11,6 +11,7 @@
 """
 
 import pandas as pd
+import numpy as np
 
 # Mandatory to run before to calculate any stats!!
 # TOREDESIGN & TOIMPROVE!
@@ -130,8 +131,8 @@ def users_anonymous_accum(data, index):
 
 def users_new_registered(data, index):
     users = data.drop_duplicates('contributor_id')
-    anonymous_users = users[users['contributor_name'] != 'Anonymous']
-    series =  anonymous_users.groupby(pd.Grouper(key='timestamp',freq='MS')).size()
+    non_anonymous_users = users[users['contributor_name'] != 'Anonymous']
+    series =  non_anonymous_users.groupby(pd.Grouper(key='timestamp',freq='MS')).size()
     if index is not None:
         series = series.reindex(index, fill_value=0)
     return series
@@ -141,7 +142,7 @@ def users_registered_accum(data, index):
 
 ########################################################################
 
-# Combined
+# Ratios
 
 def edits_per_users_accum(data, index):
     return (edits_accum(data, index) / users_accum(data, index))
@@ -154,5 +155,56 @@ def edits_per_pages_accum(data, index):
 
 def edits_per_pages_monthly(data, index):
     return (edits(data, index) / pages_edited(data, index))
+
+########################################################################
+
+# Helper functions
+
+def contributions_per_author(data):
+    """
+    Takes data and outputs data grouped by its author
+    """
+    return data.groupby('contributor_id').size()
+
+########################################################################
+
+# Inequality
+
+def gini_accum(data, index):
+
+    def gini_coeff(values):
+        """
+        Extracted from wikixray/graphics.py:70
+        Plots a GINI graph for author contributions
+
+        @type  values: list of ints
+        @param values: list of integers summarizing total contributions for each registered author
+        """
+        sum_numerator=0
+        sum_denominator=0
+        for i in range(1, len(values)):
+            sum_numerator += (len(values)-i) * values[i]
+            sum_denominator += values[i]
+        if sum_denominator == 0:
+            return np.NaN
+        ## Apply math function for the Gini coefficient
+        g_coeff= (1.0/(len(values)-1))*(len(values)-2*(sum_numerator/sum_denominator))
+        return g_coeff
+
+    #~ import pdb; pdb.set_trace()
+    #~ data = raw_data.set_index([raw_data['timestamp'].dt.to_period('M'), raw_data.index])
+    monthly_data = data.groupby(pd.Grouper(key='timestamp',freq='MS'))
+    gini_accum_df = pd.Series(index=monthly_data.size().index)
+    indices = gini_accum_df.index
+    i = 0
+    for name, group in monthly_data:
+        values = contributions_per_author(group).tolist()
+        gini_accum_df[indices[i]] = gini_coeff(values)
+        i = i + 1
+
+    if index is not None:
+        gini_accum_df = gini_accum_df.reindex(index, fill_value=0)
+
+    return gini_accum_df
 
 

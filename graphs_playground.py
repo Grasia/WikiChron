@@ -2,7 +2,7 @@ import pandas as pd
 import plotly as py
 import plotly.graph_objs as go
 
-df = pd.read_csv('data/eslagunanegra_pages_full.csv', delimiter=';', quotechar='|')
+df = pd.read_csv('data/eslagunanegra_pages_full.csv', delimiter=';', quotechar='|', index_col='revision_id')
 df['timestamp']=pd.to_datetime(df['timestamp'],format='%Y-%m-%dT%H:%M:%SZ')
 df.set_index(df['timestamp'], inplace=True)
 print(df.info())
