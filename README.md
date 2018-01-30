@@ -10,9 +10,25 @@ It analyzes the history dump of a wiki and give you nice graphs plotting that da
 * Python 3.5.2 or later
 * pip3
 * [Dash framework](https://plot.ly/dash)
+* [Grasia Dash Components](https://github.com/Grasia/grasia-dash-components)
+* [pandas](pandas.pydata.org)
 
 ### Install instructions
 Simply run: `pip3 install -r requirements.txt`
+
+### Using a virtual environment
+A good pratice is to use a virtual environment in order to isolate the development environment from your personal stuff. This skips issues about having different Python versions, pip packages in the wrong place or requiring sudo privileges and so on.
+
+In order to do this, first install [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/), either from your package manager or from pip.
+
+Then, create a new virtual environment in the repo root folder with:
+`virtualenv -p python3 venv/`
+
+Activate the virtual environment:
+`source venv/bin/activate`
+
+And finally, install dependencies here:
+`source venv/bin/activate`
 
 ## Get a wiki history dump
 First, download a xml file with the full history of the wikis you want to analyze (you can use [this nice script](https://github.com/Akronix/wikia_dump_downloader) to do so).
