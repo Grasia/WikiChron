@@ -102,6 +102,7 @@ def generate_graphs(metrics, wikis, relative_time):
                                 name=wikis[wiki_idx]
                                 )
 
+    # The oldest wiki is the one with longer number of months
     oldest_wiki = max(data[0],key = lambda wiki: len(wiki))
     min_time = 0
     max_time = len (oldest_wiki)
@@ -219,7 +220,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
                     children=[
 
                         html.Strong(
-                            'Select your temporary range:'),
+                            'Time interval (months)'),
 
                         html.Div(
                             dcc.RangeSlider(

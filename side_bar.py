@@ -87,10 +87,11 @@ def select_time_axis_control():
     return (html.Div([
         html.Hr(),
         html.Div([
+            html.Strong('Time axis:'),
             dcc.RadioItems(
                 options=[
-                    {'label': 'Relative dates', 'value': 'relative'},
-                    {'label': 'Absolute dates', 'value': 'absolute'}
+                    {'label': 'Months from birth', 'value': 'relative'},
+                    {'label': 'Calendar dates', 'value': 'absolute'}
                 ],
                 value='relative',
                 id='time-axis-selection'
