@@ -49,7 +49,6 @@ def pages_main_new(data, index):
         series = series.reindex(index, fill_value=0)
     return series
 
-
 def pages_main_accum(data, index):
     return (pages_main_new(data, index).cumsum())
 
@@ -166,6 +165,26 @@ def contributions_per_author(data):
     """
     return data.groupby('contributor_id').size()
 
+global stats_period, contribution;
+stats_period = 'M'; # format has to follow the frequency p
+contribution = 'revision'
+
+def init_stats(raw_data):
+    """
+    Here we're gonna format the data in periods and contributions.
+    What is defined as period and what is defined as contribution has to
+      be defined beforehand
+    This function must be called before to make any metric calculations.
+    Otherwise the data would be in an unexpected format.
+    The ouput will be a dataframe indexed by a PeriodIndex.
+    """
+    if contribution == 'revision':
+        data = raw_data.set_index(raw_data['timestamp'].dt.to_period(stats_period))
+    else:
+        data = raw_data.copy()
+    data.index.name = 'period'
+    return data
+
 ########################################################################
 
 # Inequality
@@ -198,7 +217,9 @@ def gini_accum(data, index):
     indices = gini_accum_df.index
     i = 0
     for name, group in monthly_data:
-        values = contributions_per_author(group).tolist()
+        values = contributions_per_author(group) \
+                .sort_values(ascending=True) \
+                .tolist()
         gini_accum_df[indices[i]] = gini_coeff(values)
         i = i + 1
 
@@ -208,3 +229,36 @@ def gini_accum(data, index):
     return gini_accum_df
 
 
+def ratio_percentiles_max_5(raw_data, index):
+    data = init_stats(raw_data)
+
+    result_time_series = pd.Series(index = data.index)
+    for period in data.index:
+        # Get contributions per contributor (unsorted)
+
+        # use accumulated data until period i
+        contributions = contributions_per_author(data[:period])
+        n_users = len(contributions)
+        percentil_5 = int(n_users * 0.05)
+
+        if percentil_5 < 5:
+            result_time_series[period] = np.NaN
+            continue
+
+        # get top users until user who corresponds to percentil 5
+        top_users = contributions.nlargest(percentil_5)
+
+        # get top user and percentil 5 user
+        p_max = top_users[0]
+        p_5 = top_users[percentil_5]
+
+        # calculate ratio between percentiles
+        result = pmax / p_5
+
+        result_time_series[period] = result
+
+    return result_time_series
+
+
+def ratio_percentiles_1_5(raw_data, index):
+    data = init_stats(raw_data)
