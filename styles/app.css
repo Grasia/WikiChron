@@ -86,6 +86,11 @@ input[type=checkbox] {
     line-height: 28px;
 }
 
+.compare-button:hover {
+    color: white;
+    background-color: #2DCCCD;
+}
+
 .compare-button:disabled {
     background-color: #D1D1D1;
     cursor: default;
