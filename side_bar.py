@@ -77,8 +77,7 @@ def wikis_tab(wikis):
             className='container',
             id='wikis-tab-container'
             ),
-        html.Hr(),
-        compare_button('wikis')
+        #~ compare_button('wikis')
         ],
         id='wikis-tab'
     );
@@ -99,7 +98,6 @@ def select_time_axis_control():
             ],
             className="container"
         ),
-        html.Hr()
         ])
     )
 
@@ -169,26 +167,21 @@ def metrics_tab(metrics):
             id='metrics-tab-container',
             ),
         select_time_axis_control(),
-        compare_button('metrics')
+        #~ compare_button('metrics')
         ],
         id='metrics-tab'
     );
 
-def compare_button(tab):
+def compare_button():
     return (
         html.Div(
             html.Button('COMPARE',
-                        id='compare-button-{}'.format(tab),
-                        className='compare-button',
+                        id='compare-button',
+                        className='action-button',
                         type='button',
                         n_clicks=0
             ),
-            style = {
-                'display': 'flex',
-                'justifyContent': 'center',
-                'alignItems': 'center',
-                'height': '80px'
-            }
+            id='compare-button-container'
         )
     )
 
@@ -234,6 +227,7 @@ def generate_side_bar(wikis, metrics):
                 }),
             wikis_tab(wikis),
             metrics_tab(metrics),
+            compare_button(),
             selection_result_container()
         ]
     );
@@ -262,26 +256,24 @@ def bind_callbacks(app):
 
     # Note that we need one State parameter for each category metric that is created dynamically
     @app.callback(Output('sidebar-selection', 'children'),
-               [Input('compare-button-wikis', 'n_clicks'),
-               Input('compare-button-metrics', 'n_clicks')],
+               [Input('compare-button', 'n_clicks')],
                [State('wikis-checklist-selection', 'values'),
                 State('time-axis-selection', 'value')]
                + [State(generate_metrics_accordion_id(name), 'values') for name in category_names]
                )
-    def compare_selection(btn_wikis_clicks,
-                        btn_metrics_clicks,
+    def compare_selection(btn_clicks,
                         wikis_selection,
                         time_axis_selection,
                         *metrics_selection_l):
-        print('Number of clicks: (' + str(btn_wikis_clicks) + ', ' + str(btn_metrics_clicks) + ')')
-        if (btn_wikis_clicks > 0 or btn_metrics_clicks > 0):
+        print('Number of clicks: ' + str(btn_clicks))
+        if (btn_clicks > 0):
             metrics_selection = list(itertools.chain.from_iterable(metrics_selection_l)) # reduce a list of lists into one list.
             selection = { 'wikis': wikis_selection, 'metrics': metrics_selection, 'time': time_axis_selection}
             return json.dumps(selection)
 
 
     # simple callbacks to enable / disable 'compare' button
-    @app.callback(Output('compare-button-wikis', 'disabled'),
+    @app.callback(Output('compare-button', 'disabled'),
                 [Input('wikis-checklist-selection', 'values')]
                 + [Input(generate_metrics_accordion_id(name), 'values') for name in category_names]
                 )
@@ -293,20 +285,6 @@ def bind_callbacks(app):
         else:
             print('You have to select at least one wiki and at least one metric')
             return 'disabled'
-
-    @app.callback(Output('compare-button-metrics', 'disabled'),
-                [Input('wikis-checklist-selection', 'values')]
-                + [Input(generate_metrics_accordion_id(name), 'values') for name in category_names]
-                )
-    def enable_compare_button(wikis_selection, *metrics_selection_l):
-        metrics_selection = list(itertools.chain.from_iterable(metrics_selection_l)) # reduce a list of lists into one list.
-        print (wikis_selection, metrics_selection)
-        if wikis_selection and metrics_selection:
-            return None
-        else:
-            print('You have to select at least one wiki and at least one metric')
-            return 'disabled'
-
     return
 
 if __name__ == '__main__':
