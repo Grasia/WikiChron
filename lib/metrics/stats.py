@@ -13,6 +13,11 @@
 import pandas as pd
 import numpy as np
 
+# CONSTANTS
+MINIMAL_USERS_PERCENTIL_MAX_5 = 100
+
+
+
 # Mandatory to run before to calculate any stats!!
 # TOREDESIGN & TOIMPROVE!
 # deprecated
@@ -179,10 +184,11 @@ def init_stats(raw_data):
     The ouput will be a dataframe indexed by a PeriodIndex.
     """
     if contribution == 'revision':
-        data = raw_data.set_index(raw_data['timestamp'].dt.to_period(stats_period))
+        data = raw_data.set_index([raw_data['timestamp'].dt.to_period(stats_period), raw_data.revision_id])
+        data = data.sort_index(level=0)
     else:
         data = raw_data.copy()
-    data.index.name = 'period'
+    data.index.set_names(['period', 'id'], inplace=True)
     return data
 
 ########################################################################
@@ -217,6 +223,8 @@ def gini_accum(data, index):
     indices = gini_accum_df.index
     i = 0
     for name, group in monthly_data:
+        # Get contributions per contributor, sort them
+        #   and make it a list to call to gini_coeff()
         values = contributions_per_author(group) \
                 .sort_values(ascending=True) \
                 .tolist()
@@ -232,16 +240,18 @@ def gini_accum(data, index):
 def ratio_percentiles_max_5(raw_data, index):
     data = init_stats(raw_data)
 
-    result_time_series = pd.Series(index = data.index)
-    for period in data.index:
-        # Get contributions per contributor (unsorted)
+    period_index = data.index.get_level_values('period').unique()
+    result_time_series = pd.Series(index = period_index)
+    for period in period_index:
 
+        # Get contributions per contributor (unsorted)
         # use accumulated data until period i
         contributions = contributions_per_author(data[:period])
         n_users = len(contributions)
         percentil_5 = int(n_users * 0.05)
 
-        if percentil_5 < 5:
+        # Skip when the wiki has too few users
+        if n_users < MINIMAL_USERS_PERCENTIL_MAX_5:
             result_time_series[period] = np.NaN
             continue
 
@@ -250,10 +260,10 @@ def ratio_percentiles_max_5(raw_data, index):
 
         # get top user and percentil 5 user
         p_max = top_users[0]
-        p_5 = top_users[percentil_5]
+        p_5 = top_users[-1]
 
         # calculate ratio between percentiles
-        result = pmax / p_5
+        result = p_max / p_5
 
         result_time_series[period] = result
 
