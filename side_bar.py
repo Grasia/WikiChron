@@ -29,7 +29,7 @@ global debug;
 debug = 'DEBUG' in os.environ
 
 global metric_categories_order;
-metric_categories_order = [MetricCategory.PAGES, MetricCategory.EDITIONS, MetricCategory.USERS, MetricCategory.RATIOS]
+metric_categories_order = [MetricCategory.PAGES, MetricCategory.EDITIONS, MetricCategory.USERS, MetricCategory.RATIOS, MetricCategory.INEQUALITY]
 
 
 # CODE
@@ -239,7 +239,7 @@ def generate_side_bar(wikis, metrics):
     );
 
 
-category_names = ['PAGES', 'EDITIONS', 'USERS', 'RATIOS']
+category_names = ['PAGES', 'EDITIONS', 'USERS', 'RATIOS', 'INEQUALITY']
 
 
 def bind_callbacks(app):
