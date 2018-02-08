@@ -48,7 +48,7 @@ def get_dataframe_from_csv(csv):
     """ Read and parse a csv and return the corresponding pandas dataframe"""
     print('Loading csv for ' + csv)
     time_start_loading_one_csv = time.perf_counter()
-    df = pd.read_csv(os.path.join(data_dir, csv + '.csv'),
+    df = pd.read_csv(os.path.join(data_dir, csv),
                     delimiter=';', quotechar='|',
                     index_col='revision_id')
     df['timestamp']=pd.to_datetime(df['timestamp'],format='%Y-%m-%dT%H:%M:%SZ')
@@ -99,7 +99,7 @@ def generate_graphs(metrics, wikis, relative_time):
             graphs_list[metric_idx][wiki_idx] = go.Scatter(
                                 x=x_axis,
                                 y=metric_data.data,
-                                name=wikis[wiki_idx]
+                                name=wikis[wiki_idx]['name']
                                 )
 
     # The oldest wiki is the one with longer number of months
@@ -121,7 +121,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
     relative_time = relative_time_arg;
 
     time_start_loading_csvs = time.perf_counter()
-    wikis_df = [get_dataframe_from_csv(wiki) for wiki in wikis]
+    wikis_df = [get_dataframe_from_csv(wiki['data']) for wiki in wikis]
     time_end_loading_csvs = time.perf_counter() - time_start_loading_csvs
     print(' * [Timing] Loading csvs : {} seconds'.format(time_end_loading_csvs) )
 
@@ -134,7 +134,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
 
     wikis_dropdown_options = []
     for index, wiki in enumerate(wikis):
-        wikis_dropdown_options.append({'label': wiki, 'value': index})
+        wikis_dropdown_options.append({'label': wiki['name'], 'value': index})
 
     metrics_dropdown_options = []
     for index, metric in enumerate(metrics):

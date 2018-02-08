@@ -30,6 +30,7 @@ debug = 'DEBUG' in os.environ
 
 global metric_categories_order;
 metric_categories_order = [MetricCategory.PAGES, MetricCategory.EDITIONS, MetricCategory.USERS, MetricCategory.RATIOS]
+#~ wikis_categories_order = ['BIG', 'MEDIUM', 'SMALL']
 
 
 # CODE
@@ -55,7 +56,7 @@ def fold_button():
 
 def wikis_tab(wikis):
 
-    wikis_options = [{'label': wiki, 'value': wiki} for wiki in wikis]
+    wikis_options = [{'label': wiki['name'], 'value': wiki['url']} for wiki in wikis]
 
     return html.Div([
         html.Div(
@@ -77,7 +78,6 @@ def wikis_tab(wikis):
             className='container',
             id='wikis-tab-container'
             ),
-        #~ compare_button('wikis')
         ],
         id='wikis-tab'
     );
