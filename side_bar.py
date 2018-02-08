@@ -32,7 +32,7 @@ global metric_categories_order;
 metric_categories_order = [MetricCategory.PAGES, MetricCategory.EDITIONS, MetricCategory.USERS, MetricCategory.RATIOS]
 category_names = ['PAGES', 'EDITIONS', 'USERS', 'RATIOS']
 
-wikis_categories_order = ['BIG', 'MEDIUM', 'SMALL']
+wikis_categories_order = ['LARGE', 'BIG', 'MEDIUM', 'SMALL']
 
 
 # CODE
@@ -92,7 +92,9 @@ def wikis_tab(wikis):
     wikis_by_category = {wiki_category: [] for wiki_category in wikis_categories_order}
     for wiki in wikis:
 
-        if wiki['pages'] > 10000:
+        if wiki['pages'] > 100000:
+            wikis_by_category['LARGE'].append(wiki)
+        elif wiki['pages'] > 10000:
             wikis_by_category['BIG'].append(wiki)
         elif wiki['pages'] > 1000:
             wikis_by_category['MEDIUM'].append(wiki)
@@ -307,12 +309,12 @@ def bind_callbacks(app):
                )
     def compare_selection(btn_clicks,
                         time_axis_selection,
-                        wikis_selection_big, wikis_selection_medium, wikis_selection_small,
+                        wikis_selection_large, wikis_selection_big, wikis_selection_medium, wikis_selection_small,
                         *metrics_selection_l):
         print('Number of clicks: ' + str(btn_clicks))
         if (btn_clicks > 0):
             metrics_selection = list(itertools.chain.from_iterable(metrics_selection_l)) # reduce a list of lists into one list.
-            wikis_selection = wikis_selection_big + wikis_selection_medium + wikis_selection_small
+            wikis_selection = wikis_selection_large + wikis_selection_big + wikis_selection_medium + wikis_selection_small
             selection = { 'wikis': wikis_selection, 'metrics': metrics_selection, 'time': time_axis_selection}
             return json.dumps(selection)
 
@@ -322,9 +324,10 @@ def bind_callbacks(app):
                 [Input(generate_wikis_accordion_id(name), 'values') for name in wikis_categories_order] +
                 [Input(generate_metrics_accordion_id(name), 'values') for name in category_names]
                 )
-    def enable_compare_button(wikis_selection_big, wikis_selection_medium, wikis_selection_small, *metrics_selection_l):
+    def enable_compare_button(wikis_selection_large, wikis_selection_big, wikis_selection_medium, wikis_selection_small,
+                            *metrics_selection_l):
         metrics_selection = list(itertools.chain.from_iterable(metrics_selection_l)) # reduce a list of lists into one list.
-        wikis_selection = wikis_selection_big + wikis_selection_medium + wikis_selection_small
+        wikis_selection = wikis_selection_large + wikis_selection_big + wikis_selection_medium + wikis_selection_small
         print (wikis_selection, metrics_selection)
         if wikis_selection and metrics_selection:
             return None
