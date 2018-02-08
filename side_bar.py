@@ -30,7 +30,9 @@ debug = 'DEBUG' in os.environ
 
 global metric_categories_order;
 metric_categories_order = [MetricCategory.PAGES, MetricCategory.EDITIONS, MetricCategory.USERS, MetricCategory.RATIOS]
-#~ wikis_categories_order = ['BIG', 'MEDIUM', 'SMALL']
+category_names = ['PAGES', 'EDITIONS', 'USERS', 'RATIOS']
+
+wikis_categories_order = ['BIG', 'MEDIUM', 'SMALL']
 
 
 # CODE
@@ -54,33 +56,77 @@ def fold_button():
         }
     );
 
+
+def generate_wikis_accordion_id(category_name):
+    return '{}-wikis'.format(category_name);
+
+
 def wikis_tab(wikis):
 
-    wikis_options = [{'label': wiki['name'], 'value': wiki['url']} for wiki in wikis]
+    def group_wikis_in_accordion(wikis, wikis_category):
 
-    return html.Div([
-        html.Div(
-            children=[
+        wikis_options = [{'label': wiki['name'], 'value': wiki['url']} for wiki in wikis]
+
+        return gdc.Accordion(
+                    id=generate_wikis_accordion_id(wikis_category) + '-accordion',
+                    className='aside-category',
+                    label=wikis_category,
+                    itemClassName='metric-category-label',
+                    childrenClassName='metric-category-list',
+                    accordionFixedWidth='300',
+                    defaultCollapsed=True,
+                    children=[
+                        dcc.Checklist(
+                            id=generate_wikis_accordion_id(wikis_category),
+                            className='aside-checklist-category',
+                            options=wikis_options,
+                            values=[],
+                            labelClassName='aside-checklist-option',
+                            labelStyle={'display': 'block'}
+                        )
+                    ],
+                    style={'display': 'block'}
+                )
+
+    # group metrics in a dict w/ key: category, value: [wikis]
+    wikis_by_category = {wiki_category: [] for wiki_category in wikis_categories_order}
+    for wiki in wikis:
+
+        if wiki['pages'] > 10000:
+            wikis_by_category['BIG'].append(wiki)
+        elif wiki['pages'] > 1000:
+            wikis_by_category['MEDIUM'].append(wiki)
+        else:
+            wikis_by_category['SMALL'].append(wiki)
+
+    # Generate accordions containing a checklist following the order
+    #   defined by metric_categories_order list.
+    wikis_checklist = []
+    for category in wikis_categories_order:
+        wikis_checklist.append(
+                group_wikis_in_accordion(
+                    wikis_by_category[category],
+                    category
+                )
+            )
+
+    intro_wikis_paragraph = html.Div(
                 html.P(
                     html.Strong(('You can compare between {} wikis').format(len(wikis))),
                     className="sidebar-info-paragraph"
-                    ),
-                dcc.Checklist(
-                    id='wikis-checklist-selection',
-                    className='aside-checklist-category',
-                    options=wikis_options,
-                    values=[],
-                    labelClassName='aside-checklist-option',
-                    labelStyle={'display': 'block'}
                 ),
-            ],
+                className="container")
+
+    return html.Div([
+        html.Div(
+            children = [intro_wikis_paragraph] + wikis_checklist,
             style={'color': 'white'},
-            className='container',
-            id='wikis-tab-container'
+            id='wikis-tab-container',
             ),
         ],
         id='wikis-tab'
     );
+
 
 def select_time_axis_control():
     return (html.Div([
@@ -172,6 +218,7 @@ def metrics_tab(metrics):
         id='metrics-tab'
     );
 
+
 def compare_button():
     return (
         html.Div(
@@ -233,9 +280,6 @@ def generate_side_bar(wikis, metrics):
     );
 
 
-category_names = ['PAGES', 'EDITIONS', 'USERS', 'RATIOS']
-
-
 def bind_callbacks(app):
 
     @app.callback(Output('wikis-tab', 'style'),
@@ -257,28 +301,30 @@ def bind_callbacks(app):
     # Note that we need one State parameter for each category metric that is created dynamically
     @app.callback(Output('sidebar-selection', 'children'),
                [Input('compare-button', 'n_clicks')],
-               [State('wikis-checklist-selection', 'values'),
-                State('time-axis-selection', 'value')]
-               + [State(generate_metrics_accordion_id(name), 'values') for name in category_names]
+                [State('time-axis-selection', 'value')] +
+                [State(generate_wikis_accordion_id(name), 'values') for name in wikis_categories_order] +
+                [State(generate_metrics_accordion_id(name), 'values') for name in category_names]
                )
     def compare_selection(btn_clicks,
-                        wikis_selection,
                         time_axis_selection,
+                        wikis_selection_big, wikis_selection_medium, wikis_selection_small,
                         *metrics_selection_l):
         print('Number of clicks: ' + str(btn_clicks))
         if (btn_clicks > 0):
             metrics_selection = list(itertools.chain.from_iterable(metrics_selection_l)) # reduce a list of lists into one list.
+            wikis_selection = wikis_selection_big + wikis_selection_medium + wikis_selection_small
             selection = { 'wikis': wikis_selection, 'metrics': metrics_selection, 'time': time_axis_selection}
             return json.dumps(selection)
 
 
     # simple callbacks to enable / disable 'compare' button
     @app.callback(Output('compare-button', 'disabled'),
-                [Input('wikis-checklist-selection', 'values')]
-                + [Input(generate_metrics_accordion_id(name), 'values') for name in category_names]
+                [Input(generate_wikis_accordion_id(name), 'values') for name in wikis_categories_order] +
+                [Input(generate_metrics_accordion_id(name), 'values') for name in category_names]
                 )
-    def enable_compare_button(wikis_selection, *metrics_selection_l):
+    def enable_compare_button(wikis_selection_big, wikis_selection_medium, wikis_selection_small, *metrics_selection_l):
         metrics_selection = list(itertools.chain.from_iterable(metrics_selection_l)) # reduce a list of lists into one list.
+        wikis_selection = wikis_selection_big + wikis_selection_medium + wikis_selection_small
         print (wikis_selection, metrics_selection)
         if wikis_selection and metrics_selection:
             return None
