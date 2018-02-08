@@ -74,7 +74,7 @@ def wikis_tab(wikis):
                     itemClassName='metric-category-label',
                     childrenClassName='metric-category-list',
                     accordionFixedWidth='300',
-                    defaultCollapsed=True,
+                    defaultCollapsed=False if wikis else True,
                     children=[
                         dcc.Checklist(
                             id=generate_wikis_accordion_id(wikis_category),
@@ -85,7 +85,7 @@ def wikis_tab(wikis):
                             labelStyle={'display': 'block'}
                         )
                     ],
-                    style={'display': 'block'}
+                    style={'display': 'flex'}
                 )
 
     # group metrics in a dict w/ key: category, value: [wikis]
@@ -178,7 +178,7 @@ def metrics_tab(metrics):
                             labelStyle={'display': 'block'}
                         )
                     ],
-                    style={'display': 'block'}
+                    style={'display': 'flex'}
                 )
 
 
@@ -234,11 +234,13 @@ def compare_button():
         )
     )
 
+
 def selection_result_container():
     if debug:
         return html.Div(id='sidebar-selection', style={'display': 'block'})
     else:
         return html.Div(id='sidebar-selection', style={'display': 'none'})
+
 
 def generate_side_bar(wikis, metrics):
     return html.Div(id='side-bar',

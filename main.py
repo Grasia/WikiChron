@@ -278,12 +278,9 @@ def bind_callbacks(app):
                     )
                 )
 
-        return html.Div(
-            id='graphs',
-            children=dash_graphs
-        )
+        return dash_graphs # update_graphs
 
-    return
+    return # bind_callbacks
 
 if __name__ == '__main__':
 
