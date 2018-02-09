@@ -59,6 +59,8 @@ def get_dataframe_from_csv(csv):
 
     return df
 
+def clean_up_bot_activity(df, wiki):
+    return lib.remove_bots_activity(df, wiki['botsids'])
 
 def load_data(dataframes, metrics):
     """ Load analyzed data by every metric for every dataframe and store it in data[] """
@@ -119,7 +121,12 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
     relative_time = relative_time_arg;
 
     time_start_loading_csvs = time.perf_counter()
-    wikis_df = [get_dataframe_from_csv(wiki['data']) for wiki in wikis]
+    wikis_df = []
+    for wiki in wikis:
+        df = get_dataframe_from_csv(wiki['data'])
+        df = clean_up_bot_activity(df, wiki)
+        wikis_df.append(df)
+
     time_end_loading_csvs = time.perf_counter() - time_start_loading_csvs
     print(' * [Timing] Loading csvs : {} seconds'.format(time_end_loading_csvs) )
 
