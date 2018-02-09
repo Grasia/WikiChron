@@ -36,7 +36,6 @@ global wikis, metrics
 wikis = []
 metrics = []
 
-data = [] # matrix of panda series, being rows => metric and columns => wiki
 graphs = []
 
 global min_time, max_time; # global variables to store the max and min values for the time axis.
@@ -62,7 +61,6 @@ def get_dataframe_from_csv(csv):
 
 
 def load_data(dataframes, metrics):
-#~ def load_data(dataframes, metrics, relative_time):
     """ Load analyzed data by every metric for every dataframe and store it in data[] """
 
     #~ if not relative_time: # natural time index
@@ -80,7 +78,7 @@ def load_data(dataframes, metrics):
 
     return wiki_by_metrics
 
-def generate_graphs(metrics, wikis, relative_time):
+def generate_graphs(data, metrics, wikis, relative_time):
     """ Turn over data[] into plotly graphs objects and store it in graphs[] """
 
     global min_time, max_time, times_axis;
@@ -128,7 +126,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
     data = load_data(wikis_df, metrics)
 
     time_start_generating_graphs = time.perf_counter()
-    graphs = generate_graphs(metrics, wikis, relative_time)
+    graphs = generate_graphs(data, metrics, wikis, relative_time)
     time_end_generating_graphs = time.perf_counter() - time_start_generating_graphs
     print(' * [Timing] Generating graphs : {} seconds'.format(time_end_generating_graphs) )
 
