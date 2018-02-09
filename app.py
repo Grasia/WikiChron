@@ -51,6 +51,7 @@ server = app.server
 app.config['suppress_callback_exceptions'] = True
 
 if debug:
+    print('=> You are in DEBUG MODE <=')
     app.scripts.config.serve_locally = True
 
 else:
