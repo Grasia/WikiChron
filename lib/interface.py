@@ -10,6 +10,8 @@
    Copyright 2017 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
 
+import numpy as np
+
 from .metrics import available_metrics as _available_metrics
 from .metrics import metrics_dict
 from .metrics import stats
@@ -18,6 +20,19 @@ from .metrics import stats
 def get_available_metrics():
    """ Return a list of the currently available metrics. """
    return _available_metrics
+
+def remove_bots_activity(df, bots_ids):
+   """
+      Filter out bots activity from pandas dataframe.
+
+      df -- data to be filtered. It'll be modified in place
+      bots_ids -- numpy array with the userid for every bot
+      Return a dataframe derived from the original but with all the
+         editions made by bot users removed
+   """
+   bots = np.array(bots_ids)
+   return df[~df['contributor_id'].isin(bots)]
+
 
 def compute_metrics_on_dataframe(metrics, df):
    """

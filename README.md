@@ -44,6 +44,15 @@ dump_parser.py also support several xml files at once. For instance, you might w
 
 `python3 dump_parser.py data/*.xml`
 
+## Provide some metadata of the wiki
+Wikichron needs one thing else in order to visualize your wiki for you.
+
+You need to have a `wikis.json` file in your data_dir/ directory with some metadata of the wikis you want to explore in wikichron.
+That file must have an entry for each wiki with, at least, the following fields: name, url, data, pages number and, optionally, a list of user ids from which you want to remove their activity.
+There is an example of `wikis.json` file in the data/ directory of this repo for the given sample set of wikis.
+
+Note that the required information in this file will change in the future. Stay tuned to that file and to the new updates coming.
+
 ## Run the application
 Use: `python3 app.py`
 

@@ -4,11 +4,12 @@ click==6.7
 dash==0.20.0
 dash-core-components==0.18.1
 dash-html-components==0.8.0
+dash-renderer==0.11.3
 dash-renderer-grasia==0.11.1
 decorator==4.2.1
 Flask==0.12.2
 Flask-Compress==1.4.0
-grasia-dash-components==0.0.5
+grasia-dash-components==0.1.0
 gunicorn==19.7.1
 idna==2.6
 ipython-genutils==0.2.0

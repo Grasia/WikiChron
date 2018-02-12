@@ -46,6 +46,9 @@ input[type=checkbox] {
     flex: 0 0 300px;
     color: white;
     font-size: 16px;
+    padding-bottom: 100px;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
 }
 
 .metric-category-label {
@@ -73,7 +76,18 @@ input[type=checkbox] {
     padding: 4px;
 }
 
-.compare-button {
+#compare-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    position: fixed;
+    width: 300px;
+    bottom: 10px;
+    background-color: #004481;
+}
+
+.action-button {
     border: None;
     height: 57px;
     width: 256px;
@@ -86,12 +100,12 @@ input[type=checkbox] {
     line-height: 28px;
 }
 
-.compare-button:hover {
+.action-button:hover {
     color: white;
     background-color: #2DCCCD;
 }
 
-.compare-button:disabled {
+.action-button:disabled {
     background-color: #D1D1D1;
     cursor: default;
     color: #9B9B9B;

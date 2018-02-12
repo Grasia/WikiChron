@@ -13,6 +13,7 @@ Title, plots and filter elements.
 
 import os
 import time
+from warnings import warn
 
 import dash
 import dash_core_components as dcc
@@ -36,7 +37,6 @@ global wikis, metrics
 wikis = []
 metrics = []
 
-data = [] # matrix of panda series, being rows => metric and columns => wiki
 graphs = []
 
 global min_time, max_time; # global variables to store the max and min values for the time axis.
@@ -48,7 +48,7 @@ def get_dataframe_from_csv(csv):
     """ Read and parse a csv and return the corresponding pandas dataframe"""
     print('Loading csv for ' + csv)
     time_start_loading_one_csv = time.perf_counter()
-    df = pd.read_csv(os.path.join(data_dir, csv + '.csv'),
+    df = pd.read_csv(os.path.join(data_dir, csv),
                     delimiter=';', quotechar='|',
                     index_col=False)
     df['timestamp']=pd.to_datetime(df['timestamp'],format='%Y-%m-%dT%H:%M:%SZ')
@@ -60,9 +60,14 @@ def get_dataframe_from_csv(csv):
 
     return df
 
+def clean_up_bot_activity(df, wiki):
+    if 'botsids' in wiki:
+        return lib.remove_bots_activity(df, wiki['botsids'])
+    else:
+        warn("Warning: Missing information of bots ids. Note that graphs can be polluted of non-human activity.")
+        return df
 
 def load_data(dataframes, metrics):
-#~ def load_data(dataframes, metrics, relative_time):
     """ Load analyzed data by every metric for every dataframe and store it in data[] """
 
     #~ if not relative_time: # natural time index
@@ -80,7 +85,7 @@ def load_data(dataframes, metrics):
 
     return wiki_by_metrics
 
-def generate_graphs(metrics, wikis, relative_time):
+def generate_graphs(data, metrics, wikis, relative_time):
     """ Turn over data[] into plotly graphs objects and store it in graphs[] """
 
     global min_time, max_time, times_axis;
@@ -99,7 +104,7 @@ def generate_graphs(metrics, wikis, relative_time):
             graphs_list[metric_idx][wiki_idx] = go.Scatter(
                                 x=x_axis,
                                 y=metric_data.data,
-                                name=wikis[wiki_idx]
+                                name=wikis[wiki_idx]['name']
                                 )
 
     # The oldest wiki is the one with longer number of months
@@ -121,20 +126,25 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
     relative_time = relative_time_arg;
 
     time_start_loading_csvs = time.perf_counter()
-    wikis_df = [get_dataframe_from_csv(wiki) for wiki in wikis]
+    wikis_df = []
+    for wiki in wikis:
+        df = get_dataframe_from_csv(wiki['data'])
+        df = clean_up_bot_activity(df, wiki)
+        wikis_df.append(df)
+
     time_end_loading_csvs = time.perf_counter() - time_start_loading_csvs
     print(' * [Timing] Loading csvs : {} seconds'.format(time_end_loading_csvs) )
 
     data = load_data(wikis_df, metrics)
 
     time_start_generating_graphs = time.perf_counter()
-    graphs = generate_graphs(metrics, wikis, relative_time)
+    graphs = generate_graphs(data, metrics, wikis, relative_time)
     time_end_generating_graphs = time.perf_counter() - time_start_generating_graphs
     print(' * [Timing] Generating graphs : {} seconds'.format(time_end_generating_graphs) )
 
     wikis_dropdown_options = []
     for index, wiki in enumerate(wikis):
-        wikis_dropdown_options.append({'label': wiki, 'value': index})
+        wikis_dropdown_options.append({'label': wiki['name'], 'value': index})
 
     metrics_dropdown_options = []
     for index, metric in enumerate(metrics):
@@ -278,12 +288,9 @@ def bind_callbacks(app):
                     )
                 )
 
-        return html.Div(
-            id='graphs',
-            children=dash_graphs
-        )
+        return dash_graphs # update_graphs
 
-    return
+    return # bind_callbacks
 
 if __name__ == '__main__':
 

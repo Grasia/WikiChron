@@ -16,6 +16,7 @@ import os
 import json
 import glob
 import time
+from warnings import warn
 
 # Dash framework imports
 import dash
@@ -51,6 +52,7 @@ server = app.server
 app.config['suppress_callback_exceptions'] = True
 
 if debug:
+    print('=> You are in DEBUG MODE <=')
     app.scripts.config.serve_locally = True
 
 else:
@@ -76,14 +78,15 @@ tabs = [
     {'value': 4, 'icon': 'assets/white_graphic.svg'},
 ]
 
-available_metrics = lib.get_available_metrics()
-
 def get_available_wikis(data_dir):
-    wikis = glob.glob(os.path.join(data_dir,'*.csv'))
-    for i, wiki in enumerate(wikis):
-        base_filename = os.path.basename(wiki)
-        wikis[i] = os.path.splitext(base_filename)[0]
+    wikis_json_file = open(os.path.join(data_dir, 'wikis.json'))
+    wikis = json.load(wikis_json_file)
     return wikis
+
+available_metrics = lib.get_available_metrics()
+available_metrics_dict = lib.metrics_dict
+available_wikis = get_available_wikis(data_dir)
+available_wikis_dict = {wiki['url']: wiki for wiki in available_wikis}
 
 def generate_welcome_page():
 
@@ -111,13 +114,11 @@ def set_layout():
         style={'display': 'flex'},
         children=[
             #~ generate_tabs_bar(tabs),
-            side_bar.generate_side_bar(wikis, available_metrics),
+            side_bar.generate_side_bar(available_wikis, available_metrics),
             html.Div(id='main-root', style={'flex': 'auto'})
         ]
     );
     return
-
-wikis = get_available_wikis(data_dir)
 
 def init_app_callbacks():
 
@@ -128,8 +129,9 @@ def init_app_callbacks():
             selection = json.loads(selection_json)
 
             if selection['wikis'] and selection['metrics']:
-                wikis = selection['wikis']
-                metrics = [lib.metrics_dict[metric] for metric in selection['metrics']]
+                wikis = [ available_wikis_dict[wiki_url] for wiki_url in selection['wikis'] ]
+                metrics = [ available_metrics_dict[metric] for metric in selection['metrics'] ]
+
                 time = selection['time']
                 if time == 'relative':
                     relative_time = True
@@ -139,10 +141,10 @@ def init_app_callbacks():
 
             else:
                 # User should never reach here, but who knows what an evil mind can do :/
-                print('Warning: You have to select at least one wiki and at least one metric')
+                warn('Warning: You have to select at least one wiki and at least one metric')
                 return generate_welcome_page()
         else:
-            print('There is no selection of wikis & metrics yet')
+            warn('There is no selection of wikis & metrics yet')
             return generate_welcome_page()
 
 @app.server.route('/js/<path:path>')
