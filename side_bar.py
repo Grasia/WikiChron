@@ -33,8 +33,8 @@ global metric_categories_order;
 metric_categories_order = [MetricCategory.PAGES, MetricCategory.EDITIONS, MetricCategory.USERS, MetricCategory.RATIOS]
 category_names = ['PAGES', 'EDITIONS', 'USERS', 'RATIOS']
 
-wikis_categories_order = ['LARGE', 'BIG', 'MEDIUM', 'SMALL']
-
+wikis_categories_order = ['VERY LARGE', 'LARGE', 'MEDIUM', 'SMALL']
+wikis_categories_descp = ['More than 100k pages', 'More than 10k pages', 'More than 1k pages', 'More than 100 pages']
 
 # CODE
 
@@ -64,7 +64,7 @@ def generate_wikis_accordion_id(category_name):
 
 def wikis_tab(wikis):
 
-    def group_wikis_in_accordion(wikis, wikis_category):
+    def group_wikis_in_accordion(wikis, wikis_category, wiki_category_descp):
 
         wikis_options = [{'label': wiki['name'], 'value': wiki['url']} for wiki in wikis]
 
@@ -77,6 +77,7 @@ def wikis_tab(wikis):
                     accordionFixedWidth='300',
                     defaultCollapsed=False if wikis else True,
                     children=[
+                        html.Strong(wiki_category_descp, style={'fontSize': '14px'}),
                         dcc.Checklist(
                             id=generate_wikis_accordion_id(wikis_category),
                             className='aside-checklist-category',
@@ -94,9 +95,9 @@ def wikis_tab(wikis):
     for wiki in wikis:
 
         if wiki['pages'] > 100000:
-            wikis_by_category['LARGE'].append(wiki)
+            wikis_by_category['VERY LARGE'].append(wiki)
         elif wiki['pages'] > 10000:
-            wikis_by_category['BIG'].append(wiki)
+            wikis_by_category['LARGE'].append(wiki)
         elif wiki['pages'] > 1000:
             wikis_by_category['MEDIUM'].append(wiki)
         else:
@@ -105,11 +106,12 @@ def wikis_tab(wikis):
     # Generate accordions containing a checklist following the order
     #   defined by metric_categories_order list.
     wikis_checklist = []
-    for category in wikis_categories_order:
+    for (category, category_descp) in zip(wikis_categories_order, wikis_categories_descp):
         wikis_checklist.append(
                 group_wikis_in_accordion(
                     wikis_by_category[category],
-                    category
+                    category,
+                    category_descp
                 )
             )
 
