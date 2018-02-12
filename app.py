@@ -16,6 +16,7 @@ import os
 import json
 import glob
 import time
+from warnings import warn
 
 # Dash framework imports
 import dash
@@ -140,10 +141,10 @@ def init_app_callbacks():
 
             else:
                 # User should never reach here, but who knows what an evil mind can do :/
-                print('Warning: You have to select at least one wiki and at least one metric')
+                warn('Warning: You have to select at least one wiki and at least one metric')
                 return generate_welcome_page()
         else:
-            print('There is no selection of wikis & metrics yet')
+            warn('There is no selection of wikis & metrics yet')
             return generate_welcome_page()
 
 @app.server.route('/js/<path:path>')

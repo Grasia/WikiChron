@@ -13,6 +13,7 @@
 import json
 import os
 import itertools
+from warnings import warn
 
 import dash
 from dash.dependencies import Input, Output, State
@@ -334,7 +335,7 @@ def bind_callbacks(app):
         if wikis_selection and metrics_selection:
             return None
         else:
-            print('You have to select at least one wiki and at least one metric')
+            warn('You have to select at least one wiki and at least one metric')
             return 'disabled'
     return
 

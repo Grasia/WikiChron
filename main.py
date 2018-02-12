@@ -13,6 +13,7 @@ Title, plots and filter elements.
 
 import os
 import time
+from warnings import warn
 
 import dash
 import dash_core_components as dcc
@@ -60,7 +61,11 @@ def get_dataframe_from_csv(csv):
     return df
 
 def clean_up_bot_activity(df, wiki):
-    return lib.remove_bots_activity(df, wiki['botsids'])
+    if 'botsids' in wiki:
+        return lib.remove_bots_activity(df, wiki['botsids'])
+    else:
+        warn("Warning: Missing information of bots ids. Note that graphs can be polluted of non-human activity.")
+        return df
 
 def load_data(dataframes, metrics):
     """ Load analyzed data by every metric for every dataframe and store it in data[] """
