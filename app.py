@@ -48,6 +48,7 @@ data_dir = os.environ['WIKICHRON_DATA_DIR']
 port = 8880;
 global app;
 app = dash.Dash('WikiChron')
+app.title = 'WikiChron'
 server = app.server
 app.config['suppress_callback_exceptions'] = True
 
