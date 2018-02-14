@@ -183,9 +183,13 @@ def init_stats(raw_data):
     Otherwise the data would be in an unexpected format.
     The ouput will be a dataframe indexed by a PeriodIndex.
     """
+    import time
     if contribution == 'revision':
+        t1 = time.time()
         data = raw_data.set_index([raw_data['timestamp'].dt.to_period(stats_period), raw_data.revision_id])
+        print('Elapsed time {}'.format(time.time() - t1))
         data = data.sort_index(level=0)
+        print('Elapsed time {}'.format(time.time() - t1))
     else:
         data = raw_data.copy()
     data.index.set_names(['period', 'id'], inplace=True)
@@ -238,10 +242,16 @@ def gini_accum(data, index):
 
 
 def ratio_percentiles_max_5(raw_data, index):
-    data = init_stats(raw_data)
 
-    period_index = data.index.get_level_values('period').unique()
+    import time
+    t1 = time.perf_counter()
+    data = init_stats(raw_data)
+    t2 = time.perf_counter() - t1; print('t2: {}'.format(t2))
+
+    #~ period_index = data.index.get_level_values('period').unique()
+    period_index = data.index.levels[data.index.names.index('period')]
     result_time_series = pd.Series(index = period_index)
+    t3 = time.perf_counter() - t1; print('t3: {}'.format(t3))
     for period in period_index:
 
         # Get contributions per contributor (unsorted)
@@ -266,6 +276,7 @@ def ratio_percentiles_max_5(raw_data, index):
         result = p_max / p_5
 
         result_time_series[period] = result
+        print(result)
 
     return result_time_series
 

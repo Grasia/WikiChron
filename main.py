@@ -135,7 +135,12 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
     time_end_loading_csvs = time.perf_counter() - time_start_loading_csvs
     print(' * [Timing] Loading csvs : {} seconds'.format(time_end_loading_csvs) )
 
+    print(' * [Info] Starting calculations....')
+    time_start_calculations = time.perf_counter()
     data = load_data(wikis_df, metrics)
+    time_end_calculations = time.perf_counter() - time_start_calculations
+    print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
+
 
     time_start_generating_graphs = time.perf_counter()
     graphs = generate_graphs(data, metrics, wikis, relative_time)
@@ -269,6 +274,7 @@ def bind_callbacks(app):
 
         dash_graphs = []
 
+        # if we're displaying calendar dates, then we do the conversion:
         if not relative_time:
             selected_timerange[0] = times_axis[selected_timerange[0]]
             selected_timerange[1] = times_axis[selected_timerange[1]]
