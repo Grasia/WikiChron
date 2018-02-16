@@ -16,9 +16,11 @@ import numpy as np
 # CONSTANTS
 MINIMAL_USERS_GINI = 20
 MINIMAL_USERS_PERCENTIL_MAX_5 = 100
+MINIMAL_USERS_PERCENTIL_MAX_10 = 50
+MINIMAL_USERS_PERCENTIL_MAX_20 = 25
 
 def calculate_index_all_months(data):
-    monthly_data = data.groupby(pd.Grouper(key='timestamp',freq='MS'))
+    monthly_data = data.groupby(pd.Grouper(key='timestamp', freq='MS'))
     index = monthly_data.size().index
     return index
 
@@ -29,7 +31,7 @@ def pages_new(data, index):
     # If we drop publicates we will get the first revision for each page_title, which
     #  corresponds with the date it was created.
     pages = data.drop_duplicates('page_id')
-    series = pages.groupby(pd.Grouper(key='timestamp',freq='MS')).size()
+    series = pages.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
     if index is not None:
         series = series.reindex(index, fill_value=0)
     return series
@@ -40,7 +42,7 @@ def pages_accum(data, index):
 def pages_main_new(data, index):
     pages = data.drop_duplicates('page_id')
     main_pages = pages[pages['page_ns'] == 0]
-    series = main_pages.groupby(pd.Grouper(key='timestamp',freq='MS')).size()
+    series = main_pages.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
     if index is not None:
         series = series.reindex(index, fill_value=0)
     return series
@@ -49,7 +51,7 @@ def pages_main_accum(data, index):
     return (pages_main_new(data, index).cumsum())
 
 def pages_edited(data, index):
-    monthly_data = data.groupby([pd.Grouper(key='timestamp',freq='MS')])
+    monthly_data = data.groupby([pd.Grouper(key='timestamp', freq='MS')])
     series = monthly_data.apply(lambda x: len(x.page_id.unique()))
     if index is not None:
         series = series.reindex(index, fill_value=0)
@@ -153,7 +155,9 @@ def edits_per_pages_monthly(data, index):
 
 ########################################################################
 
-# Helper functions
+# Distribution Of Work
+
+##### Helper functions #####
 
 def contributions_per_author(data):
     """
@@ -161,9 +165,48 @@ def contributions_per_author(data):
     """
     return data.groupby('contributor_id').size()
 
-########################################################################
 
-# Distribution Of Work
+def calc_ratio_percentile_max(data, index, percentile, minimal_users):
+
+    def ratio_max_percentile_for_period(contributions, percentage):
+
+        position = int(n_users * percentage)
+
+        # get top users until user who corresponds to percentil 5
+        top_users = contributions.nlargest(position)
+
+        # get top user and percentil 5 user
+        p_max = top_users[0]
+        percentile = top_users[-1]
+
+        # calculate ratio between percentiles
+        return p_max / percentile
+
+    percentage = percentile * 0.01
+    i = 0
+    monthly_data = data.groupby(pd.Grouper(key='timestamp',freq='MS'))
+    result = pd.Series(index=monthly_data.size().index)
+    indices = result.index
+    accum_data = pd.DataFrame()
+    for name, group in monthly_data:
+        # Get contributions per contributor, sort them
+        #   and make it a list to call to gini_coeff()
+        accum_data = accum_data.append(group)
+        contributions = contributions_per_author(accum_data) \
+                .sort_values(ascending=True)
+
+        n_users = len(contributions)
+
+        # Skip when the wiki has too few users
+        if n_users < minimal_users:
+            result[indices[i]] = np.NaN
+        else:
+            result[indices[i]] = ratio_max_percentile_for_period(contributions, percentage)
+        i = i + 1
+
+    return result
+
+##### callable ditribution metrics #####
 
 def gini_accum(data, index):
 
@@ -192,7 +235,7 @@ def gini_accum(data, index):
         return g_coeff
 
     #~ data = raw_data.set_index([raw_data['timestamp'].dt.to_period('M'), raw_data.index])
-    monthly_data = data.groupby(pd.Grouper(key='timestamp',freq='MS'))
+    monthly_data = data.groupby(pd.Grouper(key='timestamp', freq='MS'))
     if index is not None:
         gini_accum_df = pd.Series(index=index)
     else:
@@ -213,45 +256,13 @@ def gini_accum(data, index):
     return gini_accum_df
 
 
-# helper function
-def get_ratio_max_5_for_period(contributions):
-    n_users = len(contributions)
-    percentil_5 = int(n_users * 0.05)
-
-    # Skip when the wiki has too few users
-    if n_users < MINIMAL_USERS_PERCENTIL_MAX_5:
-        return np.NaN
-
-    # get top users until user who corresponds to percentil 5
-    top_users = contributions.nlargest(percentil_5)
-    print(top_users)
-
-    # get top user and percentil 5 user
-    p_max = top_users[0]
-    p_5 = top_users[-1]
-    print(p_max, p_5)
-
-    # calculate ratio between percentiles
-    return p_max / p_5
-
-
 def ratio_percentiles_max_5(data, index):
-    i = 0
-    monthly_data = data.groupby(pd.Grouper(key='timestamp',freq='MS'))
-    result = pd.Series(index=monthly_data.size().index)
-    indices = result.index
-    accum_data = pd.DataFrame()
-    for name, group in monthly_data:
-        # Get contributions per contributor, sort them
-        #   and make it a list to call to gini_coeff()
-        accum_data = accum_data.append(group)
-        values = contributions_per_author(accum_data) \
-                .sort_values(ascending=True)
-        result[indices[i]] = get_ratio_max_5_for_period(values)
-        i = i + 1
-
-    return result
+    return calc_ratio_percentile_max(data, index, 5, MINIMAL_USERS_PERCENTIL_MAX_5)
 
 
-def ratio_percentiles_1_5(raw_data, index):
-    data = prepare_stats(raw_data)
+def ratio_percentiles_max_10(data, index):
+    return calc_ratio_percentile_max(data, index, 10, MINIMAL_USERS_PERCENTIL_MAX_10)
+
+
+def ratio_percentiles_max_20(data, index):
+    return calc_ratio_percentile_max(data, index, 20, MINIMAL_USERS_PERCENTIL_MAX_20)

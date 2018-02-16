@@ -49,6 +49,8 @@ def generate_metrics():
     # INEQUALITY
     metrics.append(Metric('gini_accum', 'Gini (accumulated)', MetricCategory.DISTRIBUTION, stats.gini_accum, ''))
     metrics.append(Metric('ratio_percentiles_max_5', 'Percentil MAX / 5', MetricCategory.DISTRIBUTION, stats.ratio_percentiles_max_5, ''))
+    metrics.append(Metric('ratio_percentiles_max_10', 'Percentil MAX / 10', MetricCategory.DISTRIBUTION, stats.ratio_percentiles_max_10, ''))
+    metrics.append(Metric('ratio_percentiles_max_20', 'Percentil MAX / 20', MetricCategory.DISTRIBUTION, stats.ratio_percentiles_max_20, ''))
 
     return metrics
 
