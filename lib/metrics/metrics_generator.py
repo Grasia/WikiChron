@@ -47,8 +47,8 @@ def generate_metrics():
     metrics.append(Metric('edits_per_page_monthly', 'Edits per pages edited (monthly)', MetricCategory.RATIOS, stats.edits_per_pages_monthly, 'Number of edits for every month per number of pages edited that month'))
 
     # INEQUALITY
-    metrics.append(Metric('gini_accum', 'Gini (accumulated)', MetricCategory.INEQUALITY, stats.gini_accum, ''))
-    metrics.append(Metric('ratio_percentiles_max_5', 'Percentil MAX / 5', MetricCategory.INEQUALITY, stats.ratio_percentiles_max_5, ''))
+    metrics.append(Metric('gini_accum', 'Gini (accumulated)', MetricCategory.DISTRIBUTION, stats.gini_accum, ''))
+    metrics.append(Metric('ratio_percentiles_max_5_old', 'Percentil MAX / 5', MetricCategory.DISTRIBUTION, stats.ratio_percentiles_max_5_old, ''))
 
     return metrics
 

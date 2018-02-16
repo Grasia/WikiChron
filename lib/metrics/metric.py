@@ -17,7 +17,7 @@ class MetricCategory(Enum):
     EDITIONS = 'Edits'
     USERS = 'Users'
     RATIOS = 'Ratios'
-    INEQUALITY = 'Inequality'
+    DISTRIBUTION = 'Distribution of work'
 
 class Metric:
     """ Class for ADT Metric. """
