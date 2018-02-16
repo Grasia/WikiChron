@@ -30,8 +30,8 @@ global debug;
 debug = 'DEBUG' in os.environ
 
 global metric_categories_order;
-metric_categories_order = [MetricCategory.PAGES, MetricCategory.EDITIONS, MetricCategory.USERS, MetricCategory.RATIOS]
-category_names = ['PAGES', 'EDITIONS', 'USERS', 'RATIOS']
+metric_categories_order = [MetricCategory.PAGES, MetricCategory.EDITIONS, MetricCategory.USERS, MetricCategory.RATIOS, MetricCategory.DISTRIBUTION]
+category_names = ['PAGES', 'EDITIONS', 'USERS', 'RATIOS', 'DISTRIBUTION']
 
 wikis_categories_order = ['VERY LARGE', 'LARGE', 'MEDIUM', 'SMALL']
 wikis_categories_descp = ['More than 100k pages', 'More than 10k pages', 'More than 1k pages', 'More than 100 pages']
