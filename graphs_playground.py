@@ -42,4 +42,9 @@ layout = dict(
 )
 
 fig = dict(data=data, layout=layout)
-py.offline.plot(fig, filename = "Time Series with Rangeslider.html")
+config={
+    'displaylogo': False,
+    'showLink': False,
+    'modeBarButtonsToRemove': ['sendDataToCloud']
+}
+py.offline.plot(fig, filename = "Time Series with Rangeslider.html", config=config)

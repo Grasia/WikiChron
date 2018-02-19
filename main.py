@@ -283,14 +283,19 @@ def bind_callbacks(app):
             if (i in selected_metrics):
                 dash_graphs.append(
                     dcc.Graph(
-                    id='graph-{}'.format(i),
-                    figure={
-                        'data': graphs[i],
-                        'layout': {
-                            'title': metric.text,
-                            'xaxis': {'range': selected_timerange }
+                        id='graph-{}'.format(i),
+                        figure={
+                            'data': graphs[i],
+                            'layout': {
+                                'title': metric.text,
+                                'xaxis': {'range': selected_timerange }
+                            }
+                        },
+                        config={
+                            'displaylogo': False,
+                            'showLink': False,
+                            'modeBarButtonsToRemove': ['sendDataToCloud']
                         }
-                    }
                     )
                 )
 
