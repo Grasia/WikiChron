@@ -12,12 +12,14 @@
 
 import pandas as pd
 import numpy as np
+import math
 
 # CONSTANTS
 MINIMAL_USERS_GINI = 20
 MINIMAL_USERS_PERCENTIL_MAX_5 = 100
 MINIMAL_USERS_PERCENTIL_MAX_10 = 50
 MINIMAL_USERS_PERCENTIL_MAX_20 = 25
+MINIMAL_USERS_RATIO_10_90 = 10
 
 
 def calculate_index_all_months(data):
@@ -193,14 +195,15 @@ def contributions_per_author(data):
 
 def calc_ratio_percentile_max(data, index, percentile, minimal_users):
 
+    # Note that contributions is an *unsorted* list of contributions per author
     def ratio_max_percentile_for_period(contributions, percentage):
 
         position = int(n_users * percentage)
 
-        # get top users until user who corresponds to percentil 5
+        # get top users until user who corresponds to percentil n
         top_users = contributions.nlargest(position)
 
-        # get top user and percentil 5 user
+        # get top user and percentil n user
         p_max = top_users[0]
         percentile = top_users[-1]
 
@@ -214,11 +217,11 @@ def calc_ratio_percentile_max(data, index, percentile, minimal_users):
     indices = result.index
     accum_data = pd.DataFrame()
     for name, group in monthly_data:
-        # Get contributions per contributor, sort them
-        #   and make it a list to call to gini_coeff()
+        # Accumulate data so far
         accum_data = accum_data.append(group)
-        contributions = contributions_per_author(accum_data) \
-                .sort_values(ascending=True)
+
+        # Get contributions per contributor
+        contributions = contributions_per_author(accum_data)
 
         n_users = len(contributions)
 
@@ -270,9 +273,11 @@ def gini_accum(data, index):
     i = 0
     accum_data = pd.DataFrame()
     for name, group in monthly_data:
+        # Accumulate data so far
+        accum_data = accum_data.append(group)
+
         # Get contributions per contributor, sort them
         #   and make it a list to call to gini_coeff()
-        accum_data = accum_data.append(group)
         values = contributions_per_author(accum_data) \
                 .sort_values(ascending=True) \
                 .tolist()
@@ -283,12 +288,55 @@ def gini_accum(data, index):
 
 
 def ratio_percentiles_max_5(data, index):
-    return calc_ratio_percentile_max(data, index, 5, MINIMAL_USERS_PERCENTIL_MAX_5)
+    return calc_ratio_percentile_max(data,index, 5,
+                    MINIMAL_USERS_PERCENTIL_MAX_5)
 
 
 def ratio_percentiles_max_10(data, index):
-    return calc_ratio_percentile_max(data, index, 10, MINIMAL_USERS_PERCENTIL_MAX_10)
+    return calc_ratio_percentile_max(data, index, 10,
+                    MINIMAL_USERS_PERCENTIL_MAX_10)
 
 
 def ratio_percentiles_max_20(data, index):
-    return calc_ratio_percentile_max(data, index, 20, MINIMAL_USERS_PERCENTIL_MAX_20)
+    return calc_ratio_percentile_max(data, index, 20,
+                    MINIMAL_USERS_PERCENTIL_MAX_20)
+
+
+def ratio_10_90(data, index):
+
+    # contributions is a *sorted* list of contributions per author
+    #   in an descending order (from most contributions to less contributions)
+    def ratio_top_rest_for_period(contributions, percentage_top):
+        top_percent_users = math.ceil(n_users * percentage_top);
+        #~ rest_users = floor(n_users * (1 - percentage_top));
+        edits_top = contributions[:top_percent_users].sum()
+        edits_rest = contributions[top_percent_users:].sum()
+
+        return edits_top / edits_rest
+
+
+    percentage = 10 * 0.01
+    i = 0
+    monthly_data = data.groupby(pd.Grouper(key='timestamp', freq='MS'))
+    result = pd.Series(index=monthly_data.size().index)
+    indices = result.index
+    accum_data = pd.DataFrame()
+    for name, group in monthly_data:
+        # Get contributions per contributor, sort them
+        #   and make it a Python list
+        accum_data = accum_data.append(group)
+        contributions = contributions_per_author(accum_data) \
+                .sort_values(ascending=False)
+
+        n_users = len(contributions)
+
+        # Skip when the wiki has too few users
+        if n_users < MINIMAL_USERS_RATIO_10_90:
+            result[indices[i]] = np.NaN
+        else:
+            result[indices[i]] = ratio_top_rest_for_period(contributions,
+                                                            percentage)
+        i = i + 1
+
+    return result
+

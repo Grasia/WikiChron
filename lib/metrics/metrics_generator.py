@@ -46,11 +46,12 @@ def generate_metrics():
     metrics.append(Metric('edits_per_pages_accum', 'Edits per pages (accumulated)', MetricCategory.RATIOS, stats.edits_per_pages_accum, 'Number of total edits per number of total pages'))
     metrics.append(Metric('edits_per_page_monthly', 'Edits per pages edited (monthly)', MetricCategory.RATIOS, stats.edits_per_pages_monthly, 'Number of edits for every month per number of pages edited that month'))
 
-    # INEQUALITY
-    metrics.append(Metric('gini_accum', 'Gini (accumulated)', MetricCategory.DISTRIBUTION, stats.gini_accum, ''))
-    metrics.append(Metric('ratio_percentiles_max_5', 'Percentil MAX / 5', MetricCategory.DISTRIBUTION, stats.ratio_percentiles_max_5, ''))
-    metrics.append(Metric('ratio_percentiles_max_10', 'Percentil MAX / 10', MetricCategory.DISTRIBUTION, stats.ratio_percentiles_max_10, ''))
-    metrics.append(Metric('ratio_percentiles_max_20', 'Percentil MAX / 20', MetricCategory.DISTRIBUTION, stats.ratio_percentiles_max_20, ''))
+    # DISTRIBUTION
+    metrics.append(Metric('gini_accum', 'Gini (accumulated)', MetricCategory.DISTRIBUTION, stats.gini_accum, 'Gini coefficient (accumulated)'))
+    metrics.append(Metric('ratio_percentiles_max_5', 'Percentil MAX / 5', MetricCategory.DISTRIBUTION, stats.ratio_percentiles_max_5, 'Ratio between top user and 5th top user'))
+    metrics.append(Metric('ratio_percentiles_max_10', 'Percentil MAX / 10', MetricCategory.DISTRIBUTION, stats.ratio_percentiles_max_10, 'Ratio between top user and 10th top user'))
+    metrics.append(Metric('ratio_percentiles_max_20', 'Percentil MAX / 20', MetricCategory.DISTRIBUTION, stats.ratio_percentiles_max_20, 'Ratio between top user and 20th top user'))
+    metrics.append(Metric('ratio_10_90', 'Ratio top 10% / rest', MetricCategory.DISTRIBUTION, stats.ratio_10_90, 'Contributions of the top ten percent more active users between the 90% percent less active'))
 
     return metrics
 

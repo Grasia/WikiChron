@@ -129,6 +129,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
     wikis_df = []
     for wiki in wikis:
         df = get_dataframe_from_csv(wiki['data'])
+        lib.prepare_data(df)
         df = clean_up_bot_activity(df, wiki)
         wikis_df.append(df)
 

@@ -33,6 +33,17 @@ def remove_bots_activity(df, bots_ids):
    bots = np.array(bots_ids)
    return df[~df['contributor_id'].isin(bots)]
 
+def prepare_data(df):
+   """
+      Prepare data in the correct input format for the metric
+      calculation functions.
+
+      df -- data to be prepared.
+      Modifies inplace the input data as well as returns that data
+      in the appropiate format for further calling of metric functions.
+   """
+   return df.sort_values(by='timestamp', inplace=True)
+
 
 def compute_metrics_on_dataframe(metrics, df):
    """
@@ -49,11 +60,13 @@ def compute_metrics_on_dataframe(metrics, df):
 # TOIMPROVE
 def compute_metric_on_dataframes(metric, dfs):
    """
-      Get the requested metric computed on given list of dataframe in absolute dates.
+      Get the requested metric computed on given list of dataframe in
+      absolute dates.
 
       metric -- metric to compute
       dfs -- list of dataframes to compute metric over.
-      Return a list of panda series corresponding to the provided metric on different dataframes.
+      Return a list of panda series corresponding to the provided metric
+      on different dataframes.
    """
    return [ metric.calculate(df) for df in dfs]
 
