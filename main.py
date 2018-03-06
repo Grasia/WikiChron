@@ -24,6 +24,7 @@ from dash.dependencies import Input, Output
 
 # Local imports:
 import lib.interface as lib
+from cache import cache
 
 global debug
 debug = 'DEBUG' in os.environ
@@ -45,6 +46,7 @@ global relative_time; # flag to know when we're plotting in relative dates
 global times_axis; # datetime index of the oldest wiki from the selected subset of wikis.
 
 
+@cache.memoize(timeout=3600)
 def load_data(wiki):
     df = get_dataframe_from_csv(wiki['data'])
     lib.prepare_data(df)
@@ -74,6 +76,7 @@ def clean_up_bot_activity(df, wiki):
         warn("Warning: Missing information of bots ids. Note that graphs can be polluted of non-human activity.")
         return df
 
+@cache.memoize()
 def compute_data(dataframes, metrics):
     """ Load analyzed data by every metric for every dataframe and store it in data[] """
 

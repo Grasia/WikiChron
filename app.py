@@ -28,11 +28,8 @@ import plotly.graph_objs as go
 
 # Local imports:
 import lib.interface as lib
-from tabs_bar import generate_tabs_bar
-import main
-import side_bar
 from version import __version__
-
+import cache
 
 # production or development (DEBUG) flag:
 global debug;
@@ -51,6 +48,8 @@ app = dash.Dash('WikiChron')
 app.title = 'WikiChron'
 server = app.server
 app.config['suppress_callback_exceptions'] = True
+
+cache.set_up_cache(app)
 
 if debug:
     print('=> You are in DEBUG MODE <=')
@@ -201,10 +200,20 @@ print('Using version ' + html.__version__ + ' of Dash Html Components.')
 
 time_start_app = time.perf_counter()
 
+# start auxiliar servers:
 start_image_server()
 start_css_server()
 
+# Layout of the app:
+# imports
+from tabs_bar import generate_tabs_bar
+import side_bar
+import main
+
+# set basic layout for app
 set_layout()
+
+# bind callbacks
 side_bar.bind_callbacks(app)
 main.bind_callbacks(app)
 init_app_callbacks()
