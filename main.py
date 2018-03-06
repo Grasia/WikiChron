@@ -44,6 +44,13 @@ global min_time, max_time; # global variables to store the max and min values fo
 global relative_time; # flag to know when we're plotting in relative dates
 global times_axis; # datetime index of the oldest wiki from the selected subset of wikis.
 
+
+def load_data(wiki):
+    df = get_dataframe_from_csv(wiki['data'])
+    lib.prepare_data(df)
+    df = clean_up_bot_activity(df, wiki)
+    return df
+
 def get_dataframe_from_csv(csv):
     """ Read and parse a csv and return the corresponding pandas dataframe"""
     print('Loading csv for ' + csv)
@@ -67,7 +74,7 @@ def clean_up_bot_activity(df, wiki):
         warn("Warning: Missing information of bots ids. Note that graphs can be polluted of non-human activity.")
         return df
 
-def load_data(dataframes, metrics):
+def compute_data(dataframes, metrics):
     """ Load analyzed data by every metric for every dataframe and store it in data[] """
 
     #~ if not relative_time: # natural time index
@@ -128,9 +135,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
     time_start_loading_csvs = time.perf_counter()
     wikis_df = []
     for wiki in wikis:
-        df = get_dataframe_from_csv(wiki['data'])
-        lib.prepare_data(df)
-        df = clean_up_bot_activity(df, wiki)
+        df = load_data(wiki)
         wikis_df.append(df)
 
     time_end_loading_csvs = time.perf_counter() - time_start_loading_csvs
@@ -138,7 +143,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
 
     print(' * [Info] Starting calculations....')
     time_start_calculations = time.perf_counter()
-    data = load_data(wikis_df, metrics)
+    data = compute_data(wikis_df, metrics)
     time_end_calculations = time.perf_counter() - time_start_calculations
     print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
 
