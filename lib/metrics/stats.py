@@ -19,6 +19,8 @@ MINIMAL_USERS_GINI = 20
 MINIMAL_USERS_PERCENTIL_MAX_5 = 100
 MINIMAL_USERS_PERCENTIL_MAX_10 = 50
 MINIMAL_USERS_PERCENTIL_MAX_20 = 25
+MINIMAL_USERS_PERCENTIL_5_10 = 100
+MINIMAL_USERS_PERCENTIL_10_20 = 50
 MINIMAL_USERS_RATIO_10_90 = 10
 
 
@@ -194,6 +196,10 @@ def contributions_per_author(data):
 
 
 def calc_ratio_percentile_max(data, index, percentile, minimal_users):
+    return calc_ratio_percentile(data, index, 1, percentile, minimal_users)
+
+
+def calc_ratio_percentile(data, index, top_percentile, percentile, minimal_users):
 
     # Note that contributions is an *unsorted* list of contributions per author
     def ratio_max_percentile_for_period(contributions, percentage):
@@ -204,7 +210,10 @@ def calc_ratio_percentile_max(data, index, percentile, minimal_users):
         top_users = contributions.nlargest(position)
 
         # get top user and percentil n user
-        p_max = top_users[0]
+        print(position)
+        print(n_users)
+        print(top_percentile)
+        p_max = top_users[top_percentile-1]
         percentile = top_users[-1]
 
         # calculate ratio between percentiles
@@ -300,6 +309,16 @@ def ratio_percentiles_max_10(data, index):
 def ratio_percentiles_max_20(data, index):
     return calc_ratio_percentile_max(data, index, 20,
                     MINIMAL_USERS_PERCENTIL_MAX_20)
+
+
+def ratio_percentiles_5_10(data, index):
+    return calc_ratio_percentile(data, index, 5, 10,
+                    MINIMAL_USERS_PERCENTIL_5_10)
+
+
+def ratio_percentiles_10_20(data, index):
+    return calc_ratio_percentile(data, index, 10, 20,
+                    MINIMAL_USERS_PERCENTIL_10_20)
 
 
 def ratio_10_90(data, index):
