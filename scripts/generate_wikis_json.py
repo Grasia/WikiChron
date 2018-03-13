@@ -99,7 +99,9 @@ try:
 except:
    wikis_json = []
 
-wikis_json += wikis
+for wiki in wikis:
+   if wiki not in wikis_json:
+      wikis_json.append(wiki)
 json.dump(wikis_json, open(output_wikis_fn, 'w'))
 
 
