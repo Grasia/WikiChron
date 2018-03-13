@@ -31,11 +31,12 @@ output_wikis_fn = os.path.join(data_dir, 'wikis.json')
 row_selector = "tr.mw-statistics-"
 stats = ['articles','pages','edits','users']
 
+
 def get_name(url):
    req = requests.get(url)
    if req.status_code != 200:
       print (req.status_code)
-      return False
+      req.raise_for_status()
 
 
 def get_stats(base_url):
@@ -58,6 +59,8 @@ def get_stats(base_url):
    for stat in stats:
       row = html.select_one(row_selector+stat+" td.mw-statistics-numbers")
       text = row.text.replace(',','')
+      text = text.replace('.','')
+      text = text.replace('\xa0', '')
       value = int(text)
       result[stat] = value
 
@@ -94,16 +97,19 @@ wikisfile.close()
 #~ print(result_json)
 
 try:
-   wikis_json = json.load(open(output_wikis_fn))
+   output_wikis = open(output_wikis_fn)
+   wikis_json = json.load(output_wikis)
    print(wikis_json)
+   output_wikis.close()
 except:
    wikis_json = []
 
 for wiki in wikis:
    if wiki not in wikis_json:
       wikis_json.append(wiki)
-json.dump(wikis_json, open(output_wikis_fn, 'w'))
-
+output_wikis = open(output_wikis_fn, 'w')
+json.dump(wikis_json, output_wikis)
+output_wikis.close()
 
 #~ def main():
    #~ return 0
