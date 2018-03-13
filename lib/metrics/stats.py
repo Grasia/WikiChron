@@ -210,9 +210,6 @@ def calc_ratio_percentile(data, index, top_percentile, percentile, minimal_users
         top_users = contributions.nlargest(position)
 
         # get top user and percentil n user
-        print(position)
-        print(n_users)
-        print(top_percentile)
         p_max = top_users[top_percentile-1]
         percentile = top_users[-1]
 
@@ -257,7 +254,7 @@ def gini_accum(data, index):
         @param values: list of integers summarizing total contributions for each registered author
         """
 
-        n_users = len(values)
+        n_users = len(values) # n_users => n + 1
         if (n_users) < MINIMAL_USERS_GINI:
             return np.NaN
 
@@ -269,7 +266,9 @@ def gini_accum(data, index):
         if sum_denominator == 0:
             return np.NaN
         ## Apply math function for the Gini coefficient
-        g_coeff= (1.0/(n_users-1))*(n_users-2*(sum_numerator/sum_denominator))
+        g_coeff = (1.0/(n_users-1))*(n_users-2*(sum_numerator/sum_denominator))
+        ## Now, apply Deltas, 2003 correction for small datasets:
+        g_coeff *= (n_users - 1) / (n_users - 2)
         return g_coeff
 
     #~ data = raw_data.set_index([raw_data['timestamp'].dt.to_period('M'), raw_data.index])
