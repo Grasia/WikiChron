@@ -16,6 +16,9 @@ It analyzes the history dump of a wiki and give you nice graphs plotting that da
 ### Install instructions
 Simply run: `pip3 install -r requirements.txt`
 
+## Setup cache
+You need to setup a RedisDB server and add the corresponding parameters to the cache.py file.
+
 ### Using a virtual environment
 A good pratice is to use a virtual environment in order to isolate the development environment from your personal stuff. This skips issues about having different Python versions, pip packages in the wrong place or requiring sudo privileges and so on.
 
