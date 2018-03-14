@@ -45,6 +45,8 @@ def generate_metrics():
     metrics.append(Metric('edits_per_users_monthly', 'Edits per users (monthly)', MetricCategory.RATIOS, stats.edits_per_users_monthly, 'Number of edits for every month per number of active users that month'))
     metrics.append(Metric('edits_per_pages_accum', 'Edits per pages (accumulated)', MetricCategory.RATIOS, stats.edits_per_pages_accum, 'Number of total edits per number of total pages'))
     metrics.append(Metric('edits_per_page_monthly', 'Edits per pages edited (monthly)', MetricCategory.RATIOS, stats.edits_per_pages_monthly, 'Number of edits for every month per number of pages edited that month'))
+    metrics.append(Metric('percentage_edits_by_anonymous_accum', 'Percentage of anonymous edits (accumulated)', MetricCategory.RATIOS, stats.percentage_edits_by_anonymous_accum, 'Percentage, per month, of edits made by anonymous users of the total edits.'))
+    metrics.append(Metric('percentage_edits_by_anonymous_monthly', 'Percentage of anonymous edits (monthly)', MetricCategory.RATIOS, stats.percentage_edits_by_anonymous_monthly, 'Percentage of edits made by anonymous users of the total edits.'))
 
     # DISTRIBUTION
     metrics.append(Metric('gini_accum', 'Gini (accumulated)', MetricCategory.DISTRIBUTION, stats.gini_accum, 'Gini coefficient (accumulated)'))

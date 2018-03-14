@@ -181,6 +181,22 @@ def edits_per_pages_accum(data, index):
 def edits_per_pages_monthly(data, index):
     return (edits(data, index) / pages_edited(data, index))
 
+
+def percentage_edits_by_anonymous_monthly(data, index):
+    anonymous_edits = data[data['contributor_name'] == 'Anonymous']
+    series_anon_edits = anonymous_edits.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
+    if index is not None:
+        series_anon_edits = series_anon_edits.reindex(index, fill_value=0)
+    series_total_edits = data.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
+    series = series_anon_edits / series_total_edits
+    series *= 100 # we want it to be displayed in percentage
+    return series.fillna(0)
+
+
+def percentage_edits_by_anonymous_accum(data, index):
+    return percentage_edits_by_anonymous_monthly(data, index).cumsum()
+
+
 ########################################################################
 
 # Distribution Of Work
