@@ -108,7 +108,7 @@ for wiki in wikis:
    if wiki not in wikis_json:
       wikis_json.append(wiki)
 output_wikis = open(output_wikis_fn, 'w')
-json.dump(wikis_json, output_wikis)
+json.dump(wikis_json, output_wikis, indent='\t')
 output_wikis.close()
 
 #~ def main():
