@@ -163,7 +163,20 @@ def users_registered_accum(data, index):
 
 ########################################################################
 
-# Ratios
+# RATIOS
+
+##### Helper functions #####
+
+
+def anonymous_edits(data, index):
+    series = data[data['contributor_name'] == 'Anonymous']
+    series = series.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
+    if index is not None:
+        series = series.reindex(index, fill_value=0)
+    return series
+
+
+##### callable ditribution metrics #####
 
 
 def edits_per_users_accum(data, index):
@@ -183,18 +196,19 @@ def edits_per_pages_monthly(data, index):
 
 
 def percentage_edits_by_anonymous_monthly(data, index):
-    anonymous_edits = data[data['contributor_name'] == 'Anonymous']
-    series_anon_edits = anonymous_edits.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
-    if index is not None:
-        series_anon_edits = series_anon_edits.reindex(index, fill_value=0)
-    series_total_edits = data.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
+    series_anon_edits = anonymous_edits(data, index)
+    series_total_edits = edits(data, index)
     series = series_anon_edits / series_total_edits
     series *= 100 # we want it to be displayed in percentage
     return series.fillna(0)
 
 
 def percentage_edits_by_anonymous_accum(data, index):
-    return percentage_edits_by_anonymous_monthly(data, index).cumsum()
+    series_anon_edits_accum = anonymous_edits(data, index).cumsum()
+    series_total_edits_accum = edits_accum(data, index)
+    series = series_anon_edits_accum / series_total_edits_accum
+    series *= 100 # we want it to be displayed in percentage
+    return series.fillna(0)
 
 
 ########################################################################
