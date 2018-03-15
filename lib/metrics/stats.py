@@ -187,6 +187,14 @@ def edits_per_users_monthly(data, index):
     return (edits(data, index) / users_active(data, index))
 
 
+def edits_in_articles_per_users_accum(data, index):
+    return (edits_main_content_accum(data, index) / users_accum(data, index))
+
+
+def edits_in_articles_per_users_monthly(data, index):
+    return (edits_main_content(data, index) / users_active(data, index))
+
+
 def edits_per_pages_accum(data, index):
     return (edits_accum(data, index) / pages_accum(data, index))
 

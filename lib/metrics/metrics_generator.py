@@ -41,7 +41,8 @@ def generate_metrics():
     metrics.append(Metric('users_registered_accum', 'Total registered users (accumulated)', MetricCategory.USERS, stats.users_registered_accum, 'Total registered users at every month. Note that users have to have made at least one edition and they have to be logged with their account when they did that edition.'))
 
     # RATIO
-    metrics.append(Metric('edits_per_users_accum', 'Edits per users (accumulated)', MetricCategory.RATIOS, stats.edits_per_users_accum, 'Number of total edits per number of users'))
+    metrics.append(Metric('edits_in_articles_per_users_monthly', 'Edits in articles per users (monthly)', MetricCategory.RATIOS, stats.edits_in_articles_per_users_monthly, 'Number of edits in articles per number of users for each month'))
+    metrics.append(Metric('edits_in_articles_per_users_accum', 'Edits in articles per user (accumulated)', MetricCategory.RATIOS, stats.edits_in_articles_per_users_accum, 'Number of total edits in articles per number of users until a given month'))
     metrics.append(Metric('edits_per_users_monthly', 'Edits per users (monthly)', MetricCategory.RATIOS, stats.edits_per_users_monthly, 'Number of edits for every month per number of active users that month'))
     metrics.append(Metric('edits_per_pages_accum', 'Edits per pages (accumulated)', MetricCategory.RATIOS, stats.edits_per_pages_accum, 'Number of total edits per number of total pages'))
     metrics.append(Metric('edits_per_page_monthly', 'Edits per pages edited (monthly)', MetricCategory.RATIOS, stats.edits_per_pages_monthly, 'Number of edits for every month per number of pages edited that month'))
