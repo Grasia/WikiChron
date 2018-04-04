@@ -201,6 +201,10 @@ def start_image_server():
             raise Exception('"{}" is excluded from the allowed static files'.format(image_path))
         return flask.send_from_directory(image_directory, image_name)
 
+    @server.route('/favicon.ico')
+    def favicon():
+        return flask.send_from_directory(image_directory, 'favicon.ico')
+
 print('¡¡¡¡ Welcome to WikiChron ' + __version__ +' !!!!')
 print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
 print('Using version ' + gdc.__version__ + ' of Grasia Dash Components.')
