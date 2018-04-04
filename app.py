@@ -104,8 +104,16 @@ def generate_welcome_page():
             children=[
                 html.Div(html.Img(src='assets/welcome_graphs.svg')),
                 html.H2('Welcome to WikiChron'),
-                html.P('Select some wikis and metrics from the sidebar on the left and press compare to start.',
+                html.Center([
+                    html.P('Select some wikis and metrics from the sidebar on the left and press compare to start.',
+                        style={'font-size': 'large'}),
+                    html.P(['You can read more info about WikiChron basic concepts and assumptions ',
+                            html.A('here',
+                                    href='https://github.com/Grasia/WikiChron/wiki/Basic-concepts',
+                                    target='_blank'),
+                            '.'],
                         style={'font-size': 'large'})
+                ])
             ]
     )
 
