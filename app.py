@@ -69,6 +69,8 @@ else:
 #~ app.css.append_css({'external_url': 'app.css'})
 app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
 app.css.append_css({"external_url": "https://codepen.io/akronix/pen/BJNgRB.css"})
+app.css.append_css({"external_url": "https://use.fontawesome.com/releases/v5.0.9/css/all.css"})
+
 #~ app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
 
 tabs = [

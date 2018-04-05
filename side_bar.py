@@ -162,6 +162,15 @@ def metrics_tab(metrics):
     def group_metrics_in_accordion(metrics, metric_category):
 
         metrics_options = [{'label': metric.text, 'value': metric.code} for metric in metrics]
+        metrics_help = [ html.Div(
+                            children = html.I(className="fa fa-info-circle checklist-info"),
+                            className='one column aside-checklist-option',
+                            style={'marginLeft': 'auto'},
+                            title=metric.descp
+                            )
+                        for metric in metrics]
+
+        metrics_help_div = html.Div(children=metrics_help, className='one-column aside-checklist-category')
 
         return gdc.Accordion(
                     id=generate_metrics_accordion_id(metric_category.name) + '-accordion',
@@ -171,16 +180,19 @@ def metrics_tab(metrics):
                     childrenClassName='metric-category-list',
                     accordionFixedWidth='300',
                     defaultCollapsed=True,
-                    children=[
-                        dcc.Checklist(
-                            id=generate_metrics_accordion_id(metric_category.name),
-                            className='aside-checklist-category',
-                            options=metrics_options,
-                            values=[],
-                            labelClassName='aside-checklist-option',
-                            labelStyle={'display': 'block'}
-                        )
-                    ],
+                    children=
+                        html.Div(
+                            [dcc.Checklist(
+                                id=generate_metrics_accordion_id(metric_category.name),
+                                className='aside-checklist-category eleven columns',
+                                options=metrics_options,
+                                values=[],
+                                labelClassName='aside-checklist-option',
+                                labelStyle={'display': 'block'}
+                            ),
+                            metrics_help_div],
+                            className='row'
+                        ),
                     style={'display': 'flex'}
                 )
 
