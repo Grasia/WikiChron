@@ -208,7 +208,6 @@ def percentage_edits_by_anonymous_monthly(data, index):
     series_total_edits = edits(data, index)
     series = series_anon_edits / series_total_edits
     series *= 100 # we want it to be displayed in percentage
-    series.fillna(0, inplace=True)
     return series
 
 
@@ -217,7 +216,6 @@ def percentage_edits_by_anonymous_accum(data, index):
     series_total_edits_accum = edits_accum(data, index)
     series = series_anon_edits_accum / series_total_edits_accum
     series *= 100 # we want it to be displayed in percentage
-    series.fillna(0, inplace=True)
     return series
 
 
