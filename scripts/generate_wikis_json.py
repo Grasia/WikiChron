@@ -29,7 +29,7 @@ else:
 input_wikis_fn = os.path.join(data_dir, 'wikis.csv')
 output_wikis_fn = os.path.join(data_dir, 'wikis.json')
 row_selector = "tr.mw-statistics-"
-stats = ['articles','pages','edits','users']
+stats = ['articles','pages','edits']
 
 
 def get_name(url):
@@ -67,6 +67,53 @@ def get_stats(base_url):
    return result
 
 
+def get_nonbot_users_no(url):
+    """
+    Get actual number of nonbots users of a wiki.
+    It makes two requests to the Special:ListUsers endpoint.
+    One for all users and one for bots users, and it substracts all users number
+    by bot users number.
+    """
+
+    def query_users(url, only_bots):
+        """
+        Make a POST request to the Special:ListUsers endpoint
+        It can query for all users of the wiki (including bots)
+        of for bots users only.
+        """
+
+        if not only_bots:
+            data = {
+                'groups': "all,bot,bureaucrat,rollback,sysop,threadmoderator,authenticated,bot-global,content-reviewer,content-volunteer,council,fandom-editor,global-discussions-moderator,helper,restricted-login,restricted-login-exempt,reviewer,staff,util,vanguard,voldev,vstf,",
+                'username': "",
+                'edits': 0,
+                'limit': "50",
+                'offset': "0",
+                'loop': 0 # simulate user behaviour
+            }
+        else:
+            data = {
+                'groups': "bot,bot-global,",
+                'username': "",
+                'edits': 0,
+                'limit': "50",
+                'offset': "0",
+                'loop': 1 # simulate user behaviour
+            }
+
+        req = requests.post(url, data)
+
+        # Checking status code before returning count number
+        if 200 == req.status_code:
+            return req.json()['iTotalDisplayRecords']
+        else:
+            req.raise_for_status()
+
+
+    users_url = url + '/index.php?action=ajax&rs=ListusersAjax::axShowUsers'
+    return query_users(users_url, False) - query_users(users_url, True)
+
+
 wikisfile = open(input_wikis_fn, newline='')
 wikisreader = csv.DictReader(wikisfile, skipinitialspace=True)
 
@@ -84,6 +131,9 @@ for row in wikisreader:
 
    result_stats = get_stats(url)
    wiki.update(result_stats)
+
+   users_no = get_nonbot_users_no(url)
+   wiki['users'] = users_no
 
    print(wiki)
 
