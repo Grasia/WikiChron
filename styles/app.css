@@ -110,8 +110,8 @@ input[type=checkbox] {
     height: 80px;
     position: fixed;
     width: 300px;
-    bottom: 10px;
-    background-color: #004481;
+    bottom: 0px;
+    background-color: #072146;
 }
 
 .action-button {
