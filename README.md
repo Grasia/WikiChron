@@ -12,12 +12,10 @@ It analyzes the history dump of a wiki and give you nice graphs plotting that da
 * [Dash framework](https://plot.ly/dash)
 * [Grasia Dash Components](https://github.com/Grasia/grasia-dash-components)
 * [pandas](pandas.pydata.org)
+* (Production only) [Redis Cache](https://redis.io/)
 
 ### Install instructions
 Simply run: `pip3 install -r requirements.txt`
-
-## Setup cache
-You need to setup a RedisDB server and add the corresponding parameters to the cache.py file.
 
 ### Using a virtual environment
 A good pratice is to use a virtual environment in order to isolate the development environment from your personal stuff. This skips issues about having different Python versions, pip packages in the wrong place or requiring sudo privileges and so on.
@@ -71,3 +69,10 @@ It will show all the files ending in .csv as wikis available to analyze and plot
 
 # Deployment
 The easiest way is to follow the Dash instructions: https://plot.ly/dash/deployment
+
+There is a script called `deploy.sh` which launches the app with the latest code in master and provides the appropriate arguments. Check it out and modify to suit your needs.
+
+## Setup cache
+If you want to run WikiChron in production, you should setup a RedisDB server and add the corresponding parameters to the cache.py file.
+
+Look at the [FlaskCaching documentation](https://pythonhosted.org/Flask-Caching/#rediscache) for more information about caching.

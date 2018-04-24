@@ -49,7 +49,7 @@ app.title = 'WikiChron'
 server = app.server
 app.config['suppress_callback_exceptions'] = True
 
-cache.set_up_cache(app)
+cache.set_up_cache(app, debug)
 
 if debug:
     print('=> You are in DEBUG MODE <=')
