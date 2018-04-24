@@ -33,8 +33,8 @@ global metric_categories_order;
 metric_categories_order = [MetricCategory.PAGES, MetricCategory.EDITIONS, MetricCategory.USERS, MetricCategory.RATIOS, MetricCategory.DISTRIBUTION]
 category_names = ['PAGES', 'EDITIONS', 'USERS', 'RATIOS', 'DISTRIBUTION']
 
-wikis_categories_order = ['VERY LARGE', 'LARGE', 'MEDIUM', 'SMALL']
-wikis_categories_descp = ['More than 100k pages', 'More than 10k pages', 'More than 1k pages', 'More than 100 pages']
+wikis_categories_order = ['SMALL', 'MEDIUM', 'LARGE', 'VERY LARGE']
+wikis_categories_descp = ['More than 100 pages', 'More than 1000 pages', 'More than 10k pages', 'More than 10k pages']
 
 # CODE
 
