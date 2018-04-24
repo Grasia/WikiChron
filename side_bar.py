@@ -273,6 +273,7 @@ def generate_side_bar(wikis, metrics):
                 selectedTabStyle={
                     'backgroundColor': '#004481',
                 },
+                selectedTabClassName='side-bar-selected-tab',
                 style={
                     'width': '100%',
                     'textAlign': 'center',
@@ -283,14 +284,15 @@ def generate_side_bar(wikis, metrics):
                     'height': '70px',
                     'borderRadius': '3px',
                     'backgroundColor': '#072146',
-                    'color': 'white',
                     'borderLeftStyle': 'none',
                     'borderRightStyle': 'none',
                     'fontSize': '18px',
                     'lineHeight': '21px',
                     'justifyContent': 'center',
                     'flexDirection': 'column'
-                }),
+                },
+                tabsClassName='side-bar-tab',
+                ),
             wikis_tab(wikis),
             metrics_tab(metrics),
             compare_button(),

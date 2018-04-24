@@ -70,6 +70,31 @@ input[type=checkbox] {
     min-height: -webkit-fill-available;
 }
 
+/* Sidebar - tabs */
+.side-bar-tab {
+    width: 50%;
+    height: 70px;
+    borderRadius: 3px;
+    backgroundColor: #072146;
+    color: #49A5E6;
+    borderLeftStyle: none;
+    borderRightStyle: none;
+    fontSize: 18px;
+    lineHeight: 21px;
+    justifyContent: center;
+    flexDirection: column;
+}
+
+.side-bar-tab:hover {
+    font-weight: bold;
+    color: #2DCCCD;
+}
+
+.side-bar-selected-tab {
+    font-weight: bold;
+    color: white;
+}
+
 .metric-category-label {
     /* in hex without opacity: background-color: #072146;*/
     background-color: rgba(7,33,70,0.3);
