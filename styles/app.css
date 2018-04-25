@@ -1,4 +1,5 @@
 @import 'https://fonts.googleapis.com/css?family=Roboto';
+@import 'https://fonts.googleapis.com/css?family=Roboto+Mono';
 
 
 /* General */
@@ -16,7 +17,7 @@ p {
 #tool-title {
     opacity: 0.39;
     color: #4A4A4A;
-    font-family: Roboto;
+    font-family: 'Roboto', sans-serif;
     font-size: 35px;
     font-weight: 900;
     margin-top: 22px;
@@ -68,6 +69,35 @@ input[type=checkbox] {
     padding-bottom: 100px;
     min-height: 100vh;
     min-height: -webkit-fill-available;
+}
+
+
+/* Sidebar - fold button */
+
+#fold-button:after {
+    content: '«';
+}
+
+#fold-button {
+    font-size: 4rem;
+    font-family: 'Roboto Mono', monospace;
+}
+
+p#fold-button {
+    margin: 0 0 0 0;
+    padding: 5px 5px 5px 5px;
+}
+
+#fold-button:hover {
+    color: #2DCCCD;
+    font-weight: bold;
+}
+
+.fold-img-container-cn {
+    cursor: pointer;
+    margin-right: 18px;
+    margin-top: 5px;
+    margin-bottom: 10px;
 }
 
 /* Sidebar - tabs */
@@ -146,7 +176,7 @@ input[type=checkbox] {
     border-radius: 4px;
     background-color: #49A5E6;
     color : white;
-    font-family: Roboto;
+    font-family: 'Roboto', sans-serif;
     font-size: 24px;
     font-weight: bold;
     line-height: 28px;

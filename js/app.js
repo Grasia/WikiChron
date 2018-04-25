@@ -7,11 +7,41 @@ function setEvents() {
 }
 
 function hideSideBar() {
-    // effect to rotate to the left
 
-    // change size of the button and apply a border radius
+    console.log('Pressed hide side bar...');
+    // makes arrows point to the left <<
+    fold_button = document.getElementById('fold-button');
+    fold_button.style.transform = "rotateY(180deg)";
 
+
+    // effect pushing away side_bar (transform: translate - X)
 
     // hide side bar
-    document.getElementById('side-bar').style.display = 'none';
+    document.getElementById('side-bar-content').style.display = 'none';
+    document.getElementById('side-bar').style.flex = 'unset';
+
+    // set show bar in arrow
+    fold_container = document.getElementById('fold-img-container');
+    fold_container.onclick = showSideBar;
+    fold_container.style.margin = '5px 5px 0px 5px';
+}
+
+function showSideBar() {
+
+    console.log('Pressed show side bar...');
+
+    // makes arrows point to the right >>
+    fold_button = document.getElementById('fold-button');
+    fold_button.style.transform = '';
+
+    // effect pushing away side_bar (transform: translate - X)
+
+    // show side bar
+    document.getElementById('side-bar-content').style.display = '';
+    document.getElementById('side-bar').style.flex = '';
+
+    // set hide bar in arrow
+    fold_container = document.getElementById('fold-img-container');
+    fold_container.onclick = hideSideBar;
+    fold_container.style.margin = '';
 }
