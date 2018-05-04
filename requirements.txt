@@ -24,11 +24,13 @@ nbformat==4.4.0
 numpy==1.13.3
 pandas==0.21.0
 plotly==2.4.1
+powerlaw==1.4.3
 python-dateutil==2.6.1
 pytz==2018.3
 redis==2.10.6
 requests==2.18.4
 setproctitle==1.1.10
+scipy==1.0.1
 six==1.11.0
 traitlets==4.3.2
 urllib3==1.22
