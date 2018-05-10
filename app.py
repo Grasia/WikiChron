@@ -205,7 +205,7 @@ def start_image_server():
 
     @server.route('/favicon.ico')
     def favicon():
-        return flask.send_from_directory(image_directory, 'favicon.ico')
+        return flask.send_from_directory(image_directory, 'favicon.png')
 
 print('¡¡¡¡ Welcome to WikiChron ' + __version__ +' !!!!')
 print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
