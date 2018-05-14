@@ -5,7 +5,20 @@ It analyzes the history dump of a wiki and give you nice graphs plotting that da
 
 # Development
 
-## Install
+## Quick development
+Install dependencies:
+`pip3 install -r requirements.txt`
+
+Run application with the debug flag activated:
+`DEBUG='TRUE' python3 app.py`
+
+The webapp will be locally available in http://127.0.0.1:8000/
+
+For quick development, some sample data is provided in the `data/` directory.
+Go to step "[Using your own data](#using-your-own-data)" to learn how to set up and use your own data.
+
+## Custom installation
+
 ### Dependencies
 * Python 3.5.2 or later
 * pip3
@@ -14,7 +27,7 @@ It analyzes the history dump of a wiki and give you nice graphs plotting that da
 * [pandas](pandas.pydata.org)
 * (Production only) [Redis Cache](https://redis.io/)
 
-### Install instructions
+### Install Dependencies
 Simply run: `pip3 install -r requirements.txt`
 
 ### Using a virtual environment
@@ -31,7 +44,13 @@ Activate the virtual environment:
 And finally, install dependencies here:
 `source venv/bin/activate`
 
-## Get a wiki history dump
+### Run the application
+Use: `python3 app.py`
+
+The webapp will be locally available in http://127.0.0.1:8000/
+
+## Using your own data
+### Get a wiki history dump
 First, download a xml file with the full history of the wikis you want to analyze (you can use [this nice script](https://github.com/Akronix/wikia_dump_downloader) to do so).
 
 Second, you'll have to process that xml dump using the script: `dump_parser.py` located in the scripts directory.
@@ -45,7 +64,7 @@ dump_parser.py also support several xml files at once. For instance, you might w
 
 `python3 dump_parser.py data/*.xml`
 
-## Provide some metadata of the wiki
+### Provide some metadata of the wiki
 Wikichron needs one thing else in order to visualize your wiki for you.
 
 You need to have a `wikis.json` file in your data_dir/ directory with some metadata of the wikis you want to explore in wikichron.
@@ -54,18 +73,12 @@ There is an example of `wikis.json` file in the data/ directory of this repo for
 
 Note that the required information in this file will change in the future. Stay tuned to that file and to the new updates coming.
 
-## Run the application
-Use: `python3 app.py`
-
-The webapp will be locally available in http://127.0.0.1:8000/
-
-Optionally, you can specify a directory with the csv data of the wikis you want to analyze with the environment variable: `WIKICHRON_DATA_DIR`.
+### Filesystem data location
+By default, WikiChron uses the data from the data/ directory. However, you can specify an alternative directory with the csv data of the wikis you want to analyze through the environment variable: `WIKICHRON_DATA_DIR`.
 
 For instance, suppose that your data is stored in `/var/tmp`, you might launch wikichron using that directory with:
 
 `WIKICHRON_DATA_DIR='/var/tmp' python3 app.py`
-
-It will show all the files ending in .csv as wikis available to analyze and plot.
 
 # Deployment
 The easiest way is to follow the Dash instructions: https://plot.ly/dash/deployment

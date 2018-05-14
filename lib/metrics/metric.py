@@ -23,6 +23,19 @@ class Metric:
     """ Class for ADT Metric. """
 
     def __init__(self, code, text, category, func, descp):
+        """
+        Creates a new Metric object.
+
+        code -- an unique string id for this metric.
+        text -- title of the metric to display in the UI selection list
+        category -- MetricCategory this metric belongs to
+        (see MetricCategory Enum).
+        func -- Python function to call to compute this metric.
+        Presumably, located in the stats.py file.
+        descp -- Short description (about a paragraph) of what
+        the metric consists in.
+        Return a new Metric instance.
+        """
         self.code = code
         self.text = text
         self.category = category
