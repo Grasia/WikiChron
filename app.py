@@ -104,8 +104,13 @@ def generate_welcome_page():
             className='container',
             style=container_style,
             children=[
-                html.Div(html.Img(src='assets/welcome_graphs.svg')),
-                html.H2('Welcome to WikiChron'),
+                html.Div(html.Img(src='assets/line-graph.svg')),
+                html.H2([
+                    'Welcome to ',
+                    html.Span(html.Img(src='assets/tipo-logo.svg'),
+                        style={'vertical-align': 'text-bottom'}
+                    )]
+                ),
                 html.Center([
                     html.P('Select some wikis and metrics from the sidebar on the left and press compare to start.',
                         style={'font-size': 'large'}),

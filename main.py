@@ -183,7 +183,9 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
                 className='container',
                 style={'display': 'flex', 'align-items': 'center', 'justify-content': 'space-between'},
                 children=[
-                    html.H1('WIKI CHRON', id='tool-title'),
+                    html.Span(
+                        html.Img(src='assets/logo_wikichron.svg'),
+                        id='tool-title'),
                     html.Div([
                         html.A(
                             html.Img(src='assets/documentation.svg'),
