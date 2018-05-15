@@ -31,10 +31,19 @@ Activate the virtual environment:
 And finally, install dependencies here:
 `source venv/bin/activate`
 
-## Get a wiki history dump
-First, download a xml file with the full history of the wikis you want to analyze (you can use [this nice script](https://github.com/Akronix/wikia_dump_downloader) to do so).
+## XML dumps
+Likely, the source data for wikichron will come from a XML file with the full edit history of the wikis you want to analyze. [Go here if you want to learn more about Wikimedia XML dumps](https://www.mediawiki.org/wiki/Manual:Backing_up_a_wiki#Backup_the_content_of_the_wiki_(XML_dump)).
 
-Second, you'll have to process that xml dump using the script: `dump_parser.py` located in the scripts directory.
+### Get a wiki history dump
+
+First, you will need such xml file. If you don't have shell access to the server you have several options available depending on the wiki you want to download:
+
+- **Wikia wikis**: Supposedly, Wikia automatically generates dumps and provides them for every wiki they host. However, [there is a known bug](http://memory-alpha.wikia.com/wiki/Forum:FYI:_Corrupted_database_backups_(dumps)) in this generation that cuts off the output dumps for large wikis. The best option here is to use [this nice script](https://github.com/Akronix/wikia_dump_downloader) that request and download the complete xml dump through the Special:Export interface. Please, keep in mind that this script does not download all the namespaces available when generating dumps for a wiki, but a wide subset of them ([you can fin more detailed info in the wiki](https://github.com/Grasia/WikiChron/wiki/Basic-concepts#assumptions)).
+- **Wikimedia project wikis**: For wikis belonging to the Wikimedia project, you already have a regular updated repo with all the dumps here: http://dumps.wikimedia.org. [Select your target wiki from the list](https://dumps.wikimedia.org/backup-index-bydb.html) and download the complete edit history dump and uncompress it.
+- For **other wikis**, like self-hosted wikis, you should use the wikiteam's dumpgenerator.py script. You have a simple tutorial in their wiki: https://github.com/WikiTeam/wikiteam/wiki/Tutorial#I_have_no_shell_access_to_server. Its usage is very straightforward and the script is well maintained. Remember to use the --xml option to download the full history dump.
+
+### Process the dump
+Secondly, you'll have to process that xml dump using the script: `dump_parser.py` located in the scripts directory.
 In order to do this, place your xml file in the data/ directory and run the following command:
 
 `python3 dump_parser.py data/<name_of_your.xml>`
