@@ -73,12 +73,12 @@ app.css.append_css({"external_url": "https://use.fontawesome.com/releases/v5.0.9
 
 #~ app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
 
-tabs = [
-    {'value': 1, 'icon': 'assets/white_graphic.svg'},
-    {'value': 2, 'icon': 'assets/white_graphic.svg'},
-    {'value': 3, 'icon': 'assets/white_graphic.svg'},
-    {'value': 4, 'icon': 'assets/white_graphic.svg'},
-]
+#~ tabs = [
+    #~ {'value': 1, 'icon': 'assets/white_graphic.svg'},
+    #~ {'value': 2, 'icon': 'assets/white_graphic.svg'},
+    #~ {'value': 3, 'icon': 'assets/white_graphic.svg'},
+    #~ {'value': 4, 'icon': 'assets/white_graphic.svg'},
+#~ ]
 
 def get_available_wikis(data_dir):
     wikis_json_file = open(os.path.join(data_dir, 'wikis.json'))
@@ -92,17 +92,8 @@ available_wikis_dict = {wiki['url']: wiki for wiki in available_wikis}
 
 def generate_welcome_page():
 
-    container_style = {
-        'display': 'flex',
-        'flex-direction': 'column',
-        'justify-content': 'center',
-        'align-items': 'center',
-        'padding-top': '15%'
-    }
-
     return html.Div(id='welcome-container',
             className='container',
-            style=container_style,
             children=[
                 html.Div(html.Img(src='assets/line-graph.svg')),
                 html.H2([
