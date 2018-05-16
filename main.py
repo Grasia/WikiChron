@@ -20,7 +20,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
 import pandas as pd
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 
 # Local imports:
 import lib.interface as lib
@@ -282,9 +282,11 @@ def bind_callbacks(app):
         Output('graphs', 'children'),
         [Input('wikis-selection-dropdown', 'value'),
         Input('metrics-selection-dropdown', 'value'),
-        Input('dates-slider', 'value')])
-    def update_graphs(selected_wikis, selected_metrics, selected_timerange):
-        global relative_time;
+        Input('dates-slider', 'value')],
+        [State('time-axis-selection', 'value')]
+    )
+    def update_graphs(selected_wikis, selected_metrics, selected_timerange,
+            selected_timeaxis):
 
         for wiki_idx in range(len(wikis)):
             if wiki_idx in selected_wikis:
@@ -297,7 +299,7 @@ def bind_callbacks(app):
         dash_graphs = []
 
         # if we're displaying calendar dates, then we do the conversion:
-        if not relative_time:
+        if selected_timeaxis == 'absolute':
             selected_timerange[0] = times_axis[selected_timerange[0]]
             selected_timerange[1] = times_axis[selected_timerange[1]]
 
