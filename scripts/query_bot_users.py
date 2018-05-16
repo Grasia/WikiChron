@@ -17,14 +17,34 @@ import sys
 import json
 import re
 
-endpoint = '/api.php?action=query&list=groupmembers&gmgroups=bot|bot-global&gmlimit=500&format=json'
+wikia_api_endpoint = '/api.php?action=query&list=groupmembers&gmgroups=bot|bot-global&gmlimit=500&format=json'
+mediawiki_api_endpoint = '/w/api.php?action=query&list=allusers&augroup=bot&aulimit=500&auprop=groups&format=json'
 
+def mediawiki_get_bots_ids(base_url):
+   """
+   Query the mediwiki api enpoint for standard mediawiki wikis
+    and returns a list of bot userids
+   """
+   url = base_url + mediawiki_api_endpoint
+   print(url)
+   continue_query = True
+   bots_ids = []
+   while (continue_query):
+      r = requests.get(url)
+      res = r.json()
+      print(res)
+      bots_ids += [ str(bot['userid']) for bot in res['query']['allusers'] ]
+      continue_query = 'continue' in res
+      if (continue_query):
+         url += '&aufrom=' + res['continue']['aufrom']
 
-def get_bots_ids(base_url, offset=0):
+   return bots_ids
+
+def wikia_get_bots_ids(base_url, offset=0):
    """
-   Query the enpoint and returns a list of bot userids
+   Query the mediawiki enpoint for Wikia wikis and returns a list of bot userids
    """
-   url = base_url + endpoint + '&gmoffset={}'.format(offset)
+   url = base_url + wikia_api_endpoint + '&gmoffset={}'.format(offset)
    #~ print(url)
    r = requests.get(url)
    res = r.json()
@@ -52,7 +72,11 @@ def main():
          if not (re.search('^http', url)):
             url = 'http://' + url
          print("Retrieving data for: " + url)
-         bots_ids = get_bots_ids(url)
+         if re.search('/.*\.wikia\.com', url) != None: # detect Wikia wikis
+            bots_ids = wikia_get_bots_ids(url)
+         else:
+            bots_ids = mediawiki_get_bots_ids(url)
+
          print("These are the bots ids:")
          print(json.dumps(bots_ids))
          print("<" + "="*50 + ">")
