@@ -40,6 +40,7 @@ def mediawiki_get_bots_ids(base_url):
 
    return bots_ids
 
+
 def wikia_get_bots_ids(base_url, offset=0):
    """
    Query the mediawiki enpoint for Wikia wikis and returns a list of bot userids
@@ -54,9 +55,17 @@ def wikia_get_bots_ids(base_url, offset=0):
    else:
       return bots_ids
 
+
 def write_outputfile(filename, bots):
    import numpy as np
    np.array(bots_ids).tofile(filename, sep=',')
+
+
+def get_bots_ids(url):
+   if re.search('/.*\.wikia\.com', url) != None: # detect Wikia wikis
+      return wikia_get_bots_ids(url)
+   else:
+      return mediawiki_get_bots_ids(url)
 
 
 def main():
@@ -72,10 +81,7 @@ def main():
          if not (re.search('^http', url)):
             url = 'http://' + url
          print("Retrieving data for: " + url)
-         if re.search('/.*\.wikia\.com', url) != None: # detect Wikia wikis
-            bots_ids = wikia_get_bots_ids(url)
-         else:
-            bots_ids = mediawiki_get_bots_ids(url)
+         bots_ids = get_bots_ids(url)
 
          print("These are the bots ids:")
          print(json.dumps(bots_ids))
