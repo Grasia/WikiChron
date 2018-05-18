@@ -5,20 +5,7 @@ It analyzes the history dump of a wiki and give you nice graphs plotting that da
 
 # Development
 
-## Quick development
-Install dependencies:
-`pip3 install -r requirements.txt`
-
-Run application with the debug flag activated:
-`DEBUG='TRUE' python3 app.py`
-
-The webapp will be locally available in http://127.0.0.1:8000/
-
-For quick development, some sample data is provided in the `data/` directory.
-Go to step "[Using your own data](#using-your-own-data)" to learn how to set up and use your own data.
-
-## Custom installation
-
+## Install
 ### Dependencies
 * Python 3.5.2 or later
 * pip3
@@ -27,7 +14,7 @@ Go to step "[Using your own data](#using-your-own-data)" to learn how to set up 
 * [pandas](pandas.pydata.org)
 * (Production only) [Redis Cache](https://redis.io/)
 
-### Install Dependencies
+### Install instructions
 Simply run: `pip3 install -r requirements.txt`
 
 ### Using a virtual environment
@@ -44,16 +31,19 @@ Activate the virtual environment:
 And finally, install dependencies here:
 `source venv/bin/activate`
 
-### Run the application
-Use: `python3 app.py`
+## XML dumps
+Likely, the source data for wikichron will come from a XML file with the full edit history of the wikis you want to analyze. [Go here if you want to learn more about Wikimedia XML dumps](https://www.mediawiki.org/wiki/Manual:Backing_up_a_wiki#Backup_the_content_of_the_wiki_(XML_dump)).
 
-The webapp will be locally available in http://127.0.0.1:8000/
-
-## Using your own data
 ### Get a wiki history dump
-First, download a xml file with the full history of the wikis you want to analyze (you can use [this nice script](https://github.com/Akronix/wikia_dump_downloader) to do so).
 
-Second, you'll have to process that xml dump using the script: `dump_parser.py` located in the scripts directory.
+First, you will need such xml file. If you don't have shell access to the server you have several options available depending on the wiki you want to download:
+
+- **Wikia wikis**: Supposedly, Wikia automatically generates dumps and provides them for every wiki they host. However, [there is a known bug](http://memory-alpha.wikia.com/wiki/Forum:FYI:_Corrupted_database_backups_(dumps)) in this generation that cuts off the output dumps for large wikis. The best option here is to use [this nice script](https://github.com/Akronix/wikia_dump_downloader) that request and download the complete xml dump through the Special:Export interface. Please, keep in mind that this script does not download all the namespaces available when generating dumps for a wiki, but a wide subset of them ([you can fin more detailed info in the wiki](https://github.com/Grasia/WikiChron/wiki/Basic-concepts#assumptions)).
+- **Wikimedia project wikis**: For wikis belonging to the Wikimedia project, you already have a regular updated repo with all the dumps here: http://dumps.wikimedia.org. [Select your target wiki from the list](https://dumps.wikimedia.org/backup-index-bydb.html) and download the complete edit history dump and uncompress it.
+- For **other wikis**, like self-hosted wikis, you should use the wikiteam's dumpgenerator.py script. You have a simple tutorial in their wiki: https://github.com/WikiTeam/wikiteam/wiki/Tutorial#I_have_no_shell_access_to_server. Its usage is very straightforward and the script is well maintained. Remember to use the --xml option to download the full history dump.
+
+### Process the dump
+Secondly, you'll have to process that xml dump using the script: `dump_parser.py` located in the scripts directory.
 In order to do this, place your xml file in the data/ directory and run the following command:
 
 `python3 dump_parser.py data/<name_of_your.xml>`
@@ -64,7 +54,7 @@ dump_parser.py also support several xml files at once. For instance, you might w
 
 `python3 dump_parser.py data/*.xml`
 
-### Provide some metadata of the wiki
+## Provide some metadata of the wiki
 Wikichron needs one thing else in order to visualize your wiki for you.
 
 You need to have a `wikis.json` file in your data_dir/ directory with some metadata of the wikis you want to explore in wikichron.
@@ -73,12 +63,18 @@ There is an example of `wikis.json` file in the data/ directory of this repo for
 
 Note that the required information in this file will change in the future. Stay tuned to that file and to the new updates coming.
 
-### Filesystem data location
-By default, WikiChron uses the data from the data/ directory. However, you can specify an alternative directory with the csv data of the wikis you want to analyze through the environment variable: `WIKICHRON_DATA_DIR`.
+## Run the application
+Use: `python3 app.py`
+
+The webapp will be locally available in http://127.0.0.1:8000/
+
+Optionally, you can specify a directory with the csv data of the wikis you want to analyze with the environment variable: `WIKICHRON_DATA_DIR`.
 
 For instance, suppose that your data is stored in `/var/tmp`, you might launch wikichron using that directory with:
 
 `WIKICHRON_DATA_DIR='/var/tmp' python3 app.py`
+
+It will show all the files ending in .csv as wikis available to analyze and plot.
 
 # Deployment
 The easiest way is to follow the Dash instructions: https://plot.ly/dash/deployment
