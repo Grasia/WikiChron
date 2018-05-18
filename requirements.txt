@@ -10,7 +10,7 @@ decorator==4.2.1
 Flask==0.12.2
 Flask-Caching==1.3.3
 Flask-Compress==1.4.0
-grasia-dash-components==0.2.1
+grasia-dash-components==0.3.0
 gunicorn==19.7.1
 idna==2.6
 ipython-genutils==0.2.0

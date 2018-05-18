@@ -43,25 +43,33 @@ data_dir = os.environ['WIKICHRON_DATA_DIR']
 
 # global app config
 port = 8880;
-global app;
+#~ global app;
 app = dash.Dash('WikiChron')
 app.title = 'WikiChron'
 server = app.server
 app.config['suppress_callback_exceptions'] = True
+app.scripts.config.serve_locally = True
 
 cache.set_up_cache(app, debug)
 
+# js files being serve by this server:
+local_available_js = ['app.js', 'piwik.js']
+
+# list of js files to import from the app (either local or remote)
+to_import_js = ['js/app.js']
+
+
 if debug:
     print('=> You are in DEBUG MODE <=')
-    app.scripts.config.serve_locally = True
 
 else:
-    app.scripts.append_script({
-        "external_url": "js/piwik.js",
-        "external_url": "js/app.js",
+    to_import_js += 'js/piwik.js'
+    #~ app.scripts.append_script({
+        #~ "external_url": "js/piwik.js",
+        #~ "external_url": "js/app.js",
         # Equivalent online (codepen:)
         #"external_url": "https://codepen.io/akronix/pen/rpQgqQ.js"
-    })
+    #~ })
 
 #~ app.css.config.serve_locally = True
 
@@ -85,13 +93,37 @@ def get_available_wikis(data_dir):
     wikis = json.load(wikis_json_file)
     return wikis
 
+
 available_metrics = lib.get_available_metrics()
 available_metrics_dict = lib.metrics_dict
 available_wikis = get_available_wikis(data_dir)
 available_wikis_dict = {wiki['url']: wiki for wiki in available_wikis}
 
-def generate_welcome_page():
 
+def set_up_app(app):
+    app.layout = html.Div([
+        set_layout(),
+    ])
+    app.layout.children += set_external_imports()
+    return
+
+
+def set_external_imports():
+    return [gdc.Import(src=src) for src in to_import_js];
+
+
+def set_layout():
+    return html.Div(id='app-layout',
+        style={'display': 'flex'},
+        children=[
+            #~ generate_tabs_bar(tabs),
+            side_bar.generate_side_bar(available_wikis, available_metrics),
+            html.Div(id='main-root', style={'flex': 'auto'})
+        ]
+    );
+
+
+def generate_welcome_page():
     return html.Div(id='welcome-container',
             className='container',
             children=[
@@ -115,16 +147,6 @@ def generate_welcome_page():
             ]
     )
 
-def set_layout():
-    app.layout = html.Div(id='app-layout',
-        style={'display': 'flex'},
-        children=[
-            #~ generate_tabs_bar(tabs),
-            side_bar.generate_side_bar(available_wikis, available_metrics),
-            html.Div(id='main-root', style={'flex': 'auto'})
-        ]
-    );
-    return
 
 def init_app_callbacks():
 
@@ -153,10 +175,25 @@ def init_app_callbacks():
             warn('There is no selection of wikis & metrics yet')
             return generate_welcome_page()
 
-@app.server.route('/js/<path:path>')
-def start_js_server(path):
-    static_folder = os.path.dirname(os.path.realpath(__file__)) + '/js/'
-    return flask.send_from_directory(static_folder, path)
+
+def start_js_server():
+    static_js_route = '/js/'
+    js_directory = os.path.dirname(os.path.realpath(__file__)) + static_js_route
+
+    @app.server.route('{}<js_path>.js'.format(static_js_route))
+    def serve_local_js(js_path):
+        js_name = '{}.js'.format(js_path)
+        if js_name not in local_available_js:
+            raise Exception(
+                '"{}" is excluded from the allowed static files'.format(
+                    js_path
+                )
+            )
+        print (js_name)
+        return flask.send_from_directory(js_directory, js_name)
+
+    return
+
 
 def start_css_server():
     # Add a static styles route that serves css from desktop
@@ -175,14 +212,13 @@ def start_css_server():
                     css_path
                 )
             )
-        print (stylesheet)
         print (css_name)
         return flask.send_from_directory(css_directory, css_name)
 
 
     for stylesheet in stylesheets:
         app.css.append_css({"external_url": "/styles/{}".format(stylesheet)})
-
+    return
 
 def start_image_server():
     static_image_route = '/assets/'
@@ -213,6 +249,7 @@ time_start_app = time.perf_counter()
 # start auxiliar servers:
 start_image_server()
 start_css_server()
+start_js_server()
 
 # Layout of the app:
 # imports
@@ -220,8 +257,8 @@ from tabs_bar import generate_tabs_bar
 import side_bar
 import main
 
-# set basic layout for app
-set_layout()
+# set layout and import js
+set_up_app(app)
 
 # bind callbacks
 side_bar.bind_callbacks(app)
