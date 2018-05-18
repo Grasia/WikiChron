@@ -58,12 +58,11 @@ local_available_js = ['app.js', 'piwik.js']
 # list of js files to import from the app (either local or remote)
 to_import_js = ['js/app.js']
 
-
 if debug:
     print('=> You are in DEBUG MODE <=')
 
 else:
-    to_import_js += 'js/piwik.js'
+    to_import_js.append('js/piwik.js')
     #~ app.scripts.append_script({
         #~ "external_url": "js/piwik.js",
         #~ "external_url": "js/app.js",
