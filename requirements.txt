@@ -5,7 +5,7 @@ click==6.7
 dash==0.21.0
 dash-core-components==0.20.2
 dash-html-components==0.9.0
-dash-renderer-grasia==0.11.3
+dash-renderer-grasia==0.12.1
 decorator==4.2.1
 Flask==0.12.2
 Flask-Caching==1.3.3
