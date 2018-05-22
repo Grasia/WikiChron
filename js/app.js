@@ -1,9 +1,6 @@
-var setfoldBehaviour = setInterval(setEvents, 1000);
-
 function setEvents() {
     console.log('Setting js events...');
     document.getElementById('fold-img-container').onclick = hideSideBar;
-    clearInterval(setfoldBehaviour);
 }
 
 function hideSideBar() {
@@ -45,3 +42,6 @@ function showSideBar() {
     fold_container.onclick = hideSideBar;
     fold_container.style.margin = '';
 }
+
+
+setEvents()
