@@ -1,2 +1,2 @@
-(git pull origin master && pkill -HUP gunicorn) ||
-$(WIKICHRON_DATA_DIR='/var/wiki_dumps/csv/' gunicorn app:server -b :80 -t 600 --name=WikiChron)
+#!/bin/sh
+(git pull origin master && pkill -HUP gunicorn) || (gunicorn app:server -c gunicorn_config.py)
