@@ -287,15 +287,12 @@ def calc_ratio_percentile(data, index, top_percentile, percentile, minimal_users
 
     return result
 
+
 def power_law_alpha_calc(data):
-    try:
-        contribs = np.array(contributions_per_author(data))
-        if (len(contribs) == 0):
-            return np.nan
-        r = powerlaw.Fit(contribs, discrete=True)
-        return r.power_law.alpha
-    except:
-        return np.nan
+    contribs = np.array(contributions_per_author(data))
+    r = powerlaw.Fit(contribs, discrete=True)
+    return r.power_law.alpha
+
 
 ##### callable ditribution metrics #####
 
@@ -418,3 +415,4 @@ def ratio_10_90(data, index):
 
 def power_law_alpha(data, index):
     return apply_time_series(data, index, power_law_alpha_calc)
+
