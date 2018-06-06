@@ -12,6 +12,7 @@
 
 import pandas as pd
 import numpy as np
+import powerlaw
 import math
 
 # CONSTANTS
@@ -28,6 +29,15 @@ def calculate_index_all_months(data):
     monthly_data = data.groupby(pd.Grouper(key='timestamp', freq='MS'))
     index = monthly_data.size().index
     return index
+
+
+def apply_time_series(data, index, fun):
+    monthly_data = data.groupby(pd.Grouper(key='timestamp', freq='MS'))
+    series = monthly_data.apply(lambda x: fun(x))
+    if index is not None:
+        series = series.reindex(index, fill_value=0)
+    return series
+
 
 # Pages
 
@@ -130,7 +140,6 @@ def users_new(data, index):
     if index is not None:
         series = series.reindex(index, fill_value=0)
     return series
-
 
 def users_accum(data, index):
     return (users_new(data, index).cumsum())
@@ -278,6 +287,16 @@ def calc_ratio_percentile(data, index, top_percentile, percentile, minimal_users
 
     return result
 
+def power_law_alpha_calc(data):
+    try:
+        contribs = np.array(contributions_per_author(data))
+        if (len(contribs) == 0):
+            return np.nan
+        r = powerlaw.Fit(contribs, discrete=True)
+        return r.power_law.alpha
+    except:
+        return np.nan
+
 ##### callable ditribution metrics #####
 
 
@@ -396,3 +415,6 @@ def ratio_10_90(data, index):
 
     return result
 
+
+def power_law_alpha(data, index):
+    return apply_time_series(data, index, power_law_alpha_calc)

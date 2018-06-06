@@ -57,6 +57,7 @@ def generate_metrics():
     metrics.append(Metric('ratio_percentiles_max_20', 'Participants prctl. top / 20', MetricCategory.DISTRIBUTION, stats.ratio_percentiles_max_20, 'Ratio between contributions of the top user and the 20th top user'))
     metrics.append(Metric('ratio_percentiles_5_10', 'Participants prctl. 5 / 10', MetricCategory.DISTRIBUTION, stats.ratio_percentiles_5_10, 'Ratio between contributions of the 5th user and the 10th top user'))
     metrics.append(Metric('ratio_percentiles_10_20', 'Participants prctl. 10 / 20', MetricCategory.DISTRIBUTION, stats.ratio_percentiles_10_20, 'Ratio between contributions of the 10th user and the 20th top user'))
+    metrics.append(Metric('power_law_alpha', 'Power law\'s alpha', MetricCategory.DISTRIBUTION, stats.power_law_alpha, 'Aplha parameter of the power law fit of the distribution of work'))
 
     # keep this order when plotting graphs inserting 'index_' at the beginning
     #  for every metric code.
@@ -82,4 +83,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
