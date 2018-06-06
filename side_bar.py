@@ -128,26 +128,6 @@ def wikis_tab(wikis):
     );
 
 
-def select_time_axis_control():
-    return (html.Div([
-        html.Hr(),
-        html.Div([
-            html.Strong('Time axis:'),
-            dcc.RadioItems(
-                options=[
-                    {'label': 'Months from birth', 'value': 'relative'},
-                    {'label': 'Calendar dates', 'value': 'absolute'}
-                ],
-                value='relative',
-                id='time-axis-selection'
-            ),
-            ],
-            className="container"
-        ),
-        ])
-    )
-
-
 def generate_metrics_accordion_id(category_name):
     return '{}-metrics'.format(category_name);
 
@@ -224,8 +204,7 @@ def metrics_tab(metrics):
             style={'color': 'white'},
             id='metrics-tab-container',
             ),
-        select_time_axis_control(),
-        #~ compare_button('metrics')
+        #~ select_time_axis_control(),
         ],
         id='metrics-tab'
     );
@@ -320,19 +299,17 @@ def bind_callbacks(app):
     # Note that we need one State parameter for each category metric that is created dynamically
     @app.callback(Output('sidebar-selection', 'children'),
                [Input('compare-button', 'n_clicks')],
-                [State('time-axis-selection', 'value')] +
                 [State(generate_wikis_accordion_id(name), 'values') for name in wikis_categories_order] +
                 [State(generate_metrics_accordion_id(name), 'values') for name in category_names]
                )
     def compare_selection(btn_clicks,
-                        time_axis_selection,
                         wikis_selection_large, wikis_selection_big, wikis_selection_medium, wikis_selection_small,
                         *metrics_selection_l):
         print('Number of clicks: ' + str(btn_clicks))
         if (btn_clicks > 0):
             metrics_selection = list(itertools.chain.from_iterable(metrics_selection_l)) # reduce a list of lists into one list.
             wikis_selection = wikis_selection_large + wikis_selection_big + wikis_selection_medium + wikis_selection_small
-            selection = { 'wikis': wikis_selection, 'metrics': metrics_selection, 'time': time_axis_selection}
+            selection = { 'wikis': wikis_selection, 'metrics': metrics_selection}
             return json.dumps(selection)
 
 

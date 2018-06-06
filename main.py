@@ -129,6 +129,25 @@ def generate_graphs(data, metrics, wikis, relative_time):
     return graphs_list
 
 
+def select_time_axis_control(init_relative_time):
+    return (html.Div([
+        html.Div([
+            html.Strong('Time axis:'),
+            dcc.RadioItems(
+                options=[
+                    {'label': 'Months from birth', 'value': 'relative'},
+                    {'label': 'Calendar dates', 'value': 'absolute'}
+                ],
+                value=init_relative_time,
+                id='time-axis-selection'
+            ),
+            ],
+            className="container"
+        ),
+        ])
+    )
+
+
 def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
     global wikis_df, data, graphs, wikis, metrics, min_time, max_time, relative_time;
     wikis = wikis_arg;
@@ -247,7 +266,10 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
                                 searchable=False,
                                 value=[ option['value'] for option in metrics_dropdown_options ]
                             ),
-                         ])
+                         ]),
+
+                select_time_axis_control('relative' if relative_time else 'absolute')
+
              ]),
 
             html.Hr(),
@@ -282,8 +304,8 @@ def bind_callbacks(app):
         Output('graphs', 'children'),
         [Input('wikis-selection-dropdown', 'value'),
         Input('metrics-selection-dropdown', 'value'),
-        Input('dates-slider', 'value')],
-        [State('time-axis-selection', 'value')]
+        Input('dates-slider', 'value'),
+        Input('time-axis-selection', 'value')]
     )
     def update_graphs(selected_wikis, selected_metrics, selected_timerange,
             selected_timeaxis):
