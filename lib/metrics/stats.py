@@ -288,6 +288,40 @@ def calc_ratio_percentile(data, index, top_percentile, percentile, minimal_users
     return result
 
 
+
+
+def power_law_calc(data):
+    output1 = open ('output1', 'a')
+    output2 = open ('output2', 'a')
+
+    contribs = np.array(contributions_per_author(data))
+    r = powerlaw.Fit(contribs, discrete=True)
+
+    import time
+    time_start = time.perf_counter()
+    r.power_law.alpha
+    time_end = time.perf_counter() - time_start
+    output1.write(('{}, '.format(time_end)))
+
+    time_start = time.perf_counter()
+    r.truncated_power_law.alpha
+    time_end = time.perf_counter() - time_start
+    output2.write('{}, '.format(time_end))
+
+    output1.close()
+    output2.close()
+
+    return np.NaN
+
+    #~ return (r.truncated_power_law.alpha, r.truncated_power_law.Lambda)
+
+
+def power_law_lambda_calc(data):
+    contribs = np.array(contributions_per_author(data))
+    r = powerlaw.Fit(contribs, discrete=True)
+    return r.truncated_power_law.Lambda
+
+
 def power_law_alpha_calc(data):
     contribs = np.array(contributions_per_author(data))
     r = powerlaw.Fit(contribs, discrete=True)
@@ -413,6 +447,13 @@ def ratio_10_90(data, index):
     return result
 
 
+def power_law(data, index):
+    return apply_time_series(data, index, power_law_calc)
+
+
 def power_law_alpha(data, index):
     return apply_time_series(data, index, power_law_alpha_calc)
 
+
+def power_law_lambda(data, index):
+    return apply_time_series(data, index, power_law_lambda_calc)
