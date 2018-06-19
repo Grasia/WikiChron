@@ -168,6 +168,7 @@ def init_app_callbacks():
                 # set relative time by default if it's a multiwiki selection
                 # set absolute time by default if it's a monowiki selection
                 relative_time = len(wikis) > 1;
+                return main.generate_main_content(wikis, metrics, relative_time)
 
             else:
                 # User should never reach here, but who knows what an evil mind can do :/

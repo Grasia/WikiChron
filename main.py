@@ -310,31 +310,51 @@ def bind_callbacks(app):
     def update_graphs(selected_wikis, selected_metrics, selected_timerange,
             selected_timeaxis):
 
+        print('Updating graphs. Selection: [{}, {}, {}, {}]'.format(selected_wikis, selected_metrics, selected_timerange, selected_timeaxis))
+
+        # copy to local variable `new_graphs` in order to not modify global variables.
+        new_graphs = graphs;
+
+        from sys import getsizeof
+        print('Size of graphs in memory: {}'.format(getsizeof(new_graphs)))
+
+        for i, metric in enumerate(metrics):
+            for j, wiki in enumerate(wikis):
+                metric_data = new_graphs[i][j]
+                if relative_time:
+                    x_axis = len(metric_data.y) # relative to the age of the wiki in months
+                else:
+                    x_axis = metric_data.x # natural months
+            new_graphs[i][j].x = x_axis
+
         for wiki_idx in range(len(wikis)):
             if wiki_idx in selected_wikis:
                 for metric_idx in range(len(metrics)):
-                    graphs[metric_idx][wiki_idx]['visible'] = True
+                    new_graphs[metric_idx][wiki_idx]['visible'] = True
             else:
                 for metric_idx in range(len(metrics)):
-                    graphs[metric_idx][wiki_idx]['visible'] = "legendonly"
+                    new_graphs[metric_idx][wiki_idx]['visible'] = "legendonly"
 
-        dash_graphs = []
 
-        # if we're displaying calendar dates, then we do the conversion:
+        # Showing only the selected timerange in the slider.
+        new_timerange = selected_timerange
+        # In case we are displaying calendar dates, then we have to do a conversion:
         if selected_timeaxis == 'absolute':
-            selected_timerange[0] = times_axis[selected_timerange[0]]
-            selected_timerange[1] = times_axis[selected_timerange[1]]
+            new_timerange[0] = times_axis[selected_timerange[0]]
+            new_timerange[1] = times_axis[selected_timerange[1]]
 
+        # Dash' graphs:
+        dash_graphs = []
         for i, metric in enumerate(metrics):
             if (i in selected_metrics):
                 dash_graphs.append(
                     dcc.Graph(
                         id='graph-{}'.format(i),
                         figure={
-                            'data': graphs[i],
+                            'data': new_graphs[i],
                             'layout': {
                                 'title': metric.text,
-                                'xaxis': {'range': selected_timerange }
+                                'xaxis': {'range': new_timerange }
                             }
                         },
                         config={
