@@ -312,8 +312,10 @@ def bind_callbacks(app):
 
         print('Updating graphs. Selection: [{}, {}, {}, {}]'.format(selected_wikis, selected_metrics, selected_timerange, selected_timeaxis))
 
+
+        relative_time = selected_timeaxis == 'relative'
         # copy to local variable `new_graphs` in order to not modify global variables.
-        new_graphs = graphs;
+        new_graphs = generate_graphs(data, metrics, wikis, relative_time);
 
         from sys import getsizeof
         print('Size of graphs in memory: {}'.format(getsizeof(new_graphs)))
@@ -339,7 +341,7 @@ def bind_callbacks(app):
         # Showing only the selected timerange in the slider.
         new_timerange = selected_timerange
         # In case we are displaying calendar dates, then we have to do a conversion:
-        if selected_timeaxis == 'absolute':
+        if not relative_time:
             new_timerange[0] = times_axis[selected_timerange[0]]
             new_timerange[1] = times_axis[selected_timerange[1]]
 
