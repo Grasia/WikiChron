@@ -347,10 +347,10 @@ def bind_callbacks(app):
         wikis_selection = wikis_selection_large + wikis_selection_big + wikis_selection_medium + wikis_selection_small
         print (wikis_selection, metrics_selection)
         if wikis_selection and metrics_selection:
-            return None
+            return False
         else:
             warn('You have to select at least one wiki and at least one metric')
-            return 'disabled'
+            return True
     return
 
 if __name__ == '__main__':
