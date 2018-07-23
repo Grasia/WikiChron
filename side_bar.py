@@ -345,7 +345,7 @@ def bind_callbacks(app):
                             *metrics_selection_l):
         metrics_selection = list(itertools.chain.from_iterable(metrics_selection_l)) # reduce a list of lists into one list.
         wikis_selection = wikis_selection_large + wikis_selection_big + wikis_selection_medium + wikis_selection_small
-        print (wikis_selection, metrics_selection)
+        print ('User selection: {} {}'.format(wikis_selection, metrics_selection))
         if wikis_selection and metrics_selection:
             return False
         else:
