@@ -34,18 +34,6 @@ debug = 'DEBUG' in os.environ
 global data_dir;
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 
-#~ wikis_df = []
-#~ global wikis, metrics
-#~ wikis = []
-#~ metrics = []
-
-#~ graphs = []
-
-#~ global min_time, max_time; # global variables to store the max and min values for the time axis. -> Slider
-
-#~ global relative_time; # flag to know when we're plotting in relative dates
-#~ global times_axis; # datetime index of the oldest wiki from the selected subset of wikis.
-
 
 @cache.memoize(timeout=3600)
 def load_data(wiki):
@@ -120,10 +108,20 @@ def load_and_compute_data(wikis, metrics):
     return data
 
 
+def generate_longest_time_axis(list_of_selected_wikis, relative_time):
+    """ Generate time axis index of the oldest wiki """
+
+    # The oldest wiki is the one with longer number of months
+    oldest_wiki = max(list_of_selected_wikis, key = lambda wiki: len(wiki))
+    if relative_time:
+        time_axis = list(range(0, len(oldest_wiki.index)))
+    else:
+        time_axis = oldest_wiki.index
+    return time_axis
+
+
 def generate_graphs(data, metrics, wikis, relative_time):
     """ Turn over data[] into plotly graphs objects and store it in graphs[] """
-
-    #~ global min_time, max_time, times_axis;
 
     graphs_list = [[None for j in range(len(wikis))] for i in range(len(metrics))]
 
@@ -141,15 +139,6 @@ def generate_graphs(data, metrics, wikis, relative_time):
                                 y=metric_data.data,
                                 name=wikis[wiki_idx]['name']
                                 )
-
-    # The oldest wiki is the one with longer number of months
-    oldest_wiki = max(data[0],key = lambda wiki: len(wiki))
-    min_time = 0
-    max_time = len (oldest_wiki)
-    if relative_time:
-        times_axis = list(range(min_time, max_time))
-    else:
-        times_axis = oldest_wiki.index
 
     return graphs_list
 
@@ -274,12 +263,25 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
 
             html.Hr(),
 
-            html.Div(id='date-slider-div', className='container'),
+            html.Div(id='date-slider-div', className='container',
+                children=[
+                    html.Strong(
+                        'Time interval (months)'),
+
+                    html.Div(id='date-slider-container',
+                        style={'height': '35px'},
+                        children=[
+                            dcc.RangeSlider(
+                                id='dates-slider',
+                        )],
+                    )
+                ]),
 
             html.Div(id='graphs'),
 
             html.Div(id='initial-selection', style={'display': 'none'}, children=args_selection),
-            html.Div(id='intermediate-data', style={'display': 'none'})
+            html.Div(id='intermediate-data', style={'display': 'none'}),
+            html.Div(id='ready', style={'display': 'none'})
         ]
     );
 
@@ -305,17 +307,39 @@ def bind_callbacks(app):
 
 
     @app.callback(
-        Output('graphs', 'children'),
+        Output('ready', 'children'),
         [Input('wikis-selection-dropdown', 'value'),
         Input('metrics-selection-dropdown', 'value'),
+        Input('dates-slider', 'value'),
         Input('time-axis-selection', 'value'),
         Input('intermediate-data', 'children')],
-        [State('initial-selection', 'children')]
     )
-    def update_graphs(selected_wikis, selected_metrics, #selected_timerange,
+    def ready_to_plot_graphs(*args):
+        #~ print (args)
+        if not all(args):
+            #~ print('not ready!')
+            return None
+        else:
+            print('Ready to plot graphs!')
+            return 'ready'
+
+
+
+    @app.callback(
+        Output('graphs', 'children'),
+        [Input('ready', 'children')],
+        [State('wikis-selection-dropdown', 'value'),
+        State('metrics-selection-dropdown', 'value'),
+        State('dates-slider', 'value'),
+        State('time-axis-selection', 'value'),
+        State('intermediate-data', 'children'),
+        State('initial-selection', 'children')]
+    )
+    def update_graphs(ready,
+            selected_wikis, selected_metrics, selected_timerange,
             selected_timeaxis, data_json, selection_json):
 
-        if not data_json: # waiting for data to be retrieved and calculated from server
+        if not ready: # waiting for all parameters to be ready
             return;
 
         selection = json.loads(selection_json)
@@ -327,8 +351,7 @@ def bind_callbacks(app):
             for j in range(len(data[i])):
                 data[i][j] = pd.read_json(data[i][j], typ="series")
 
-        #~ print('Updating graphs. Selection: [{}, {}, {}, {}]'.format(selected_wikis, selected_metrics, selected_timerange, selected_timeaxis))
-        print('Updating graphs. Selection: [{}, {}, {}]'.format(selected_wikis, selected_metrics, selected_timeaxis))
+        print('Updating graphs. Selection: [{}, {}, {}, {}]'.format(selected_wikis, selected_metrics, selected_timerange, selected_timeaxis))
 
         relative_time = selected_timeaxis == 'relative'
 
@@ -358,12 +381,15 @@ def bind_callbacks(app):
                     new_graphs[metric_idx][wiki_idx]['visible'] = "legendonly"
 
 
-        # Showing only the selected timerange in the slider.
-        #~ new_timerange = selected_timerange
-        # In case we are displaying calendar dates, then we have to do a conversion:
-        #~ if not relative_time:
-            #~ new_timerange[0] = times_axis[selected_timerange[0]]
-            #~ new_timerange[1] = times_axis[selected_timerange[1]]
+        # Show only the selected timerange in the slider.
+        new_timerange = selected_timerange
+
+        # In case we are displaying calendar dates, then we have to do a
+        # conversion from "relative dates" to the actual 'natural' date.
+        if not relative_time:
+            time_axis = generate_longest_time_axis(data[0], relative_time)
+            new_timerange[0] = time_axis[selected_timerange[0]]
+            new_timerange[1] = time_axis[selected_timerange[1]]
 
         # Dash' graphs:
         dash_graphs = []
@@ -376,7 +402,7 @@ def bind_callbacks(app):
                             'data': new_graphs[i],
                             'layout': {
                                 'title': metric.text,
-                                #~ 'xaxis': {'range': new_timerange }
+                                'xaxis': {'range': new_timerange }
                             }
                         },
                         config={
@@ -389,51 +415,51 @@ def bind_callbacks(app):
 
         return dash_graphs # update_graphs
 
-    """
-    @app.callback(
-        Output('graphs', 'children'),
-        [Input('wikis-selection-dropdown', 'value'),
-        Input('metrics-selection-dropdown', 'value'),
-        Input('dates-slider', 'value'),
-        Input('time-axis-selection', 'value')],
-        [State('intermediate-data', 'children')]
-    )
-    # input -> min_time, max_time, time_axis
-    # output -> dates-slider
-    # IMPORTANT!! -> Make sure output does not activate update_graphs, but both update_slider and update_graphs are activated at same time.
-    def update_slider():
 
-        number_of_marks = int(len(times_axis) / 9);
-        subset_times = times_axis[0::number_of_marks]
-        #~ last_element = times_axis[max_time-1]
+    @app.callback(
+        Output('date-slider-container', 'children'),
+        [Input('intermediate-data', 'children'),
+        Input('time-axis-selection', 'value')]
+    )
+    def update_slider(data_json, selected_timeaxis):
+        """
+        data -- to extract the selected wikis (to obtain the time axis index)
+        time_axis_selection -- To know if we're in relative or calendar dates
+        Returns a dcc.RangeSlider in dates-slider
+        """
+
+        if not data_json:
+            return dcc.RangeSlider(id='dates-slider');
+
+        relative_time = selected_timeaxis == 'relative'
+
+        # get time axis of the oldest one and use it as base numbers for the slider:
+        data = json.loads(data_json)
+        data_wikis_with_first_metric = [ pd.read_json(wiki_time_series, typ="series") for wiki_time_series in data[0] ]
+        time_axis = generate_longest_time_axis(data_wikis_with_first_metric, relative_time)
+
+        min_time = 0
+        max_time = len (time_axis)
+
+        number_of_marks = int(len(time_axis) / 9);
+        subset_times = time_axis[0::number_of_marks]
+
         if relative_time:
             range_slider_marks = {x: str(x) for x in subset_times}
-            #~ range_slider_marks[max_time] = str(last_element)
         else:
             range_slider_marks = {i*number_of_marks: x.strftime('%b %Y') for i, x in enumerate(subset_times)}
-            #~ range_slider_marks[max_time] = last_element.strftime('%b %Y')
 
-        # parts of this should be on main actually:
-        return children=[
-
-                        html.Strong(
-                            'Time interval (months)'),
-
-                        html.Div(
-                            dcc.RangeSlider(
-                                id='dates-slider',
-                                min=min_time,
-                                max=max_time-1,
-                                step=1,
-                                value=[min_time, max_time-1],
-                                allowCross=False,
-                                marks=range_slider_marks,
-                            ),
-                            style={'height': '35px'}
-                        )
-                   ]),
-
-    """
+        return (
+                    dcc.RangeSlider(
+                        id='dates-slider',
+                        min=min_time,
+                        max=max_time-1,
+                        step=1,
+                        value=[min_time, max_time-1],
+                        allowCross=False,
+                        marks=range_slider_marks,
+                    )
+                )
 
     return # bind_callbacks
 
