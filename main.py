@@ -125,7 +125,6 @@ def generate_graphs(data, metrics, wikis, relative_time):
 
     graphs_list = [[None for j in range(len(wikis))] for i in range(len(metrics))]
 
-    #~ global metric_data
     for metric_idx in range(len(metrics)):
         for wiki_idx in range(len(wikis)):
             metric_data = data[metric_idx][wiki_idx]
@@ -163,7 +162,6 @@ def select_time_axis_control(init_relative_time):
 
 
 def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
-    #~ global wikis_df, data, graphs, wikis, metrics, min_time, max_time, relative_time;
 
     wikis = wikis_arg;
     metrics = metrics_arg;
