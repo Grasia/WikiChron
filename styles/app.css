@@ -62,6 +62,17 @@ input[type=checkbox] {
     font-size: 16px;
 }
 
+#time-axis-selection {
+    vertical-align: top;
+    display: inline-block;
+}
+
+.selector {
+    padding: 10px;
+    background: #ededed78;
+    border-radius: 8px;
+}
+
 /* Sidebar */
 
 #side-bar {
