@@ -142,26 +142,57 @@ def generate_graphs(data, metrics, wikis, relative_time):
     return graphs_list
 
 
-def select_time_axis_control(init_relative_time):
-    return (html.Div([
-        html.Div([
-            html.Strong('Time axis:'),
-            dcc.RadioItems(
-                options=[
-                    {'label': 'Months from birth', 'value': 'relative'},
-                    {'label': 'Calendar dates', 'value': 'absolute'}
-                ],
-                value=init_relative_time,
-                id='time-axis-selection'
-            ),
-            ],
-            className="container"
-        ),
-        ])
-    )
-
 
 def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
+
+    #~ def main_header():
+    #~ def select_wikis_and_metrics_control(wikis_dropdown_options, metrics_dropdown_options):
+
+    def select_time_axis_control(init_relative_time):
+        return (html.Div([
+            html.Div([
+                html.Span(
+                    [html.Strong('Time axis:')],
+                    className='three columns',
+                    style={'padding-left': '7.5%'}
+                ),
+                dcc.RadioItems(
+                    options=[
+                        {'label': 'Months from birth', 'value': 'relative'},
+                        {'label': 'Calendar dates', 'value': 'absolute'}
+                    ],
+                    value=init_relative_time,
+                    id='time-axis-selection',
+                    inputStyle={'margin-left': '0px'}
+                ),
+                ],
+                id='time-axis-selection-div',
+                className='selector'
+            ),
+            ],
+            style={'margin-top' : '15px'}
+            )
+        );
+
+
+    def date_slider_control():
+        return (html.Div(id='date-slider-div', className='container',
+                children=[
+                    html.Strong(
+                        'Time interval (months)'),
+
+                    html.Div(id='date-slider-container',
+                        style={'height': '35px'},
+                        children=[
+                            dcc.RangeSlider(
+                                id='dates-slider',
+                        )],
+                    )
+                ],
+                style={'margin-top': '15px'}
+                )
+        );
+
 
     wikis = wikis_arg;
     metrics = metrics_arg;
@@ -185,6 +216,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
         style={'width': '100%'},
         children=[
 
+            #~ main_header()
             html.Div(id='header',
                 className='container',
                 style={'display': 'flex', 'align-items': 'center', 'justify-content': 'space-between'},
@@ -215,65 +247,59 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
             html.Div(id='selection-div',
                 className='container',
                 children=[
-                    html.Div(id='first-row',
-                        className='row',
-                        style={'marginBottom': '15px'},
+                    #~ select_wikis_and_metrics_control(wikis_dropdown_options, metrics_dropdown_options),
+                    html.Div(id='wikis-and-metrics-control',
+                        className='selector',
                         children=[
-                            html.Strong(
-                            'You are comparing:',
-                            className='three columns'
+                            html.Div(id='first-row',
+                                className='row',
+                                style={'marginBottom': '15px'},
+                                children=[
+                                    html.Strong(
+                                    'You are comparing:',
+                                    className='three columns'
+                                    ),
+
+                                    html.Div(id='wikis-selection-div',
+                                        children=[
+                                            html.Span('Wikis:', className='two columns'),
+
+                                            dcc.Dropdown(
+                                                id='wikis-selection-dropdown',
+                                                className='seven columns',
+                                                options=wikis_dropdown_options,
+                                                multi=True,
+                                                searchable=False,
+                                                value=[ option['value'] for option in wikis_dropdown_options ]
+                                            ),
+                                        ]),
+                                ]
                             ),
 
-                    html.Div(id='wikis-selection-div',
-                        children=[
-                            html.Span('Wikis:', className='two columns'),
+                            html.Div(id='metrics-selection-div',
+                                className='row',
+                                children=[
+                                    html.P(className='three columns'),
+                                    html.Span('Metrics:', className='two columns', style={'marginLeft': '0'}),
 
-                            dcc.Dropdown(
-                                id='wikis-selection-dropdown',
-                                className='seven columns',
-                                options=wikis_dropdown_options,
-                                multi=True,
-                                searchable=False,
-                                value=[ option['value'] for option in wikis_dropdown_options ]
-                             ),
-                         ]),
-                    ]),
+                                    dcc.Dropdown(
+                                        id='metrics-selection-dropdown',
+                                        className='seven columns',
+                                        options=metrics_dropdown_options,
+                                        multi=True,
+                                        searchable=False,
+                                        value=[ option['value'] for option in metrics_dropdown_options ]
+                                    ),
+                                 ]),
+                            ],
+                        ),
+                    select_time_axis_control('relative' if relative_time else 'absolute')
+                ]
+             ),
 
-                html.Div(id='metrics-selection-div',
-                        className='row',
-                        children=[
-                            html.P(className='three columns'),
-                            html.Span('Metrics:', className='two columns', style={'marginLeft': '0'}),
-
-                            dcc.Dropdown(
-                                id='metrics-selection-dropdown',
-                                className='seven columns',
-                                options=metrics_dropdown_options,
-                                multi=True,
-                                searchable=False,
-                                value=[ option['value'] for option in metrics_dropdown_options ]
-                            ),
-                         ]),
-
-                select_time_axis_control('relative' if relative_time else 'absolute')
-
-             ]),
+            date_slider_control(),
 
             html.Hr(),
-
-            html.Div(id='date-slider-div', className='container',
-                children=[
-                    html.Strong(
-                        'Time interval (months)'),
-
-                    html.Div(id='date-slider-container',
-                        style={'height': '35px'},
-                        children=[
-                            dcc.RangeSlider(
-                                id='dates-slider',
-                        )],
-                    )
-                ]),
 
             html.Div(id='graphs'),
 

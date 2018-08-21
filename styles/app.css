@@ -67,6 +67,12 @@ input[type=checkbox] {
     display: inline-block;
 }
 
+.selector {
+    padding: 10px;
+    background: #ededed78;
+    border-radius: 8px;
+}
+
 /* Sidebar */
 
 #side-bar {
