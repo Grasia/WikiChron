@@ -129,13 +129,13 @@ def generate_graphs(data, metrics, wikis, relative_time):
         for wiki_idx in range(len(wikis)):
             metric_data = data[metric_idx][wiki_idx]
             if relative_time:
-                x_axis = len(metric_data.index) # relative to the age of the wiki in months
+                x_axis = list(range(len(metric_data.index))) # relative to the age of the wiki in months
             else:
                 x_axis = metric_data.index # natural months
 
             graphs_list[metric_idx][wiki_idx] = go.Scatter(
                                 x=x_axis,
-                                y=metric_data.data,
+                                y=metric_data,
                                 name=wikis[wiki_idx]['name']
                                 )
 
@@ -391,7 +391,7 @@ def bind_callbacks(app):
             for j, wiki in enumerate(wikis):
                 metric_data = new_graphs[i][j]
                 if relative_time:
-                    x_axis = len(metric_data.y) # relative to the age of the wiki in months
+                    x_axis = list(range(len(metric_data.x))) # relative to the age of the wiki in months
                 else:
                     x_axis = metric_data.x # natural months
             new_graphs[i][j].x = x_axis
