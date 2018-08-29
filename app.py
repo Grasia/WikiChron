@@ -33,7 +33,7 @@ import cache
 
 # production or development (DEBUG) flag:
 global debug;
-debug = 'DEBUG' in os.environ
+debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
 # get csv data location (data/ by default)
 global data_dir;

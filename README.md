@@ -76,6 +76,12 @@ For instance, suppose that your data is stored in `/var/tmp`, you might launch w
 
 It will show all the files ending in .csv as wikis available to analyze and plot.
 
+## Development environment
+
+To get errors messages, backtraces and automatic reloading when source code changes, you must set the environment variable: FLASK_ENV to 'development', i.e.: `export FLASK_ENV=development` prior to launch `app.py`.
+
+You can get more information on this in the [Flask documentation](http://flask.pocoo.org/docs/1.0/server/).
+
 # Deployment
 The easiest way is to follow the Dash instructions: https://plot.ly/dash/deployment
 
