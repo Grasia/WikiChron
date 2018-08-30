@@ -465,13 +465,32 @@ def bind_callbacks(app):
         min_time = 0
         max_time = len (time_axis)
 
-        number_of_marks = int(len(time_axis) / 9);
-        subset_times = time_axis[0::number_of_marks]
+        #~ max_number_of_marks = 11
+        if max_time < 12:
+            step_for_marks = 1
+        elif max_time < 33:
+            step_for_marks = 3
+        elif max_time < 66:
+            step_for_marks = 6
+        elif max_time < 121:
+            step_for_marks = 12
+        elif max_time < 264:
+            step_for_marks = 24
+        else:
+            step_for_marks = 36
+
+        # Take dates starting from month 0 in steps defined by step_for_marks
+        #  (which makes sure that you don't have more than 11 points in the slider)
+        #  and skip (don't take) the last mark since we want to put there the last
+        #  month of the wiki.
+        subset_times = time_axis[0:max_time-step_for_marks:step_for_marks]
 
         if relative_time:
             range_slider_marks = {x: str(x) for x in subset_times}
+            range_slider_marks[max_time-1] = max_time-1
         else:
-            range_slider_marks = {i*number_of_marks: x.strftime('%b %Y') for i, x in enumerate(subset_times)}
+            range_slider_marks = {i*step_for_marks: x.strftime('%b %Y') for i, x in enumerate(subset_times)}
+            range_slider_marks[max_time-1] = time_axis[max_time-1].strftime('%b %Y')
 
         return (
                     dcc.RangeSlider(
