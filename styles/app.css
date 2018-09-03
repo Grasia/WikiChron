@@ -67,6 +67,17 @@ input[type=checkbox] {
     display: inline-block;
 }
 
+#slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 15px;
+}
+
+#display-slider-selection {
+    font-size: 12px;
+}
+
 .selector {
     padding: 10px;
     background: #ededed78;
