@@ -305,6 +305,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
 
             html.Div(id='initial-selection', style={'display': 'none'}, children=args_selection),
             html.Div(id='intermediate-data', style={'display': 'none'}),
+            html.Div(id='time-axis', style={'display': 'none'}),
             html.Div(id='ready', style={'display': 'none'})
         ]
     );
@@ -331,12 +332,36 @@ def bind_callbacks(app):
 
 
     @app.callback(
+        Output('time-axis', 'children'),
+        [Input('intermediate-data', 'children'),
+        Input('time-axis-selection', 'value'),
+        ]
+    )
+    def time_axis(data_json, selected_timeaxis):
+        if not data_json:
+            return;
+
+        # get time axis of the oldest one and use it as base numbers for the slider:
+        data = json.loads(data_json)
+        data_wikis_with_first_metric = [ pd.read_json(wiki_time_series, typ="series") for wiki_time_series in data[0] ]
+        time_axis_index = generate_longest_time_axis(data_wikis_with_first_metric, selected_timeaxis == 'relative')
+        #~ time_axis =
+        #~ import pdb; pdb.set_trace()
+        relative_time = selected_timeaxis == 'relative'
+        if relative_time:
+            return json.dumps(time_axis_index)
+        else:
+            return json.dumps(time_axis_index.date.tolist(), default=str)
+
+
+    @app.callback(
         Output('ready', 'children'),
         [Input('wikis-selection-dropdown', 'value'),
         Input('metrics-selection-dropdown', 'value'),
         Input('dates-slider', 'value'),
         Input('time-axis-selection', 'value'),
-        Input('intermediate-data', 'children')],
+        Input('intermediate-data', 'children'),
+        Input('time-axis', 'children')],
     )
     def ready_to_plot_graphs(*args):
         #~ print (args)
@@ -348,7 +373,6 @@ def bind_callbacks(app):
             return 'ready'
 
 
-
     @app.callback(
         Output('graphs', 'children'),
         [Input('ready', 'children')],
@@ -357,11 +381,12 @@ def bind_callbacks(app):
         State('dates-slider', 'value'),
         State('time-axis-selection', 'value'),
         State('intermediate-data', 'children'),
-        State('initial-selection', 'children')]
+        State('initial-selection', 'children'),
+        State('time-axis', 'children')]
     )
     def update_graphs(ready,
             selected_wikis, selected_metrics, selected_timerange,
-            selected_timeaxis, data_json, selection_json):
+            selected_timeaxis, data_json, selection_json, time_axis_json):
 
         if not ready: # waiting for all parameters to be ready
             return;
@@ -411,7 +436,7 @@ def bind_callbacks(app):
         # In case we are displaying calendar dates, then we have to do a
         # conversion from "relative dates" to the actual 'natural' date.
         if not relative_time:
-            time_axis = generate_longest_time_axis(data[0], relative_time)
+            time_axis = pd.DatetimeIndex(json.loads(time_axis_json))
             new_timerange[0] = time_axis[selected_timerange[0]]
             new_timerange[1] = time_axis[selected_timerange[1]]
 
@@ -442,25 +467,31 @@ def bind_callbacks(app):
 
     @app.callback(
         Output('date-slider-container', 'children'),
-        [Input('intermediate-data', 'children'),
-        Input('time-axis-selection', 'value')]
+        [Input('time-axis', 'children'),
+        Input('time-axis-selection', 'value')],
+        [State('dates-slider', 'value')]
     )
-    def update_slider(data_json, selected_timeaxis):
+    def update_slider(time_axis_json, selected_timeaxis, slider_previous_state):
         """
         data -- to extract the selected wikis (to obtain the time axis index)
         time_axis_selection -- To know if we're in relative or calendar dates
         Returns a dcc.RangeSlider in dates-slider
         """
 
-        if not data_json:
+        if not time_axis_json:
             return dcc.RangeSlider(id='dates-slider');
+
+        if slider_previous_state:
+            print('Slider: ({},{})'.format(slider_previous_state[0], slider_previous_state[1]) )
 
         relative_time = selected_timeaxis == 'relative'
 
-        # get time axis of the oldest one and use it as base numbers for the slider:
-        data = json.loads(data_json)
-        data_wikis_with_first_metric = [ pd.read_json(wiki_time_series, typ="series") for wiki_time_series in data[0] ]
-        time_axis = generate_longest_time_axis(data_wikis_with_first_metric, relative_time)
+        time_axis = json.loads(time_axis_json)
+
+        # If using calendar dates, work with pandas DatetimeIndex
+        # (equivalent to Python datetime), so we can use strftime()
+        if not relative_time:
+            time_axis = pd.DatetimeIndex(time_axis)
 
         min_time = 0
         max_time = len (time_axis)
@@ -492,13 +523,18 @@ def bind_callbacks(app):
             range_slider_marks = {i*step_for_marks: x.strftime('%b %Y') for i, x in enumerate(subset_times)}
             range_slider_marks[max_time-1] = time_axis[max_time-1].strftime('%b %Y')
 
+        if slider_previous_state:
+            value = slider_previous_state
+        else:
+            value = [min_time, max_time-1]
+
         return (
                     dcc.RangeSlider(
                         id='dates-slider',
                         min=min_time,
                         max=max_time-1,
                         step=1,
-                        value=[min_time, max_time-1],
+                        value=value,
                         allowCross=False,
                         marks=range_slider_marks,
                     )
