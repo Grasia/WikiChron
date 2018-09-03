@@ -15,6 +15,7 @@ import os
 import time
 from warnings import warn
 import json
+import functools
 
 import dash
 import dash_core_components as dcc
@@ -111,12 +112,18 @@ def load_and_compute_data(wikis, metrics):
 def generate_longest_time_axis(list_of_selected_wikis, relative_time):
     """ Generate time axis index of the oldest wiki """
 
-    # The oldest wiki is the one with longer number of months
-    oldest_wiki = max(list_of_selected_wikis, key = lambda wiki: len(wiki))
+    # Make the union of the Datetime indices of every wiki.
+    # In this way, we get the date range corresponding of the smallest set that
+    #  covers all the lifespan of all wikis.
+    # Otherwise, wikis lifespan for different dates which are not
+    #  contained in the lifespan of the oldest wiki would be lost
+    unified_datetime_index = functools.reduce(
+                            lambda index_1, index_2: index_1.union(index_2),
+                            map(lambda wiki: wiki.index, list_of_selected_wikis))
     if relative_time:
-        time_axis = list(range(0, len(oldest_wiki.index)))
+        time_axis = list(range(0, len(unified_datetime_index)))
     else:
-        time_axis = oldest_wiki.index
+        time_axis = unified_datetime_index
     return time_axis
 
 
@@ -484,9 +491,6 @@ def bind_callbacks(app):
 
         if not time_axis_json:
             return dcc.RangeSlider(id='dates-slider');
-
-        if slider_previous_state:
-            print('Slider: ({},{})'.format(slider_previous_state[0], slider_previous_state[1]) )
 
         relative_time = selected_timeaxis == 'relative'
 
