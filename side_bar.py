@@ -231,14 +231,8 @@ def selection_result_container():
         return html.Div(id='sidebar-selection', style={'display': 'none'})
 
 
-def generate_side_bar(wikis, metrics):
-    return html.Div(id='side-bar',
-        children=[
-            fold_button(),
-            html.Div(id='side-bar-content',
-                children = [
-                    #~ html.Div(style={'backgroundColor': '#072146', 'height': '15px'}),
-                    gdc.Tabs(
+def generate_tabs(wikis, metrics):
+    return ([gdc.Tabs(
                         tabs=[
                             {'value': 'wikis', 'label': 'WIKIS'},
                             {'value': 'metrics', 'label': 'METRICS'}
@@ -270,10 +264,22 @@ def generate_side_bar(wikis, metrics):
                         tabsClassName='side-bar-tab',
                         ),
                     wikis_tab(wikis),
-                    metrics_tab(metrics),
-                    compare_button(),
+                    metrics_tab(metrics)
+            ]);
+
+
+def generate_side_bar(wikis, metrics):
+    return html.Div(id='side-bar',
+        children=[
+            fold_button(),
+            html.Div(id='side-bar-content',
+                children = [
+                    #~ html.Div(style={'backgroundColor': '#072146', 'height': '15px'}),
+                    ] + generate_tabs(wikis, metrics) +
+                    [compare_button(),
                     selection_result_container()
-            ])
+                    ]
+            )
         ]
     );
 
