@@ -7,7 +7,7 @@
 
    Created on: 15-nov-2017
 
-   Copyright 2017 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
+   Copyright 2017-2018 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
 
 from .metrics_generator import generate_metrics, generate_dict_metrics

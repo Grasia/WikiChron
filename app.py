@@ -7,7 +7,7 @@
 
    Created on: 23-oct-2017
 
-   Copyright 2017 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
+   Copyright 2017-2018 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
 # built-in imports
 import flask
