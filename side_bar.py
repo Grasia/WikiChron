@@ -204,7 +204,6 @@ def metrics_tab(metrics):
             style={'color': 'white'},
             id='metrics-tab-container',
             ),
-        #~ select_time_axis_control(),
         ],
         id='metrics-tab'
     );
@@ -232,40 +231,38 @@ def selection_result_container():
 
 
 def generate_tabs(wikis, metrics):
-    return ([gdc.Tabs(
-                        tabs=[
-                            {'value': 'wikis', 'label': 'WIKIS'},
-                            {'value': 'metrics', 'label': 'METRICS'}
-                        ],
-                        value='wikis',
-                        id='side-bar-tabs',
-                        vertical=False,
-                        selectedTabStyle={
-                            'backgroundColor': '#004481',
-                        },
-                        selectedTabClassName='side-bar-selected-tab',
-                        style={
-                            'width': '100%',
-                            'textAlign': 'center',
-                            'border': 'none',
-                        },
-                        tabsStyle={
-                            'width': '50%',
-                            'height': '70px',
-                            'borderRadius': '3px',
-                            'backgroundColor': '#072146',
-                            'borderLeftStyle': 'none',
-                            'borderRightStyle': 'none',
-                            'fontSize': '18px',
-                            'lineHeight': '21px',
-                            'justifyContent': 'center',
-                            'flexDirection': 'column'
-                        },
-                        tabsClassName='side-bar-tab',
-                        ),
-                    wikis_tab(wikis),
-                    metrics_tab(metrics)
-            ]);
+    return (html.Div([
+                gdc.Tabs(
+                    tabs=[
+                        {'value': 'wikis', 'label': 'WIKIS'},
+                        {'value': 'metrics', 'label': 'METRICS'}
+                    ],
+                    value='wikis',
+                    id='side-bar-tabs',
+                    vertical=False,
+                    selectedTabStyle={
+                        'backgroundColor': '#004481',
+                    },
+                    selectedTabClassName='side-bar-selected-tab',
+                    style={
+                        'width': '100%',
+                        'textAlign': 'center',
+                        'border': 'none',
+                    },
+                    tabsStyle={
+                        'backgroundColor': '#072146',
+                        'borderRadius': '3px',
+                        'borderLeftStyle': 'none',
+                        'borderRightStyle': 'none',
+                    },
+                    tabsClassName='side-bar-tab',
+                ),
+                wikis_tab(wikis),
+                metrics_tab(metrics)
+                ],
+            id='side-bar-tabs-container',
+        )
+    );
 
 
 def generate_side_bar(wikis, metrics):
@@ -274,11 +271,10 @@ def generate_side_bar(wikis, metrics):
             fold_button(),
             html.Div(id='side-bar-content',
                 children = [
-                    #~ html.Div(style={'backgroundColor': '#072146', 'height': '15px'}),
-                    ] + generate_tabs(wikis, metrics) +
-                    [compare_button(),
+                    generate_tabs(wikis, metrics),
+                    compare_button(),
                     selection_result_container()
-                    ]
+                ]
             )
         ]
     );

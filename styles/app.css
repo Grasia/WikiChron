@@ -129,11 +129,7 @@ p#fold-button {
 .side-bar-tab {
     width: 50%;
     height: 70px;
-    border-radius: 3px;
-    background-color: #072146;
     color: #49A5E6;
-    border-left-style: none;
-    border-right-style: none;
     font-size: 18px;
     line-height: 21px;
     justify-content: center;
