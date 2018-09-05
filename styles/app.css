@@ -129,15 +129,15 @@ p#fold-button {
 .side-bar-tab {
     width: 50%;
     height: 70px;
-    borderRadius: 3px;
-    backgroundColor: #072146;
+    border-radius: 3px;
+    background-color: #072146;
     color: #49A5E6;
-    borderLeftStyle: none;
-    borderRightStyle: none;
-    fontSize: 18px;
-    lineHeight: 21px;
-    justifyContent: center;
-    flexDirection: column;
+    border-left-style: none;
+    border-right-style: none;
+    font-size: 18px;
+    line-height: 21px;
+    justify-content: center;
+    flex-direction: column;
 }
 
 .side-bar-tab:hover {
