@@ -3,7 +3,7 @@
 """
    side_bar.py
 
-   Descp:
+   Descp: The left side bar of WikiChron.
 
    Created on: 25-oct-2017
 
