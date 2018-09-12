@@ -152,8 +152,82 @@ def generate_graphs(data, metrics, wikis, relative_time):
 
 def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
 
-    #~ def main_header():
-    #~ def select_wikis_and_metrics_control(wikis_dropdown_options, metrics_dropdown_options):
+    def main_header():
+        return (html.Div(id='header',
+                className='container',
+                style={'display': 'flex', 'align-items': 'center', 'justify-content': 'space-between'},
+                children=[
+                    html.Span(
+                        html.Img(src='assets/logo_wikichron.svg'),
+                        id='tool-title'),
+                    html.Div([
+                        html.A(
+                            html.Img(src='assets/documentation.svg'),
+                            href='https://github.com/Grasia/WikiChron/wiki/',
+                            target='_blank',
+                            className='icon',
+                            title='Documentation'
+                        ),
+                        html.A(
+                            html.Img(src='assets/ico-github.svg'),
+                            href='https://github.com/Grasia/WikiChron',
+                            target='_blank',
+                            className='icon',
+                            title='Github repo'
+                        ),
+                    ],
+                    id='icons-bar')
+            ])
+        );
+
+
+    def select_wikis_and_metrics_control(wikis_dropdown_options, metrics_dropdown_options):
+        return (html.Div(id='wikis-and-metrics-control',
+                        className='selector',
+                        children=[
+                            html.Div(id='first-row',
+                                className='row',
+                                style={'marginBottom': '15px'},
+                                children=[
+                                    html.Strong(
+                                    'You are comparing:',
+                                    className='three columns'
+                                    ),
+
+                                    html.Div(id='wikis-selection-div',
+                                        children=[
+                                            html.Span('Wikis:', className='two columns'),
+
+                                            dcc.Dropdown(
+                                                id='wikis-selection-dropdown',
+                                                className='seven columns',
+                                                options=wikis_dropdown_options,
+                                                multi=True,
+                                                searchable=False,
+                                                value=[ option['value'] for option in wikis_dropdown_options ]
+                                            ),
+                                        ]),
+                                ]
+                            ),
+
+                            html.Div(id='metrics-selection-div',
+                                className='row',
+                                children=[
+                                    html.P(className='three columns'),
+                                    html.Span('Metrics:', className='two columns', style={'marginLeft': '0'}),
+
+                                    dcc.Dropdown(
+                                        id='metrics-selection-dropdown',
+                                        className='seven columns',
+                                        options=metrics_dropdown_options,
+                                        multi=True,
+                                        searchable=False,
+                                        value=[ option['value'] for option in metrics_dropdown_options ]
+                                    ),
+                                 ]),
+                            ],
+                        )
+                );
 
     def select_time_axis_control(init_relative_time):
         return (html.Div([
@@ -227,83 +301,14 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
         style={'width': '100%'},
         children=[
 
-            #~ main_header()
-            html.Div(id='header',
-                className='container',
-                style={'display': 'flex', 'align-items': 'center', 'justify-content': 'space-between'},
-                children=[
-                    html.Span(
-                        html.Img(src='assets/logo_wikichron.svg'),
-                        id='tool-title'),
-                    html.Div([
-                        html.A(
-                            html.Img(src='assets/documentation.svg'),
-                            href='https://github.com/Grasia/WikiChron/wiki/',
-                            target='_blank',
-                            className='icon',
-                            title='Documentation'
-                        ),
-                        html.A(
-                            html.Img(src='assets/ico-github.svg'),
-                            href='https://github.com/Grasia/WikiChron',
-                            target='_blank',
-                            className='icon',
-                            title='Github repo'
-                        ),
-                    ],
-                    id='icons-bar')
-            ]),
+            main_header(),
+
             html.Hr(),
 
             html.Div(id='selection-div',
                 className='container',
                 children=[
-                    #~ select_wikis_and_metrics_control(wikis_dropdown_options, metrics_dropdown_options),
-                    html.Div(id='wikis-and-metrics-control',
-                        className='selector',
-                        children=[
-                            html.Div(id='first-row',
-                                className='row',
-                                style={'marginBottom': '15px'},
-                                children=[
-                                    html.Strong(
-                                    'You are comparing:',
-                                    className='three columns'
-                                    ),
-
-                                    html.Div(id='wikis-selection-div',
-                                        children=[
-                                            html.Span('Wikis:', className='two columns'),
-
-                                            dcc.Dropdown(
-                                                id='wikis-selection-dropdown',
-                                                className='seven columns',
-                                                options=wikis_dropdown_options,
-                                                multi=True,
-                                                searchable=False,
-                                                value=[ option['value'] for option in wikis_dropdown_options ]
-                                            ),
-                                        ]),
-                                ]
-                            ),
-
-                            html.Div(id='metrics-selection-div',
-                                className='row',
-                                children=[
-                                    html.P(className='three columns'),
-                                    html.Span('Metrics:', className='two columns', style={'marginLeft': '0'}),
-
-                                    dcc.Dropdown(
-                                        id='metrics-selection-dropdown',
-                                        className='seven columns',
-                                        options=metrics_dropdown_options,
-                                        multi=True,
-                                        searchable=False,
-                                        value=[ option['value'] for option in metrics_dropdown_options ]
-                                    ),
-                                 ]),
-                            ],
-                        ),
+                    select_wikis_and_metrics_control(wikis_dropdown_options, metrics_dropdown_options),
                     select_time_axis_control('relative' if relative_time else 'absolute')
                 ]
              ),
