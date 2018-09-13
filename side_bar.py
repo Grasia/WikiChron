@@ -27,7 +27,7 @@ from lib.metrics.metric import MetricCategory
 global app;
 
 global debug;
-debug = 'DEBUG' in os.environ
+debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
 global metric_categories_order;
 metric_categories_order = [MetricCategory.PAGES, MetricCategory.EDITIONS, MetricCategory.USERS, MetricCategory.RATIOS, MetricCategory.DISTRIBUTION]
