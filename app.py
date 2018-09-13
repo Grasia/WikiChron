@@ -159,14 +159,6 @@ def init_app_callbacks():
                 wikis = [ available_wikis_dict[wiki_url] for wiki_url in selection['wikis'] ]
                 metrics = [ available_metrics_dict[metric] for metric in selection['metrics'] ]
 
-                #~ time = selection['time']
-                #~ if time == 'relative':
-                    #~ relative_time = True
-                #~ else:
-                    #~ relative_time = False
-
-                # set relative time by default if it's a multiwiki selection
-                # set absolute time by default if it's a monowiki selection
                 relative_time = len(wikis) > 1;
                 return main.generate_main_content(wikis, metrics, relative_time)
 
