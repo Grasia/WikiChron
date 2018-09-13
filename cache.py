@@ -15,4 +15,4 @@ def set_up_cache(app, debug):
             'CACHE_REDIS_URL': REDIS_URL
         })
     else:
-        cache = Cache(app.server, config={'CACHE_TYPE': 'null'})
+        cache = Cache(app.server, config={'CACHE_TYPE': 'simple'})

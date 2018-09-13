@@ -69,7 +69,6 @@ def clean_up_bot_activity(df, wiki):
         return df
 
 
-@cache.memoize()
 def compute_data(dataframes, metrics):
     """ Load analyzed data by every metric for every dataframe and store it in data[] """
 
@@ -89,6 +88,8 @@ def compute_data(dataframes, metrics):
     return wiki_by_metrics
 
 
+# returns data[metric][wiki]
+@cache.memoize()
 def load_and_compute_data(wikis, metrics):
 
     # load data from csvs:
@@ -108,7 +109,7 @@ def load_and_compute_data(wikis, metrics):
     print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
     return data
 
-
+@cache.memoize()
 def generate_longest_time_axis(list_of_selected_wikis, relative_time):
     """ Generate time axis index of the oldest wiki """
 
@@ -320,7 +321,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
             html.Div(id='graphs'),
 
             html.Div(id='initial-selection', style={'display': 'none'}, children=args_selection),
-            html.Div(id='intermediate-data', style={'display': 'none'}),
+            html.Div(id='signal-data', style={'display': 'none'}),
             html.Div(id='time-axis', style={'display': 'none'}),
             html.Div(id='ready', style={'display': 'none'})
         ]
@@ -329,10 +330,11 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
 def bind_callbacks(app):
 
     @app.callback(
-        Output('intermediate-data', 'children'),
+        Output('signal-data', 'children'),
         [Input('initial-selection', 'children')]
         )
     def start_main(selection_json):
+        # get wikis x metrics selection
         selection = json.loads(selection_json)
         wikis = selection['wikis']
         metrics = [ lib.metrics_dict[metric] for metric in selection['metrics'] ]
@@ -344,26 +346,33 @@ def bind_callbacks(app):
         print( '\tof the following metrics: {}'.format( metric_names ))
         data = load_and_compute_data(wikis, metrics)
         print('<-- Done retrieving and computing data!')
-        return json.dumps(data, default=lambda ts: ts.to_json(force_ascii=False))
+        return 'True' #UPDATE DASH-RENDERER
 
 
     @app.callback(
         Output('time-axis', 'children'),
-        [Input('intermediate-data', 'children'),
+        [Input('signal-data', 'children'),
         Input('time-axis-selection', 'value'),
-        ]
+        ],
+        [State('initial-selection', 'children'),]
     )
-    def time_axis(data_json, selected_timeaxis):
-        if not data_json:
+    def time_axis(signal, selected_timeaxis, selection_json):
+        if not signal:
             return;
 
-        # get time axis of the oldest one and use it as base numbers for the slider:
-        data = json.loads(data_json)
-        data_wikis_with_first_metric = [ pd.read_json(wiki_time_series, typ="series") for wiki_time_series in data[0] ]
-        time_axis_index = generate_longest_time_axis(data_wikis_with_first_metric, selected_timeaxis == 'relative')
-        #~ time_axis =
-        #~ import pdb; pdb.set_trace()
         relative_time = selected_timeaxis == 'relative'
+
+        # get wikis x metrics selection
+        selection = json.loads(selection_json)
+        wikis = selection['wikis']
+        metrics = [ lib.metrics_dict[metric] for metric in selection['metrics'] ]
+
+        data = load_and_compute_data(wikis, metrics)
+
+        # get time axis of the oldest one and use it as base numbers for the slider:
+        time_axis_index = generate_longest_time_axis([ wiki for wiki in data[0] ],
+                                                    relative_time)
+
         if relative_time:
             return json.dumps(time_axis_index)
         else:
@@ -376,7 +385,7 @@ def bind_callbacks(app):
         Input('metrics-selection-dropdown', 'value'),
         Input('dates-slider', 'value'),
         Input('time-axis-selection', 'value'),
-        Input('intermediate-data', 'children'),
+        Input('signal-data', 'children'),
         Input('time-axis', 'children')],
     )
     def ready_to_plot_graphs(*args):
@@ -396,25 +405,22 @@ def bind_callbacks(app):
         State('metrics-selection-dropdown', 'value'),
         State('dates-slider', 'value'),
         State('time-axis-selection', 'value'),
-        State('intermediate-data', 'children'),
         State('initial-selection', 'children'),
         State('time-axis', 'children')]
     )
     def update_graphs(ready,
             selected_wikis, selected_metrics, selected_timerange,
-            selected_timeaxis, data_json, selection_json, time_axis_json):
+            selected_timeaxis, selection_json, time_axis_json):
 
         if not ready: # waiting for all parameters to be ready
             return;
 
+        # get wikis x metrics selection
         selection = json.loads(selection_json)
         wikis = selection['wikis']
         metrics = [ lib.metrics_dict[metric] for metric in selection['metrics'] ]
 
-        data = json.loads(data_json)
-        for i in range(len(data)):
-            for j in range(len(data[i])):
-                data[i][j] = pd.read_json(data[i][j], typ="series")
+        data = load_and_compute_data(wikis, metrics)
 
         print('Updating graphs. Selection: [{}, {}, {}, {}]'.format(selected_wikis, selected_metrics, selected_timerange, selected_timeaxis))
 
