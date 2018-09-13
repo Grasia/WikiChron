@@ -346,7 +346,7 @@ def bind_callbacks(app):
         print( '\tof the following metrics: {}'.format( metric_names ))
         data = load_and_compute_data(wikis, metrics)
         print('<-- Done retrieving and computing data!')
-        return 'True' #UPDATE DASH-RENDERER
+        return True
 
 
     @app.callback(
