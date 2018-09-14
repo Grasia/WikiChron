@@ -58,12 +58,19 @@ def generate_wikis_accordion_id(category_name):
     return '{}-wikis'.format(category_name);
 
 
-def wikis_tab(wikis):
+def wikis_tab(wikis, selected_wikis):
 
     def group_wikis_in_accordion(wikis, wikis_category, wiki_category_descp,
-                                selected_wikis=[]):
+                                selected_wikis_value=[]):
 
         wikis_options = [{'label': wiki['name'], 'value': wiki['url']} for wiki in wikis]
+
+        wikis_values_checklist = list(filter(lambda x : x == selected_wikis_value[0], map(lambda w: w['url'], wikis )))
+        # Do this with a filter for two lists. check itertools.join like sets??
+        wikis_values_checklist = list( set(selected_wikis_value) & set(map(lambda w: w['url'], wikis )) )
+
+        print ([w['url']for w in wikis])
+        print (wikis_values_checklist)
 
         return gdc.Accordion(
                     id=generate_wikis_accordion_id(wikis_category) + '-accordion',
@@ -79,7 +86,7 @@ def wikis_tab(wikis):
                             id=generate_wikis_accordion_id(wikis_category),
                             className='aside-checklist-category',
                             options=wikis_options,
-                            values=selected_wikis,
+                            values=wikis_values_checklist,
                             labelClassName='aside-checklist-option',
                             labelStyle={'display': 'block'}
                         )
@@ -108,7 +115,8 @@ def wikis_tab(wikis):
                 group_wikis_in_accordion(
                     wikis_by_category[category],
                     category,
-                    category_descp
+                    category_descp,
+                    selected_wikis
                 )
             )
 
@@ -134,7 +142,7 @@ def generate_metrics_accordion_id(category_name):
     return '{}-metrics'.format(category_name);
 
 
-def metrics_tab(metrics):
+def metrics_tab(metrics, selected_metrics):
 
     def group_metrics_in_accordion(metrics, metric_category):
 
@@ -225,7 +233,7 @@ def compare_button():
     )
 
 
-def generate_tabs(wikis, metrics):
+def generate_tabs(wikis, metrics, selected_wikis, selected_metrics):
     return (html.Div([
                 gdc.Tabs(
                     tabs=[
@@ -252,21 +260,21 @@ def generate_tabs(wikis, metrics):
                     },
                     tabsClassName='side-bar-tab',
                 ),
-                wikis_tab(wikis),
-                metrics_tab(metrics)
+                wikis_tab(wikis, selected_wikis),
+                metrics_tab(metrics, selected_metrics)
                 ],
             id='side-bar-tabs-container',
         )
     );
 
 
-def generate_side_bar(wikis, metrics):
+def generate_side_bar(wikis, metrics, pre_selected_wikis = [], pre_selected_metrics = []):
     return html.Div(id='side-bar',
         children=[
             fold_button(),
             html.Div(id='side-bar-content',
                 children = [
-                    generate_tabs(wikis, metrics),
+                    generate_tabs(wikis, metrics, pre_selected_wikis, pre_selected_metrics),
                     compare_button(),
                 ]
             )

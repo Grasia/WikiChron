@@ -220,22 +220,36 @@ def init_app_callbacks():
         [State('side-bar', 'children'),
         State('url', 'search')],
         )
-    def generate_side_bar_onload(pathname, sidebar, selection_json):
+    def generate_side_bar_onload(pathname, sidebar, query_string):
         print('¡¡¡¡¡¡¡Dash Loaded!!!!!')
 
         if pathname:
             print('This is path: {}'.format(pathname))
 
         if not sidebar:
+
             if pathname:
-                #~ print('This is the selection: {}'.format(selection_json))
-                #~ selection = json.loads(selection_json)
 
-                print('This is path: {}'.format(pathname))
+                try: # check well formatted query strings and avoid empty query strings
+                    # Attention! query_string includes heading ? symbol
+                    selection = parse_qs(query_string[1:], strict_parsing=True)
+                except ValueError:
+                    print('Invalid format for query string')
+                    return None
 
-                return side_bar.generate_side_bar(available_wikis, available_metrics)
+                print('generate_side_bar_onload: This is the selection: {}'.format(selection))
+
+                if not selection:
+                    return side_bar.generate_side_bar(available_wikis, available_metrics)
+                else: # we have selection of wikis and metrics in the query string, so sidebar should start with those
+                    pre_selected_wikis = selection['wikis']
+                    pre_selected_metrics = selection['metrics']
+                    print(pre_selected_wikis)
+                    return side_bar.generate_side_bar(available_wikis, available_metrics,
+                                                    pre_selected_wikis, pre_selected_metrics)
             else:
-                return 'None';
+                return None;
+
         else:
             raise PreventUpdate("sidebar must be generated only once");
 
