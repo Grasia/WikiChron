@@ -14,7 +14,7 @@ import json
 import os
 import itertools
 from warnings import warn
-from urllib.parse import parse_qs, urlencode
+from urllib.parse import urlencode
 
 import dash
 from dash.dependencies import Input, Output, State
@@ -60,7 +60,8 @@ def generate_wikis_accordion_id(category_name):
 
 def wikis_tab(wikis):
 
-    def group_wikis_in_accordion(wikis, wikis_category, wiki_category_descp):
+    def group_wikis_in_accordion(wikis, wikis_category, wiki_category_descp,
+                                selected_wikis=[]):
 
         wikis_options = [{'label': wiki['name'], 'value': wiki['url']} for wiki in wikis]
 
@@ -78,7 +79,7 @@ def wikis_tab(wikis):
                             id=generate_wikis_accordion_id(wikis_category),
                             className='aside-checklist-category',
                             options=wikis_options,
-                            values=[],
+                            values=selected_wikis,
                             labelClassName='aside-checklist-option',
                             labelStyle={'display': 'block'}
                         )
@@ -224,13 +225,6 @@ def compare_button():
     )
 
 
-def selection_result_container():
-    if debug:
-        return html.Div(id='sidebar-selection', style={'display': 'block'})
-    else:
-        return html.Div(id='sidebar-selection', style={'display': 'none'})
-
-
 def generate_tabs(wikis, metrics):
     return (html.Div([
                 gdc.Tabs(
@@ -274,7 +268,6 @@ def generate_side_bar(wikis, metrics):
                 children = [
                     generate_tabs(wikis, metrics),
                     compare_button(),
-                    selection_result_container()
                 ]
             )
         ]
@@ -282,29 +275,6 @@ def generate_side_bar(wikis, metrics):
 
 
 def bind_callbacks(app):
-
-    @app.callback(
-        Output('sidebar-selection', 'children'),
-        [Input('url', 'search')]
-        )
-    def write_query_string_in_hidden_selection_div(query_string):
-
-        #~ if not (query_string): # check query string is not empty
-            #~ return None
-
-        try: # check well formatted query strings and avoid empty query strings
-            # Attention! query_string includes heading ? symbol
-            selection = parse_qs(query_string[1:], strict_parsing=True)
-        except ValueError:
-            print('Invalid format for query string')
-            return None
-
-        #~ if not selection:
-            #~ return None
-
-        if debug:
-            print('selection: {}'.format(selection))
-        return (json.dumps(selection))
 
 
     @app.callback(Output('wikis-tab', 'style'),

@@ -17,13 +17,15 @@ import json
 import glob
 import time
 from warnings import warn
+from urllib.parse import parse_qs
 
 # Dash framework imports
 import dash
 import dash_core_components as dcc
 import grasia_dash_components as gdc
 import dash_html_components as html
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
 import plotly.graph_objs as go
 
 # Local imports:
@@ -116,9 +118,14 @@ def set_layout():
         style={'display': 'flex'},
         children=[
             dcc.Location(id='url', refresh=False),
+            html.Div(id='on-load', style={'display': 'none'}),
+
             #~ generate_tabs_bar(tabs),
-            side_bar.generate_side_bar(available_wikis, available_metrics),
-            html.Div(id='main-root', style={'flex': 'auto'})
+            #~ side_bar.generate_side_bar(available_wikis, available_metrics),
+            html.Div(id='side-bar'),
+            html.Div(id='main-root', style={'flex': 'auto'}),
+            html.Div(id='sidebar-selection', style={'display': 'none'}),
+            html.Div(id='test', style={'display': 'none'})
         ]
     );
 
@@ -150,9 +157,11 @@ def generate_welcome_page():
 
 def init_app_callbacks():
 
+
     @app.callback(Output('main-root', 'children'),
     [Input('sidebar-selection', 'children')])
     def load_main_graphs(selection_json):
+        print('This is the selection: {}'.format(selection_json))
         if selection_json:
             selection = json.loads(selection_json)
 
@@ -168,8 +177,63 @@ def init_app_callbacks():
                 warn('Warning: You have to select at least one wiki and at least one metric')
                 return generate_welcome_page()
         else:
-            warn('There is no selection of wikis & metrics yet')
+            print('There is no selection of wikis & metrics yet')
             return generate_welcome_page()
+
+
+    @app.callback(
+        Output('sidebar-selection', 'children'),
+        [Input('url', 'search')]
+        )
+    def write_query_string_in_hidden_selection_div(query_string):
+
+        #~ if not (query_string): # check query string is not empty
+            #~ return None
+
+        try: # check well formatted query strings and avoid empty query strings
+            # Attention! query_string includes heading ? symbol
+            selection = parse_qs(query_string[1:], strict_parsing=True)
+        except ValueError:
+            print('Invalid format for query string')
+            return None
+
+        #~ if not selection:
+            #~ return None
+
+        if debug:
+            print('selection to write in query string: {}'.format(selection))
+        return (json.dumps(selection))
+
+
+    @app.callback(Output('side-bar', 'children'),
+        [Input('url', 'pathname')],
+        [State('side-bar', 'children'),
+        State('url', 'search')],
+        )
+    def generate_side_bar_onload(pathname, sidebar, selection_json):
+        print('¡¡¡¡¡¡¡Dash Loaded!!!!!')
+
+        if pathname:
+            print('This is path: {}'.format(pathname))
+
+        if not sidebar and pathname and selection_json:
+            print('This is the selection: {}'.format(selection_json))
+            #~ selection = json.loads(selection_json)
+
+            print('This is path: {}'.format(pathname))
+
+            return side_bar.generate_side_bar(available_wikis, available_metrics)
+        else:
+            raise PreventUpdate("sidebar must be generated only once and \
+as long as the app has been loaded.");
+
+    return
+
+
+#~ from flask import Flask,redirect
+#~ @app.server.route('/')
+#~ def redirect_index_to_app():
+    #~ return redirect("/app", code=302)
 
 
 def start_js_server():

@@ -1,6 +1,7 @@
 function setEvents() {
     console.log('Setting js events...');
     document.getElementById('fold-img-container').onclick = hideSideBar;
+    console.log('All Set!');
 }
 
 function hideSideBar() {
