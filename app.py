@@ -115,6 +115,7 @@ def set_layout():
     return html.Div(id='app-layout',
         style={'display': 'flex'},
         children=[
+            dcc.Location(id='url', refresh=False),
             #~ generate_tabs_bar(tabs),
             side_bar.generate_side_bar(available_wikis, available_metrics),
             html.Div(id='main-root', style={'flex': 'auto'})

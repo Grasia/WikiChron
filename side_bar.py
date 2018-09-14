@@ -14,6 +14,7 @@ import json
 import os
 import itertools
 from warnings import warn
+from urllib.parse import parse_qs, urlencode
 
 import dash
 from dash.dependencies import Input, Output, State
@@ -282,6 +283,30 @@ def generate_side_bar(wikis, metrics):
 
 def bind_callbacks(app):
 
+    @app.callback(
+        Output('sidebar-selection', 'children'),
+        [Input('url', 'search')]
+        )
+    def write_query_string_in_hidden_selection_div(query_string):
+
+        #~ if not (query_string): # check query string is not empty
+            #~ return None
+
+        try: # check well formatted query strings and avoid empty query strings
+            # Attention! query_string includes heading ? symbol
+            selection = parse_qs(query_string[1:], strict_parsing=True)
+        except ValueError:
+            print('Invalid format for query string')
+            return None
+
+        #~ if not selection:
+            #~ return None
+
+        if debug:
+            print('selection: {}'.format(selection))
+        return (json.dumps(selection))
+
+
     @app.callback(Output('wikis-tab', 'style'),
                    [Input('side-bar-tabs', 'value')])
     def update_wikis_tab_visible(tab_selection):
@@ -299,7 +324,7 @@ def bind_callbacks(app):
             return {'display':'none'}
 
     # Note that we need one State parameter for each category metric that is created dynamically
-    @app.callback(Output('sidebar-selection', 'children'),
+    @app.callback(Output('url', 'search'),
                [Input('compare-button', 'n_clicks')],
                 [State(generate_wikis_accordion_id(name), 'values') for name in wikis_categories_order] +
                 [State(generate_metrics_accordion_id(name), 'values') for name in category_names]
@@ -312,7 +337,9 @@ def bind_callbacks(app):
             metrics_selection = list(itertools.chain.from_iterable(metrics_selection_l)) # reduce a list of lists into one list.
             wikis_selection = wikis_selection_large + wikis_selection_big + wikis_selection_medium + wikis_selection_small
             selection = { 'wikis': wikis_selection, 'metrics': metrics_selection}
-            return json.dumps(selection)
+
+            query_str = urlencode(selection,  doseq=True)
+            return '?' + query_str;
 
 
     # simple callbacks to enable / disable 'compare' button
