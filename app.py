@@ -17,7 +17,7 @@ import json
 import glob
 import time
 from warnings import warn
-from urllib.parse import parse_qs
+from urllib.parse import parse_qs, urljoin
 
 # Dash framework imports
 import dash
@@ -45,8 +45,10 @@ data_dir = os.environ['WIKICHRON_DATA_DIR']
 
 # global app config
 port = 8880;
+wikichron_base_pathname = '/app/';
+
 #~ global app;
-app = dash.Dash('WikiChron')
+app = dash.Dash('WikiChron', url_base_pathname=wikichron_base_pathname)
 app.title = 'WikiChron'
 server = app.server
 app.config['suppress_callback_exceptions'] = True
@@ -59,6 +61,14 @@ local_available_js = ['app.js', 'piwik.js']
 
 # list of js files to import from the app (either local or remote)
 to_import_js = ['js/app.js']
+
+
+
+# Redirects index to /app
+@app.server.route('/')
+def redirect_index_to_app():
+    return flask.redirect(wikichron_base_pathname, code=302)
+
 
 if debug:
     print('=> You are in DEBUG MODE <=')
@@ -216,31 +226,30 @@ def init_app_callbacks():
         if pathname:
             print('This is path: {}'.format(pathname))
 
-        if not sidebar and pathname and selection_json:
-            print('This is the selection: {}'.format(selection_json))
-            #~ selection = json.loads(selection_json)
+        if not sidebar:
+            if pathname:
+                #~ print('This is the selection: {}'.format(selection_json))
+                #~ selection = json.loads(selection_json)
 
-            print('This is path: {}'.format(pathname))
+                print('This is path: {}'.format(pathname))
 
-            return side_bar.generate_side_bar(available_wikis, available_metrics)
+                return side_bar.generate_side_bar(available_wikis, available_metrics)
+            else:
+                return 'None';
         else:
-            raise PreventUpdate("sidebar must be generated only once and \
-as long as the app has been loaded.");
+            raise PreventUpdate("sidebar must be generated only once");
 
     return
 
 
-#~ from flask import Flask,redirect
-#~ @app.server.route('/')
-#~ def redirect_index_to_app():
-    #~ return redirect("/app", code=302)
-
-
 def start_js_server():
-    static_js_route = '/js/'
-    js_directory = os.path.dirname(os.path.realpath(__file__)) + static_js_route
+    static_js_route = 'js/'
+    js_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                 static_js_route)
 
-    @app.server.route('{}<js_path>.js'.format(static_js_route))
+    server_js_route = urljoin(wikichron_base_pathname, static_js_route)
+
+    @app.server.route(urljoin(server_js_route, '<js_path>.js'))
     def serve_local_js(js_path):
         js_name = '{}.js'.format(js_path)
         if js_name not in local_available_js:
@@ -249,7 +258,7 @@ def start_js_server():
                     js_path
                 )
             )
-        print (js_name)
+        print ('Returning: {}'.format(js_name))
         return flask.send_from_directory(js_directory, js_name)
 
     return
@@ -272,7 +281,7 @@ def start_css_server():
                     css_path
                 )
             )
-        print (css_name)
+        print ('Returning: {}'.format(css_name))
         return flask.send_from_directory(css_directory, css_name)
 
 
@@ -280,24 +289,31 @@ def start_css_server():
         app.css.append_css({"external_url": "/styles/{}".format(stylesheet)})
     return
 
+
 def start_image_server():
-    static_image_route = '/assets/'
-    image_directory = os.path.dirname(os.path.realpath(__file__)) + static_image_route
+    static_image_route = 'assets/'
+    server_image_route = urljoin(wikichron_base_pathname, static_image_route)
+
+    image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                    static_image_route)
     list_of_images = [os.path.basename(x) for x in glob.glob('{}*.svg'.format(image_directory))]
 
     # Add a static image route that serves images from desktop
     # Be *very* careful here - you don't want to serve arbitrary files
     # from your computer or server
-    @app.server.route('{}<image_path>.svg'.format(static_image_route))
+    @app.server.route(urljoin(server_image_route, '<image_path>.svg'))
     def serve_image(image_path):
         image_name = '{}.svg'.format(image_path)
         if image_name not in list_of_images:
             raise Exception('"{}" is excluded from the allowed static files'.format(image_path))
+
+        print ('Returning: {}'.format(image_name))
         return flask.send_from_directory(image_directory, image_name)
 
     @server.route('/favicon.ico')
     def favicon():
         return flask.send_from_directory(image_directory, 'favicon.png')
+
 
 print('¡¡¡¡ Welcome to WikiChron ' + __version__ +' !!!!')
 print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
@@ -313,7 +329,7 @@ start_js_server()
 
 # Layout of the app:
 # imports
-from tabs_bar import generate_tabs_bar
+#~ from tabs_bar import generate_tabs_bar
 import side_bar
 import main
 
