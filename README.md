@@ -1,5 +1,5 @@
 # WikiChron
-Data visualization tool for wikis.
+WikiChron is a web tool for the analysis and visualization of the evolution of wiki online communities.
 
 It analyzes the history dump of a wiki and give you nice graphs plotting that data.
 
