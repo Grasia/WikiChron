@@ -287,7 +287,8 @@ def generate_side_bar(wikis, metrics, pre_selected_wikis = [], pre_selected_metr
                     generate_tabs(wikis, metrics, pre_selected_wikis, pre_selected_metrics),
                     compare_button(),
                 ]
-            )
+            ),
+            gdc.Import(src='js/side_bar.js')
         ]
     );
 

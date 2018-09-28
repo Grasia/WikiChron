@@ -57,10 +57,10 @@ app.scripts.config.serve_locally = True
 cache.set_up_cache(app, debug)
 
 # js files being serve by this server:
-local_available_js = ['app.js', 'piwik.js']
+local_available_js = ['side_bar.js', 'piwik.js']
 
 # list of js files to import from the app (either local or remote)
-to_import_js = ['js/app.js']
+to_import_js = []
 
 
 
@@ -125,7 +125,10 @@ def set_up_app(app):
 
 
 def set_external_imports():
-    return [gdc.Import(src=src) for src in to_import_js];
+    if not to_import_js:
+        return [gdc.Import()]
+    else:
+        return [gdc.Import(src=src) for src in to_import_js];
 
 
 def set_layout():
