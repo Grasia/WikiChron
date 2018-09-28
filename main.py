@@ -159,18 +159,18 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
                 style={'display': 'flex', 'align-items': 'center', 'justify-content': 'space-between'},
                 children=[
                     html.Span(
-                        html.Img(src='assets/logo_wikichron.svg'),
+                        html.Img(src='/assets/logo_wikichron.svg'),
                         id='tool-title'),
                     html.Div([
                         html.A(
-                            html.Img(src='assets/documentation.svg'),
+                            html.Img(src='/assets/documentation.svg'),
                             href='https://github.com/Grasia/WikiChron/wiki/',
                             target='_blank',
                             className='icon',
                             title='Documentation'
                         ),
                         html.A(
-                            html.Img(src='assets/ico-github.svg'),
+                            html.Img(src='/assets/ico-github.svg'),
                             href='https://github.com/Grasia/WikiChron',
                             target='_blank',
                             className='icon',

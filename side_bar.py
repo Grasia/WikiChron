@@ -358,26 +358,6 @@ if __name__ == '__main__':
 
     app.scripts.config.serve_locally = True
 
-    def start_image_server():
-        import flask
-        import glob
-
-        static_image_route = '/assets/'
-        image_directory = os.path.dirname(os.path.realpath(__file__)) + static_image_route
-        list_of_images = [os.path.basename(x) for x in glob.glob('{}*.svg'.format(image_directory))]
-
-        # Add a static image route that serves images from desktop
-        # Be *very* careful here - you don't want to serve arbitrary files
-        # from your computer or server
-        @app.server.route('{}<image_path>.svg'.format(static_image_route))
-        def serve_image(image_path):
-            image_name = '{}.svg'.format(image_path)
-            if image_name not in list_of_images:
-                raise Exception('"{}" is excluded from the allowed static files'.format(image_path))
-            return flask.send_from_directory(image_directory, image_name)
-
-    start_image_server()
-
 #~ app.scripts.append_script({ "external_url": "app.js"})
 
     from lib.interface import get_available_metrics

@@ -93,10 +93,10 @@ app.css.append_css({"external_url": "https://use.fontawesome.com/releases/v5.0.9
 #~ app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
 
 #~ tabs = [
-    #~ {'value': 1, 'icon': 'assets/white_graphic.svg'},
-    #~ {'value': 2, 'icon': 'assets/white_graphic.svg'},
-    #~ {'value': 3, 'icon': 'assets/white_graphic.svg'},
-    #~ {'value': 4, 'icon': 'assets/white_graphic.svg'},
+    #~ {'value': 1, 'icon': '/assets/white_graphic.svg'},
+    #~ {'value': 2, 'icon': '/assets/white_graphic.svg'},
+    #~ {'value': 3, 'icon': '/assets/white_graphic.svg'},
+    #~ {'value': 4, 'icon': '/assets/white_graphic.svg'},
 #~ ]
 
 def get_available_wikis(data_dir):
@@ -152,10 +152,10 @@ def generate_welcome_page():
     return html.Div(id='welcome-container',
             className='container',
             children=[
-                html.Div(html.Img(src='assets/line-graph.svg')),
+                html.Div(html.Img(src='/assets/line-graph.svg')),
                 html.H2([
                     'Welcome to ',
-                    html.Span(html.Img(src='assets/tipo-logo.svg'),
+                    html.Span(html.Img(src='/assets/tipo-logo.svg'),
                         style={'vertical-align': 'text-bottom'}
                     )]
                 ),
@@ -304,31 +304,6 @@ def start_css_server():
     return
 
 
-def start_image_server():
-    static_image_route = 'assets/'
-    server_image_route = urljoin(wikichron_base_pathname, static_image_route)
-
-    image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                    static_image_route)
-    list_of_images = [os.path.basename(x) for x in glob.glob('{}*.svg'.format(image_directory))]
-
-    # Add a static image route that serves images from desktop
-    # Be *very* careful here - you don't want to serve arbitrary files
-    # from your computer or server
-    @app.server.route(urljoin(server_image_route, '<image_path>.svg'))
-    def serve_image(image_path):
-        image_name = '{}.svg'.format(image_path)
-        if image_name not in list_of_images:
-            raise Exception('"{}" is excluded from the allowed static files'.format(image_path))
-
-        print ('Returning: {}'.format(image_name))
-        return flask.send_from_directory(image_directory, image_name)
-
-    @server.route('/favicon.ico')
-    def favicon():
-        return flask.send_from_directory(image_directory, 'favicon.png')
-
-
 print('¡¡¡¡ Welcome to WikiChron ' + __version__ +' !!!!')
 print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
 print('Using version ' + gdc.__version__ + ' of Grasia Dash Components.')
@@ -337,7 +312,6 @@ print('Using version ' + html.__version__ + ' of Dash Html Components.')
 time_start_app = time.perf_counter()
 
 # start auxiliar servers:
-start_image_server()
 start_css_server()
 start_js_server()
 
