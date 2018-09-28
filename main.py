@@ -284,7 +284,8 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
     metrics = metrics_arg;
     relative_time = relative_time_arg;
 
-    print ('Generating main...')
+    if debug:
+        print ('Generating main...')
 
     wikis_dropdown_options = []
     for index, wiki in enumerate(wikis):
@@ -394,7 +395,8 @@ def bind_callbacks(app):
             #~ print('not ready!')
             return None
         else:
-            print('Ready to plot graphs!')
+            if debug:
+                print('Ready to plot graphs!')
             return 'ready'
 
 
@@ -422,7 +424,8 @@ def bind_callbacks(app):
 
         data = load_and_compute_data(wikis, metrics)
 
-        print('Updating graphs. Selection: [{}, {}, {}, {}]'.format(selected_wikis, selected_metrics, selected_timerange, selected_timeaxis))
+        if debug:
+            print('Updating graphs. Selection: [{}, {}, {}, {}]'.format(selected_wikis, selected_metrics, selected_timerange, selected_timeaxis))
 
         relative_time = selected_timeaxis == 'relative'
 

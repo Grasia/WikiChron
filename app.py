@@ -176,7 +176,9 @@ def init_app_callbacks():
     @app.callback(Output('main-root', 'children'),
     [Input('sidebar-selection', 'children')])
     def load_main_graphs(selection_json):
-        print('This is the selection: {}'.format(selection_json))
+        if debug:
+            print('load_main_graphs: This is the selection: {}'.format(selection_json))
+
         if selection_json:
             selection = json.loads(selection_json)
 
@@ -187,13 +189,9 @@ def init_app_callbacks():
 
                 return main.generate_main_content(wikis, metrics, relative_time)
 
-            else:
-                # User should never reach here, but who knows what an evil mind can do :/
-                warn('Warning: You have to select at least one wiki and at least one metric')
-                return generate_welcome_page()
-        else:
-            print('There is no selection of wikis & metrics yet')
-            return generate_welcome_page()
+
+        print('There is not a valid wikis & metrics tuple selection yet for plotting any graph')
+        return generate_welcome_page()
 
 
     @app.callback(
@@ -222,10 +220,11 @@ def init_app_callbacks():
         State('url', 'search')],
         )
     def generate_side_bar_onload(pathname, sidebar, query_string):
-        print('--> Dash App Loaded!')
 
         if pathname:
-            print('This is current path: {}'.format(pathname))
+            if debug:
+                print('--> Dash App Loaded!')
+                print('\tAnd this is current path: {}'.format(pathname))
 
         if not sidebar:
 
@@ -234,7 +233,8 @@ def init_app_callbacks():
                 # Attention! query_string includes heading ? symbol
                 selection = parse_qs(query_string[1:])
 
-                print('generate_side_bar_onload: This is the selection: {}'.format(selection))
+                if debug:
+                    print('generate_side_bar_onload: This is the selection: {}'.format(selection))
 
                 # we might have selection of wikis and metrics in the query string,
                 #  so sidebar should start with those selected.
@@ -248,7 +248,7 @@ def init_app_callbacks():
                 return None;
 
         else:
-            raise PreventUpdate("sidebar must be generated only once");
+            raise PreventUpdate("Sidebar already generated! sidebar must be generated only once");
 
     return
 

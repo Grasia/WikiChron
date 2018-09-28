@@ -156,9 +156,6 @@ def metrics_tab(metrics, selected_metrics):
         else:
             metrics_values_checklist = []
 
-        print ([m.code for m in metrics])
-        print (metrics_values_checklist)
-
         metrics_help = [ html.Div(
                             children = html.I(className="fa fa-info-circle checklist-info"),
                             className='one column aside-checklist-option',
@@ -346,7 +343,6 @@ def bind_callbacks(app):
         if wikis_selection and metrics_selection:
             return False
         else:
-            warn('You have to select at least one wiki and at least one metric')
             return True
     return
 
