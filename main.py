@@ -357,7 +357,7 @@ def bind_callbacks(app):
         [State('initial-selection', 'children'),]
     )
     def time_axis(signal, selected_timeaxis, selection_json):
-        if not signal:
+        if not signal or not selected_timeaxis or not selection_json:
             return '';
 
         relative_time = selected_timeaxis == 'relative'
@@ -571,7 +571,7 @@ def bind_callbacks(app):
         slider_selection -- Selection of the Range Slider.
         """
 
-        if not slider_selection:
+        if not slider_selection or not time_axis_json:
             return;
 
         relative_time = selected_timeaxis == 'relative'

@@ -104,11 +104,16 @@ def get_available_wikis(data_dir):
     wikis = json.load(wikis_json_file)
     return wikis
 
+# other global variables:
 
 available_metrics = lib.get_available_metrics()
 available_metrics_dict = lib.metrics_dict
 available_wikis = get_available_wikis(data_dir)
 available_wikis_dict = {wiki['url']: wiki for wiki in available_wikis}
+selection_params = {'wikis', 'metrics'}
+
+
+######### BEGIN CODE ###########################################################
 
 
 def set_up_app(app):
@@ -200,15 +205,11 @@ def init_app_callbacks():
         #~ if not (query_string): # check query string is not empty
             #~ return None
 
-        try: # check well formatted query strings and avoid empty query strings
-            # Attention! query_string includes heading ? symbol
-            selection = parse_qs(query_string[1:], strict_parsing=True)
-        except ValueError:
-            print('write_query_string_in_hidden_selection_div: Invalid format for query string. Selection set to empty')
-            return ''
+        # Attention! query_string includes heading ? symbol
+        query_string_dict = parse_qs(query_string[1:])
 
-        #~ if not selection:
-            #~ return None
+        # get only the parameters we are interested in for the side_bar selection
+        selection = { param: query_string_dict[param] for param in set(query_string_dict.keys()) & selection_params }
 
         if debug:
             print('selection to write in query string: {}'.format(selection))
@@ -230,12 +231,8 @@ def init_app_callbacks():
 
             if pathname:
 
-                try: # check well formatted query strings and avoid empty query strings
-                    # Attention! query_string includes heading ? symbol
-                    selection = parse_qs(query_string[1:], strict_parsing=True)
-                except ValueError:
-                    print('generate_side_bar_onload: Invalid format for query string')
-                    return side_bar.generate_side_bar(available_wikis, available_metrics)
+                # Attention! query_string includes heading ? symbol
+                selection = parse_qs(query_string[1:])
 
                 print('generate_side_bar_onload: This is the selection: {}'.format(selection))
 
