@@ -29,7 +29,7 @@ import lib.interface as lib
 from cache import cache
 
 global debug
-debug = 'DEBUG' in os.environ
+debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
 # get csv data location (data/ by default)
 global data_dir;
@@ -284,7 +284,8 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
     metrics = metrics_arg;
     relative_time = relative_time_arg;
 
-    print ('Generating main...')
+    if debug:
+        print ('Generating main...')
 
     wikis_dropdown_options = []
     for index, wiki in enumerate(wikis):
@@ -357,8 +358,8 @@ def bind_callbacks(app):
         [State('initial-selection', 'children'),]
     )
     def time_axis(signal, selected_timeaxis, selection_json):
-        if not signal:
-            return;
+        if not signal or not selected_timeaxis or not selection_json:
+            return '';
 
         relative_time = selected_timeaxis == 'relative'
 
@@ -394,7 +395,8 @@ def bind_callbacks(app):
             #~ print('not ready!')
             return None
         else:
-            print('Ready to plot graphs!')
+            if debug:
+                print('Ready to plot graphs!')
             return 'ready'
 
 
@@ -422,7 +424,8 @@ def bind_callbacks(app):
 
         data = load_and_compute_data(wikis, metrics)
 
-        print('Updating graphs. Selection: [{}, {}, {}, {}]'.format(selected_wikis, selected_metrics, selected_timerange, selected_timeaxis))
+        if debug:
+            print('Updating graphs. Selection: [{}, {}, {}, {}]'.format(selected_wikis, selected_metrics, selected_timerange, selected_timeaxis))
 
         relative_time = selected_timeaxis == 'relative'
 
@@ -571,7 +574,7 @@ def bind_callbacks(app):
         slider_selection -- Selection of the Range Slider.
         """
 
-        if not slider_selection:
+        if not slider_selection or not time_axis_json:
             return;
 
         relative_time = selected_timeaxis == 'relative'

@@ -17,13 +17,15 @@ import json
 import glob
 import time
 from warnings import warn
+from urllib.parse import parse_qs, urljoin
 
 # Dash framework imports
 import dash
 import dash_core_components as dcc
 import grasia_dash_components as gdc
 import dash_html_components as html
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
 import plotly.graph_objs as go
 
 # Local imports:
@@ -43,8 +45,10 @@ data_dir = os.environ['WIKICHRON_DATA_DIR']
 
 # global app config
 port = 8880;
+wikichron_base_pathname = '/app/';
+
 #~ global app;
-app = dash.Dash('WikiChron')
+app = dash.Dash('WikiChron', url_base_pathname=wikichron_base_pathname)
 app.title = 'WikiChron'
 server = app.server
 app.config['suppress_callback_exceptions'] = True
@@ -57,6 +61,14 @@ local_available_js = ['app.js', 'piwik.js']
 
 # list of js files to import from the app (either local or remote)
 to_import_js = ['js/app.js']
+
+
+
+# Redirects index to /app
+@app.server.route('/')
+def redirect_index_to_app():
+    return flask.redirect(wikichron_base_pathname, code=302)
+
 
 if debug:
     print('=> You are in DEBUG MODE <=')
@@ -92,11 +104,16 @@ def get_available_wikis(data_dir):
     wikis = json.load(wikis_json_file)
     return wikis
 
+# other global variables:
 
 available_metrics = lib.get_available_metrics()
 available_metrics_dict = lib.metrics_dict
 available_wikis = get_available_wikis(data_dir)
 available_wikis_dict = {wiki['url']: wiki for wiki in available_wikis}
+selection_params = {'wikis', 'metrics'}
+
+
+######### BEGIN CODE ###########################################################
 
 
 def set_up_app(app):
@@ -115,9 +132,15 @@ def set_layout():
     return html.Div(id='app-layout',
         style={'display': 'flex'},
         children=[
+            dcc.Location(id='url', refresh=False),
+            html.Div(id='on-load', style={'display': 'none'}),
+
             #~ generate_tabs_bar(tabs),
-            side_bar.generate_side_bar(available_wikis, available_metrics),
-            html.Div(id='main-root', style={'flex': 'auto'})
+            #~ side_bar.generate_side_bar(available_wikis, available_metrics),
+            html.Div(id='side-bar'),
+            html.Div(id='main-root', style={'flex': 'auto'}),
+            html.Div(id='sidebar-selection', style={'display': 'none'}),
+            html.Div(id='test', style={'display': 'none'})
         ]
     );
 
@@ -149,41 +172,95 @@ def generate_welcome_page():
 
 def init_app_callbacks():
 
+
     @app.callback(Output('main-root', 'children'),
     [Input('sidebar-selection', 'children')])
     def load_main_graphs(selection_json):
+        if debug:
+            print('load_main_graphs: This is the selection: {}'.format(selection_json))
+
         if selection_json:
             selection = json.loads(selection_json)
 
-            if selection['wikis'] and selection['metrics']:
+            if selection.get('wikis') and selection.get('metrics'):
                 wikis = [ available_wikis_dict[wiki_url] for wiki_url in selection['wikis'] ]
                 metrics = [ available_metrics_dict[metric] for metric in selection['metrics'] ]
+                relative_time = len(wikis) > 1
 
-                #~ time = selection['time']
-                #~ if time == 'relative':
-                    #~ relative_time = True
-                #~ else:
-                    #~ relative_time = False
-
-                # set relative time by default if it's a multiwiki selection
-                # set absolute time by default if it's a monowiki selection
-                relative_time = len(wikis) > 1;
                 return main.generate_main_content(wikis, metrics, relative_time)
 
-            else:
-                # User should never reach here, but who knows what an evil mind can do :/
-                warn('Warning: You have to select at least one wiki and at least one metric')
-                return generate_welcome_page()
+
+        print('There is not a valid wikis & metrics tuple selection yet for plotting any graph')
+        return generate_welcome_page()
+
+
+    @app.callback(
+        Output('sidebar-selection', 'children'),
+        [Input('url', 'search')]
+        )
+    def write_query_string_in_hidden_selection_div(query_string):
+
+        #~ if not (query_string): # check query string is not empty
+            #~ return None
+
+        # Attention! query_string includes heading ? symbol
+        query_string_dict = parse_qs(query_string[1:])
+
+        # get only the parameters we are interested in for the side_bar selection
+        selection = { param: query_string_dict[param] for param in set(query_string_dict.keys()) & selection_params }
+
+        if debug:
+            print('selection to write in query string: {}'.format(selection))
+        return (json.dumps(selection))
+
+
+    @app.callback(Output('side-bar', 'children'),
+        [Input('url', 'pathname')],
+        [State('side-bar', 'children'),
+        State('url', 'search')],
+        )
+    def generate_side_bar_onload(pathname, sidebar, query_string):
+
+        if pathname:
+            if debug:
+                print('--> Dash App Loaded!')
+                print('\tAnd this is current path: {}'.format(pathname))
+
+        if not sidebar:
+
+            if pathname:
+
+                # Attention! query_string includes heading ? symbol
+                selection = parse_qs(query_string[1:])
+
+                if debug:
+                    print('generate_side_bar_onload: This is the selection: {}'.format(selection))
+
+                # we might have selection of wikis and metrics in the query string,
+                #  so sidebar should start with those selected.
+                pre_selected_wikis   = selection['wikis'] if 'wikis' in selection else []
+                pre_selected_metrics = selection['metrics'] if 'metrics' in selection else []
+
+                return side_bar.generate_side_bar(available_wikis, available_metrics,
+                                                    pre_selected_wikis, pre_selected_metrics)
+
+            else: # if app hasn't loaded the path yet, wait to load sidebar later
+                return None;
+
         else:
-            warn('There is no selection of wikis & metrics yet')
-            return generate_welcome_page()
+            raise PreventUpdate("Sidebar already generated! sidebar must be generated only once");
+
+    return
 
 
 def start_js_server():
-    static_js_route = '/js/'
-    js_directory = os.path.dirname(os.path.realpath(__file__)) + static_js_route
+    static_js_route = 'js/'
+    js_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                 static_js_route)
 
-    @app.server.route('{}<js_path>.js'.format(static_js_route))
+    server_js_route = urljoin(wikichron_base_pathname, static_js_route)
+
+    @app.server.route(urljoin(server_js_route, '<js_path>.js'))
     def serve_local_js(js_path):
         js_name = '{}.js'.format(js_path)
         if js_name not in local_available_js:
@@ -192,7 +269,7 @@ def start_js_server():
                     js_path
                 )
             )
-        print (js_name)
+        print ('Returning: {}'.format(js_name))
         return flask.send_from_directory(js_directory, js_name)
 
     return
@@ -215,7 +292,7 @@ def start_css_server():
                     css_path
                 )
             )
-        print (css_name)
+        print ('Returning: {}'.format(css_name))
         return flask.send_from_directory(css_directory, css_name)
 
 
@@ -223,24 +300,31 @@ def start_css_server():
         app.css.append_css({"external_url": "/styles/{}".format(stylesheet)})
     return
 
+
 def start_image_server():
-    static_image_route = '/assets/'
-    image_directory = os.path.dirname(os.path.realpath(__file__)) + static_image_route
+    static_image_route = 'assets/'
+    server_image_route = urljoin(wikichron_base_pathname, static_image_route)
+
+    image_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                    static_image_route)
     list_of_images = [os.path.basename(x) for x in glob.glob('{}*.svg'.format(image_directory))]
 
     # Add a static image route that serves images from desktop
     # Be *very* careful here - you don't want to serve arbitrary files
     # from your computer or server
-    @app.server.route('{}<image_path>.svg'.format(static_image_route))
+    @app.server.route(urljoin(server_image_route, '<image_path>.svg'))
     def serve_image(image_path):
         image_name = '{}.svg'.format(image_path)
         if image_name not in list_of_images:
             raise Exception('"{}" is excluded from the allowed static files'.format(image_path))
+
+        print ('Returning: {}'.format(image_name))
         return flask.send_from_directory(image_directory, image_name)
 
     @server.route('/favicon.ico')
     def favicon():
         return flask.send_from_directory(image_directory, 'favicon.png')
+
 
 print('¡¡¡¡ Welcome to WikiChron ' + __version__ +' !!!!')
 print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
@@ -256,7 +340,7 @@ start_js_server()
 
 # Layout of the app:
 # imports
-from tabs_bar import generate_tabs_bar
+#~ from tabs_bar import generate_tabs_bar
 import side_bar
 import main
 

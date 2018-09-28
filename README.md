@@ -66,7 +66,7 @@ Note that the required information in this file will change in the future. Stay 
 ## Run the application
 Use: `python3 app.py`
 
-The webapp will be locally available in http://127.0.0.1:8000/
+The webapp will be locally available in http://127.0.0.1:8000/app/
 
 Optionally, you can specify a directory with the csv data of the wikis you want to analyze with the environment variable: `WIKICHRON_DATA_DIR`.
 

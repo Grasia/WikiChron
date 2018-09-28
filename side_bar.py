@@ -14,6 +14,7 @@ import json
 import os
 import itertools
 from warnings import warn
+from urllib.parse import urlencode
 
 import dash
 from dash.dependencies import Input, Output, State
@@ -27,7 +28,7 @@ from lib.metrics.metric import MetricCategory
 global app;
 
 global debug;
-debug = 'DEBUG' in os.environ
+debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
 global metric_categories_order;
 metric_categories_order = [MetricCategory.PAGES, MetricCategory.EDITIONS, MetricCategory.USERS, MetricCategory.RATIOS, MetricCategory.DISTRIBUTION]
@@ -57,11 +58,20 @@ def generate_wikis_accordion_id(category_name):
     return '{}-wikis'.format(category_name);
 
 
-def wikis_tab(wikis):
+def wikis_tab(wikis, selected_wikis):
 
-    def group_wikis_in_accordion(wikis, wikis_category, wiki_category_descp):
+    def group_wikis_in_accordion(wikis, wikis_category, wiki_category_descp,
+                                selected_wikis_value):
 
         wikis_options = [{'label': wiki['name'], 'value': wiki['url']} for wiki in wikis]
+
+        # add pre-selected wikis (likely, from url query string),
+        # if any, to the accordion which is going to be created.
+        if selected_wikis_value:
+            wikis_values_checklist = list( set(selected_wikis_value) & set(map(lambda w: w['url'], wikis )) ) # take values (url) of pre-selected wikis for this wiki category
+        else:
+            wikis_values_checklist = []
+
 
         return gdc.Accordion(
                     id=generate_wikis_accordion_id(wikis_category) + '-accordion',
@@ -77,7 +87,7 @@ def wikis_tab(wikis):
                             id=generate_wikis_accordion_id(wikis_category),
                             className='aside-checklist-category',
                             options=wikis_options,
-                            values=[],
+                            values=wikis_values_checklist,
                             labelClassName='aside-checklist-option',
                             labelStyle={'display': 'block'}
                         )
@@ -106,7 +116,8 @@ def wikis_tab(wikis):
                 group_wikis_in_accordion(
                     wikis_by_category[category],
                     category,
-                    category_descp
+                    category_descp,
+                    selected_wikis
                 )
             )
 
@@ -132,11 +143,19 @@ def generate_metrics_accordion_id(category_name):
     return '{}-metrics'.format(category_name);
 
 
-def metrics_tab(metrics):
+def metrics_tab(metrics, selected_metrics):
 
-    def group_metrics_in_accordion(metrics, metric_category):
-
+    def group_metrics_in_accordion(metrics, metric_category,
+                                    selected_metrics_value):
         metrics_options = [{'label': metric.text, 'value': metric.code} for metric in metrics]
+
+        # add pre-selected metrics (likely, from url query string),
+        # if any, to the accordion which is going to be created.
+        if selected_metrics_value:
+            metrics_values_checklist = list( set(selected_metrics_value) & set(map(lambda m: m.code, metrics )) ) # take values of pre-selected wikis for this wiki category
+        else:
+            metrics_values_checklist = []
+
         metrics_help = [ html.Div(
                             children = html.I(className="fa fa-info-circle checklist-info"),
                             className='one column aside-checklist-option',
@@ -154,14 +173,14 @@ def metrics_tab(metrics):
                     itemClassName='metric-category-label',
                     childrenClassName='metric-category-list',
                     accordionFixedWidth='300',
-                    defaultCollapsed=True,
+                    defaultCollapsed=False if metrics_values_checklist else True,
                     children=
                         html.Div(
                             [dcc.Checklist(
                                 id=generate_metrics_accordion_id(metric_category.name),
                                 className='aside-checklist-category eleven columns',
                                 options=metrics_options,
-                                values=[],
+                                values=metrics_values_checklist,
                                 labelClassName='aside-checklist-option',
                                 labelStyle={'display': 'block'}
                             ),
@@ -187,7 +206,8 @@ def metrics_tab(metrics):
         metrics_checklist.append(
                 group_metrics_in_accordion(
                     metrics_by_category[category],
-                    category
+                    category,
+                    selected_metrics
                 )
             )
 
@@ -223,14 +243,7 @@ def compare_button():
     )
 
 
-def selection_result_container():
-    if debug:
-        return html.Div(id='sidebar-selection', style={'display': 'block'})
-    else:
-        return html.Div(id='sidebar-selection', style={'display': 'none'})
-
-
-def generate_tabs(wikis, metrics):
+def generate_tabs(wikis, metrics, selected_wikis, selected_metrics):
     return (html.Div([
                 gdc.Tabs(
                     tabs=[
@@ -257,23 +270,22 @@ def generate_tabs(wikis, metrics):
                     },
                     tabsClassName='side-bar-tab',
                 ),
-                wikis_tab(wikis),
-                metrics_tab(metrics)
+                wikis_tab(wikis, selected_wikis),
+                metrics_tab(metrics, selected_metrics)
                 ],
             id='side-bar-tabs-container',
         )
     );
 
 
-def generate_side_bar(wikis, metrics):
+def generate_side_bar(wikis, metrics, pre_selected_wikis = [], pre_selected_metrics = []):
     return html.Div(id='side-bar',
         children=[
             fold_button(),
             html.Div(id='side-bar-content',
                 children = [
-                    generate_tabs(wikis, metrics),
+                    generate_tabs(wikis, metrics, pre_selected_wikis, pre_selected_metrics),
                     compare_button(),
-                    selection_result_container()
                 ]
             )
         ]
@@ -281,6 +293,7 @@ def generate_side_bar(wikis, metrics):
 
 
 def bind_callbacks(app):
+
 
     @app.callback(Output('wikis-tab', 'style'),
                    [Input('side-bar-tabs', 'value')])
@@ -299,7 +312,7 @@ def bind_callbacks(app):
             return {'display':'none'}
 
     # Note that we need one State parameter for each category metric that is created dynamically
-    @app.callback(Output('sidebar-selection', 'children'),
+    @app.callback(Output('url', 'search'),
                [Input('compare-button', 'n_clicks')],
                 [State(generate_wikis_accordion_id(name), 'values') for name in wikis_categories_order] +
                 [State(generate_metrics_accordion_id(name), 'values') for name in category_names]
@@ -312,7 +325,9 @@ def bind_callbacks(app):
             metrics_selection = list(itertools.chain.from_iterable(metrics_selection_l)) # reduce a list of lists into one list.
             wikis_selection = wikis_selection_large + wikis_selection_big + wikis_selection_medium + wikis_selection_small
             selection = { 'wikis': wikis_selection, 'metrics': metrics_selection}
-            return json.dumps(selection)
+
+            query_str = urlencode(selection,  doseq=True)
+            return '?' + query_str;
 
 
     # simple callbacks to enable / disable 'compare' button
@@ -328,7 +343,6 @@ def bind_callbacks(app):
         if wikis_selection and metrics_selection:
             return False
         else:
-            warn('You have to select at least one wiki and at least one metric')
             return True
     return
 
