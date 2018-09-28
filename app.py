@@ -47,8 +47,14 @@ data_dir = os.environ['WIKICHRON_DATA_DIR']
 port = 8880;
 wikichron_base_pathname = '/app/';
 
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', # dash stylesheet
+                        #~ 'https://codepen.io/akronix/pen/BJNgRB.css',  # fontawesome css
+]
+
 #~ global app;
-app = dash.Dash('WikiChron', url_base_pathname=wikichron_base_pathname)
+app = dash.Dash('WikiChron',
+                external_stylesheets=external_stylesheets,
+                url_base_pathname=wikichron_base_pathname)
 app.title = 'WikiChron'
 server = app.server
 app.config['suppress_callback_exceptions'] = True
@@ -82,15 +88,18 @@ else:
         #"external_url": "https://codepen.io/akronix/pen/rpQgqQ.js"
     #~ })
 
+# uncoment for offline serving of css:
 #~ app.css.config.serve_locally = True
 
-#~ app.css.append_css({'external_url': 'dash.css'})
-#~ app.css.append_css({'external_url': 'app.css'})
-app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
-app.css.append_css({"external_url": "https://codepen.io/akronix/pen/BJNgRB.css"})
-app.css.append_css({"external_url": "https://use.fontawesome.com/releases/v5.0.9/css/all.css"})
+# uncoment for offline serving of js:
+#~ app.scripts.config.serve_locally = True
 
+# In case we ever need font awesome icons:
+#~ app.css.append_css({"external_url": "https://use.fontawesome.com/releases/v5.0.9/css/all.css"})
+
+# skeleton.css: (Already included in dash stylesheet)
 #~ app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
+
 
 #~ tabs = [
     #~ {'value': 1, 'icon': '/assets/white_graphic.svg'},
@@ -98,6 +107,7 @@ app.css.append_css({"external_url": "https://use.fontawesome.com/releases/v5.0.9
     #~ {'value': 3, 'icon': '/assets/white_graphic.svg'},
     #~ {'value': 4, 'icon': '/assets/white_graphic.svg'},
 #~ ]
+
 
 def get_available_wikis(data_dir):
     wikis_json_file = open(os.path.join(data_dir, 'wikis.json'))
@@ -278,32 +288,6 @@ def start_js_server():
     return
 
 
-def start_css_server():
-    # Add a static styles route that serves css from desktop
-    # Be *very* careful here - you don't want to serve arbitrary files
-    # from your computer or server
-    static_css_route = '/styles/'
-    css_directory = os.path.dirname(os.path.realpath(__file__)) + static_css_route
-    stylesheets = ['app.css']
-
-    @app.server.route('{}<css_path>.css'.format(static_css_route))
-    def serve_stylesheet(css_path):
-        css_name = '{}.css'.format(css_path)
-        if css_name not in stylesheets:
-            raise Exception(
-                '"{}" is excluded from the allowed static files'.format(
-                    css_path
-                )
-            )
-        print ('Returning: {}'.format(css_name))
-        return flask.send_from_directory(css_directory, css_name)
-
-
-    for stylesheet in stylesheets:
-        app.css.append_css({"external_url": "/styles/{}".format(stylesheet)})
-    return
-
-
 print('¡¡¡¡ Welcome to WikiChron ' + __version__ +' !!!!')
 print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
 print('Using version ' + gdc.__version__ + ' of Grasia Dash Components.')
@@ -312,7 +296,6 @@ print('Using version ' + html.__version__ + ' of Dash Html Components.')
 time_start_app = time.perf_counter()
 
 # start auxiliar servers:
-start_css_server()
 start_js_server()
 
 # Layout of the app:
