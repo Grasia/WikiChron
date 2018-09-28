@@ -175,11 +175,11 @@ def init_app_callbacks():
         if selection_json:
             selection = json.loads(selection_json)
 
-            if selection['wikis'] and selection['metrics']:
+            if selection.get('wikis') and selection.get('metrics'):
                 wikis = [ available_wikis_dict[wiki_url] for wiki_url in selection['wikis'] ]
                 metrics = [ available_metrics_dict[metric] for metric in selection['metrics'] ]
+                relative_time = len(wikis) > 1
 
-                relative_time = len(wikis) > 1;
                 return main.generate_main_content(wikis, metrics, relative_time)
 
             else:
@@ -204,8 +204,8 @@ def init_app_callbacks():
             # Attention! query_string includes heading ? symbol
             selection = parse_qs(query_string[1:], strict_parsing=True)
         except ValueError:
-            print('Invalid format for query string')
-            return None
+            print('write_query_string_in_hidden_selection_div: Invalid format for query string. Selection set to empty')
+            return ''
 
         #~ if not selection:
             #~ return None
@@ -221,10 +221,10 @@ def init_app_callbacks():
         State('url', 'search')],
         )
     def generate_side_bar_onload(pathname, sidebar, query_string):
-        print('¡¡¡¡¡¡¡Dash Loaded!!!!!')
+        print('--> Dash App Loaded!')
 
         if pathname:
-            print('This is path: {}'.format(pathname))
+            print('This is current path: {}'.format(pathname))
 
         if not sidebar:
 
@@ -234,20 +234,20 @@ def init_app_callbacks():
                     # Attention! query_string includes heading ? symbol
                     selection = parse_qs(query_string[1:], strict_parsing=True)
                 except ValueError:
-                    print('Invalid format for query string')
-                    return None
+                    print('generate_side_bar_onload: Invalid format for query string')
+                    return side_bar.generate_side_bar(available_wikis, available_metrics)
 
                 print('generate_side_bar_onload: This is the selection: {}'.format(selection))
 
-                if not selection:
-                    return side_bar.generate_side_bar(available_wikis, available_metrics)
-                else: # we have selection of wikis and metrics in the query string, so sidebar should start with those
-                    pre_selected_wikis = selection['wikis']
-                    pre_selected_metrics = selection['metrics']
-                    print(pre_selected_wikis)
-                    return side_bar.generate_side_bar(available_wikis, available_metrics,
+                # we might have selection of wikis and metrics in the query string,
+                #  so sidebar should start with those selected.
+                pre_selected_wikis   = selection['wikis'] if 'wikis' in selection else []
+                pre_selected_metrics = selection['metrics'] if 'metrics' in selection else []
+
+                return side_bar.generate_side_bar(available_wikis, available_metrics,
                                                     pre_selected_wikis, pre_selected_metrics)
-            else:
+
+            else: # if app hasn't loaded the path yet, wait to load sidebar later
                 return None;
 
         else:

@@ -358,7 +358,7 @@ def bind_callbacks(app):
     )
     def time_axis(signal, selected_timeaxis, selection_json):
         if not signal:
-            return;
+            return '';
 
         relative_time = selected_timeaxis == 'relative'
 

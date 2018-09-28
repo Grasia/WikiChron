@@ -61,16 +61,17 @@ def generate_wikis_accordion_id(category_name):
 def wikis_tab(wikis, selected_wikis):
 
     def group_wikis_in_accordion(wikis, wikis_category, wiki_category_descp,
-                                selected_wikis_value=[]):
+                                selected_wikis_value):
 
         wikis_options = [{'label': wiki['name'], 'value': wiki['url']} for wiki in wikis]
 
-        wikis_values_checklist = list(filter(lambda x : x == selected_wikis_value[0], map(lambda w: w['url'], wikis )))
-        # Do this with a filter for two lists. check itertools.join like sets??
-        wikis_values_checklist = list( set(selected_wikis_value) & set(map(lambda w: w['url'], wikis )) )
+        # add pre-selected wikis (likely, from url query string),
+        # if any, to the accordion which is going to be created.
+        if selected_wikis_value:
+            wikis_values_checklist = list( set(selected_wikis_value) & set(map(lambda w: w['url'], wikis )) ) # take values (url) of pre-selected wikis for this wiki category
+        else:
+            wikis_values_checklist = []
 
-        print ([w['url']for w in wikis])
-        print (wikis_values_checklist)
 
         return gdc.Accordion(
                     id=generate_wikis_accordion_id(wikis_category) + '-accordion',
@@ -144,9 +145,20 @@ def generate_metrics_accordion_id(category_name):
 
 def metrics_tab(metrics, selected_metrics):
 
-    def group_metrics_in_accordion(metrics, metric_category):
-
+    def group_metrics_in_accordion(metrics, metric_category,
+                                    selected_metrics_value):
         metrics_options = [{'label': metric.text, 'value': metric.code} for metric in metrics]
+
+        # add pre-selected metrics (likely, from url query string),
+        # if any, to the accordion which is going to be created.
+        if selected_metrics_value:
+            metrics_values_checklist = list( set(selected_metrics_value) & set(map(lambda m: m.code, metrics )) ) # take values of pre-selected wikis for this wiki category
+        else:
+            metrics_values_checklist = []
+
+        print ([m.code for m in metrics])
+        print (metrics_values_checklist)
+
         metrics_help = [ html.Div(
                             children = html.I(className="fa fa-info-circle checklist-info"),
                             className='one column aside-checklist-option',
@@ -164,14 +176,14 @@ def metrics_tab(metrics, selected_metrics):
                     itemClassName='metric-category-label',
                     childrenClassName='metric-category-list',
                     accordionFixedWidth='300',
-                    defaultCollapsed=True,
+                    defaultCollapsed=False if metrics_values_checklist else True,
                     children=
                         html.Div(
                             [dcc.Checklist(
                                 id=generate_metrics_accordion_id(metric_category.name),
                                 className='aside-checklist-category eleven columns',
                                 options=metrics_options,
-                                values=[],
+                                values=metrics_values_checklist,
                                 labelClassName='aside-checklist-option',
                                 labelStyle={'display': 'block'}
                             ),
@@ -197,7 +209,8 @@ def metrics_tab(metrics, selected_metrics):
         metrics_checklist.append(
                 group_metrics_in_accordion(
                     metrics_by_category[category],
-                    category
+                    category,
+                    selected_metrics
                 )
             )
 
