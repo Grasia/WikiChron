@@ -40,12 +40,15 @@ debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 # get csv data location (data/ by default)
 global data_dir;
 if not 'WIKICHRON_DATA_DIR' in os.environ:
-    os.environ['WIKICHRON_DATA_DIR'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+    os.environ['WIKICHRON_DATA_DIR'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../data')
 data_dir = os.environ['WIKICHRON_DATA_DIR']
 
 # global app config
 port = 8880;
 wikichron_base_pathname = '/app/';
+#~ assets_url_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets');
+assets_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets');
+
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', # dash stylesheet
                         #~ 'https://codepen.io/akronix/pen/BJNgRB.css',  # fontawesome css
@@ -88,7 +91,8 @@ global app;
 app = dash.Dash('WikiChron',
                 meta_tags = meta_tags,
                 external_stylesheets=external_stylesheets,
-                url_base_pathname=wikichron_base_pathname)
+                url_base_pathname=wikichron_base_pathname,
+                assets_folder=assets_folder)
 app.title = 'WikiChron'
 server = app.server
 app.config['suppress_callback_exceptions'] = True
@@ -324,6 +328,7 @@ def start_js_server():
 
 
 print('¡¡¡¡ Welcome to WikiChron ' + __version__ +' !!!!')
+print('Using version ' + dash.__version__ + ' of Dash.')
 print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
 print('Using version ' + gdc.__version__ + ' of Grasia Dash Components.')
 print('Using version ' + html.__version__ + ' of Dash Html Components.')
