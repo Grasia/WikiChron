@@ -86,34 +86,20 @@ meta_tags = [
     },
 ]
 
-
-global app;
-app = dash.Dash('WikiChron',
-                meta_tags = meta_tags,
-                external_stylesheets=external_stylesheets,
-                url_base_pathname=wikichron_base_pathname,
-                assets_folder=assets_folder)
-app.title = 'WikiChron'
-server = app.server
-app.config['suppress_callback_exceptions'] = True
-
-# Enable for dash-renderer-grasia Loading:
-app.scripts.config.serve_locally = True
-
-cache.set_up_cache(app, debug)
-
 # js files being serve by this server:
 local_available_js = ['side_bar.js', 'piwik.js']
 
 # list of js files to import from the app (either local or remote)
 to_import_js = []
 
+global app;
 
 
-# Redirects index to /app
-@app.server.route('/')
-def redirect_index_to_app():
-    return flask.redirect(wikichron_base_pathname, code=302)
+def start_redirection_server():
+    # Redirects index to /app
+    @app.server.route('/')
+    def redirect_index_to_app():
+        return flask.redirect(wikichron_base_pathname, code=302)
 
 
 if debug:
@@ -158,14 +144,6 @@ selection_params = {'wikis', 'metrics'}
 
 
 ######### BEGIN CODE ###########################################################
-
-
-def set_up_app(app):
-    app.layout = html.Div([
-        set_layout(),
-    ])
-    app.layout.children += set_external_imports()
-    return
 
 
 def set_external_imports():
@@ -217,7 +195,7 @@ def generate_welcome_page():
     )
 
 
-def init_app_callbacks():
+def app_bind_callbacks(app):
 
 
     @app.callback(Output('main-root', 'children'),
@@ -327,33 +305,83 @@ def start_js_server():
     return
 
 
-print('¡¡¡¡ Welcome to WikiChron ' + __version__ +' !!!!')
-print('Using version ' + dash.__version__ + ' of Dash.')
-print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
-print('Using version ' + gdc.__version__ + ' of Grasia Dash Components.')
-print('Using version ' + html.__version__ + ' of Dash Html Components.')
+def create_app():
+    print('Creating new Dash instance...')
+    global app;
+    app = dash.Dash('WikiChron',
+                    meta_tags = meta_tags,
+                    external_stylesheets=external_stylesheets,
+                    url_base_pathname=wikichron_base_pathname,
+                    assets_folder=assets_folder)
+    app.title = 'WikiChron'
+    server = app.server
+    app.config['suppress_callback_exceptions'] = True
 
-time_start_app = time.perf_counter()
+    # Enable for dash-renderer-grasia Loading:
+    app.scripts.config.serve_locally = True
 
-# start auxiliar servers:
-start_js_server()
+    cache.set_up_cache(app, debug)
 
-# Layout of the app:
-# imports
-#~ from tabs_bar import generate_tabs_bar
-import side_bar
-import main
+    return app
 
-# set layout and import js
+
+def init_app_callbacks(app):
+    global side_bar
+    import side_bar
+    global main
+    import main
+
+    app_bind_callbacks(app)
+    side_bar.bind_callbacks(app)
+    main.bind_callbacks(app)
+    return
+
+
+def set_up_app(app):
+    # bind callbacks
+    print('Binding callbacks...')
+    init_app_callbacks(app)
+
+    # set app layout
+    print('Setting up layout...')
+    app.layout = html.Div([
+        set_layout(),
+    ])
+    app.layout.children += set_external_imports()
+    return
+
+
+def start_app(app):
+
+    # start auxiliar servers:
+    start_js_server()
+    start_redirection_server()
+
+    print('¡¡¡¡ Welcome to WikiChron ' + __version__ +' !!!!')
+    print('Using version ' + dash.__version__ + ' of Dash.')
+    print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
+    print('Using version ' + gdc.__version__ + ' of Grasia Dash Components.')
+    print('Using version ' + html.__version__ + ' of Dash Html Components.')
+
+    return
+
+
+def run(app):
+    app.run_server(debug=debug, port=port)
+    return
+
+# create and config Dash instance
+app = create_app()
+
+# set layout, import startup js and bind callbacks
 set_up_app(app)
 
-# bind callbacks
-side_bar.bind_callbacks(app)
-main.bind_callbacks(app)
-init_app_callbacks()
+# start Dash instance
+start_app(app)
 
-time_loaded_app = time.perf_counter() - time_start_app
-print(' * [Timing] Loading the app: {} seconds'.format(time_loaded_app) )
-
+print ('This is __name__: {}'.format(__name__))
 if __name__ == '__main__':
-    app.run_server(debug=debug, port=port)
+    run(app)
+
+else:
+    server = app.server
