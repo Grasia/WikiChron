@@ -350,7 +350,7 @@ def bind_callbacks(app):
     @app.callback(
         Output('signal-data', 'children'),
         [Input('initial-selection', 'children')]
-        )
+    )
     def start_main(selection_json):
         # get wikis x metrics selection
         selection = json.loads(selection_json)

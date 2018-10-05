@@ -237,7 +237,7 @@ def app_bind_callbacks(app):
     @app.callback(
         Output('sidebar-selection', 'children'),
         [Input('url', 'search')]
-        )
+    )
     def write_query_string_in_hidden_selection_div(query_string):
 
         #~ if not (query_string): # check query string is not empty
@@ -258,7 +258,7 @@ def app_bind_callbacks(app):
         [Input('url', 'pathname')],
         [State('side-bar', 'children'),
         State('url', 'search')],
-        )
+    )
     def generate_side_bar_onload(pathname, sidebar, query_string):
 
         if pathname:
