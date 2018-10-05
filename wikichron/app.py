@@ -208,9 +208,12 @@ def generate_welcome_page():
 def app_bind_callbacks(app):
 
 
-    @app.callback(Output('main-root', 'children'),
-    [Input('sidebar-selection', 'children')])
-    def load_main_graphs(selection_json):
+    @app.callback(
+        Output('main-root', 'children'),
+        [Input('sidebar-selection', 'children')],
+        [State('url', 'search')]
+    )
+    def load_main_graphs(selection_json, query_string):
         if debug:
             print('load_main_graphs: This is the selection: {}'.format(selection_json))
 
@@ -223,7 +226,8 @@ def app_bind_callbacks(app):
 
                 relative_time = len(wikis) > 1
 
-                return main.generate_main_content(wikis, metrics, relative_time)
+                return main.generate_main_content(wikis, metrics,
+                                                relative_time, query_string)
 
 
         print('There is not a valid wikis & metrics tuple selection yet for plotting any graph')
