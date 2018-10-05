@@ -63,7 +63,7 @@ def get_dataframe_from_csv(csv):
     print('!!Loaded csv for ' + csv)
     time_end_loading_one_csv = time.perf_counter() - time_start_loading_one_csv
     print(' * [Timing] Loading {} : {} seconds'.format(csv, time_end_loading_one_csv) )
-
+    df.index.name = csv
     return df
 
 

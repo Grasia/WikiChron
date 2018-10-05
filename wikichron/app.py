@@ -19,6 +19,7 @@ import time
 from warnings import warn
 from urllib.parse import parse_qs, urljoin
 from codecs import decode
+from io import BytesIO
 
 # Dash framework imports
 import dash
@@ -31,6 +32,7 @@ import plotly.graph_objs as go
 
 # Other external imports:
 from flask import request
+import pandas as pd
 
 # Local imports:
 import lib.interface as lib
@@ -349,8 +351,38 @@ def start_download_data_server():
         (wikis, metrics) = extract_wikis_and_metrics_from_selection_dict(selection)
 
         data = main.load_and_compute_data(wikis, metrics)
-        print(data)
-        return ('Received this selection: {}'.format(selection))
+
+        wikis_df = []
+
+        # For each wiki, create a DataFrame and add a column for the data of
+        #   each metric.
+        # Then, merge all the wikis in one DataFrame
+        # Remember this is the structure of data: data[metric][wiki]
+        for wiki_idx in range(len(data[0])):
+
+            # These two following lines are equivalent to the other next 3 lines
+            #   but they are, probably, more difficult to understand and
+            #  to maintain, although probably more pandas-ish:
+            #~ metrics_data_for_this_wiki = [metric[wiki_idx] for metric in data ]
+            #~ wiki_df = pd.concat(metrics_data_for_this_wiki, axis=1)
+
+            wiki_df = pd.DataFrame()
+            for metric in data:
+                wiki_df[metric[wiki_idx].name] = metric[wiki_idx]
+
+            wikis_df.append(wiki_df)
+
+        # join all wiki DataFrames in one:
+        output_df = pd.concat(wikis_df, join='outer', axis=1)
+
+        output_str = output_df.to_csv()
+
+        output_buffer = BytesIO()
+        output_buffer.write(output_str.encode('utf-8'))
+        output_buffer.seek(0)
+        return flask.send_file(output_buffer, as_attachment=True,
+                    attachment_filename='computed_data.csv',
+                    mimetype='text/csv')
 
     return
 

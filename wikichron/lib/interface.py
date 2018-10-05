@@ -54,11 +54,17 @@ def compute_metrics_on_dataframe(metrics, df):
       Return a list of panda series corresponding to the provided metrics.
    """
    index = stats.calculate_index_all_months(df) #TOIMPROVE
-   return [ metric.calculate(df, index) for metric in metrics ]
+   metrics_data = []
+   for metric in metrics:
+      metric_series = metric.calculate(df, index)
+      metric_series.name = '{}>{}'.format(df.index.name,metric.code)
+      metrics_data.append(metric_series)
+   return metrics_data
 
 # Too inefficient with the current implementation
 # TOIMPROVE
-def compute_metric_on_dataframes(metric, dfs):
+# NOTBEENUSED
+#~ def compute_metric_on_dataframes(metric, dfs):
    """
       Get the requested metric computed on given list of dataframe in
       absolute dates.
@@ -68,5 +74,5 @@ def compute_metric_on_dataframes(metric, dfs):
       Return a list of panda series corresponding to the provided metric
       on different dataframes.
    """
-   return [ metric.calculate(df) for df in dfs]
+   #~ return [ metric.calculate(df) for df in dfs]
 
