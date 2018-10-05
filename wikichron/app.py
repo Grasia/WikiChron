@@ -142,12 +142,22 @@ selection_params = {'wikis', 'metrics'}
 ######### BEGIN CODE ###########################################################
 
 
+#--------- AUX FUNCS ----------------------------------------------------------#
+
+def extract_wikis_and_metrics_from_selection_dict(selection):
+    wikis = [ available_wikis_dict[wiki_url] for wiki_url in selection['wikis'] ]
+    metrics = [ available_metrics_dict[metric] for metric in selection['metrics'] ]
+    return (wikis, metrics)
+
+
 def set_external_imports():
     if not to_import_js:
         return [gdc.Import()]
     else:
         return [gdc.Import(src=src) for src in to_import_js];
 
+
+#--------- LAYOUT ----------------------------------------------------------#
 
 def set_layout():
     return html.Div(id='app-layout',
@@ -191,6 +201,8 @@ def generate_welcome_page():
     )
 
 
+#--------- CALLBACKS ----------------------------------------------------------#
+
 def app_bind_callbacks(app):
 
 
@@ -204,8 +216,9 @@ def app_bind_callbacks(app):
             selection = json.loads(selection_json)
 
             if selection.get('wikis') and selection.get('metrics'):
-                wikis = [ available_wikis_dict[wiki_url] for wiki_url in selection['wikis'] ]
-                metrics = [ available_metrics_dict[metric] for metric in selection['metrics'] ]
+
+                (wikis, metrics) = extract_wikis_and_metrics_from_selection_dict(selection)
+
                 relative_time = len(wikis) > 1
 
                 return main.generate_main_content(wikis, metrics, relative_time)
@@ -274,8 +287,7 @@ def app_bind_callbacks(app):
     return
 
 
-######### BEGIN AUX SERVERS ####################################################
-
+#--------- BEGIN AUX SERVERS --------------------------------------------------#
 
 def start_redirection_server():
     # Redirects index to /app
@@ -315,7 +327,6 @@ def start_js_server():
 def start_download_data_server():
 
     def is_valid(selection):
-        print(selection)
         # check empty query string
         if not selection:
             return False
@@ -335,11 +346,15 @@ def start_download_data_server():
         if not is_valid(selection):
             return 'Nothing to download!'
 
-        return ('Received this selection: {}'.format(selection))
+        (wikis, metrics) = extract_wikis_and_metrics_from_selection_dict(selection)
 
+        data = main.load_and_compute_data(wikis, metrics)
+        print(data)
+        return ('Received this selection: {}'.format(selection))
 
     return
 
+#--------- APP CREATION FUNCS -------------------------------------------------#
 
 def create_app():
     print('Creating new Dash instance...')
@@ -406,6 +421,9 @@ def init_app(app):
 def run(app):
     app.run_server(debug=debug, port=port)
     return
+
+
+######### BEGIN MAIN ###########################################################
 
 # create and config Dash instance
 app = create_app()
