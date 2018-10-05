@@ -16,6 +16,7 @@ import time
 from warnings import warn
 import json
 import functools
+from urllib.parse import urlencode
 
 import dash
 import dash_core_components as dcc
@@ -34,6 +35,12 @@ debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 # get csv data location (data/ by default)
 global data_dir;
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
+
+
+
+def extract_metrics_objs_from_metrics_codes(metric_codes):
+    metrics = [ lib.metrics_dict[metric] for metric in metric_codes ]
+    return metrics
 
 
 @cache.memoize(timeout=3600)
@@ -57,7 +64,7 @@ def get_dataframe_from_csv(csv):
     print('!!Loaded csv for ' + csv)
     time_end_loading_one_csv = time.perf_counter() - time_start_loading_one_csv
     print(' * [Timing] Loading {} : {} seconds'.format(csv, time_end_loading_one_csv) )
-
+    df.index.name = csv
     return df
 
 
@@ -151,9 +158,11 @@ def generate_graphs(data, metrics, wikis, relative_time):
 
 
 
-def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
+def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
+                            query_string):
 
     def main_header():
+        href_download_button = '/download/{}'.format(query_string)
         return (html.Div(id='header',
                 className='container',
                 style={'display': 'flex', 'align-items': 'center', 'justify-content': 'space-between'},
@@ -162,6 +171,14 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg):
                         html.Img(src='/assets/logo_wikichron.svg'),
                         id='tool-title'),
                     html.Div([
+                        html.A(
+                            html.Img(src='/assets/cloud_download.svg'),
+                            href=href_download_button,
+                            id='download-button',
+                            target='_blank',
+                            className='icon',
+                            title='Download data'
+                        ),
                         html.A(
                             html.Img(src='/assets/documentation.svg'),
                             href='https://github.com/Grasia/WikiChron/wiki/',
@@ -333,12 +350,12 @@ def bind_callbacks(app):
     @app.callback(
         Output('signal-data', 'children'),
         [Input('initial-selection', 'children')]
-        )
+    )
     def start_main(selection_json):
         # get wikis x metrics selection
         selection = json.loads(selection_json)
         wikis = selection['wikis']
-        metrics = [ lib.metrics_dict[metric] for metric in selection['metrics'] ]
+        metrics = extract_metrics_objs_from_metrics_codes(selection['metrics'])
 
         metric_names = [metric.text for metric in metrics]
         wikis_names = [wiki['name'] for wiki in wikis]
@@ -366,7 +383,7 @@ def bind_callbacks(app):
         # get wikis x metrics selection
         selection = json.loads(selection_json)
         wikis = selection['wikis']
-        metrics = [ lib.metrics_dict[metric] for metric in selection['metrics'] ]
+        metrics = extract_metrics_objs_from_metrics_codes(selection['metrics'])
 
         data = load_and_compute_data(wikis, metrics)
 
@@ -420,7 +437,7 @@ def bind_callbacks(app):
         # get wikis x metrics selection
         selection = json.loads(selection_json)
         wikis = selection['wikis']
-        metrics = [ lib.metrics_dict[metric] for metric in selection['metrics'] ]
+        metrics = extract_metrics_objs_from_metrics_codes(selection['metrics'])
 
         data = load_and_compute_data(wikis, metrics)
 
@@ -592,6 +609,20 @@ def bind_callbacks(app):
             new_timerange[1] = time_axis[slider_selection[1]].strftime('%b %Y')
             return('From {} to {} '.format(new_timerange[0], new_timerange[1]))
 
+
+    # Play with this in case we want to download only the being shown current selection
+    # instead of the generate_main_content() selection
+    #@app.callback(
+        #Output('download-button', 'href'),
+        #[Input('current-selection-wikis', 'children')], -> Coming from Dropdowns
+        #[Input('current-selection-metrics', 'children')], -> Coming from Dropdowns
+    #)
+    #def set_href_for_download_button(selection_json):
+        #selection = json.loads(selection_json)
+        #print(selection)
+        #query_str = urlencode(selection,  doseq=True)
+        #href = '/download/?' + query_str;
+        #return href
 
     return # bind_callbacks
 

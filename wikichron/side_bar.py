@@ -297,7 +297,8 @@ def bind_callbacks(app):
 
 
     @app.callback(Output('wikis-tab', 'style'),
-                   [Input('side-bar-tabs', 'value')])
+                   [Input('side-bar-tabs', 'value')]
+    )
     def update_wikis_tab_visible(tab_selection):
         if tab_selection == 'wikis':
             return {'display':'block'}
@@ -305,7 +306,8 @@ def bind_callbacks(app):
             return {'display':'none'}
 
     @app.callback(Output('metrics-tab', 'style'),
-               [Input('side-bar-tabs', 'value')])
+               [Input('side-bar-tabs', 'value')]
+    )
     def update_metrics_tab_visible(tab_selection):
         if tab_selection == 'metrics':
             return {'display':'block'}
@@ -317,7 +319,7 @@ def bind_callbacks(app):
                [Input('compare-button', 'n_clicks')],
                 [State(generate_wikis_accordion_id(name), 'values') for name in wikis_categories_order] +
                 [State(generate_metrics_accordion_id(name), 'values') for name in category_names]
-               )
+    )
     def compare_selection(btn_clicks,
                         wikis_selection_large, wikis_selection_big, wikis_selection_medium, wikis_selection_small,
                         *metrics_selection_l):
@@ -335,7 +337,7 @@ def bind_callbacks(app):
     @app.callback(Output('compare-button', 'disabled'),
                 [Input(generate_wikis_accordion_id(name), 'values') for name in wikis_categories_order] +
                 [Input(generate_metrics_accordion_id(name), 'values') for name in category_names]
-                )
+    )
     def enable_compare_button(wikis_selection_large, wikis_selection_big, wikis_selection_medium, wikis_selection_small,
                             *metrics_selection_l):
         metrics_selection = list(itertools.chain.from_iterable(metrics_selection_l)) # reduce a list of lists into one list.
