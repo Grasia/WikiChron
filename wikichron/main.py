@@ -36,6 +36,12 @@ global data_dir;
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 
 
+
+def extract_metrics_objs_from_metrics_codes(metric_codes):
+    metrics = [ lib.metrics_dict[metric] for metric in metric_codes ]
+    return metrics
+
+
 @cache.memoize(timeout=3600)
 def load_data(wiki):
     df = get_dataframe_from_csv(wiki['data'])
@@ -338,7 +344,7 @@ def bind_callbacks(app):
         # get wikis x metrics selection
         selection = json.loads(selection_json)
         wikis = selection['wikis']
-        metrics = [ lib.metrics_dict[metric] for metric in selection['metrics'] ]
+        metrics = extract_metrics_objs_from_metrics_codes(selection['metrics'])
 
         metric_names = [metric.text for metric in metrics]
         wikis_names = [wiki['name'] for wiki in wikis]
@@ -366,7 +372,7 @@ def bind_callbacks(app):
         # get wikis x metrics selection
         selection = json.loads(selection_json)
         wikis = selection['wikis']
-        metrics = [ lib.metrics_dict[metric] for metric in selection['metrics'] ]
+        metrics = extract_metrics_objs_from_metrics_codes(selection['metrics'])
 
         data = load_and_compute_data(wikis, metrics)
 
@@ -420,7 +426,7 @@ def bind_callbacks(app):
         # get wikis x metrics selection
         selection = json.loads(selection_json)
         wikis = selection['wikis']
-        metrics = [ lib.metrics_dict[metric] for metric in selection['metrics'] ]
+        metrics = extract_metrics_objs_from_metrics_codes(selection['metrics'])
 
         data = load_and_compute_data(wikis, metrics)
 
