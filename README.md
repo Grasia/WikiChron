@@ -29,7 +29,7 @@ Activate the virtual environment:
 `source venv/bin/activate`
 
 And finally, install dependencies here:
-`source venv/bin/activate`
+`pip3 install -r requirements.txt`
 
 ## XML dumps
 Likely, the source data for wikichron will come from a XML file with the full edit history of the wikis you want to analyze. [Go here if you want to learn more about Wikimedia XML dumps](https://www.mediawiki.org/wiki/Manual:Backing_up_a_wiki#Backup_the_content_of_the_wiki_(XML_dump)).
