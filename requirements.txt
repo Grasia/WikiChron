@@ -1,3 +1,4 @@
+appdirs==1.4.3
 beautifulsoup4==4.6.3
 certifi==2018.8.24
 chardet==3.0.4
@@ -5,12 +6,12 @@ click==6.7
 dash==0.28.1
 dash-core-components==0.30.2
 dash-html-components==0.11.0
-dash-renderer==0.14.1
-dash-renderer-grasia==0.13.2
+dash-renderer-grasia==0.14.1.dev2
 decorator==4.3.0
 Flask==1.0.2
 Flask-Caching==1.4.0
 Flask-Compress==1.4.0
+fs==2.1.1
 grasia-dash-components==0.3.4
 gunicorn==19.9.0
 idna==2.6
@@ -37,5 +38,6 @@ scipy==1.1.0
 setproctitle==1.1.10
 six==1.11.0
 traitlets==4.3.2
+typing==3.6.6
 urllib3==1.23
 Werkzeug==0.14.1

@@ -25,6 +25,7 @@ from io import BytesIO
 import dash
 import dash_core_components as dcc
 import grasia_dash_components as gdc
+import dash_renderer
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
@@ -105,18 +106,6 @@ if debug:
 
 else: # load piwik only in production:
     to_import_js.append('js/piwik.js')
-
-# uncoment for offline serving of css:
-#~ app.css.config.serve_locally = True
-
-# uncoment for offline serving of js:
-#~ app.scripts.config.serve_locally = True
-
-# In case we ever need font awesome icons:
-#~ app.css.append_css({"external_url": "https://use.fontawesome.com/releases/v5.0.9/css/all.css"})
-
-# skeleton.css: (Already included in dash stylesheet)
-#~ app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
 
 
 #~ tabs = [
@@ -404,8 +393,18 @@ def create_app():
     server = app.server
     app.config['suppress_callback_exceptions'] = True
 
-    # Enable for dash-renderer-grasia Loading:
-    app.scripts.config.serve_locally = True
+    # uncoment for offline serving of css:
+    #~ app.css.config.serve_locally = True
+
+    # uncoment for offline serving of js:
+    #~ app.scripts.config.serve_locally = True
+
+    # In case we ever need font awesome icons:
+    #~ app.css.append_css({"external_url": "https://use.fontawesome.com/releases/v5.0.9/css/all.css"})
+
+    # skeleton.css: (Already included in dash stylesheet)
+    #~ app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
+
 
     cache.set_up_cache(app, debug)
 
@@ -447,6 +446,7 @@ def init_app(app):
 
     print('¡¡¡¡ Welcome to WikiChron ' + __version__ +' !!!!')
     print('Using version ' + dash.__version__ + ' of Dash.')
+    print('Using version ' + dash_renderer.__version__ + ' of Dash renderer.')
     print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
     print('Using version ' + gdc.__version__ + ' of Grasia Dash Components.')
     print('Using version ' + html.__version__ + ' of Dash Html Components.')
