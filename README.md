@@ -1,5 +1,5 @@
 # WikiChron
-Data visualization tool for wikis.
+WikiChron is a web tool for the analysis and visualization of the evolution of wiki online communities.
 
 It analyzes the history dump of a wiki and give you nice graphs plotting that data.
 
@@ -29,7 +29,7 @@ Activate the virtual environment:
 `source venv/bin/activate`
 
 And finally, install dependencies here:
-`source venv/bin/activate`
+`pip install -r requirements.txt`
 
 ## XML dumps
 Likely, the source data for wikichron will come from a XML file with the full edit history of the wikis you want to analyze. [Go here if you want to learn more about Wikimedia XML dumps](https://www.mediawiki.org/wiki/Manual:Backing_up_a_wiki#Backup_the_content_of_the_wiki_(XML_dump)).
