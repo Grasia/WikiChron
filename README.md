@@ -46,13 +46,13 @@ First, you will need such xml file. If you don't have shell access to the server
 Secondly, you'll have to process that xml dump using the script: `dump_parser.py` located in the scripts directory.
 In order to do this, place your xml file in the data/ directory and run the following command:
 
-`python3 scripts/dump_parser.py data/<name_of_your.xml>`
+`python3 -m dump_parser data/<name_of_your.xml>`
 
 It will create a new csv file with the same name of your xml in the data/ dir folder.
 
 dump_parser.py also support several xml files at once. For instance, you might want to process all xml files in the data folder:
 
-`python3 scripts/dump_parser.py data/*.xml`
+`python3 -m dump_parser data/*.xml`
 
 ## Provide some metadata of the wiki
 Wikichron needs one thing else in order to visualize your wiki for you.
