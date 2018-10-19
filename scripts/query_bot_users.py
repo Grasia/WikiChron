@@ -27,7 +27,7 @@ def mediawiki_get_bots_ids(base_url):
    """
    def api_probing(base_url):
 
-      if base_url[:-1] != '/':
+      if base_url[-1:] != '/':
          base_url += ('/')
 
       url = base_url + 'w/' + mediawiki_api_endpoint
