@@ -20,6 +20,7 @@ from warnings import warn
 from urllib.parse import parse_qs, urljoin
 from codecs import decode
 from io import BytesIO
+import zipfile
 
 # Dash framework imports
 import dash
@@ -345,11 +346,14 @@ def start_download_data_server():
 
         data = main.load_and_compute_data(wikis, metrics)
 
-        wikis_df = []
+        # output in-memory zip file
+        in_memory_zip = BytesIO()
+        zipfile_ob = zipfile.ZipFile(in_memory_zip, mode='w',
+                                    compression=zipfile.ZIP_DEFLATED)
 
         # For each wiki, create a DataFrame and add a column for the data of
         #   each metric.
-        # Then, merge all the wikis in one DataFrame
+        # Then, generate a csv for that DataFrame and append it to the output zip file
         # Remember this is the structure of data: data[metric][wiki]
         for wiki_idx in range(len(data[0])):
 
@@ -361,21 +365,24 @@ def start_download_data_server():
 
             wiki_df = pd.DataFrame()
             for metric in data:
+                # assign the name of the metric as the name of the column for its data:
                 wiki_df[metric[wiki_idx].name] = metric[wiki_idx]
 
-            wikis_df.append(wiki_df)
+            csv_str = wiki_df.to_csv()
+            # append dataframe csv to zip file with name of the wiki:
+            zipfile_ob.writestr('{}.csv'.format(wikis[wiki_idx]['name']), csv_str)
 
-        # join all wiki DataFrames in one:
-        output_df = pd.concat(wikis_df, join='outer', axis=1)
-
-        output_str = output_df.to_csv()
-
-        output_buffer = BytesIO()
-        output_buffer.write(output_str.encode('utf-8'))
-        output_buffer.seek(0)
-        return flask.send_file(output_buffer, as_attachment=True,
-                    attachment_filename='computed_data.csv',
-                    mimetype='text/csv')
+        # testing zip format and integrity
+        error = zipfile_ob.testzip()
+        if error is None:
+            zipfile_ob.close()
+            in_memory_zip.seek(0) # move ByteIO cursor to the start
+            return flask.send_file(in_memory_zip, as_attachment=True,
+                        attachment_filename='computed_data.zip',
+                        mimetype='application/zip')
+        else:
+            zipfile_ob.close()
+            raise Exeption('There was an error compressing the data in a zip file: {}'.format(error))
 
     return
 
