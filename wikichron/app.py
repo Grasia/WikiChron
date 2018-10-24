@@ -19,7 +19,7 @@ import time
 from warnings import warn
 from urllib.parse import parse_qs, urljoin
 from codecs import decode
-from io import BytesIO
+from io import BytesIO, StringIO
 
 # Dash framework imports
 import dash
@@ -345,11 +345,25 @@ def start_download_data_server():
 
         data = main.load_and_compute_data(wikis, metrics)
 
-        wikis_df = []
+        #~ import zipfile
+        #~ import io
+
+        import gzip
+        # output in-memory zip file
+        in_memory_zip = BytesIO()
+        zipfile_ob = gzip.GzipFile(fileobj=in_memory_zip, mode='ab', filename='computed_data.zip')
+                                    #~ compression=zipfile.ZIP_DEFLATED)
+        #~ zipfile_ob = zipfile.ZipFile(in_memory_zip, mode='w',
+                                    #~ compression=zipfile.ZIP_DEFLATED)
+
+        # csv files
+        #~ output_buffer = BytesIO()
+        #~ output_buffer.write(output_str.encode('utf-8'))
+        #~ output_buffer.seek(0)
 
         # For each wiki, create a DataFrame and add a column for the data of
         #   each metric.
-        # Then, merge all the wikis in one DataFrame
+        # Then, generate a csv for that DataFrame and append it to the output zip file
         # Remember this is the structure of data: data[metric][wiki]
         for wiki_idx in range(len(data[0])):
 
@@ -363,19 +377,25 @@ def start_download_data_server():
             for metric in data:
                 wiki_df[metric[wiki_idx].name] = metric[wiki_idx]
 
-            wikis_df.append(wiki_df)
+            csv_str = wiki_df.to_csv()
+            #~ zipfile_ob.writestr('{}.csv'.format(wiki_idx), csv_str.encode('utf-8'))
+            zipfile_ob.write(csv_str.encode('utf-8'))
+            print(type(csv_str))
 
-        # join all wiki DataFrames in one:
-        output_df = pd.concat(wikis_df, join='outer', axis=1)
+            #~ zipfile_ob.writestr('test.csv', csv_str)
 
-        output_str = output_df.to_csv()
+        #~ error = zipfile_ob.testzip()
+        #~ if error is None:
 
-        output_buffer = BytesIO()
-        output_buffer.write(output_str.encode('utf-8'))
-        output_buffer.seek(0)
-        return flask.send_file(output_buffer, as_attachment=True,
-                    attachment_filename='computed_data.csv',
-                    mimetype='text/csv')
+        zipfile_ob.close()
+
+        in_memory_zip.seek(0)
+        return flask.send_file(in_memory_zip, as_attachment=True,
+                    attachment_filename='computed_data.zip',
+                    mimetype='application/zip')
+        #~ else:
+            #~ print('Error in {}'.format(error))
+            #~ exit(1)
 
     return
 
