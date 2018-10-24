@@ -59,7 +59,7 @@ assets_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets
 
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', # dash stylesheet
-                        #~ 'https://codepen.io/akronix/pen/BJNgRB.css',  # fontawesome css
+                        'https://use.fontawesome.com/releases/v5.0.9/css/all.css',  # fontawesome css
 ]
 
 
@@ -405,9 +405,6 @@ def create_app():
 
     # uncoment for offline serving of js:
     #~ app.scripts.config.serve_locally = True
-
-    # In case we ever need font awesome icons:
-    #~ app.css.append_css({"external_url": "https://use.fontawesome.com/releases/v5.0.9/css/all.css"})
 
     # skeleton.css: (Already included in dash stylesheet)
     #~ app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
