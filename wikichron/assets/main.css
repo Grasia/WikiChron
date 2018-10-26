@@ -1,0 +1,45 @@
+/* Main */
+
+#icons-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-left: auto;
+}
+
+.icon {
+    opacity: 0.8;
+}
+
+.icon:hover {
+    opacity: 1;
+}
+
+.icon:not(:first-child) {
+    margin-left: 18px;
+}
+
+.control-text {
+    font-size: 16px;
+}
+
+#time-axis-selection {
+    vertical-align: top;
+    display: inline-block;
+}
+
+#slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 15px;
+}
+
+#display-slider-selection {
+    font-size: 12px;
+}
+
+.selector {
+    padding: 10px;
+    background: #ededed78;
+    border-radius: 8px;
+}
