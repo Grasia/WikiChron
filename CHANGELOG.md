@@ -1,5 +1,20 @@
 # Change Log for WikiChron
 
+## 1.1.1 - 2018-10-31
+### Added
+- Icon in the header which displays a dialog showing sharing and downloading links for current selection. Closes #53
+- deps: sd-material-ui
+### Changed
+- stylesheets and js files divided depending on their scope
+- download now returns a zip with one csv per wiki. Re-Closes #21
+- moved dump_parser to an independant pypi package and use it as a dependency
+- Some improvements in query_bot_users.py script.
+### Fixed
+- Missing help icons (?) next to the metrics checklist.
+### Updated
+- deps: dash-core-components, requests.
+
+
 ## 1.1.0 - 2018-10-10
 ### Added
 - Button to download in csv format the current selection of wikis and metrics. See [26](https://github.com/Grasia/WikiChron/issues/26).
