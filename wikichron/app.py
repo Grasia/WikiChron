@@ -31,6 +31,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import plotly.graph_objs as go
+import sd_material_ui
 
 # Other external imports:
 from flask import request
@@ -52,6 +53,7 @@ if not 'WIKICHRON_DATA_DIR' in os.environ:
 data_dir = os.environ['WIKICHRON_DATA_DIR']
 
 # global app config
+APP_HOSTNAME = 'http://wikichron.science';
 port = 8880;
 wikichron_base_pathname = '/app/';
 #~ assets_url_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets');
@@ -95,7 +97,7 @@ meta_tags = [
 ]
 
 # js files being serve by this server:
-local_available_js = ['side_bar.js', 'piwik.js']
+local_available_js = ['side_bar.js', 'main.share_modal.js', 'piwik.js']
 
 # list of js files to import from the app (either local or remote)
 to_import_js = []
@@ -168,6 +170,15 @@ def set_layout():
     );
 
 
+def load_external_dash_libs_in_layout():
+    return html.Div(id='external-dash-libs',
+        style={'display': 'none'},
+        children=[
+            sd_material_ui.Divider()
+        ]
+    );
+
+
 def generate_welcome_page():
     return html.Div(id='welcome-container',
             className='container',
@@ -217,7 +228,7 @@ def app_bind_callbacks(app):
                 relative_time = len(wikis) > 1
 
                 return main.generate_main_content(wikis, metrics,
-                                                relative_time, query_string)
+                                                relative_time, query_string, APP_HOSTNAME)
 
 
         print('There is not a valid wikis & metrics tuple selection yet for plotting any graph')
@@ -436,6 +447,7 @@ def set_up_app(app):
     print('Setting up layout...')
     app.layout = html.Div([
         set_layout(),
+        load_external_dash_libs_in_layout()
     ])
     app.layout.children += set_external_imports()
     return

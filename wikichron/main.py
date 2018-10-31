@@ -24,6 +24,8 @@ import dash_html_components as html
 import plotly.graph_objs as go
 import pandas as pd
 from dash.dependencies import Input, Output, State
+import grasia_dash_components as gdc
+import sd_material_ui
 
 # Local imports:
 import lib.interface as lib
@@ -159,7 +161,7 @@ def generate_graphs(data, metrics, wikis, relative_time):
 
 
 def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
-                            query_string):
+                            query_string, url_host):
 
     def main_header():
         href_download_button = '/download/{}'.format(query_string)
@@ -171,6 +173,12 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
                         html.Img(src='/assets/logo_wikichron.svg'),
                         id='tool-title'),
                     html.Div([
+                        html.A(
+                            html.Img(src='/assets/share.svg'),
+                            id='share-button',
+                            className='icon',
+                            title='Share current selection'
+                        ),
                         html.A(
                             html.Img(src='/assets/cloud_download.svg'),
                             href=href_download_button,
@@ -197,6 +205,47 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
                     id='icons-bar')
             ])
         );
+
+
+    def share_modal(share_link, download_link):
+        return html.Div([
+            sd_material_ui.Dialog(
+                html.Div(children=[
+                    html.H3('Share WikiChron with others or save your work!'),
+                    html.P([
+                      html.Strong('Link with your current selection:'),
+                      html.Div(className='share-modal-link-and-button-cn', children=[
+                        dcc.Input(value=share_link, id='share-link-input', readOnly=True, className='share-modal-input-cn', type='url'),
+                        html.Div(className='tooltip', children=[
+                          html.Button('Copy!', id='share-link', className='share-modal-button-cn'),
+                        ])
+                      ]),
+                    ]),
+                    html.P([
+                      html.Strong('Link to download the data of your current selection:'),
+                      html.Div(className='share-modal-link-and-button-cn', children=[
+                        dcc.Input(value=download_link, id='share-download-input', readOnly=True, className='share-modal-input-cn', type='url'),
+                        html.Div(className='tooltip', children=[
+                          html.Button('Copy!', id='share-download', className='share-modal-button-cn'),
+                        ])
+                      ]),
+
+                      html.Div([
+                        html.Span('You can find more info about working with the data downloaded in '),
+                        html.A('this page of our wiki.', href='https://github.com/Grasia/WikiChron/wiki/Downloading-and-working-with-the-data')
+                        ],
+                        className='share-modal-paragraph-info-cn'
+                      )
+                    ]),
+                    gdc.Import(src='js/main.share_modal.js')
+                    ],
+                    id='share-dialog-inner-div'
+                ),
+                id='share-dialog',
+                modal=False,
+                open=False
+            )
+        ])
 
 
     def select_wikis_and_metrics_control(wikis_dropdown_options, metrics_dropdown_options):
@@ -337,6 +386,9 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
             html.Hr(),
 
             html.Div(id='graphs'),
+
+            share_modal('{}/app/{}'.format(url_host, query_string),
+                        '{}/download/{}'.format(url_host, query_string)),
 
             html.Div(id='initial-selection', style={'display': 'none'}, children=args_selection),
             html.Div(id='signal-data', style={'display': 'none'}),
@@ -608,6 +660,20 @@ def bind_callbacks(app):
             new_timerange[0] = time_axis[slider_selection[0]].strftime('%b %Y')
             new_timerange[1] = time_axis[slider_selection[1]].strftime('%b %Y')
             return('From {} to {} '.format(new_timerange[0], new_timerange[1]))
+
+
+    @app.callback(
+        Output('share-dialog', 'open'),
+        [Input('share-button', 'n_clicks')],
+        [State('share-dialog', 'open')]
+    )
+    def show_share_modal(n_clicks: int, open_state: bool):
+        if not n_clicks: # modal init closed
+            return False
+        elif n_clicks > 0 and not open_state: # opens if we click and `open` state is not open
+            return True
+        else: # otherwise, leave it closed.
+            return False
 
 
     # Play with this in case we want to download only the being shown current selection
