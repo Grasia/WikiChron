@@ -124,19 +124,19 @@ def users_active(data, index):
     return series
 	
 #this metric is the same as the users_active, but getting rid of anonymous users	
-def users_registered_active(data,index):
-# get rid of anonymous users and procceed as it was done in the previous metric.
-    user_registered=data[data['contributor_name']!='Anonymous']
-    monthly_data_registered=user_registered.groupby(pd.Grouper(key='timestamp', freq='MS'))
+def users_registered_active(data, index):
+	# get rid of anonymous users and procceed as it was done in the previous metric.
+    user_registered = data[data['contributor_name'] != 'Anonymous']
+    monthly_data_registered = user_registered.groupby(pd.Grouper(key='timestamp', freq='MS'))
     series = monthly_data_registered.apply(lambda x: len(x.contributor_id.unique()))
     if index is not None:
         series = series.reindex(index, fill_value=0)
     return series
 
 # this metric is the complementary to users_registered_active: now, we get rid of registered users and focus on anonymous users.
-def users_anonymous_active(data,index):
-    user_registered=data[data['contributor_name']=='Anonymous']
-    monthly_data_anonymous=user_registered.groupby(pd.Grouper(key='timestamp', freq='MS'))
+def users_anonymous_active(data, index):
+    user_registered = data[data['contributor_name'] == 'Anonymous']
+    monthly_data_anonymous = user_registered.groupby(pd.Grouper(key='timestamp', freq='MS'))
     series = monthly_data_anonymous.apply(lambda x: len(x.contributor_id.unique()))
     if index is not None:
         series = series.reindex(index, fill_value=0)
