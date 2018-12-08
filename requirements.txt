@@ -3,10 +3,11 @@ beautifulsoup4==4.6.3
 certifi==2018.8.24
 chardet==3.0.4
 click==6.7
-dash==0.28.1
-dash-core-components==0.35.2
-dash-html-components==0.11.0
-dash-renderer-grasia==0.14.1.dev2
+dash==0.31.1
+dash-core-components==0.39.0
+dash-cytoscape==0.0.2
+dash-html-components==0.13.2
+dash-renderer==0.14.3
 decorator==4.3.0
 Flask==1.0.2
 Flask-Caching==1.4.0
@@ -29,6 +30,7 @@ pandas==0.23.4
 plotly==3.1.1
 powerlaw==1.4.4
 python-dateutil==2.7.3
+python-igraph==0.7.1.post6
 pytz==2018.5
 redis==2.10.6
 requests==2.20.0
