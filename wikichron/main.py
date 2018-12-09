@@ -17,7 +17,7 @@ import os
 import time
 from warnings import warn
 import json
-
+from datetime import datetime
 import dash
 import dash_cytoscape
 import dash_core_components as dcc
@@ -73,28 +73,47 @@ def load_data(wiki):
     df = clean_up_bot_activity(df, wiki)
     return df
 
-def to_cytoscape_dict(di_nodes, di_edges):
+def to_cytoscape_dict(di_net):
     """
-    Transform an input dict to cytoscape dict
+    Transform an input dict to cytoscape network
 
     Parameters:
-        -di_nodes: A dict with nodes loaded with "generate_network"
-        -di_edges: A dict with edges loaded with "generate_network"
+        -di_net: actual network to transform
 
     Return:
         A dict with the cytoscape structure of nodes and edges
     """
     network = []
-    for key, val in di_nodes.items():
+    min_v = float('Inf')
+    max_v = -1
+    for key, val in di_net['nodes'].items():
+
+        if min_v > val['num_edits']:
+            min_v = val['num_edits']
+        if max_v < val['num_edits']:
+            max_v = val['num_edits']
+
         network.append({
             'data': {
                 'id': key,
                 'label': val['label'],
                 'num_edits': val['num_edits'],
+                'first_edit': val['first_edit'],
                 'last_edit': val['last_edit']
             }
         })
-    for key, val in di_edges.items():
+
+    di_net['user_max_edits'] = max_v
+    di_net['user_min_edits'] = min_v
+    min_v = float('Inf')
+    max_v = -1
+    for key, val in di_net['edges'].items():
+
+        if min_v > val['weight']:
+            min_v = val['weight']
+        if max_v < val['weight']:
+            max_v = val['weight']
+
         network.append({
             'data': {
                 'id': key,
@@ -103,33 +122,52 @@ def to_cytoscape_dict(di_nodes, di_edges):
                 'weight': val['weight']
             }
         })
-    # print(network)
-    # print('aristas : {}\nnodos: {}'.format(len(di_edges), len(di_nodes)))
-    return network
 
-def generate_network(dataframe):
+    di_net['edge_max_weight'] = max_v
+    di_net['edge_min_weight'] = min_v
+    di_net['nodes'] = None
+    di_net['edges'] = None
+    di_net['network'] = network
+
+    # print('aristas : {}\nnodos: {}'.format(len(di_edges), len(di_nodes)))
+    return di_net
+
+def generate_network(dataframe, time_limit = datetime.now()):
     """
     Generates a dict with the network
 
     Parameters:
         -dataframe: A pandas object with the wiki info
+        -time_limit: A datetime object, default; Actual time
 
-    Return: A tuple (nodes, edges) with the network representation
+    Return: A dict {nodes, edges, oldest_user, newest_user} with the network 
+                representation.
     """
     di_nodes = {}
     di_edges = {}
     user_per_page = {}
+    oldest_user = False
+    newest_user = False
 
     for index, r in dataframe.iterrows():
+        t = (time_limit - r['timestamp'].to_pydatetime()).total_seconds()
+        if t < 0:
+            break
+
         if r['contributor_name'] == 'Anonymous':
             continue
+        
+        if not oldest_user:
+            oldest_user = t
 
+        newest_user = t
         # Nodes
         if not r['contributor_id'] in di_nodes:
             di_nodes[r['contributor_id']] = {}
             di_nodes[r['contributor_id']]['label'] = \
                                     r['contributor_name']
             di_nodes[r['contributor_id']]['num_edits'] = 0
+            di_nodes[r['contributor_id']]['first_edit'] = t
 
         di_nodes[r['contributor_id']]['num_edits'] += 1
         di_nodes[r['contributor_id']]['last_edit'] = r['timestamp']
@@ -158,7 +196,12 @@ def generate_network(dataframe):
                 di_edges[key1]['target'] = aux[j]
                 di_edges[key1]['weight'] = 1
 
-    return (di_nodes, di_edges)
+    return {
+        'nodes': di_nodes,
+        'edges': di_edges,
+        'oldest_user': oldest_user,
+        'newest_user': newest_user
+    }
 
 
 
@@ -174,11 +217,11 @@ def load_and_compute_data(wiki, _):
     # compute metric data:
     print(' * [Info] Starting calculations....')
     time_start_calculations = time.perf_counter()
-    nodes, edges = generate_network(df)
-    network = to_cytoscape_dict(nodes, edges)
+    di_net = generate_network(df)
+    di_net = to_cytoscape_dict(di_net)
     time_end_calculations = time.perf_counter() - time_start_calculations
     print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
-    return network
+    return di_net
 
 
 def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
@@ -293,25 +336,6 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
             )
         ])
 
-    def network():
-        """
-        Generates the network dashboard
-
-        Return: An HTML object with the notwork dashboard
-        """
-        return html.Div(id='cytoscape', children=[
-                dash_cytoscape.Cytoscape(
-                    elements=[],
-                    layout={
-                    'name': 'cose'
-                    },
-                    style = {
-                            'height': '100%',
-                            'width': '100%',
-                            'position': 'absolute'       
-                    }
-                )
-            ]);
 
     if debug:
         print ('Generating main...')
@@ -328,14 +352,12 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
 
             html.Hr(),
 
-            html.Div(id='graphs'),
-
             share_modal('{}/app/{}'.format(url_host, query_string),
                         '{}/download/{}'.format(url_host, query_string)),
 
             html.Div(id='initial-selection', style={'display': 'none'}, 
                         children=args_selection),
-            network(),
+            html.Div(id='cytoscape', children=[]),
             html.Div(id='signal-data', style={'display': 'none'}),
             #html.Div(id='time-axis', style={'display': 'none'}),
             html.Div(id='ready', style={'display': 'none'})
@@ -359,15 +381,64 @@ def bind_callbacks(app):
         print('<-- Done retrieving and computing data!')
 
         return dash_cytoscape.Cytoscape(
-                    elements=network,
-                    layout={
-                    'name': 'concentric'
+                    elements=network['network'],
+                    layout = {
+                    'name': 'cose',
+                    'idealEdgeLength': 100,
+                    'nodeOverlap': 20,
+                    'refresh': 20,
+                    'fit': True,
+                    'padding': 30,
+                    'randomize': False,
+                    'componentSpacing': 100,
+                    'nodeRepulsion': 400000,
+                    'edgeElasticity': 100,
+                    'nestingFactor': 5,
+                    'gravity': 80,
+                    'numIter': 1000,
+                    'initialTemp': 200,
+                    'coolingFactor': 0.95,
+                    'minTemp': 1.0
                     },
                     style = {
                             'height': '100%',
                             'width': '100%',
-                            'position': 'absolute'       
-                    }
+                            'position': 'absolute'    
+                    },
+                    stylesheet = [{
+                        'selector': 'node',
+                        'style': {
+                            'content': '',
+                            'text-valign': 'center',
+                            'color': 'white',
+                            'text-outline-width': 2,
+                            'background-color': 'mapData(first_edit, {}, {}, \
+                                #004481, #B0BEC5)'.format(network['newest_user'],\
+                                                network['oldest_user']),
+                            'text-outline-color': '#999',
+                            'height': 'mapData(num_edits, {}, {}, 10, 60)'
+                                .format(network['user_min_edits'], 
+                                        network['user_max_edits']),
+                            'width': 'mapData(num_edits, {}, {}, 10, 60)'
+                                .format(network['user_min_edits'], 
+                                        network['user_max_edits']),
+                            'border-width': '1%',
+                            'border-style': 'solid',
+                            'border-color': 'black'
+                        }
+                    },
+                    {
+                        'selector': 'edge',
+                        'style': {
+                          "width": 'mapData(weight, {}, {}, 1, 10)'
+                                .format(network['edge_min_weight'], 
+                                        network['edge_max_weight']),
+                          'opacity': 'mapData(weight, {}, {}, 0.2, 1)'
+                                .format(network['edge_min_weight'], 
+                                        network['edge_max_weight']),
+                          'line-color': "#E53935",
+                        }
+                    }]
                 )
 
 
