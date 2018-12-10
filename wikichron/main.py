@@ -224,13 +224,14 @@ def load_and_compute_data(wiki, _):
     return di_net
 
 
-def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
+def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
                             query_string, url_host):
     """
     @TODO: Quit unused args
     It generates the main content
     Parameters:
             -wikis_arg: wikis to show, only used the first wiki
+            -network_type_arg, type of network to generate
             -query_string: string to share/download
             -url_host: url to share/download
             -others: are not used

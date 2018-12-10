@@ -139,93 +139,31 @@ def wikis_tab(wikis, selected_wikis):
     );
 
 
-def generate_metrics_accordion_id(category_name):
-    return '{}-metrics'.format(category_name);
+def networks_tab(networks, selected_network):
 
+    networks_options = [{'label': nw.name, 'value': nw.name} for nw in networks]
 
-def metrics_tab(metrics, selected_metrics):
-
-    def group_metrics_in_accordion(metrics, metric_category,
-                                    selected_metrics_value):
-        metrics_options = [{'label': metric.text, 'value': metric.code} for metric in metrics]
-
-        # add pre-selected metrics (likely, from url query string),
-        # if any, to the accordion which is going to be created.
-        if selected_metrics_value:
-            metrics_values_checklist = list( set(selected_metrics_value) & set(map(lambda m: m.code, metrics )) ) # take values of pre-selected wikis for this wiki category
-        else:
-            metrics_values_checklist = []
-
-        metrics_help = [ html.Div(
-                            children = html.I(className="fa fa-info-circle checklist-info"),
-                            className='one column aside-checklist-option',
-                            style={'marginLeft': 'auto'},
-                            title=metric.descp
-                            )
-                        for metric in metrics]
-
-        metrics_help_div = html.Div(children=metrics_help, className='one-column aside-checklist-category')
-
-        return gdc.Accordion(
-                    id=generate_metrics_accordion_id(metric_category.name) + '-accordion',
-                    className='aside-category',
-                    label=metric_category.value,
-                    itemClassName='metric-category-label',
-                    childrenClassName='metric-category-list',
-                    accordionFixedWidth='300',
-                    defaultCollapsed=False if metrics_values_checklist else True,
-                    children=
-                        html.Div(
-                            [dcc.Checklist(
-                                id=generate_metrics_accordion_id(metric_category.name),
+    networks_checklist = html.Div(
+                           [dcc.Checklist(
+                                id='network-selection',
                                 className='aside-checklist-category eleven columns',
-                                options=metrics_options,
-                                values=metrics_values_checklist,
+                                options=networks_options,
+                                values=networks[0].name,
                                 labelClassName='aside-checklist-option',
                                 labelStyle={'display': 'block'}
-                            ),
-                            metrics_help_div],
-                            className='row'
-                        ),
-                    style={'display': 'flex'}
-                )
-
-
-    # group metrics in a dict w/ key: category, value: [metrics]
-    metrics_by_category = {}
-    for metric in metrics:
-        if metric.category not in metrics_by_category:
-            metrics_by_category[metric.category] = [metric]
-        else:
-            metrics_by_category[metric.category].append(metric)
-
-    # Generate accordions containing a checklist following the order
-    #   defined by metric_categories_order list.
-    metrics_checklist = []
-    for category in metric_categories_order:
-        metrics_checklist.append(
-                group_metrics_in_accordion(
-                    metrics_by_category[category],
-                    category,
-                    selected_metrics
-                )
-            )
-
-    intro_metrics_paragraph = html.Div(
-                html.P(
-                    html.Strong('Please, select the charts you wish to see and when you finish click on compare'),
-                    className="sidebar-info-paragraph"
-                ),
-                className="container")
+                            )],
+                            className='row',
+                            style={'display': 'flex'}
+                        );
 
     return html.Div([
         html.Div(
-            children = [intro_metrics_paragraph] + metrics_checklist,
+            children = networks_checklist,
             style={'color': 'white'},
-            id='metrics-tab-container',
+            id='networks-tab-container',
             ),
         ],
-        id='metrics-tab'
+        id='networks-tab'
     );
 
 
@@ -243,12 +181,12 @@ def compare_button():
     )
 
 
-def generate_tabs(wikis, metrics, selected_wikis, selected_metrics):
+def generate_tabs(wikis, networks, selected_wikis, selected_network):
     return (html.Div([
                 gdc.Tabs(
                     tabs=[
                         {'value': 'wikis', 'label': 'WIKIS'},
-                        {'value': 'metrics', 'label': 'METRICS'}
+                        {'value': 'networks', 'label': 'NETWORKS'}
                     ],
                     value='wikis',
                     id='side-bar-tabs',
@@ -271,20 +209,20 @@ def generate_tabs(wikis, metrics, selected_wikis, selected_metrics):
                     tabsClassName='side-bar-tab',
                 ),
                 wikis_tab(wikis, selected_wikis),
-                metrics_tab(metrics, selected_metrics)
+                networks_tab(networks, selected_network)
                 ],
             id='side-bar-tabs-container',
         )
     );
 
 
-def generate_side_bar(wikis, metrics, pre_selected_wikis = [], pre_selected_metrics = []):
+def generate_side_bar(wikis, networks, pre_selected_wikis = [], pre_selected_network = None):
     return html.Div(id='side-bar',
         children=[
             fold_button(),
             html.Div(id='side-bar-content',
                 children = [
-                    generate_tabs(wikis, metrics, pre_selected_wikis, pre_selected_metrics),
+                    generate_tabs(wikis, networks, pre_selected_wikis, pre_selected_network),
                     compare_button(),
                 ]
             ),
@@ -305,11 +243,11 @@ def bind_callbacks(app):
         else:
             return {'display':'none'}
 
-    @app.callback(Output('metrics-tab', 'style'),
+    @app.callback(Output('networks-tab', 'style'),
                [Input('side-bar-tabs', 'value')]
     )
     def update_metrics_tab_visible(tab_selection):
-        if tab_selection == 'metrics':
+        if tab_selection == 'networks':
             return {'display':'block'}
         else:
             return {'display':'none'}
@@ -318,16 +256,15 @@ def bind_callbacks(app):
     @app.callback(Output('url', 'search'),
                [Input('compare-button', 'n_clicks')],
                 [State(generate_wikis_accordion_id(name), 'values') for name in wikis_categories_order] +
-                [State(generate_metrics_accordion_id(name), 'values') for name in category_names]
+                [State('network-selection', 'values')]
     )
     def compare_selection(btn_clicks,
                         wikis_selection_large, wikis_selection_big, wikis_selection_medium, wikis_selection_small,
-                        *metrics_selection_l):
+                        network_selection):
         print('Number of clicks: ' + str(btn_clicks))
         if (btn_clicks > 0):
-            metrics_selection = list(itertools.chain.from_iterable(metrics_selection_l)) # reduce a list of lists into one list.
             wikis_selection = wikis_selection_large + wikis_selection_big + wikis_selection_medium + wikis_selection_small
-            selection = { 'wikis': wikis_selection, 'metrics': metrics_selection}
+            selection = { 'wikis': wikis_selection, 'network': network_selection}
 
             query_str = urlencode(selection,  doseq=True)
             return '?' + query_str;
@@ -336,14 +273,13 @@ def bind_callbacks(app):
     # simple callbacks to enable / disable 'compare' button
     @app.callback(Output('compare-button', 'disabled'),
                 [Input(generate_wikis_accordion_id(name), 'values') for name in wikis_categories_order] +
-                [Input(generate_metrics_accordion_id(name), 'values') for name in category_names]
+                [Input('network-selection', 'values')]
     )
     def enable_compare_button(wikis_selection_large, wikis_selection_big, wikis_selection_medium, wikis_selection_small,
-                            *metrics_selection_l):
-        metrics_selection = list(itertools.chain.from_iterable(metrics_selection_l)) # reduce a list of lists into one list.
+                            network_selection):
         wikis_selection = wikis_selection_large + wikis_selection_big + wikis_selection_medium + wikis_selection_small
-        print ('User selection: {} {}'.format(wikis_selection, metrics_selection))
-        if wikis_selection and metrics_selection:
+        print ('User selection: {} {}'.format(wikis_selection, network_selection))
+        if wikis_selection and network_selection:
             return False
         else:
             return True

@@ -126,11 +126,12 @@ def get_available_wikis(data_dir):
 
 # other global variables:
 
+available_networks = lib.get_available_networks()
 available_metrics = lib.get_available_metrics()
 available_metrics_dict = lib.metrics_dict
 available_wikis = get_available_wikis(data_dir)
 available_wikis_dict = {wiki['url']: wiki for wiki in available_wikis}
-selection_params = {'wikis', 'metrics'}
+selection_params = {'wikis', 'metrics', 'network'}
 
 
 ######### BEGIN CODE ###########################################################
@@ -142,6 +143,11 @@ def extract_wikis_and_metrics_from_selection_dict(selection):
     wikis = [ available_wikis_dict[wiki_url] for wiki_url in selection['wikis'] ]
     metrics = [ available_metrics_dict[metric] for metric in selection['metrics'] ]
     return (wikis, metrics)
+
+
+def extract_wikis_from_selection_dict(selection):
+    wikis = [ available_wikis_dict[wiki_url] for wiki_url in selection['wikis'] ]
+    return (wikis)
 
 
 def set_external_imports():
@@ -220,14 +226,14 @@ def app_bind_callbacks(app):
 
         if selection_json:
             selection = json.loads(selection_json)
+            if selection.get('wikis') and selection.get('network'):
 
-            if selection.get('wikis') and selection.get('metrics'):
-
-                (wikis, metrics) = extract_wikis_and_metrics_from_selection_dict(selection)
+                (wikis) = extract_wikis_from_selection_dict(selection)
+                (network) = selection['network']
 
                 relative_time = len(wikis) > 1
 
-                return main.generate_main_content(wikis, metrics,
+                return main.generate_main_content(wikis, network,
                                                 relative_time, query_string, APP_HOSTNAME)
 
 
@@ -280,10 +286,10 @@ def app_bind_callbacks(app):
                 # we might have selection of wikis and metrics in the query string,
                 #  so sidebar should start with those selected.
                 pre_selected_wikis   = selection['wikis'] if 'wikis' in selection else []
-                pre_selected_metrics = selection['metrics'] if 'metrics' in selection else []
+                pre_selected_network = selection['network'] if 'network' in selection else None
 
-                return side_bar.generate_side_bar(available_wikis, available_metrics,
-                                                    pre_selected_wikis, pre_selected_metrics)
+                return side_bar.generate_side_bar(available_wikis, available_networks,
+                                                    pre_selected_wikis, pre_selected_network)
 
             else: # if app hasn't loaded the path yet, wait to load sidebar later
                 return None;
