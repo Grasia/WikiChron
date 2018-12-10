@@ -16,10 +16,16 @@ from .metrics import available_metrics as _available_metrics
 from .metrics import metrics_dict
 from .metrics import stats
 
+from .networks import available_networks as _available_networks
+
 
 def get_available_metrics():
    """ Return a list of the currently available metrics. """
    return _available_metrics
+
+def get_available_networks():
+   """ Return a list of the currently available metrics. """
+   return _available_networks
 
 def remove_bots_activity(df, bots_ids):
    """
