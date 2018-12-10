@@ -13,7 +13,8 @@
 
 class Network:
 
-   def __init__(self, name, generate_network):
+   def __init__(self, code, name, generate_network):
+      self.code = code
       self.name = name
       self.generate_network = generate_network
 

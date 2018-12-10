@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-   collaboration_network.py
+   co_editing_network.py
 
    Descp:
 

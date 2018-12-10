@@ -11,8 +11,8 @@
 """
 
 from .types.NetworkType import Network
-from .types import collaboration_network
+from .types import co_editing_network
 
 def create_available_networks():
-    networks = [Network('collaboration', collaboration_network.generate_network)]
+    networks = [Network('co_editing_network', 'Co-editing', co_editing_network.generate_network)]
     return networks
