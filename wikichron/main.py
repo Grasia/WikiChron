@@ -32,7 +32,7 @@ import lib.interface as lib
 from cache import cache
 
 global debug
-debug = True #if os.environ.get('FLASK_ENV') == 'development' else False
+debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
 # get csv data location (data/ by default)
 global data_dir;
@@ -140,7 +140,7 @@ def generate_network(dataframe, time_limit = datetime.now()):
         -dataframe: A pandas object with the wiki info
         -time_limit: A datetime object, default; Actual time
 
-    Return: A dict {nodes, edges, oldest_user, newest_user} with the network 
+    Return: A dict {nodes, edges, oldest_user, newest_user} with the network
                 representation.
     """
     di_nodes = {}
@@ -156,7 +156,7 @@ def generate_network(dataframe, time_limit = datetime.now()):
 
         if r['contributor_name'] == 'Anonymous':
             continue
-        
+
         if not oldest_user:
             oldest_user = t
 
@@ -229,13 +229,13 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
     """
     @TODO: Quit unused args
     It generates the main content
-    Parameters: 
+    Parameters:
             -wikis_arg: wikis to show, only used the first wiki
             -query_string: string to share/download
             -url_host: url to share/download
             -others: are not used
 
-    Return: An HTML object with the main content 
+    Return: An HTML object with the main content
     """
 
     def main_header():
@@ -355,7 +355,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
             share_modal('{}/app/{}'.format(url_host, query_string),
                         '{}/download/{}'.format(url_host, query_string)),
 
-            html.Div(id='initial-selection', style={'display': 'none'}, 
+            html.Div(id='initial-selection', style={'display': 'none'},
                         children=args_selection),
             html.Div(id='cytoscape', children=[]),
             html.Div(id='signal-data', style={'display': 'none'}),
@@ -383,27 +383,27 @@ def bind_callbacks(app):
         return dash_cytoscape.Cytoscape(
                     elements=network['network'],
                     layout = {
-                    'name': 'cose',
-                    'idealEdgeLength': 100,
-                    'nodeOverlap': 20,
-                    'refresh': 20,
-                    'fit': True,
-                    'padding': 30,
-                    'randomize': False,
-                    'componentSpacing': 100,
-                    'nodeRepulsion': 400000,
-                    'edgeElasticity': 100,
-                    'nestingFactor': 5,
-                    'gravity': 80,
-                    'numIter': 1000,
-                    'initialTemp': 200,
-                    'coolingFactor': 0.95,
-                    'minTemp': 1.0
+                        'name': 'cose',
+                        'idealEdgeLength': 100,
+                        'nodeOverlap': 20,
+                        'refresh': 20,
+                        'fit': True,
+                        'padding': 30,
+                        'randomize': False,
+                        'componentSpacing': 100,
+                        'nodeRepulsion': 400000,
+                        'edgeElasticity': 100,
+                        'nestingFactor': 5,
+                        'gravity': 80,
+                        'numIter': 1000,
+                        'initialTemp': 200,
+                        'coolingFactor': 0.95,
+                        'minTemp': 1.0
                     },
                     style = {
-                            'height': '100%',
-                            'width': '100%',
-                            'position': 'absolute'    
+                        'height': '100%',
+                        'width': '100%',
+                        'position': 'absolute'
                     },
                     stylesheet = [{
                         'selector': 'node',
@@ -413,14 +413,14 @@ def bind_callbacks(app):
                             'color': 'white',
                             'text-outline-width': 2,
                             'background-color': 'mapData(first_edit, {}, {}, \
-                                #004481, #B0BEC5)'.format(network['newest_user'],\
+                                #004481, #B0BEC5)'.format(network['newest_user'],
                                                 network['oldest_user']),
                             'text-outline-color': '#999',
                             'height': 'mapData(num_edits, {}, {}, 10, 60)'
-                                .format(network['user_min_edits'], 
+                                .format(network['user_min_edits'],
                                         network['user_max_edits']),
                             'width': 'mapData(num_edits, {}, {}, 10, 60)'
-                                .format(network['user_min_edits'], 
+                                .format(network['user_min_edits'],
                                         network['user_max_edits']),
                             'border-width': '1%',
                             'border-style': 'solid',
@@ -430,13 +430,13 @@ def bind_callbacks(app):
                     {
                         'selector': 'edge',
                         'style': {
-                          "width": 'mapData(weight, {}, {}, 1, 10)'
-                                .format(network['edge_min_weight'], 
+                            "width": 'mapData(weight, {}, {}, 1, 10)'
+                                .format(network['edge_min_weight'],
                                         network['edge_max_weight']),
-                          'opacity': 'mapData(weight, {}, {}, 0.2, 1)'
-                                .format(network['edge_min_weight'], 
+                            'opacity': 'mapData(weight, {}, {}, 0.2, 1)'
+                                .format(network['edge_min_weight'],
                                         network['edge_max_weight']),
-                          'line-color': "#E53935",
+                            'line-color': "#E53935",
                         }
                     }]
                 )
@@ -490,7 +490,7 @@ def bind_callbacks(app):
     #                 style = {
     #                         'height': '100%',
     #                         'width': '100%',
-    #                         'position': 'absolute'       
+    #                         'position': 'absolute'
     #                 }
     #             )
     #         ]);
