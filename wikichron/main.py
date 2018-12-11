@@ -30,6 +30,7 @@ import sd_material_ui
 # Local imports:
 import lib.interface as lib
 from cache import cache
+from controls_sidebar import generate_controls_sidebar
 
 global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
@@ -360,6 +361,8 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
         className='control-text',
         style={'width': '100%'},
         children=[
+
+            generate_controls_sidebar(),
 
             main_header(),
 

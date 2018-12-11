@@ -97,7 +97,12 @@ meta_tags = [
 ]
 
 # js files being serve by this server:
-local_available_js = ['side_bar.js', 'main.share_modal.js', 'piwik.js']
+local_available_js = [
+    'side_bar.js',
+    'controls_side_bar.js',
+    'main.share_modal.js',
+    'piwik.js'
+]
 
 # list of js files to import from the app (either local or remote)
 to_import_js = []

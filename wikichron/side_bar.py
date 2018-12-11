@@ -44,7 +44,9 @@ def fold_button():
         html.Div(
             id='fold-img-container',
             className='fold-img-container-cn',
-            children=[html.P(id='fold-button')],
+            children=[
+                html.P(id='fold-button', className='fold-button-cn')
+            ],
         ),
         id='fold-container',
         style={
@@ -176,7 +178,8 @@ def compare_button():
                         type='button',
                         n_clicks=0
             ),
-            id='compare-button-container'
+            id='compare-button-container',
+            className='compare-button-container-cn'
         )
     )
 
@@ -218,6 +221,7 @@ def generate_tabs(wikis, networks, selected_wikis, selected_network):
 
 def generate_side_bar(wikis, networks, pre_selected_wikis = [], pre_selected_network = None):
     return html.Div(id='side-bar',
+        className='side-bar-cn',
         children=[
             fold_button(),
             html.Div(id='side-bar-content',
@@ -297,16 +301,17 @@ if __name__ == '__main__':
     app.scripts.config.serve_locally = True
 
 #~ app.scripts.append_script({ "external_url": "app.js"})
+    from app import get_available_wikis
+    available_wikis = get_available_wikis('data/')
 
-    from lib.interface import get_available_metrics
-    example_wikis = ['eslagunanegra_pages_full', 'cocktails', 'zelda']
+    from lib.interface import get_available_networks
     app.layout = html.Div(id='app-layout',
         style={'display': 'flex'},
         children=[
-            generate_side_bar(example_wikis, get_available_metrics()),
+            generate_side_bar(available_wikis, get_available_networks()),
         ]
     );
-    bind_callbacks(app)
+    #~ bind_callbacks(app)
 
     app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
     app.css.append_css({"external_url": "https://codepen.io/akronix/pen/rpQgqQ.css"})
