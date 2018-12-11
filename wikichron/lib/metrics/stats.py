@@ -161,6 +161,24 @@ def users_new_registered(data, index):
 def users_registered_accum(data, index):
     return (users_new_registered(data, index).cumsum())
 
+
+def users_active_more_than_4(data, index):
+    monthly = data.groupby(pd.Grouper(key='timestamp', freq = 'MS'))
+    series = monthly.apply(lambda x: len(x.groupby(['contributor_id']).size().where(lambda y: y>4).dropna()))
+    return series
+
+
+def users_active_more_than_24(data, index):
+    monthly = data.groupby(pd.Grouper(key='timestamp', freq = 'MS'))
+    series = monthly.apply(lambda x: len(x.groupby(['contributor_id']).size().where(lambda y: y>24).dropna()))
+    return series
+
+
+def users_active_more_than_99(data, index):
+    monthly = data.groupby(pd.Grouper(key='timestamp', freq = 'MS'))
+    series = monthly.apply(lambda x: len(x.groupby(['contributor_id']).size().where(lambda y: y>99).dropna()))
+    return series
+
 ########################################################################
 
 # RATIOS
