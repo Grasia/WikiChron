@@ -110,8 +110,11 @@
 
 /** Upload modal dialog **/
 
-#update-csv-button-container {
+#csv-buttons-container {
     display: flex;
     flex-direction: row-reverse;
+    flex-wrap: nowrap;
+    margin: 5px;
+    justify-content: space-between;
 }
 

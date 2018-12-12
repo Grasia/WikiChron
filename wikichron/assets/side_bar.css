@@ -104,26 +104,3 @@ p#fold-button {
     background-color: #072146;
 }
 
-.action-button {
-    border: None;
-    height: 57px;
-    width: 256px;
-    border-radius: 4px;
-    background-color: #49A5E6;
-    color : white;
-    font-family: 'Roboto', sans-serif;
-    font-size: 24px;
-    font-weight: bold;
-    line-height: 28px;
-}
-
-.action-button:hover {
-    color: white;
-    background-color: #2DCCCD;
-}
-
-.action-button:disabled {
-    background-color: #D1D1D1;
-    cursor: default;
-    color: #9B9B9B;
-}

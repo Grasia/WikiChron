@@ -346,20 +346,27 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
                         ),
                     ]),
 
-                    html.Div(
-                        html.Button('UPDATE',
-                                    id='update-csv-button',
+                    html.Div(id='csv-buttons-container',
+                    children = [
+
+                        html.Button('UPLOAD',
+                                    id='upload-csv-button',
                                     className='action-button',
                                     type='button',
                                     n_clicks=0
                         ),
-                        id='update-csv-button-container'
-                    ),
 
+                        html.Button('CANCEL',
+                                    id='cancel-csv-button',
+                                    className='action-button',
+                                    type='button',
+                                    n_clicks=0
+                        ),
+                    ]),
                 ]),
                 id='upload-dialog',
                 modal=False,
-                open=False
+                open=True
             )
         ])
 
