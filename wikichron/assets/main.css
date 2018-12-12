@@ -1,5 +1,7 @@
 /* Main */
 
+
+/** Header **/
 #icons-bar {
     display: flex;
     justify-content: space-between;
@@ -17,6 +19,8 @@
 .icon:not(:first-child) {
     margin-left: 18px;
 }
+
+/** Controls **/
 
 .control-text {
     font-size: 16px;
@@ -43,6 +47,8 @@
     background: #ededed78;
     border-radius: 8px;
 }
+
+/** Share dialog **/
 
 .share-modal-link-and-button-cn {
     display: flex;
@@ -100,5 +106,12 @@
 
 .share-modal-paragraph-info-cn {
     margin-left: 5px;
+}
+
+/** Upload modal dialog **/
+
+#update-csv-button-container {
+    display: flex;
+    flex-direction: row-reverse;
 }
 

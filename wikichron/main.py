@@ -207,7 +207,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
         );
 
 
-    def share_modal(share_link, download_link):
+    def share_dialog(share_link, download_link):
         return html.Div([
             sd_material_ui.Dialog(
                 html.Div(children=[
@@ -244,6 +244,116 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
                 id='share-dialog',
                 modal=False,
                 open=False
+            )
+        ])
+
+
+    def upload_zone():
+        return html.Div([
+            dcc.Upload(
+                id='upload-data',
+                children=[
+                    html.Img(src='/assets/upload-drag.svg',
+                    style={'marginTop': '20px'}
+                    ),
+                    html.P([
+                        'Drag and Drop or ',
+                        html.A('Choose a file')
+                    ]),
+                ],
+                style={
+                    'min-width': '300px',
+                    'height': '130px',
+                    'borderWidth': '1px',
+                    'borderStyle': 'dashed',
+                    'borderRadius': '5px',
+                    'textAlign': 'center',
+                    'margin': '10px'
+                },
+                multiple=False
+            ),
+            html.Div(id='output-data-upload'),
+        ])
+
+
+    def upload_csv_modal():
+        return html.Div([
+            sd_material_ui.Dialog(
+                html.Div(id='upload-dialog-inner-div',
+                className='container',
+                children=[
+                    html.H3('Add your wiki to Wikichron'),
+                    html.P([
+                      html.Strong('(link to the docs)'),
+                    ]),
+
+                    html.Div(
+                        className = 'row',
+                        children = [
+                            html.P(
+                                html.Strong('wiki name*:'),
+                                className='three columns'
+                            ),
+                            html.Div(className='nine columns',
+                                children = [
+                                    dcc.Input(id='wiki-name-input',
+                                        placeholder="Write a descriptive name of the wiki",
+                                        className='share-modal-input-cn',
+                                      type='text'),
+                            ],
+                            style={'display': 'inline-flex'}
+                            ),
+                        ]
+                    ),
+
+                    html.Div(
+                        className = 'row',
+                        children = [
+                            html.P(
+                                html.Strong('wiki url*:'),
+                                className='three columns'
+                            ),
+                            html.Div(className='nine columns', children=[
+                            dcc.Input(id='wiki-url-input',
+                                      placeholder="Write the url of the wiki",
+                                      className='share-modal-input-cn',
+                                      type='url'),
+                            ],
+                            style={'display': 'inline-flex'}
+                            ),
+                        ]
+                    ),
+
+                    html.P([
+                        html.Div(className='row',
+                            children=[
+                                html.P(
+                                    html.Strong('csv file*:'),
+                                    className='three columns'
+                                ),
+                                html.Div(
+                                    className='nine columns',
+                                    children=upload_zone()
+                                )
+                            ],
+                        style={'display': 'flex'}
+                        ),
+                    ]),
+
+                    html.Div(
+                        html.Button('UPDATE',
+                                    id='update-csv-button',
+                                    className='action-button',
+                                    type='button',
+                                    n_clicks=0
+                        ),
+                        id='update-csv-button-container'
+                    ),
+
+                ]),
+                id='upload-dialog',
+                modal=False,
+                open=True
             )
         ])
 
@@ -387,8 +497,10 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
 
             html.Div(id='graphs'),
 
-            share_modal('{}/app/{}'.format(url_host, query_string),
+            share_dialog('{}/app/{}'.format(url_host, query_string),
                         '{}/download/{}'.format(url_host, query_string)),
+
+            upload_csv_modal(),
 
             html.Div(id='initial-selection', style={'display': 'none'}, children=args_selection),
             html.Div(id='signal-data', style={'display': 'none'}),
