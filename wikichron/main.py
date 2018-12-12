@@ -73,6 +73,7 @@ def load_data(wiki):
     df = clean_up_bot_activity(df, wiki)
     return df
 
+@cache.memoize()
 def to_cytoscape_dict(di_net):
     """
     Transform an input dict to cytoscape network
@@ -132,6 +133,7 @@ def to_cytoscape_dict(di_net):
     # print('aristas : {}\nnodos: {}'.format(len(di_edges), len(di_nodes)))
     return di_net
 
+@cache.memoize()
 def generate_network(dataframe, time_limit = datetime.now()):
     """
     Generates a dict with the network
