@@ -365,7 +365,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
                     ]),
                 ]),
                 id='upload-dialog',
-                modal=False,
+                modal=True,
                 open=True
             )
         ])
@@ -803,16 +803,24 @@ def bind_callbacks(app):
 
     @app.callback(
         Output('upload-dialog', 'open'),
-        [Input('upload-button', 'n_clicks')],
+        [Input('upload-button', 'n_clicks'),
+        Input('cancel-csv-button', 'n_clicks')],
         [State('upload-dialog', 'open')]
     )
-    def show_share_modal(n_clicks: int, open_state: bool):
-        if not n_clicks: # modal init closed
+    def show_share_modal(open_upload_clicks: int,
+                        cancel_upload_clicks: int,
+                        open_state: bool):
+        if open_upload_clicks \
+        and open_upload_clicks > 0 \
+        and not open_state:
             return True
-        elif n_clicks > 0 and not open_state: # opens if we click and `open` state is not open
-            return True
-        else: # otherwise, leave it closed.
+        elif cancel_upload_clicks \
+        and cancel_upload_clicks > 0 \
+        and open_state:
             return False
+        else: # otherwise, modal default open status:
+            return True
+
 
 
     # Play with this in case we want to download only the being shown current selection
