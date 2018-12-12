@@ -251,8 +251,18 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
                 style={'display': 'flex', 'align-items': 'center', \
                         'justify-content': 'space-between'},
                 children=[
-                    html.Span(
-                        html.Img(src='/assets/logo_wikichron.svg'),
+                    html.Span([
+                            html.Img(src='/assets/logo_wikichron.svg'),
+                            html.Span('    '),
+                            html.Strong(
+                                html.Em('Networks'),
+                                style={
+                                    'marginLeft': '15px',
+                                    'fontSize': 'large',
+                                    'textDecoration': 'underline'
+                                }
+                            )
+                        ],
                         id='tool-title'),
                     html.Div([
                         html.A(
