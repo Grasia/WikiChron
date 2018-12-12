@@ -351,14 +351,14 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
 
                         html.Button('UPLOAD',
                                     id='upload-csv-button',
-                                    className='action-button',
+                                    className='button action-button',
                                     type='button',
                                     n_clicks=0
                         ),
 
                         html.Button('CANCEL',
                                     id='cancel-csv-button',
-                                    className='action-button',
+                                    className='button cancel-button',
                                     type='button',
                                     n_clicks=0
                         ),

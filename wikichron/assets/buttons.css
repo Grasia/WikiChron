@@ -1,16 +1,19 @@
 /* Buttons */
 
-.action-button {
+.button {
     border: None;
     height: 57px;
     width: 256px;
     border-radius: 4px;
-    background-color: #49A5E6;
-    color : white;
     font-family: 'Roboto', sans-serif;
     font-size: 24px;
     font-weight: bold;
     line-height: 28px;
+}
+
+.action-button {
+    background-color: #49A5E6;
+    color : white;
 }
 
 .action-button:hover {
@@ -22,4 +25,14 @@
     background-color: #D1D1D1;
     cursor: default;
     color: #9B9B9B;
+}
+
+.cancel-button {
+    background-color: darkred;
+    color : white;
+}
+
+.cancel-button:hover {
+    background-color: red;
+    color : white;
 }

@@ -234,7 +234,7 @@ def compare_button():
         html.Div(
             html.Button('COMPARE',
                         id='compare-button',
-                        className='action-button',
+                        className='button action-button',
                         type='button',
                         n_clicks=0
             ),
