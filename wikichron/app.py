@@ -54,7 +54,7 @@ data_dir = os.environ['WIKICHRON_DATA_DIR']
 
 # global app config
 APP_HOSTNAME = 'http://wikichron.science';
-port = 8880;
+port = 8890;
 wikichron_base_pathname = '/app/';
 #~ assets_url_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets');
 assets_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets');
