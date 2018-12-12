@@ -97,7 +97,7 @@ Look at the [FlaskCaching documentation](https://pythonhosted.org/Flask-Caching/
 
 ## Font Awesome
 We are using icons from the [font-awesome](https://fontawesome.com) repository. These icons are subjected to the Creative Commons Attribution 4.0 International license. [You can find to the terms of their license here](https://fontawesome.com/license).
-In particular, we are using the following icons: share-alt-solid, info-circle
+In particular, we are using the following icons: share-alt-solid, info-circle, file-upload-solid.
 
 ### Modifications in font awesome icons
 * The file: `share.svg` is a modification of the [`share-alt-solid.svg`](https://fontawesome.com/icons/share-alt?style=solid) file provided by fontawesome.

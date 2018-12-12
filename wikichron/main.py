@@ -174,6 +174,12 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
                         id='tool-title'),
                     html.Div([
                         html.A(
+                            html.Img(src='/assets/file-upload.svg'),
+                            id='upload-button',
+                            className='icon',
+                            title='Upload wiki'
+                        ),
+                        html.A(
                             html.Img(src='/assets/share.svg'),
                             id='share-button',
                             className='icon',
@@ -353,7 +359,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
                 ]),
                 id='upload-dialog',
                 modal=False,
-                open=True
+                open=False
             )
         ])
 
@@ -782,6 +788,20 @@ def bind_callbacks(app):
     def show_share_modal(n_clicks: int, open_state: bool):
         if not n_clicks: # modal init closed
             return False
+        elif n_clicks > 0 and not open_state: # opens if we click and `open` state is not open
+            return True
+        else: # otherwise, leave it closed.
+            return False
+
+
+    @app.callback(
+        Output('upload-dialog', 'open'),
+        [Input('upload-button', 'n_clicks')],
+        [State('upload-dialog', 'open')]
+    )
+    def show_share_modal(n_clicks: int, open_state: bool):
+        if not n_clicks: # modal init closed
+            return True
         elif n_clicks > 0 and not open_state: # opens if we click and `open` state is not open
             return True
         else: # otherwise, leave it closed.
