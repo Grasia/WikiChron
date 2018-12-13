@@ -7,7 +7,7 @@ This flavour of WikiChron will show you insightful visualizations of wikis in th
 
 ## Install
 ### Dependencies
-* Python 3.5.2 or later
+* Python 3.6.7 or later
 * pip3
 * [Dash framework](https://plot.ly/dash)
 * [Grasia Dash Components](https://github.com/Grasia/grasia-dash-components)
