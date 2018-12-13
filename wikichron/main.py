@@ -372,7 +372,6 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
                         children=args_selection),
             html.Div(id='cytoscape', children=[]),
             html.Div(id='signal-data', style={'display': 'none'}),
-            #html.Div(id='time-axis', style={'display': 'none'}),
             html.Div(id='ready', style={'display': 'none'})
         ]
     );
@@ -380,7 +379,7 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
 def bind_callbacks(app):
 
     @app.callback(
-        Output('cytoscape', 'children'),
+        Output('signal-data', 'value'),
         [Input('initial-selection', 'children')]
     )
     def start_main(selection_json):
@@ -393,8 +392,37 @@ def bind_callbacks(app):
         network = load_and_compute_data(wiki, None)
         print('<-- Done retrieving and computing data!')
 
+        return True
+
+
+    @app.callback(
+        Output('ready', 'value'),
+        [Input('signal-data', 'value')]
+    )
+    def ready_to_plot_networks(signal):
+        #print (signal)
+        if not signal:
+            print('not ready!')
+            return False
+        if debug:
+            print('Ready to plot network!')
+        return True
+
+
+    @app.callback(
+        Output('cytoscape', 'children'),
+        [Input('ready', 'value'),
+        Input('initial-selection', 'children')]
+    )
+    def show_network(ready, selection_json):
+        if not ready: # waiting for all parameters to be ready
+            return
+        selection = json.loads(selection_json)
+        wiki = selection['wikis'][0]
+        network = load_and_compute_data(wiki, None)
+
         return dash_cytoscape.Cytoscape(
-                    elements=network['network'],
+                    elements = network['network'],
                     layout = {
                         'name': 'cose',
                         'idealEdgeLength': 100,
@@ -427,14 +455,14 @@ def bind_callbacks(app):
                             'text-outline-width': 2,
                             'background-color': 'mapData(first_edit, {}, {}, \
                                 #004481, #B0BEC5)'.format(network['newest_user'],
-                                                network['oldest_user']),
+                                    network['oldest_user']),
                             'text-outline-color': '#999',
                             'height': 'mapData(num_edits, {}, {}, 10, 60)'
                                 .format(network['user_min_edits'],
-                                        network['user_max_edits']),
+                                    network['user_max_edits']),
                             'width': 'mapData(num_edits, {}, {}, 10, 60)'
                                 .format(network['user_min_edits'],
-                                        network['user_max_edits']),
+                                    network['user_max_edits']),
                             'border-width': '1%',
                             'border-style': 'solid',
                             'border-color': 'black'
@@ -445,68 +473,15 @@ def bind_callbacks(app):
                         'style': {
                             "width": 'mapData(weight, {}, {}, 1, 10)'
                                 .format(network['edge_min_weight'],
-                                        network['edge_max_weight']),
+                                    network['edge_max_weight']),
                             'opacity': 'mapData(weight, {}, {}, 0.2, 1)'
                                 .format(network['edge_min_weight'],
-                                        network['edge_max_weight']),
+                                    network['edge_max_weight']),
                             'line-color': "#E53935",
                         }
                     }]
                 )
 
-
-    # @app.callback(
-    #     Output('ready', 'children'),
-    #     [Input('signal-data', 'children')]
-    # )
-    # def ready_to_plot_networks(signal):
-    #     #~ print (signal)
-    #     if not signal:
-    #         print('not ready!')
-    #         return None
-    #     if debug:
-    #         print('Ready to plot network!')
-    # return 'ready'
-
-
-    # @app.callback(
-    #     Output('cytoscape', 'children'),
-    #     [Input('signal-data', 'children')],
-    #     [State('initial-selection', 'children')]
-    # )
-    # def update_network(ready, selection_json):
-
-    #     if not ready: # waiting for all parameters to be ready
-    #         return
-    #     selection = json.loads(selection_json)
-    #     wiki = selection['wikis'][0]
-    #     print('\n\n\n\n')
-    #     nodes = load_and_compute_data(wiki, None)
-    #     print(nodes)
-    #     nodes = to_cytoscape_dict(nodes)
-    #     print(nodes)
-
-    #     return html.Div([
-    #             dash_cytoscape.Cytoscape(
-    #                 id='cytoscape',
-    #                 elements=[
-    #                     {'data': {'id': 'one', 'label': 'Node 1'}},
-    #                     {'data': {'id': 'two', 'label': 'Node 2'}},
-    #                     {'data': {'id': 'a', 'label': 'Node A'}},
-    #                     {'data': {'source': 'one', 'target': 'two','label': 'Node 1 to 2'}},
-    #                     {'data': {'source': 'one', 'target': 'a','label': 'Node 1 to a'}}
-    #                 ],
-
-    #                 layout={
-    #                 'name': 'cose'
-    #                 },
-    #                 style = {
-    #                         'height': '100%',
-    #                         'width': '100%',
-    #                         'position': 'absolute'
-    #                 }
-    #             )
-    #         ]);
 
     @app.callback(
         Output('share-dialog', 'open'),
