@@ -106,7 +106,7 @@ In particular, we are using the following icons: share-alt-solid, info-circle
 
 WikiChron is used for science and, accordingly, we have presented the tool in some scientific conferences. Please, cite us if you use the tool for your research work:
 * Abel Serrano, Javier Arroyo, and Samer Hassan. 2018. Webtool for the Analysis and Visualization of the Evolution of Wiki Online Communities. In Proceedings of the European Conference on Information Systems 2018 (ECIS '18). 10 pages.
-  * [Freely available here](http://ecis2018.eu/wp-content/uploads/2018/09/2169-doc.pdf)
+  * [Freely available here](https://aisel.aisnet.org/cgi/viewcontent.cgi?article=1072&context=ecis2018_rip)
 * Abel Serrano, Javier Arroyo, and Samer Hassan. 2018. Participation Inequality in Wikis: A Temporal Analysis Using WikiChron. In Proceedings of the 14th International Symposium on Open Collaboration (OpenSym '18). ACM, New York, NY, USA, Article 12, 7 pages. DOI: https://doi.org/10.1145/3233391.3233536.
   * [Freely available here](http://www.opensym.org/wp-content/uploads/2018/07/OpenSym2018_paper_31-1.pdf)
 
