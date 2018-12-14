@@ -246,7 +246,7 @@ def bind_callbacks(app):
     @app.callback(Output('networks-tab', 'style'),
                [Input('side-bar-tabs', 'value')]
     )
-    def update_metrics_tab_visible(tab_selection):
+    def update_networks_tab_visible(tab_selection):
         if tab_selection == 'networks':
             return {'display':'block'}
         else:

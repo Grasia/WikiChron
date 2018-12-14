@@ -68,6 +68,13 @@ def get_dataframe_from_csv(csv):
     return df
 
 
+def extract_network_obj_from_network_code(selected_network_code):
+    if selected_network_code:
+        return CoEditingNetwork()
+    else:
+        raise Exception("Something went bad. Missing network type selection.")
+
+
 @cache.memoize(timeout=3600)
 def load_data(wiki):
     df = get_dataframe_from_csv(wiki['data'])
@@ -78,7 +85,13 @@ def load_data(wiki):
 
 
 @cache.memoize()
-def load_and_compute_data(wiki, _):
+def load_and_compute_data(wiki, network_type):
+    """
+    Parameters
+        - wiki: Related info about the wiki selected.
+        - network_type: network selected. It is an instance of BaseNetwork.
+    Return: Data representing the network.
+    """
 
     # load data from csvs:
     time_start_loading_csvs = time.perf_counter()
@@ -86,12 +99,11 @@ def load_and_compute_data(wiki, _):
     time_end_loading_csvs = time.perf_counter() - time_start_loading_csvs
     print(' * [Timing] Loading csvs : {} seconds'.format(time_end_loading_csvs) )
 
-    # compute metric data:
+    # generate network:
     print(' * [Info] Starting calculations....')
     time_start_calculations = time.perf_counter()
-    network = CoEditingNetwork()
-    network.generate_from_pandas(data=df)
-    di_net = network.to_cytoscape_dict()
+    network_type.generate_from_pandas(data=df)
+    di_net = network_type.to_cytoscape_dict()
     time_end_calculations = time.perf_counter() - time_start_calculations
     print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
     return di_net
@@ -103,11 +115,11 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
     @TODO: Quit unused args
     It generates the main content
     Parameters:
-            -wikis_arg: wikis to show, only used the first wiki
-            -network_type_arg, type of network to generate
-            -query_string: string to share/download
-            -url_host: url to share/download
-            -others: are not used
+        -wikis_arg: wikis to show, only used the first wiki
+        -network_type_arg, type of network to generate
+        -query_string: string to share/download
+        -url_host: url to share/download
+        -others: are not used
 
     Return: An HTML object with the main content
     """
@@ -225,7 +237,8 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
         print ('Generating main...')
     wikis = wikis_arg;
     relative_time = relative_time_arg;
-    args_selection = json.dumps({"wikis": wikis, "relative_time": relative_time})
+    args_selection = json.dumps({"wikis": wikis, "relative_time": relative_time,
+                                "network": network_type_arg})
 
     return html.Div(
         id='main',
@@ -254,13 +267,15 @@ def bind_callbacks(app):
         [Input('initial-selection', 'children')]
     )
     def start_main(selection_json):
-        # get wikis x metrics selection
+        # get wikis x network selection
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0]
+        network_type = extract_network_obj_from_network_code(selection['network'])
 
         print('--> Retrieving and computing data')
-        print( '\t for the following wikis: {}'.format( wiki['name'] ))
-        network = load_and_compute_data(wiki, None)
+        print( '\t for the following wiki: {}'.format( wiki['name'] ))
+        print( '\trepresented as this network: {}'.format( network_type.name ))
+        load_and_compute_data(wiki, network_type)
         print('<-- Done retrieving and computing data!')
 
         return True
@@ -288,9 +303,13 @@ def bind_callbacks(app):
     def show_network(ready, selection_json):
         if not ready: # waiting for all parameters to be ready
             return
+
+        # get wikis x network selection
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0]
-        network = load_and_compute_data(wiki, None)
+        network_type = extract_network_obj_from_network_code(selection['network'])
+
+        network = load_and_compute_data(wiki, network_type)
 
         return dash_cytoscape.Cytoscape(
                     elements = network['network'],

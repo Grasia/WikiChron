@@ -35,7 +35,7 @@ class CoEditingNetwork(BaseNetwork):
         self.oldest_user = 0
         self.newest_user = 0
 
-   
+
     def generate_from_pandas(self, data, time_limit = datetime.now()):
         user_per_page = {}
         mapper_v = {}

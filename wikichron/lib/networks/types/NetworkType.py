@@ -15,6 +15,15 @@ class BaseNetwork(Graph):
         self.code = code
         self.name = name
 
+
+    def init_network(self):
+        """
+        Constructs an instance of this network type.
+        Use this instead of the default constructor
+        """
+        return __init_(self)
+
+
     def generate_from_pandas(self, data, time_limit):
         """
         Generates a graph from a pandas data
