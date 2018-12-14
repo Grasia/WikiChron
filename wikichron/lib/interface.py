@@ -24,7 +24,7 @@ def get_available_metrics():
    return _available_metrics
 
 def get_available_networks():
-   """ Return a list of the currently available metrics. """
+   """ Return a list of the currently available networks. """
    return _available_networks
 
 def remove_bots_activity(df, bots_ids):

@@ -1,29 +1,39 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
-   NetworkType.py
-
-   Descp:
-
-   Created on: 10-dic-2018
-
-   Copyright 2018 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
 
+ Author: Youssef El Faqir El Rhazoui
+ Date: 13/12/2018
+ Distributed under the terms of the GPLv3 license.
 
-class Network:
+"""
 
-   def __init__(self, code, name, generate_network):
-      self.code = code
-      self.name = name
-      self.generate_network = generate_network
+from igraph import Graph
+
+class BaseNetwork(Graph):
+
+    def __init__(self, is_directed = False, code = None, name = None):
+        super().__init__(directed=is_directed)
+        self.code = code
+        self.name = name
+
+    def generate_from_pandas(self, data, time_limit):
+        """
+        Generates a graph from a pandas data
+
+        Parameters:
+            -data: A pandas object with the wiki info (read from csv),
+                   must be order by timestamp
+            -time_limit: A datetime object
+
+        Return: A graph with the network representation.
+        """
+        raise NotImplementedError('generate_from_pandas is not implemented')
 
 
-   def generate_network(self, dataframe, time_limit):
-      """
-      Define function for object of untitled
-      """
-      return self.generate_network(data, time_limit)
+    def to_cytoscape_dict(self):
+        """
+        Transform this network to cytoscape dict
 
-
-
+        Return:
+            A dict with the cytoscape structure
+        """
+        raise NotImplementedError('to_cytoscape_dict is not implemented')
