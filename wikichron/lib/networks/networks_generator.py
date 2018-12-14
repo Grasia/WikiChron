@@ -13,5 +13,5 @@
 from .types.NetworkType import BaseNetwork
 
 def create_available_networks():
-    networks = [BaseNetwork('co_editing_network', 'Co-editing')]
+    networks = [BaseNetwork(code = 'co_editing_network', name = 'Co-editing')]
     return networks
