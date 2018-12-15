@@ -66,7 +66,7 @@ Note that the required information in this file will change in the future. Stay 
 ## Run the application
 Use: `python3 -m wikichron` or `python3 wikichron/app.py`
 
-The webapp will be locally available in http://127.0.0.1:8000/app/
+The webapp will be locally available under http://127.0.0.1:8880/app/
 
 Optionally, you can specify a directory with the csv data of the wikis you want to analyze with the environment variable: `WIKICHRON_DATA_DIR`.
 
@@ -79,6 +79,8 @@ It will show all the files ending in .csv as wikis available to analyze and plot
 ## Development environment
 
 To get errors messages, backtraces and automatic reloading when source code changes, you must set the environment variable: FLASK_ENV to 'development', i.e.: `export FLASK_ENV=development` prior to launch `app.py`.
+
+There is a simple but handy script called `run_develop.sh` which set the app for development environment and launches it locally.
 
 You can get more information on this in the [Flask documentation](http://flask.pocoo.org/docs/1.0/server/).
 
