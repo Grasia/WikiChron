@@ -19,7 +19,7 @@ from .networks import available_networks as _available_networks
 import os
 import pandas as pd
 import time
-
+from warnings import warn
 
 global data_dir;
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
@@ -109,6 +109,5 @@ def clean_up_bot_activity(df, wiki):
     if 'botsids' in wiki:
         return remove_bots_activity(df, wiki['botsids'])
     else:
-        warn("Warning: Missing information of bots ids. Note that graphs \
-                can be polluted of non-human activity.")
+        warn("Warning: Missing information of bots ids. Note that graphs can be polluted of non-human activity.")
     return df

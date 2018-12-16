@@ -38,6 +38,7 @@ class CoEditingNetwork(BaseNetwork):
         super().__init__(is_directed=False)
         self['oldest_user'] = None
         self['newest_user'] = None
+        
 
     def generate_from_pandas(self, data):
         user_per_page = {}

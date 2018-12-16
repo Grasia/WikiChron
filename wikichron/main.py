@@ -15,7 +15,6 @@ data.
 
 import os
 import time
-from warnings import warn
 import json
 from datetime import datetime
 import dash
@@ -52,7 +51,6 @@ def load_data(wiki):
     lib.prepare_data(df)
     df = lib.clean_up_bot_activity(df, wiki)
     return df
-
 
 
 @cache.memoize()
