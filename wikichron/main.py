@@ -103,6 +103,7 @@ def load_and_compute_data(wiki, network_type):
     print(' * [Info] Starting calculations....')
     time_start_calculations = time.perf_counter()
     network_type.generate_from_pandas(data=df)
+    #network_type = network_type.filter_by_timestamp("2011-04-07 02:05:56")
     di_net = network_type.to_cytoscape_dict()
     time_end_calculations = time.perf_counter() - time_start_calculations
     print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
@@ -112,7 +113,6 @@ def load_and_compute_data(wiki, network_type):
 def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
                             query_string, url_host):
     """
-    @TODO: Quit unused args
     It generates the main content
     Parameters:
         -wikis_arg: wikis to show, only used the first wiki
@@ -344,8 +344,8 @@ def bind_callbacks(app):
                             'color': 'white',
                             'text-outline-width': 2,
                             'background-color': 'mapData(first_edit, {}, {}, \
-                                #004481, #B0BEC5)'.format(network['newest_user'],
-                                    network['oldest_user']),
+                                #004481, #B0BEC5)'.format(network['oldest_user'],
+                                    network['newest_user']),
                             'text-outline-color': '#999',
                             'height': 'mapData(num_edits, {}, {}, 10, 60)'
                                 .format(network['user_min_edits'],
