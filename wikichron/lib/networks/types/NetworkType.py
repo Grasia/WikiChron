@@ -24,14 +24,13 @@ class BaseNetwork(Graph):
         return __init_(self)
 
 
-    def generate_from_pandas(self, data, time_limit):
+    def generate_from_pandas(self, data):
         """
         Generates a graph from a pandas data
 
         Parameters:
             -data: A pandas object with the wiki info (read from csv),
                    must be order by timestamp
-            -time_limit: A datetime object
 
         Return: A graph with the network representation.
         """

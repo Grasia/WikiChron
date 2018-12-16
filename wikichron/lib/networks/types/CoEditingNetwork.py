@@ -36,16 +36,14 @@ class CoEditingNetwork(BaseNetwork):
         self.newest_user = 0
 
 
-    def generate_from_pandas(self, data, time_limit = datetime.now()):
+    def generate_from_pandas(self, data):
         user_per_page = {}
         mapper_v = {}
         mapper_e = {}
         count = 0
 
         for index, r in data.iterrows():
-            t = (time_limit - r['timestamp'].to_pydatetime()).total_seconds()
-            if t < 0:
-                break
+            t = int(r['timestamp'].to_pydatetime().strftime('%s'))
 
             if r['contributor_name'] == 'Anonymous':
                 continue
