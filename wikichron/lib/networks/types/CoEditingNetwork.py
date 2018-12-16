@@ -36,9 +36,8 @@ class CoEditingNetwork(BaseNetwork):
 
     def __init__(self):
         super().__init__(is_directed=False)
-        self.oldest_user = None
-        self.newest_user = None
-
+        self['oldest_user'] = None
+        self['newest_user'] = None
 
     def generate_from_pandas(self, data):
         user_per_page = {}
@@ -50,10 +49,10 @@ class CoEditingNetwork(BaseNetwork):
             if r['contributor_name'] == 'Anonymous':
                 continue
 
-            if not self.oldest_user:
-                self.oldest_user = r['timestamp']
+            if not self['oldest_user']:
+                self['oldest_user'] = r['timestamp']
 
-            self.newest_user = r['timestamp']
+            self['newest_user'] = r['timestamp']
 
             # Nodes
             if not r['contributor_id'] in mapper_v:
@@ -155,9 +154,9 @@ class CoEditingNetwork(BaseNetwork):
                 }
             })
 
-        di_net['oldest_user'] = int(datetime.strptime(str(self.oldest_user),
+        di_net['oldest_user'] = int(datetime.strptime(str(self['oldest_user']),
                             "%Y-%m-%d %H:%M:%S").strftime('%s'))
-        di_net['newest_user'] = int(datetime.strptime(str(self.newest_user), 
+        di_net['newest_user'] = int(datetime.strptime(str(self['newest_user']), 
                             "%Y-%m-%d %H:%M:%S").strftime('%s'))
         di_net['edge_max_weight'] = max_v
         di_net['edge_min_weight'] = min_v
@@ -167,14 +166,15 @@ class CoEditingNetwork(BaseNetwork):
 
     def filter_by_timestamp(self, t_filter):
         t = int(datetime.strptime(t_filter, "%Y-%m-%d %H:%M:%S").strftime('%s'))
-        t1 = int(datetime.strptime(str(self.oldest_user), "%Y-%m-%d %H:%M:%S")
+        t1 = int(datetime.strptime(str(self['oldest_user']), "%Y-%m-%d %H:%M:%S")
                                 .strftime('%s'))
         if t - t1 < 0:
-            raise Exception(f'{t_filter} is older than the wiki creation {self.oldest_user}')
+            raise Exception('{} is older than the wiki creation {}'
+                                .format(t_filter, self['oldest_user']))
 
         f_net = CoEditingNetwork()
-        f_net.oldest_user = self.oldest_user
-        f_net.newest_user = self.oldest_user
+        f_net['oldest_user'] = self['oldest_user']
+        f_net['newest_user'] = self['oldest_user']
 
         #let's filter the nodes
         count = 0
@@ -185,8 +185,8 @@ class CoEditingNetwork(BaseNetwork):
             if t - t1 < 0:
                 continue
 
-            if v['first_edit'] > f_net.newest_user:
-                f_net.newest_user = v['first_edit']
+            if v['first_edit'] > f_net['newest_user']:
+                f_net['newest_user'] = v['first_edit']
             f_net.add_vertex(count)
             f_net.vs[count]['contributor_id'] = v['contributor_id']
             f_net.vs[count]['label'] = v['label']
