@@ -70,31 +70,44 @@ class CoEditingNetwork(BaseNetwork):
 
             # A page gets serveral contributors
             if not r['page_id'] in user_per_page:
-                user_per_page[r['page_id']] = {r['contributor_id']}
+                user_per_page[r['page_id']] = \
+                                {r['contributor_id']: {r['timestamp']}}
             else:
-                user_per_page[r['page_id']].add(r['contributor_id'])
+                if r['contributor_id'] in user_per_page[r['page_id']]:
+                    user_per_page[r['page_id']][r['contributor_id']]\
+                                .add(r['timestamp'])
+                else:
+                    user_per_page[r['page_id']][r['contributor_id']] = \
+                            {r['timestamp']}
 
         count = 0
         # Edges
         for k, p in user_per_page.items():
-            aux = list(p)
-            for i in range(len(aux)):
-                for j in range(i+1, len(aux)):
-                    if f'{aux[i]}{aux[j]}' in mapper_e:
-                        self.es[mapper_e[f'{aux[i]}{aux[j]}']]['weight'] += 1
+            aux = {}
+            for k_i, v_i in p.items():
+                for k_j, v_j in aux.items():
+                    if f'{k_i}{k_j}' in mapper_e:
+                        self.es[mapper_e[f'{k_i}{k_j}']]['weight'] += 1
+                        self.es[mapper_e[f'{k_i}{k_j}']]['s_pg'][k] = v_i
+                        self.es[mapper_e[f'{k_i}{k_j}']]['t_pg'][k] = v_j
                         continue
-                    if f'{aux[j]}{aux[i]}' in mapper_e:
-                        self.es[mapper_e[f'{aux[j]}{aux[i]}']]['weight'] += 1
+                    if f'{k_j}{k_i}' in mapper_e:
+                        self.es[mapper_e[f'{k_j}{k_i}']]['weight'] += 1
+                        self.es[mapper_e[f'{k_j}{k_i}']]['s_pg'][k] = v_j
+                        self.es[mapper_e[f'{k_j}{k_i}']]['t_pg'][k] = v_i
                         continue
 
-                    self.add_edge(mapper_v[aux[i]], mapper_v[aux[j]])
-                    mapper_e[f'{aux[i]}{aux[j]}'] = count
+                    self.add_edge(mapper_v[k_i], mapper_v[k_j])
+                    mapper_e[f'{k_i}{k_j}'] = count
                     count += 1
-                    self.es[mapper_e[f'{aux[i]}{aux[j]}']]['weight'] = 1
-                    self.es[mapper_e[f'{aux[i]}{aux[j]}']]['id'] = \
-                                                            f'{aux[i]}{aux[j]}'
-                    self.es[mapper_e[f'{aux[i]}{aux[j]}']]['source'] = aux[i]
-                    self.es[mapper_e[f'{aux[i]}{aux[j]}']]['target'] = aux[j]
+                    self.es[mapper_e[f'{k_i}{k_j}']]['weight'] = 1
+                    self.es[mapper_e[f'{k_i}{k_j}']]['id'] = f'{k_i}{k_j}'
+                    self.es[mapper_e[f'{k_i}{k_j}']]['source'] = k_i
+                    self.es[mapper_e[f'{k_i}{k_j}']]['target'] = k_j
+                    self.es[mapper_e[f'{k_i}{k_j}']]['s_pg'] = {k: v_i}
+                    self.es[mapper_e[f'{k_i}{k_j}']]['t_pg'] = {k: v_j}
+
+                aux[k_i] = v_i
         return
 
 
