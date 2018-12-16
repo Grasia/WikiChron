@@ -178,27 +178,24 @@ class CoEditingNetwork(BaseNetwork):
 
         #let's filter the nodes
         count = 0
-        s_c = 0
         mapper_v = {}
         for v in self.vs:
             t1 = int(datetime.strptime(str(v['first_edit']), "%Y-%m-%d %H:%M:%S")
                                 .strftime('%s'))
             if t - t1 < 0:
-                s_c += 1
                 continue
 
             if v['first_edit'] > f_net.newest_user:
                 f_net.newest_user = v['first_edit']
             f_net.add_vertex(count)
-            f_net.vs[count]['contributor_id'] = self.vs[s_c]['contributor_id']
-            f_net.vs[count]['label'] = self.vs[s_c]['label']
-            f_net.vs[count]['num_edits'] = self.vs[s_c]['num_edits']
-            f_net.vs[count]['first_edit'] = self.vs[s_c]['first_edit']
-            f_net.vs[count]['first_edit_c'] = self.vs[s_c]['first_edit_c']
-            f_net.vs[count]['last_edit'] = self.vs[s_c]['last_edit']
-            mapper_v[self.vs[s_c]['contributor_id']] = count
+            f_net.vs[count]['contributor_id'] = v['contributor_id']
+            f_net.vs[count]['label'] = v['label']
+            f_net.vs[count]['num_edits'] = v['num_edits']
+            f_net.vs[count]['first_edit'] = v['first_edit']
+            f_net.vs[count]['first_edit_c'] = v['first_edit_c']
+            f_net.vs[count]['last_edit'] = v['last_edit']
+            mapper_v[v['contributor_id']] = count
             count += 1
-            s_c += 1
 
         # now the edges
         count = 0
