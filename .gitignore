@@ -2,3 +2,4 @@ __pycache__/
 npm-debug.log
 venv/
 data/
+precooked_data/
