@@ -13,6 +13,7 @@ This flavour of WikiChron will show you insightful visualizations of wikis in th
 * [Grasia Dash Components](https://github.com/Grasia/grasia-dash-components)
 * [pandas](pandas.pydata.org)
 * (Production only) [Redis Cache](https://redis.io/)
+* [python-igraph] (https://igraph.org/python/) -> it's a c package so it depends on your OS
 
 ### Install instructions
 Simply run: `pip3 install -r requirements.txt`
