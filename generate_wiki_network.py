@@ -13,6 +13,7 @@ from os.path import join
 import sys
 import wikichron.lib.interface as lib
 import pandas as pd
+import json
 from wikichron.lib.networks.types.CoEditingNetwork import CoEditingNetwork
 
 def main(*args):
@@ -23,16 +24,16 @@ def main(*args):
 		return 1
 
 	dest_path = os.path.join('.', 'precooked_data', 'networks')
-	row = pd.read_csv(os.path.join(source_path, 'wikis.csv'), 
-					delimiter=', ', quotechar='|', index_col=False)
 
-	for i, f in row.iterrows():
-		df = lib.get_dataframe_from_csv(f['csvfile'])
+	wikis = json.load(open(os.path.join(lib.data_dir, 'wikis.json')))
+
+	for w in wikis:
+		df = lib.get_dataframe_from_csv(w['data'])
 		lib.prepare_data(df)
-		df = lib.clean_up_bot_activity(df, f['csvfile'])
+		df = lib.clean_up_bot_activity(df, w['data'])
 		for net in lib.get_available_networks():
 			net.generate_from_pandas(data=df)
-			o_f = f['csvfile'][:-3]
+			o_f = w['data'][:-3]
 			o_f = '{}{}.bin'.format(o_f, net.code)
 			net.write_pickle(fname=os.path.join(dest_path, o_f))
 	
