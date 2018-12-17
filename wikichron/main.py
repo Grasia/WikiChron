@@ -35,7 +35,9 @@ debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
 # get csv data location (data/ by default)
 global data_dir;
+global precooked_net_dir;
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
+precooked_net_dir = os.getenv('PRECOOKED_NETWORK_DIR', 'precooked_data/networks')
 
 
 def extract_network_obj_from_network_code(selected_network_code):

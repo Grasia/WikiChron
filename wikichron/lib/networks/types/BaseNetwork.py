@@ -10,11 +10,10 @@ from igraph import Graph
 
 class BaseNetwork(Graph):
 
-    def __init__(self, code = 'base_network', name = 'BaseNetwork'
-                , is_directed = False):
+    def __init__(self, is_directed = False):
         super().__init__(directed=is_directed)
-        self.code = code
-        self.name = name
+        self.code = 'base_network'
+        self.name = 'Base Network'
 
 
     def init_network(self):

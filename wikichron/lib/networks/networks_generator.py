@@ -10,8 +10,8 @@
    Copyright 2017-2018 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
 
-from .types.NetworkType import BaseNetwork
+from .types.CoEditingNetwork import CoEditingNetwork
 
 def create_available_networks():
-    networks = [BaseNetwork(code = 'co_editing_network', name = 'Co-editing')]
+    networks = [CoEditingNetwork()]
     return networks

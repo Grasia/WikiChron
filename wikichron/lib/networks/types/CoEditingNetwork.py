@@ -7,7 +7,7 @@
 """
 
 from datetime import datetime
-from .NetworkType import BaseNetwork
+from .BaseNetwork import BaseNetwork
 
 class CoEditingNetwork(BaseNetwork):
     """
@@ -38,6 +38,8 @@ class CoEditingNetwork(BaseNetwork):
         super().__init__(is_directed=False)
         self['oldest_user'] = None
         self['newest_user'] = None
+        self.name = 'Co-Editing'
+        self.code = 'co_editing_network'
         
 
     def generate_from_pandas(self, data):

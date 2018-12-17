@@ -30,10 +30,11 @@ def main(*args):
 		df = lib.get_dataframe_from_csv(f['csvfile'])
 		lib.prepare_data(df)
 		df = lib.clean_up_bot_activity(df, f['csvfile'])
-		net = CoEditingNetwork()
-		net.generate_from_pandas(data=df)
-		net.write_pickle(fname=os.path.join(dest_path, '{}.bin'
-							.format(f['url'])))
+		for net in lib.get_available_networks():
+			net.generate_from_pandas(data=df)
+			o_f = f['csvfile'][:-3]
+			o_f = '{}{}.bin'.format(o_f, net.code)
+			net.write_pickle(fname=os.path.join(dest_path, o_f))
 	
 	return 0
 
