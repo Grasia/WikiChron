@@ -1,12 +1,20 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
-    This script generates a network per wiki csv. It get them from ../data
+   generate_wiki_network.py
+
+   Descp: This script generates a network per wiki csv. It get them from ../data
     and creates a bin network in precooked_data/networks
+
+   Created on: 17-dic-2018
+
+   Copyright 2018 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
+   Copyright 2018 Youssef El Faqir El Rhazoui <f.r.youssef@hotmail.com>
+
+
+   Distributed under the terms of the AGPLv3 license.
 """
-#
-# Author: Youssef El Faqir El Rhazoui
-# Date: 07/12/2018
-# Distributed under the terms of the GPLv3 license.
-#
+
 
 import os
 from os.path import join
