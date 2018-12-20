@@ -1,6 +1,6 @@
 function setEvents() {
     console.log('Setting js events for controls_side_bar.py...');
-    hideSideBar(); // start with controls hidden by default
+    hideSideBar(); // start with left sidebar hidden by default when controls_side_bar is loaded
     document.getElementById('controls-fold-img-container').onclick = hideControlsSideBar;
     console.log('All Set!');
 }
