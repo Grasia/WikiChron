@@ -10,10 +10,10 @@ from igraph import Graph
 
 class BaseNetwork(Graph):
 
-    def __init__(self, is_directed = False, code = None, name = None):
+    def __init__(self, is_directed = False):
         super().__init__(directed=is_directed)
-        self.code = code
-        self.name = name
+        self.code = 'base_network'
+        self.name = 'Base Network'
 
 
     def init_network(self):
@@ -24,14 +24,13 @@ class BaseNetwork(Graph):
         return __init_(self)
 
 
-    def generate_from_pandas(self, data, time_limit):
+    def generate_from_pandas(self, data):
         """
         Generates a graph from a pandas data
 
         Parameters:
             -data: A pandas object with the wiki info (read from csv),
                    must be order by timestamp
-            -time_limit: A datetime object
 
         Return: A graph with the network representation.
         """
@@ -46,3 +45,16 @@ class BaseNetwork(Graph):
             A dict with the cytoscape structure
         """
         raise NotImplementedError('to_cytoscape_dict is not implemented')
+
+
+    def filter_by_timestamp(self, t_filter):
+        """
+        Filter a network by a date
+
+        Parameters:
+            -t_filter: a timestamp to filter
+
+        Return:
+            A Network object with the filter applied
+        """
+        raise NotImplementedError('filter_by_timestamp is not implemented')

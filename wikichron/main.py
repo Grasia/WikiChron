@@ -15,14 +15,12 @@ data.
 
 import os
 import time
-from warnings import warn
 import json
 from datetime import datetime
 import dash
 import dash_cytoscape
 import dash_core_components as dcc
 import dash_html_components as html
-import pandas as pd
 from dash.dependencies import Input, Output, State
 import grasia_dash_components as gdc
 import sd_material_ui
@@ -38,35 +36,9 @@ debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
 # get csv data location (data/ by default)
 global data_dir;
+global precooked_net_dir;
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
-
-
-
-def clean_up_bot_activity(df, wiki):
-    if 'botsids' in wiki:
-        return lib.remove_bots_activity(df, wiki['botsids'])
-    else:
-        warn("Warning: Missing information of bots ids. Note that graphs \
-                can be polluted of non-human activity.")
-    return df
-
-
-def get_dataframe_from_csv(csv):
-    """ Read and parse a csv and return the corresponding pandas dataframe"""
-    print('Loading csv for ' + csv)
-    time_start_loading_one_csv = time.perf_counter()
-    df = pd.read_csv(os.path.join(data_dir, csv),
-                    delimiter=';', quotechar='|',
-                    index_col=False)
-    df['timestamp']=pd.to_datetime(df['timestamp'],format='%Y-%m-%dT%H:%M:%SZ')
-    #~ df.set_index(df['timestamp'], inplace=True) # generate a datetime index
-    #~ print(df.info())
-    print('!!Loaded csv for ' + csv)
-    time_end_loading_one_csv = time.perf_counter() - time_start_loading_one_csv
-    print(' * [Timing] Loading {} : {} seconds'
-                    .format(csv, time_end_loading_one_csv))
-    df.index.name = csv
-    return df
+precooked_net_dir = os.getenv('PRECOOKED_NETWORK_DIR', 'precooked_data/networks')
 
 
 def extract_network_obj_from_network_code(selected_network_code):
@@ -78,11 +50,10 @@ def extract_network_obj_from_network_code(selected_network_code):
 
 @cache.memoize(timeout=3600)
 def load_data(wiki):
-    df = get_dataframe_from_csv(wiki['data'])
+    df = lib.get_dataframe_from_csv(wiki['data'])
     lib.prepare_data(df)
-    df = clean_up_bot_activity(df, wiki)
+    df = lib.clean_up_bot_activity(df, wiki)
     return df
-
 
 
 @cache.memoize()
@@ -104,6 +75,7 @@ def load_and_compute_data(wiki, network_type):
     print(' * [Info] Starting calculations....')
     time_start_calculations = time.perf_counter()
     network_type.generate_from_pandas(data=df)
+    #network_type = network_type.filter_by_timestamp("2011-04-07 02:05:56")
     di_net = network_type.to_cytoscape_dict()
     time_end_calculations = time.perf_counter() - time_start_calculations
     print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
@@ -113,7 +85,6 @@ def load_and_compute_data(wiki, network_type):
 def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
                             query_string, url_host):
     """
-    @TODO: Quit unused args
     It generates the main content
     Parameters:
         -wikis_arg: wikis to show, only used the first wiki
@@ -347,8 +318,8 @@ def bind_callbacks(app):
                             'color': 'white',
                             'text-outline-width': 2,
                             'background-color': 'mapData(first_edit, {}, {}, \
-                                #004481, #B0BEC5)'.format(network['newest_user'],
-                                    network['oldest_user']),
+                                #004481, #B0BEC5)'.format(network['oldest_user'],
+                                    network['newest_user']),
                             'text-outline-color': '#999',
                             'height': 'mapData(num_edits, {}, {}, 10, 60)'
                                 .format(network['user_min_edits'],
