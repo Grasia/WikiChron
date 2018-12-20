@@ -1,6 +1,6 @@
-/* Sidebar */
+/* Sidebars */
 
-#side-bar {
+.side-bar-cn {
     background-color: #004481;
     flex: 0 0 300px;
     color: white;
