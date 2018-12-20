@@ -154,13 +154,23 @@ def networks_tab(networks, selected_network):
                                 labelClassName='aside-checklist-option',
                                 labelStyle={'display': 'block'}
                             )],
-                            className='row',
+                            className='container row',
                             style={'display': 'flex'}
                         );
 
+    intro_networks_paragraph = html.Div(
+                html.P(
+                    html.Strong('Select a network type from the list:'),
+                    className="sidebar-info-paragraph"
+                ),
+                className="container")
+
     return html.Div([
         html.Div(
-            children = networks_checklist,
+            children = [
+                intro_networks_paragraph,
+                networks_checklist,
+            ],
             style={'color': 'white'},
             id='networks-tab-container',
             ),
@@ -221,7 +231,6 @@ def generate_tabs(wikis, networks, selected_wikis, selected_network):
 
 def generate_side_bar(wikis, networks, pre_selected_wikis = [], pre_selected_network = None):
     return html.Div(id='side-bar',
-        className='side-bar-cn',
         children=[
             fold_button(),
             html.Div(id='side-bar-content',
