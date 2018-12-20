@@ -97,7 +97,12 @@ meta_tags = [
 ]
 
 # js files being serve by this server:
-local_available_js = ['side_bar.js', 'main.share_modal.js', 'piwik.js']
+local_available_js = [
+    'side_bar.js',
+    'controls_side_bar.js',
+    'main.share_modal.js',
+    'piwik.js'
+]
 
 # list of js files to import from the app (either local or remote)
 to_import_js = []
@@ -168,7 +173,7 @@ def set_layout():
 
             #~ generate_tabs_bar(tabs),
             #~ side_bar.generate_side_bar(available_wikis, available_metrics),
-            html.Div(id='side-bar'),
+            html.Div(id='side-bar-root', className='side-bar-cn'),
             html.Div(id='main-root', style={'flex': 'auto'}),
             html.Div(id='sidebar-selection', style={'display': 'none'}),
             html.Div(id='test', style={'display': 'none'})
@@ -261,9 +266,9 @@ def app_bind_callbacks(app):
         return (json.dumps(selection))
 
 
-    @app.callback(Output('side-bar', 'children'),
+    @app.callback(Output('side-bar-root', 'children'),
         [Input('url', 'pathname')],
-        [State('side-bar', 'children'),
+        [State('side-bar-root', 'children'),
         State('url', 'search')],
     )
     def generate_side_bar_onload(pathname, sidebar, query_string):

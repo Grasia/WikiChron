@@ -1,6 +1,6 @@
-/* Sidebar */
+/* Sidebars */
 
-#side-bar {
+.side-bar-cn {
     background-color: #004481;
     flex: 0 0 300px;
     color: white;
@@ -10,24 +10,52 @@
     min-height: -webkit-fill-available;
 }
 
+/** Sidebar: selector - specifics **/
 
-/* Sidebar - fold button */
+#side-bar {
+    opacity: 1;
+}
 
+/** Sidebar: controls - specifics **/
+
+#controls-side-bar {
+    opacity: 0.7;
+}
+
+#controls-sidebar-wrapper {
+    z-index: 2;
+    position: fixed;
+    right: 0;
+    width: 300px;
+}
+
+#controls-side-bar:hover {
+    opacity: 0.9;
+}
+
+/* Sidebars - fold button */
+
+/** selectors sidebar **/
 #fold-button:after {
     content: '«';
 }
 
-#fold-button {
+/** controls sidebar **/
+#controls-fold-button:after {
+    content: '»';
+}
+
+.fold-button-cn {
     font-size: 4rem;
     font-family: 'Roboto Mono', monospace;
 }
 
-p#fold-button {
+p.fold-button-cn {
     margin: 0 0 0 0;
     padding: 5px 5px 5px 5px;
 }
 
-#fold-button:hover {
+.fold-button-cn:hover {
     color: #2DCCCD;
     font-weight: bold;
 }
@@ -35,6 +63,7 @@ p#fold-button {
 .fold-img-container-cn {
     cursor: pointer;
     margin-right: 18px;
+    margin-left: 18px;
     margin-top: 5px;
     margin-bottom: 10px;
 }
@@ -93,7 +122,9 @@ p#fold-button {
     opacity: 1;
 }
 
-#compare-button-container {
+/* Sidebars - buttons */
+
+.compare-button-container-cn {
     display: flex;
     justify-content: center;
     align-items: center;
