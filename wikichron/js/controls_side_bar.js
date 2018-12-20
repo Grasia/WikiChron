@@ -1,11 +1,11 @@
 function setEvents() {
     console.log('Setting js events for controls_side_bar.py...');
     hideSideBar(); // start with controls hidden by default
-    document.getElementById('controls-fold-img-container').onclick = showSideBar;
+    document.getElementById('controls-fold-img-container').onclick = hideControlsSideBar;
     console.log('All Set!');
 }
 
-function hideSideBar() {
+function hideControlsSideBar() {
 
     console.log('Pressed hide side bar...');
     // makes arrows point to the left <<
@@ -20,11 +20,11 @@ function hideSideBar() {
 
     // set show bar in arrow
     fold_container = document.getElementById('controls-fold-img-container');
-    fold_container.onclick = showSideBar;
+    fold_container.onclick = showControlsSideBar;
     fold_container.style.margin = '5px 5px 0px 5px';
 }
 
-function showSideBar() {
+function showControlsSideBar() {
 
     console.log('Pressed show side bar...');
 
@@ -40,7 +40,7 @@ function showSideBar() {
 
     // set hide bar in arrow
     fold_container = document.getElementById('controls-fold-img-container');
-    fold_container.onclick = hideSideBar;
+    fold_container.onclick = hideControlsSideBar;
     fold_container.style.margin = '';
 }
 
