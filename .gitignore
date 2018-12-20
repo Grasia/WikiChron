@@ -1,3 +1,5 @@
 __pycache__/
 npm-debug.log
 venv/
+data/
+.python-version
