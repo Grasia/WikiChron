@@ -7,7 +7,7 @@ function setEvents() {
 function hideSideBar() {
 
     console.log('Pressed hide side bar...');
-    // makes arrows point to the left <<
+    // makes arrows point to the right >>
     fold_button = document.getElementById('fold-button');
     fold_button.style.transform = "rotateY(180deg)";
 
@@ -16,7 +16,7 @@ function hideSideBar() {
 
     // hide side bar
     document.getElementById('side-bar-content').style.display = 'none';
-    document.getElementById('side-bar').style.flex = 'unset';
+    document.getElementById('side-bar-root').style.flex = 'unset';
 
     // set show bar in arrow
     fold_container = document.getElementById('fold-img-container');
@@ -28,7 +28,7 @@ function showSideBar() {
 
     console.log('Pressed show side bar...');
 
-    // makes arrows point to the right >>
+    // makes arrows point to the left <<
     fold_button = document.getElementById('fold-button');
     fold_button.style.transform = '';
 
@@ -36,7 +36,7 @@ function showSideBar() {
 
     // show side bar
     document.getElementById('side-bar-content').style.display = '';
-    document.getElementById('side-bar').style.flex = '';
+    document.getElementById('side-bar-root').style.flex = '';
 
     // set hide bar in arrow
     fold_container = document.getElementById('fold-img-container');
