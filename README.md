@@ -7,12 +7,13 @@ This flavour of WikiChron will show you insightful visualizations of wikis in th
 
 ## Install
 ### Dependencies
-* Python 3.5.2 or later
+* Python 3.6.7 or later
 * pip3
 * [Dash framework](https://plot.ly/dash)
 * [Grasia Dash Components](https://github.com/Grasia/grasia-dash-components)
 * [pandas](pandas.pydata.org)
 * (Production only) [Redis Cache](https://redis.io/)
+* [python-igraph] (https://igraph.org/python/) -> it's a c package so it depends on your OS
 
 ### Install instructions
 Simply run: `pip3 install -r requirements.txt`
@@ -66,7 +67,7 @@ Note that the required information in this file will change in the future. Stay 
 ## Run the application
 Use: `python3 -m wikichron` or `python3 wikichron/app.py`
 
-The webapp will be locally available in http://127.0.0.1:8000/app/
+The webapp will be locally available under http://127.0.0.1:8890/app/
 
 Optionally, you can specify a directory with the csv data of the wikis you want to analyze with the environment variable: `WIKICHRON_DATA_DIR`.
 
@@ -79,6 +80,8 @@ It will show all the files ending in .csv as wikis available to analyze and plot
 ## Development environment
 
 To get errors messages, backtraces and automatic reloading when source code changes, you must set the environment variable: FLASK_ENV to 'development', i.e.: `export FLASK_ENV=development` prior to launch `app.py`.
+
+There is a simple but handy script called `run_develop.sh` which set the app for development environment and launches it locally.
 
 You can get more information on this in the [Flask documentation](http://flask.pocoo.org/docs/1.0/server/).
 
@@ -106,7 +109,7 @@ In particular, we are using the following icons: share-alt-solid, info-circle
 
 WikiChron is used for science and, accordingly, we have presented the tool in some scientific conferences. Please, cite us if you use the tool for your research work:
 * Abel Serrano, Javier Arroyo, and Samer Hassan. 2018. Webtool for the Analysis and Visualization of the Evolution of Wiki Online Communities. In Proceedings of the European Conference on Information Systems 2018 (ECIS '18). 10 pages.
-  * [Freely available here](http://ecis2018.eu/wp-content/uploads/2018/09/2169-doc.pdf)
+  * [Freely available here](https://aisel.aisnet.org/cgi/viewcontent.cgi?article=1072&context=ecis2018_rip)
 * Abel Serrano, Javier Arroyo, and Samer Hassan. 2018. Participation Inequality in Wikis: A Temporal Analysis Using WikiChron. In Proceedings of the 14th International Symposium on Open Collaboration (OpenSym '18). ACM, New York, NY, USA, Article 12, 7 pages. DOI: https://doi.org/10.1145/3233391.3233536.
   * [Freely available here](http://www.opensym.org/wp-content/uploads/2018/07/OpenSym2018_paper_31-1.pdf)
 

@@ -15,14 +15,12 @@ data.
 
 import os
 import time
-from warnings import warn
 import json
 from datetime import datetime
 import dash
 import dash_cytoscape
 import dash_core_components as dcc
 import dash_html_components as html
-import pandas as pd
 from dash.dependencies import Input, Output, State
 import grasia_dash_components as gdc
 import sd_material_ui
@@ -31,185 +29,41 @@ import sd_material_ui
 import lib.interface as lib
 from cache import cache
 from controls_sidebar import generate_controls_sidebar
+from lib.networks.types.CoEditingNetwork import CoEditingNetwork
 
 global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
 # get csv data location (data/ by default)
 global data_dir;
+global precooked_net_dir;
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
+precooked_net_dir = os.getenv('PRECOOKED_NETWORK_DIR', 'precooked_data/networks')
 
 
-
-def clean_up_bot_activity(df, wiki):
-    if 'botsids' in wiki:
-        return lib.remove_bots_activity(df, wiki['botsids'])
+def extract_network_obj_from_network_code(selected_network_code):
+    if selected_network_code:
+        return CoEditingNetwork()
     else:
-        warn("Warning: Missing information of bots ids. Note that graphs can be polluted of non-human activity.")
-    return df
-
-
-def get_dataframe_from_csv(csv):
-    """ Read and parse a csv and return the corresponding pandas dataframe"""
-    print('Loading csv for ' + csv)
-    time_start_loading_one_csv = time.perf_counter()
-    df = pd.read_csv(os.path.join(data_dir, csv),
-                    delimiter=';', quotechar='|',
-                    index_col=False)
-    df['timestamp']=pd.to_datetime(df['timestamp'],format='%Y-%m-%dT%H:%M:%SZ')
-    #~ df.set_index(df['timestamp'], inplace=True) # generate a datetime index
-    #~ print(df.info())
-    print('!!Loaded csv for ' + csv)
-    time_end_loading_one_csv = time.perf_counter() - time_start_loading_one_csv
-    print(' * [Timing] Loading {} : {} seconds'
-                    .format(csv, time_end_loading_one_csv))
-    df.index.name = csv
-    return df
+        raise Exception("Something went bad. Missing network type selection.")
 
 
 @cache.memoize(timeout=3600)
 def load_data(wiki):
-    df = get_dataframe_from_csv(wiki['data'])
+    df = lib.get_dataframe_from_csv(wiki['data'])
     lib.prepare_data(df)
-    df = clean_up_bot_activity(df, wiki)
+    df = lib.clean_up_bot_activity(df, wiki)
     return df
 
-@cache.memoize()
-def to_cytoscape_dict(di_net):
-    """
-    Transform an input dict to cytoscape network
-
-    Parameters:
-        -di_net: actual network to transform
-
-    Return:
-        A dict with the cytoscape structure of nodes and edges
-    """
-    network = []
-    min_v = float('Inf')
-    max_v = -1
-    for key, val in di_net['nodes'].items():
-
-        if min_v > val['num_edits']:
-            min_v = val['num_edits']
-        if max_v < val['num_edits']:
-            max_v = val['num_edits']
-
-        network.append({
-            'data': {
-                'id': key,
-                'label': val['label'],
-                'num_edits': val['num_edits'],
-                'first_edit': val['first_edit'],
-                'last_edit': val['last_edit']
-            }
-        })
-
-    di_net['user_max_edits'] = max_v
-    di_net['user_min_edits'] = min_v
-    min_v = float('Inf')
-    max_v = -1
-    for key, val in di_net['edges'].items():
-
-        if min_v > val['weight']:
-            min_v = val['weight']
-        if max_v < val['weight']:
-            max_v = val['weight']
-
-        network.append({
-            'data': {
-                'id': key,
-                'source': val['source'],
-                'target': val['target'],
-                'weight': val['weight']
-            }
-        })
-
-    di_net['edge_max_weight'] = max_v
-    di_net['edge_min_weight'] = min_v
-    di_net['nodes'] = None
-    di_net['edges'] = None
-    di_net['network'] = network
-
-    # print('aristas : {}\nnodos: {}'.format(len(di_edges), len(di_nodes)))
-    return di_net
 
 @cache.memoize()
-def generate_network(dataframe, time_limit = datetime.now()):
+def load_and_compute_data(wiki, network_type):
     """
-    Generates a dict with the network
-
-    Parameters:
-        -dataframe: A pandas object with the wiki info
-        -time_limit: A datetime object, default; Actual time
-
-    Return: A dict {nodes, edges, oldest_user, newest_user} with the network
-                representation.
+    Parameters
+        - wiki: Related info about the wiki selected.
+        - network_type: network selected. It is an instance of BaseNetwork.
+    Return: Data representing the network.
     """
-    di_nodes = {}
-    di_edges = {}
-    user_per_page = {}
-    oldest_user = False
-    newest_user = False
-
-    for index, r in dataframe.iterrows():
-        t = (time_limit - r['timestamp'].to_pydatetime()).total_seconds()
-        if t < 0:
-            break
-
-        if r['contributor_name'] == 'Anonymous':
-            continue
-
-        if not oldest_user:
-            oldest_user = t
-
-        newest_user = t
-        # Nodes
-        if not r['contributor_id'] in di_nodes:
-            di_nodes[r['contributor_id']] = {}
-            di_nodes[r['contributor_id']]['label'] = \
-                                    r['contributor_name']
-            di_nodes[r['contributor_id']]['num_edits'] = 0
-            di_nodes[r['contributor_id']]['first_edit'] = t
-
-        di_nodes[r['contributor_id']]['num_edits'] += 1
-        di_nodes[r['contributor_id']]['last_edit'] = r['timestamp']
-
-        # A page gets serveral contributors
-        if not r['page_id'] in user_per_page:
-            user_per_page[r['page_id']] = {r['contributor_id']}
-        else:
-            user_per_page[r['page_id']].add(r['contributor_id'])
-
-    # Edges
-    for k, p in user_per_page.items():
-        aux = list(p)
-        for i in range(len(aux)):
-            for j in range(i+1, len(aux)):
-                key1 = '{}{}'.format(aux[i],aux[j])
-                key2 = '{}{}'.format(aux[j],aux[i])
-                if key1 in di_edges:
-                    di_edges[key1]['weight'] += 1
-                    continue
-                if key2 in di_edges:
-                    di_edges[key2]['weight'] += 1
-                    continue
-                di_edges[key1] = {}
-                di_edges[key1]['source'] = aux[i]
-                di_edges[key1]['target'] = aux[j]
-                di_edges[key1]['weight'] = 1
-
-    return {
-        'nodes': di_nodes,
-        'edges': di_edges,
-        'oldest_user': oldest_user,
-        'newest_user': newest_user
-    }
-
-
-
-@cache.memoize()
-def load_and_compute_data(wiki, _):
 
     # load data from csvs:
     time_start_loading_csvs = time.perf_counter()
@@ -217,11 +71,12 @@ def load_and_compute_data(wiki, _):
     time_end_loading_csvs = time.perf_counter() - time_start_loading_csvs
     print(' * [Timing] Loading csvs : {} seconds'.format(time_end_loading_csvs) )
 
-    # compute metric data:
+    # generate network:
     print(' * [Info] Starting calculations....')
     time_start_calculations = time.perf_counter()
-    di_net = generate_network(df)
-    di_net = to_cytoscape_dict(di_net)
+    network_type.generate_from_pandas(data=df)
+    #network_type = network_type.filter_by_timestamp("2011-04-07 02:05:56")
+    di_net = network_type.to_cytoscape_dict()
     time_end_calculations = time.perf_counter() - time_start_calculations
     print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
     return di_net
@@ -230,14 +85,13 @@ def load_and_compute_data(wiki, _):
 def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
                             query_string, url_host):
     """
-    @TODO: Quit unused args
     It generates the main content
     Parameters:
-            -wikis_arg: wikis to show, only used the first wiki
-            -network_type_arg, type of network to generate
-            -query_string: string to share/download
-            -url_host: url to share/download
-            -others: are not used
+        -wikis_arg: wikis to show, only used the first wiki
+        -network_type_arg, type of network to generate
+        -query_string: string to share/download
+        -url_host: url to share/download
+        -others: are not used
 
     Return: An HTML object with the main content
     """
@@ -355,9 +209,11 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
         print ('Generating main...')
     wikis = wikis_arg;
     relative_time = relative_time_arg;
-    args_selection = json.dumps({"wikis": wikis, "relative_time": relative_time})
+    args_selection = json.dumps({"wikis": wikis, "relative_time": relative_time,
+                                "network": network_type_arg})
 
-    return html.Div(id='main',
+    return html.Div(
+        id='main',
         className='control-text',
         style={'width': '100%'},
         children=[
@@ -375,29 +231,62 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
                         children=args_selection),
             html.Div(id='cytoscape', children=[]),
             html.Div(id='signal-data', style={'display': 'none'}),
-            #html.Div(id='time-axis', style={'display': 'none'}),
             html.Div(id='ready', style={'display': 'none'})
-        ]
-    );
+        ]);
 
 def bind_callbacks(app):
 
     @app.callback(
-        Output('cytoscape', 'children'),
+        Output('signal-data', 'value'),
         [Input('initial-selection', 'children')]
     )
     def start_main(selection_json):
-        # get wikis x metrics selection
+        # get wikis x network selection
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0]
+        network_type = extract_network_obj_from_network_code(selection['network'])
 
         print('--> Retrieving and computing data')
-        print( '\t for the following wikis: {}'.format( wiki['name'] ))
-        network = load_and_compute_data(wiki, None)
+        print( '\t for the following wiki: {}'.format( wiki['name'] ))
+        print( '\trepresented as this network: {}'.format( network_type.name ))
+        load_and_compute_data(wiki, network_type)
         print('<-- Done retrieving and computing data!')
 
+        return True
+
+
+    @app.callback(
+        Output('ready', 'value'),
+        [Input('signal-data', 'value')]
+    )
+    def ready_to_plot_networks(signal):
+        #print (signal)
+        if not signal:
+            print('not ready!')
+            return False
+        if debug:
+            print('Ready to plot network!')
+        return True
+
+
+    @app.callback(
+        Output('cytoscape', 'children'),
+        [Input('ready', 'value'),
+        Input('initial-selection', 'children')]
+    )
+    def show_network(ready, selection_json):
+        if not ready: # waiting for all parameters to be ready
+            return
+
+        # get wikis x network selection
+        selection = json.loads(selection_json)
+        wiki = selection['wikis'][0]
+        network_type = extract_network_obj_from_network_code(selection['network'])
+
+        network = load_and_compute_data(wiki, network_type)
+
         return dash_cytoscape.Cytoscape(
-                    elements=network['network'],
+                    elements = network['network'],
                     layout = {
                         'name': 'cose',
                         'idealEdgeLength': 100,
@@ -429,15 +318,15 @@ def bind_callbacks(app):
                             'color': 'white',
                             'text-outline-width': 2,
                             'background-color': 'mapData(first_edit, {}, {}, \
-                                #004481, #B0BEC5)'.format(network['newest_user'],
-                                                network['oldest_user']),
+                                #004481, #B0BEC5)'.format(network['oldest_user'],
+                                    network['newest_user']),
                             'text-outline-color': '#999',
                             'height': 'mapData(num_edits, {}, {}, 10, 60)'
                                 .format(network['user_min_edits'],
-                                        network['user_max_edits']),
+                                    network['user_max_edits']),
                             'width': 'mapData(num_edits, {}, {}, 10, 60)'
                                 .format(network['user_min_edits'],
-                                        network['user_max_edits']),
+                                    network['user_max_edits']),
                             'border-width': '1%',
                             'border-style': 'solid',
                             'border-color': 'black'
@@ -448,68 +337,15 @@ def bind_callbacks(app):
                         'style': {
                             "width": 'mapData(weight, {}, {}, 1, 10)'
                                 .format(network['edge_min_weight'],
-                                        network['edge_max_weight']),
+                                    network['edge_max_weight']),
                             'opacity': 'mapData(weight, {}, {}, 0.2, 1)'
                                 .format(network['edge_min_weight'],
-                                        network['edge_max_weight']),
+                                    network['edge_max_weight']),
                             'line-color': "#E53935",
                         }
                     }]
                 )
 
-
-    # @app.callback(
-    #     Output('ready', 'children'),
-    #     [Input('signal-data', 'children')]
-    # )
-    # def ready_to_plot_networks(signal):
-    #     #~ print (signal)
-    #     if not signal:
-    #         print('not ready!')
-    #         return None
-    #     if debug:
-    #         print('Ready to plot network!')
-    # return 'ready'
-
-
-    # @app.callback(
-    #     Output('cytoscape', 'children'),
-    #     [Input('signal-data', 'children')],
-    #     [State('initial-selection', 'children')]
-    # )
-    # def update_network(ready, selection_json):
-
-    #     if not ready: # waiting for all parameters to be ready
-    #         return
-    #     selection = json.loads(selection_json)
-    #     wiki = selection['wikis'][0]
-    #     print('\n\n\n\n')
-    #     nodes = load_and_compute_data(wiki, None)
-    #     print(nodes)
-    #     nodes = to_cytoscape_dict(nodes)
-    #     print(nodes)
-
-    #     return html.Div([
-    #             dash_cytoscape.Cytoscape(
-    #                 id='cytoscape',
-    #                 elements=[
-    #                     {'data': {'id': 'one', 'label': 'Node 1'}},
-    #                     {'data': {'id': 'two', 'label': 'Node 2'}},
-    #                     {'data': {'id': 'a', 'label': 'Node A'}},
-    #                     {'data': {'source': 'one', 'target': 'two','label': 'Node 1 to 2'}},
-    #                     {'data': {'source': 'one', 'target': 'a','label': 'Node 1 to a'}}
-    #                 ],
-
-    #                 layout={
-    #                 'name': 'cose'
-    #                 },
-    #                 style = {
-    #                         'height': '100%',
-    #                         'width': '100%',
-    #                         'position': 'absolute'
-    #                 }
-    #             )
-    #         ]);
 
     @app.callback(
         Output('share-dialog', 'open'),

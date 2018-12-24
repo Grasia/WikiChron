@@ -7,7 +7,8 @@
 
    Created on: 14-nov-2017
 
-   Copyright 2017-2018 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
+   Copyright 2017-2018 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>, 
+                      Youssef El Faqir El Rhazoui 
 """
 
 import numpy as np
@@ -15,16 +16,21 @@ import numpy as np
 from .metrics import available_metrics as _available_metrics
 from .metrics import metrics_dict
 from .metrics import stats
-
 from .networks import available_networks as _available_networks
+import os
+import pandas as pd
+import time
+from warnings import warn
 
+global data_dir;
+data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 
 def get_available_metrics():
    """ Return a list of the currently available metrics. """
    return _available_metrics
 
 def get_available_networks():
-   """ Return a list of the currently available metrics. """
+   """ Return a list of the currently available networks. """
    return _available_networks
 
 def remove_bots_activity(df, bots_ids):
@@ -82,3 +88,45 @@ def compute_metrics_on_dataframe(metrics, df):
    """
    #~ return [ metric.calculate(df) for df in dfs]
 
+def get_dataframe_from_csv(csv):
+    """ Read and parse a csv and return the corresponding pandas dataframe"""
+    print('Loading csv for ' + csv)
+    time_start_loading_one_csv = time.perf_counter()
+    df = pd.read_csv(os.path.join(data_dir, csv),
+                    delimiter=';', quotechar='|',
+                    index_col=False)
+    df['timestamp']=pd.to_datetime(df['timestamp'],format='%Y-%m-%dT%H:%M:%SZ')
+    #~ df.set_index(df['timestamp'], inplace=True) # generate a datetime index
+    #~ print(df.info())
+    print('!!Loaded csv for ' + csv)
+    time_end_loading_one_csv = time.perf_counter() - time_start_loading_one_csv
+    print(' * [Timing] Loading {} : {} seconds'
+                    .format(csv, time_end_loading_one_csv))
+    df.index.name = csv
+    return df
+
+
+def clean_up_bot_activity(df, wiki):
+    if 'botsids' in wiki:
+        return remove_bots_activity(df, wiki['botsids'])
+    else:
+        warn("Warning: Missing information of bots ids. Note that graphs can be polluted of non-human activity.")
+    return df
+
+
+def get_network_from_bin(name, network_t):
+    """
+    Find and read a network from a bin file
+
+    Parameters: 
+      - name: the network name
+      - network_t: the network type
+
+    Return:
+      - 0 if the file doesn't exist
+      - An network_t type instance if it exist
+
+    Raise Exception:
+      - network_t is not avaliable
+    """
+    
