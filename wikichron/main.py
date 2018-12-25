@@ -192,7 +192,6 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
             ])
         );
 
-
     def share_modal(share_link, download_link):
         """
         Generates a window to share a link
@@ -255,7 +254,7 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
                         style={'height': '35px'},
                         children=[
                             dcc.Slider(
-                                id='dates-slider',
+                                id='dates-slider'
                         )],
                     )
                 ],
@@ -270,29 +269,29 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
                                 "network": network_type_arg})
 
     return html.Div(
-        id='main',
-        className='control-text',
-        style={'width': '100%'},
-        children=[
+            id='main',
+            className='control-text',
+            style={'width': '100%'},
+            children=[
 
-            generate_controls_sidebar(),
+                generate_controls_sidebar(),
 
-            main_header(),
+                main_header(),
 
-            html.Hr(),
+                html.Hr(),
 
-            date_slider_control(),
+                date_slider_control(),
 
-            html.Hr(style={'margin-bottom': '0px'}),
+                html.Hr(style={'margin-bottom': '0px'}),
 
-            share_modal('{}/app/{}'.format(url_host, query_string),
-                        '{}/download/{}'.format(url_host, query_string)),
+                share_modal('{}/app/{}'.format(url_host, query_string),
+                            '{}/download/{}'.format(url_host, query_string)),
 
-            html.Div(id='initial-selection', style={'display': 'none'},
-                        children=args_selection),
-            html.Div(id='cytoscape', children=[]),
-            html.Div(id='signal-data', style={'display': 'none'}),
-            html.Div(id='ready', style={'display': 'none'})
+                html.Div(id='initial-selection', style={'display': 'none'},
+                            children=args_selection),
+                html.Div(id='cytoscape', children=[]),
+                html.Div(id='signal-data', style={'display': 'none'}),
+                html.Div(id='ready', style={'display': 'none'})
         ]);
 
 def bind_callbacks(app):
