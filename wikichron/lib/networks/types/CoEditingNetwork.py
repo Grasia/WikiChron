@@ -167,8 +167,8 @@ class CoEditingNetwork(BaseNetwork):
         return di_net
 
 
-    def filter_by_timestamp(self, t_filter):
-        t = int(datetime.strptime(t_filter, "%Y-%m-%d %H:%M:%S").strftime('%s'))
+    def filter_by_time(self, t_filter):
+        t = t_filter
         t1 = int(datetime.strptime(str(self['oldest_user']), "%Y-%m-%d %H:%M:%S")
                                 .strftime('%s'))
         if t - t1 < 0:

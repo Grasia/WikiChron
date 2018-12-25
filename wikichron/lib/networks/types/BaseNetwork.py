@@ -47,12 +47,12 @@ class BaseNetwork(Graph):
         raise NotImplementedError('to_cytoscape_dict is not implemented')
 
 
-    def filter_by_timestamp(self, t_filter):
+    def filter_by_time(self, t_filter):
         """
         Filter a network by a date
 
         Parameters:
-            -t_filter: a timestamp to filter
+            -t_filter: a time in seconds to filter the network
 
         Return:
             A Network object with the filter applied

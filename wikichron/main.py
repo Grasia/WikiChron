@@ -59,7 +59,6 @@ def load_data(wiki):
     return df
 
 
-@cache.memoize()
 def load_and_compute_data(wiki, network_type):
     """
     Parameters
@@ -78,11 +77,46 @@ def load_and_compute_data(wiki, network_type):
     print(' * [Info] Starting calculations....')
     time_start_calculations = time.perf_counter()
     network_type.generate_from_pandas(data=df)
-    #network_type = network_type.filter_by_timestamp("2011-04-07 02:05:56")
-    di_net = network_type.to_cytoscape_dict()
     time_end_calculations = time.perf_counter() - time_start_calculations
     print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
-    return di_net
+    return network_type
+
+
+def default_network_stylesheet(network):
+    return [{
+                'selector': 'node',
+                'style': {
+                    'content': '',
+                    'text-valign': 'center',
+                    'color': 'white',
+                    'text-outline-width': 2,
+                    'background-color': 'mapData(first_edit, {}, {}, \
+                        #004481, #B0BEC5)'.format(network['oldest_user'],
+                            network['newest_user']),
+                    'text-outline-color': '#999',
+                    'height': 'mapData(num_edits, {}, {}, 10, 60)'
+                        .format(network['user_min_edits'],
+                            network['user_max_edits']),
+                    'width': 'mapData(num_edits, {}, {}, 10, 60)'
+                        .format(network['user_min_edits'],
+                            network['user_max_edits']),
+                    'border-width': '1%',
+                    'border-style': 'solid',
+                    'border-color': 'black'
+                }
+            },
+            {
+                'selector': 'edge',
+                'style': {
+                    "width": 'mapData(weight, {}, {}, 1, 10)'
+                        .format(network['edge_min_weight'],
+                            network['edge_max_weight']),
+                    'opacity': 'mapData(weight, {}, {}, 0.2, 1)'
+                        .format(network['edge_min_weight'],
+                            network['edge_max_weight']),
+                    'line-color': "#E53935",
+                }
+            }]
 
 
 def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
@@ -249,7 +283,7 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
 
             date_slider_control(),
 
-            html.Hr(),
+            html.Hr(style={'margin-bottom': '0px'}),
 
             share_modal('{}/app/{}'.format(url_host, query_string),
                         '{}/download/{}'.format(url_host, query_string)),
@@ -258,12 +292,11 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
                         children=args_selection),
             html.Div(id='cytoscape', children=[]),
             html.Div(id='signal-data', style={'display': 'none'}),
-            html.Div(id='time-axis', style={'display': 'none'}),
             html.Div(id='ready', style={'display': 'none'})
         ]);
 
 def bind_callbacks(app):
-
+ 
     @app.callback(
         Output('signal-data', 'value'),
         [Input('initial-selection', 'children')]
@@ -277,7 +310,8 @@ def bind_callbacks(app):
         print('--> Retrieving and computing data')
         print( '\t for the following wiki: {}'.format( wiki['name'] ))
         print( '\trepresented as this network: {}'.format( network_type.name ))
-        load_and_compute_data(wiki, network_type)
+        global network
+        network = load_and_compute_data(wiki, network_type)
         print('<-- Done retrieving and computing data!')
 
         return True
@@ -286,7 +320,7 @@ def bind_callbacks(app):
     @app.callback(
         Output('ready', 'value'),
         [Input('signal-data', 'value'),
-        Input('date-slider-container', 'children')]
+        Input('dates-slider', 'value')]
     )
     def ready_to_plot_networks(*args):
         #print (args)
@@ -300,22 +334,31 @@ def bind_callbacks(app):
 
     @app.callback(
         Output('cytoscape', 'children'),
-        [Input('ready', 'value'),
-        Input('initial-selection', 'children')]
+        [Input('ready', 'value')],
+        [State('dates-slider', 'value'),
+        State('cytoscape', 'children')]
     )
-    def show_network(ready, selection_json):
-        if not ready: # waiting for all parameters to be ready
+    def update_network(ready, time_selected, printed):
+        if not ready:
             return
 
-        # get wikis x network selection
-        selection = json.loads(selection_json)
-        wiki = selection['wikis'][0]
-        network_type = extract_network_obj_from_network_code(selection['network'])
+        if printed:
+            print(' * [Info] Starting time filter....')
+            time_start_calculations = time.perf_counter()
+            
+            origin = int(datetime.strptime(str(network['oldest_user']), 
+            "%Y-%m-%d %H:%M:%S").strftime('%s'))
+            f_network = network.filter_by_time(origin + time_selected * TIME_DIV)
 
-        network = load_and_compute_data(wiki, network_type)
+            time_end_calculations = time.perf_counter() - time_start_calculations
+            print(' * [Timing] Filter : {} seconds'.format(time_end_calculations))
+            di_net = f_network.to_cytoscape_dict()
+
+        else:
+            di_net = network.to_cytoscape_dict()
 
         return dash_cytoscape.Cytoscape(
-                    elements = network['network'],
+                    elements = di_net['network'],
                     layout = {
                         'name': 'cose',
                         'idealEdgeLength': 100,
@@ -339,40 +382,7 @@ def bind_callbacks(app):
                         'width': '100%',
                         'position': 'absolute'
                     },
-                    stylesheet = [{
-                        'selector': 'node',
-                        'style': {
-                            'content': '',
-                            'text-valign': 'center',
-                            'color': 'white',
-                            'text-outline-width': 2,
-                            'background-color': 'mapData(first_edit, {}, {}, \
-                                #004481, #B0BEC5)'.format(network['oldest_user'],
-                                    network['newest_user']),
-                            'text-outline-color': '#999',
-                            'height': 'mapData(num_edits, {}, {}, 10, 60)'
-                                .format(network['user_min_edits'],
-                                    network['user_max_edits']),
-                            'width': 'mapData(num_edits, {}, {}, 10, 60)'
-                                .format(network['user_min_edits'],
-                                    network['user_max_edits']),
-                            'border-width': '1%',
-                            'border-style': 'solid',
-                            'border-color': 'black'
-                        }
-                    },
-                    {
-                        'selector': 'edge',
-                        'style': {
-                            "width": 'mapData(weight, {}, {}, 1, 10)'
-                                .format(network['edge_min_weight'],
-                                    network['edge_max_weight']),
-                            'opacity': 'mapData(weight, {}, {}, 0.2, 1)'
-                                .format(network['edge_min_weight'],
-                                    network['edge_max_weight']),
-                            'line-color': "#E53935",
-                        }
-                    }]
+                    stylesheet = default_network_stylesheet(di_net)
                 )
 
 
@@ -394,21 +404,18 @@ def bind_callbacks(app):
 
     @app.callback(
         Output('date-slider-container', 'children'),
-        [Input('initial-selection', 'children'),
-        Input('signal-data', 'value')]
+        [Input('signal-data', 'value')]
     )
-    def update_slider(selection_json, signal):
+    def update_slider(signal):
         if not signal:
             return dcc.Slider(id='dates-slider')
 
-        selection = json.loads(selection_json)
-        wiki = selection['wikis'][0]
-        network_type = extract_network_obj_from_network_code(selection['network'])
-        di_net = load_and_compute_data(wiki, network_type)
+        origin = int(datetime.strptime(str(network['oldest_user']), 
+            "%Y-%m-%d %H:%M:%S").strftime('%s'))
+        end = int(datetime.strptime(str(network['newest_user']), 
+            "%Y-%m-%d %H:%M:%S").strftime('%s'))
 
-        time_gap = di_net['newest_user'] - di_net['oldest_user']
-
-        min_time = 0
+        time_gap = end - origin
         max_time = time_gap // TIME_DIV
 
         #~ max_number_of_marks = 11
@@ -425,16 +432,16 @@ def bind_callbacks(app):
         else:
             step_for_marks = 36
 
-        range_slider_marks = {i: datetime.fromtimestamp(di_net['oldest_user']
-         + i * TIME_DIV).strftime('%b %Y') for i in range(0, max_time-step_for_marks, 
-        step_for_marks)}
+        range_slider_marks = {i: datetime.fromtimestamp(origin
+         + i * TIME_DIV).strftime('%b %Y') for i in range(1, 
+         max_time-step_for_marks, step_for_marks)}
 
         range_slider_marks[max_time] = datetime.fromtimestamp(
-        di_net['oldest_user'] + max_time * TIME_DIV).strftime('%b %Y')
+        origin + max_time * TIME_DIV).strftime('%b %Y')
 
         return  dcc.Slider(
                     id='dates-slider',
-                    min=min_time,
+                    min=1,
                     max=max_time,
                     step=1,
                     value=max_time,
