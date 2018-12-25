@@ -31,6 +31,9 @@ from cache import cache
 from controls_sidebar import generate_controls_sidebar
 from lib.networks.types.CoEditingNetwork import CoEditingNetwork
 
+#aprox 1 month = 30 days
+TIME_DIV = 60 * 60 * 24 * 30
+
 global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
@@ -204,6 +207,26 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
             )
         ])
 
+    def date_slider_control():
+        return html.Div(id='date-slider-div', className='container',
+                children=[
+                    html.Span(id='slider-header',
+                    children=[
+                        html.Strong(
+                            'Time interval (months):'),
+                        html.Span(id='display-slider-selection')
+                    ]),
+
+                    html.Div(id='date-slider-container',
+                        style={'height': '35px'},
+                        children=[
+                            dcc.Slider(
+                                id='dates-slider',
+                        )],
+                    )
+                ],
+                style={'margin-top': '15px'}
+                )
 
     if debug:
         print ('Generating main...')
@@ -224,6 +247,10 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
 
             html.Hr(),
 
+            date_slider_control(),
+
+            html.Hr(),
+
             share_modal('{}/app/{}'.format(url_host, query_string),
                         '{}/download/{}'.format(url_host, query_string)),
 
@@ -231,6 +258,7 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
                         children=args_selection),
             html.Div(id='cytoscape', children=[]),
             html.Div(id='signal-data', style={'display': 'none'}),
+            html.Div(id='time-axis', style={'display': 'none'}),
             html.Div(id='ready', style={'display': 'none'})
         ]);
 
@@ -257,11 +285,12 @@ def bind_callbacks(app):
 
     @app.callback(
         Output('ready', 'value'),
-        [Input('signal-data', 'value')]
+        [Input('signal-data', 'value'),
+        Input('date-slider-container', 'children')]
     )
-    def ready_to_plot_networks(signal):
-        #print (signal)
-        if not signal:
+    def ready_to_plot_networks(*args):
+        #print (args)
+        if not all(args):
             print('not ready!')
             return False
         if debug:
@@ -361,6 +390,56 @@ def bind_callbacks(app):
             return False
 
         return # bind_callbacks
+
+
+    @app.callback(
+        Output('date-slider-container', 'children'),
+        [Input('initial-selection', 'children'),
+        Input('signal-data', 'value')]
+    )
+    def update_slider(selection_json, signal):
+        if not signal:
+            return dcc.Slider(id='dates-slider')
+
+        selection = json.loads(selection_json)
+        wiki = selection['wikis'][0]
+        network_type = extract_network_obj_from_network_code(selection['network'])
+        di_net = load_and_compute_data(wiki, network_type)
+
+        time_gap = di_net['newest_user'] - di_net['oldest_user']
+
+        min_time = 0
+        max_time = time_gap // TIME_DIV
+
+        #~ max_number_of_marks = 11
+        if max_time < 12:
+            step_for_marks = 1
+        elif max_time < 33:
+            step_for_marks = 3
+        elif max_time < 66:
+            step_for_marks = 6
+        elif max_time < 121:
+            step_for_marks = 12
+        elif max_time < 264:
+            step_for_marks = 24
+        else:
+            step_for_marks = 36
+
+        range_slider_marks = {i: datetime.fromtimestamp(di_net['oldest_user']
+         + i * TIME_DIV).strftime('%b %Y') for i in range(0, max_time-step_for_marks, 
+        step_for_marks)}
+
+        range_slider_marks[max_time] = datetime.fromtimestamp(
+        di_net['oldest_user'] + max_time * TIME_DIV).strftime('%b %Y')
+
+        return  dcc.Slider(
+                    id='dates-slider',
+                    min=min_time,
+                    max=max_time,
+                    step=1,
+                    value=max_time,
+                    marks=range_slider_marks
+                )
 
 
 if __name__ == '__main__':
