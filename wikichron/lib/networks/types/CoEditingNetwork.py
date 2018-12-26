@@ -207,21 +207,21 @@ class CoEditingNetwork(BaseNetwork):
             t_p = {}
             # source filter
             for k, p in e['s_pg'].items():
-                s_p[k] = set()
+                s_p[k] = []
                 for ts in p:
                     t1 = int(datetime.strptime(str(ts), "%Y-%m-%d %H:%M:%S")
                                 .strftime('%s'))
                     if t > t1:
-                        s_p[k].add(ts)
+                        s_p[k].append(ts)
 
             # target filter
             for k, p in e['t_pg'].items():
-                t_p[k] = set()
+                t_p[k] = []
                 for ts in p:
                     t1 = int(datetime.strptime(str(ts), "%Y-%m-%d %H:%M:%S")
                                 .strftime('%s'))
                     if t > t1:
-                        t_p[k].add(ts)
+                        t_p[k].append(ts)
 
             # weight filter
             weight = 0

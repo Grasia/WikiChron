@@ -289,7 +289,7 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
 
                 html.Div(id='initial-selection', style={'display': 'none'},
                             children=args_selection),
-                html.Div(id='cytoscape', children=[]),
+                html.Div(id='cytoscape', style={'display': 'flex'}, children=[]),
                 html.Div(id='signal-data', style={'display': 'none'}),
                 html.Div(id='ready', style={'display': 'none'})
         ]);
@@ -377,9 +377,8 @@ def bind_callbacks(app):
                         'minTemp': 1.0
                     },
                     style = {
-                        'height': '100%',
-                        'width': '100%',
-                        'position': 'absolute'
+                        'height': '95vh',
+                        'width': '100%'
                     },
                     stylesheet = default_network_stylesheet(di_net)
                 )
