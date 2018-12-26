@@ -31,8 +31,7 @@ from cache import cache
 from controls_sidebar import generate_controls_sidebar
 from lib.networks.types.CoEditingNetwork import CoEditingNetwork
 
-#aprox 1 month = 30 days
-TIME_DIV = 60 * 60 * 24 * 30
+TIME_DIV = CoEditingNetwork.TIME_DIV
 
 global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
@@ -111,10 +110,8 @@ def default_network_stylesheet(network):
                     "width": 'mapData(weight, {}, {}, 1, 10)'
                         .format(network['edge_min_weight'],
                             network['edge_max_weight']),
-                    'opacity': 'mapData(weight, {}, {}, 0.2, 1)'
-                        .format(network['edge_min_weight'],
-                            network['edge_max_weight']),
-                    'line-color': "#E53935",
+                    'opacity': 'mapData(w_time, 0, 2, 0.5, 1)',
+                    'line-color': "mapData(w_time, 0, 2, #039BE5, #E53935)",
                 }
             }]
 
@@ -312,7 +309,6 @@ def bind_callbacks(app):
         global network
         network = load_and_compute_data(wiki, network_type)
         print('<-- Done retrieving and computing data!')
-
         return True
 
 

@@ -6,6 +6,8 @@
 
 """
 
+import numpy
+import math
 from datetime import datetime
 from .BaseNetwork import BaseNetwork
 
@@ -33,6 +35,9 @@ class CoEditingNetwork(BaseNetwork):
                     edits in that page as value
 
     """
+
+    #aprox 1 month = 30 days
+    TIME_DIV = 60 * 60 * 24 * 30
 
     def __init__(self):
         super().__init__(is_directed=False)
@@ -92,11 +97,15 @@ class CoEditingNetwork(BaseNetwork):
                 for k_j, v_j in aux.items():
                     if f'{k_i}{k_j}' in mapper_e:
                         self.es[mapper_e[f'{k_i}{k_j}']]['weight'] += 1
+                        self.es[mapper_e[f'{k_i}{k_j}']]['w_time'] += \
+                            self.calculate_w_time(v_i[-1], v_j[-1])
                         self.es[mapper_e[f'{k_i}{k_j}']]['s_pg'][k] = v_i
                         self.es[mapper_e[f'{k_i}{k_j}']]['t_pg'][k] = v_j
                         continue
                     if f'{k_j}{k_i}' in mapper_e:
                         self.es[mapper_e[f'{k_j}{k_i}']]['weight'] += 1
+                        self.es[mapper_e[f'{k_j}{k_i}']]['w_time'] += \
+                            self.calculate_w_time(v_j[-1], v_i[-1])
                         self.es[mapper_e[f'{k_j}{k_i}']]['s_pg'][k] = v_j
                         self.es[mapper_e[f'{k_j}{k_i}']]['t_pg'][k] = v_i
                         continue
@@ -105,6 +114,8 @@ class CoEditingNetwork(BaseNetwork):
                     mapper_e[f'{k_i}{k_j}'] = count
                     count += 1
                     self.es[mapper_e[f'{k_i}{k_j}']]['weight'] = 1
+                    self.es[mapper_e[f'{k_i}{k_j}']]['w_time'] = \
+                            self.calculate_w_time(v_i[-1], v_j[-1])
                     self.es[mapper_e[f'{k_i}{k_j}']]['id'] = f'{k_i}{k_j}'
                     self.es[mapper_e[f'{k_i}{k_j}']]['source'] = k_i
                     self.es[mapper_e[f'{k_i}{k_j}']]['target'] = k_j
@@ -112,6 +123,10 @@ class CoEditingNetwork(BaseNetwork):
                     self.es[mapper_e[f'{k_i}{k_j}']]['t_pg'] = {k: v_j}
 
                 aux[k_i] = v_i
+
+        for e in self.es:
+            e['w_time'] = e['w_time'] / e['weight']
+
         return
 
 
@@ -153,7 +168,8 @@ class CoEditingNetwork(BaseNetwork):
                     'id': edge['id'],
                     'source': edge['source'],
                     'target': edge['target'],
-                    'weight': edge['weight']
+                    'weight': edge['weight'],
+                    'w_time': edge['w_time']
                 }
             })
 
@@ -225,13 +241,17 @@ class CoEditingNetwork(BaseNetwork):
 
             # weight filter
             weight = 0
+            w_time = 0
             for k, _ in e['s_pg'].items():
                 if len(s_p[k]) > 0 and len(t_p[k]) > 0:
                     weight += 1
+                    w_time += self.calculate_w_time(s_p[k][-1], t_p[k][-1])
+
 
             if weight > 0:
                 f_net.add_edge(mapper_v[e['source']], mapper_v[e['target']])
                 f_net.es[count]['weight'] = weight
+                f_net.es[count]['w_time'] = w_time / weight
                 f_net.es[count]['id'] = e['id']
                 f_net.es[count]['source'] = e['source']
                 f_net.es[count]['target'] = e['target']
@@ -239,3 +259,29 @@ class CoEditingNetwork(BaseNetwork):
                 f_net.es[count]['t_pg'] = t_p
                 count += 1
         return f_net
+
+
+    def calculate_w_time(self, tsp1, tsp2):
+        """
+        Calculates the weight based on time between 2 editions
+
+        Parameters: 
+            -tsp1: a timestamp
+            -tsp2: a timestamp
+
+        Returns: a number which represent the w_time
+        """
+        t1 = int(datetime.strptime(str(tsp1), 
+            "%Y-%m-%d %H:%M:%S").strftime('%s'))
+        t2 = int(datetime.strptime(str(tsp2), 
+            "%Y-%m-%d %H:%M:%S").strftime('%s'))
+        t_gap = math.fabs(t1 - t2)
+
+        if t_gap == 0:
+            return 1
+
+        if t_gap > self.TIME_DIV:
+            return self.TIME_DIV / t_gap
+
+        return 1 + numpy.interp(
+            self.TIME_DIV / t_gap, [1, 50], [0, 1])
