@@ -51,7 +51,7 @@ def extract_network_obj_from_network_code(selected_network_code):
         raise Exception("Something went bad. Missing network type selection.")
 
 
-@cache.memoize(timeout=3600)
+#@cache.memoize(timeout=3600)
 def load_data(wiki):
     df = lib.get_dataframe_from_csv(wiki['data'])
     lib.prepare_data(df)
@@ -334,26 +334,26 @@ def bind_callbacks(app):
     @app.callback(
         Output('cytoscape', 'children'),
         [Input('ready', 'value')],
-        [State('dates-slider', 'value'),
-        State('cytoscape', 'children')]
+        [State('date-slider-container', 'children')]
     )
-    def update_network(ready, time_selected, printed):
+    def update_network(ready, slider):
         if not ready:
             return
-
-        if printed:
+        if not slider['props']['value'] == slider['props']['max']:
             print(' * [Info] Starting time filter....')
             time_start_calculations = time.perf_counter()
             
             origin = int(datetime.strptime(str(network['oldest_user']), 
             "%Y-%m-%d %H:%M:%S").strftime('%s'))
-            f_network = network.filter_by_time(origin + time_selected * TIME_DIV)
+            f_network = network.filter_by_time(origin + slider['props']['value']
+             * TIME_DIV)
 
             time_end_calculations = time.perf_counter() - time_start_calculations
             print(' * [Timing] Filter : {} seconds'.format(time_end_calculations))
             di_net = f_network.to_cytoscape_dict()
 
         else:
+            print(' * [Info] Printing the entire network....')
             di_net = network.to_cytoscape_dict()
 
         return dash_cytoscape.Cytoscape(

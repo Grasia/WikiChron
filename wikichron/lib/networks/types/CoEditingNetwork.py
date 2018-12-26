@@ -75,14 +75,14 @@ class CoEditingNetwork(BaseNetwork):
             # A page gets serveral contributors
             if not r['page_id'] in user_per_page:
                 user_per_page[r['page_id']] = \
-                                {r['contributor_id']: {r['timestamp']}}
+                                {r['contributor_id']: [r['timestamp']]}
             else:
                 if r['contributor_id'] in user_per_page[r['page_id']]:
                     user_per_page[r['page_id']][r['contributor_id']]\
-                                .add(r['timestamp'])
+                                .append(r['timestamp'])
                 else:
                     user_per_page[r['page_id']][r['contributor_id']] = \
-                            {r['timestamp']}
+                            [r['timestamp']]
 
         count = 0
         # Edges
@@ -171,7 +171,7 @@ class CoEditingNetwork(BaseNetwork):
         t = t_filter
         t1 = int(datetime.strptime(str(self['oldest_user']), "%Y-%m-%d %H:%M:%S")
                                 .strftime('%s'))
-        if t - t1 < 0:
+        if t < t1:
             raise Exception('{} is older than the wiki creation {}'
                                 .format(t_filter, self['oldest_user']))
 
@@ -185,7 +185,7 @@ class CoEditingNetwork(BaseNetwork):
         for v in self.vs:
             t1 = int(datetime.strptime(str(v['first_edit']), "%Y-%m-%d %H:%M:%S")
                                 .strftime('%s'))
-            if t - t1 < 0:
+            if t < t1:
                 continue
 
             if v['first_edit'] > f_net['newest_user']:
@@ -211,7 +211,7 @@ class CoEditingNetwork(BaseNetwork):
                 for ts in p:
                     t1 = int(datetime.strptime(str(ts), "%Y-%m-%d %H:%M:%S")
                                 .strftime('%s'))
-                    if t - t1 > 0:
+                    if t > t1:
                         s_p[k].add(ts)
 
             # target filter
@@ -220,7 +220,7 @@ class CoEditingNetwork(BaseNetwork):
                 for ts in p:
                     t1 = int(datetime.strptime(str(ts), "%Y-%m-%d %H:%M:%S")
                                 .strftime('%s'))
-                    if t - t1 > 0:
+                    if t > t1:
                         t_p[k].add(ts)
 
             # weight filter
