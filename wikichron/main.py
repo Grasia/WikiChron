@@ -57,7 +57,7 @@ def load_data(wiki):
     df = lib.clean_up_bot_activity(df, wiki)
     return df
 
-
+#@cache.memoize()
 def load_and_compute_data(wiki, network_type):
     """
     Parameters

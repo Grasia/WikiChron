@@ -38,6 +38,7 @@ class CoEditingNetwork(BaseNetwork):
 
     #aprox 1 month = 30 days
     TIME_DIV = 60 * 60 * 24 * 30
+    TIME_BOUND = 24 * 15
 
     def __init__(self):
         super().__init__(is_directed=False)
@@ -278,10 +279,10 @@ class CoEditingNetwork(BaseNetwork):
         t_gap = math.fabs(t1 - t2)
 
         if t_gap == 0:
-            return 1
+            return 2
 
         if t_gap > self.TIME_DIV:
             return self.TIME_DIV / t_gap
 
         return 1 + numpy.interp(
-            self.TIME_DIV / t_gap, [1, 50], [0, 1])
+            self.TIME_DIV / t_gap, [1, self.TIME_BOUND], [0, 1])
