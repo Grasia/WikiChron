@@ -12,8 +12,10 @@ class BaseNetwork(Graph):
 
     def __init__(self, is_directed = False):
         super().__init__(directed=is_directed)
+        self.directed = is_directed
         self.code = 'base_network'
         self.name = 'Base Network'
+        self.page_rank = []
 
 
     def init_network(self):
@@ -58,3 +60,10 @@ class BaseNetwork(Graph):
             A Network object with the filter applied
         """
         raise NotImplementedError('filter_by_timestamp is not implemented')
+
+
+    def calculate_page_rank(self):
+        """
+        Calculates the network pageRank 
+        """
+        self.page_rank = self.pagerank(directed=self.directed)

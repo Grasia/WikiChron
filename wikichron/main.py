@@ -363,12 +363,16 @@ def bind_callbacks(app):
 
     @app.callback(
         Output('network-ready', 'value'),
-        [Input('ready', 'value')],
+        [Input('ready', 'value'),
+        Input('calculate_page_rank', 'n_clicks')],
         [State('date-slider-container', 'children')]
     )
-    def update_network(ready, slider):
+    def update_network(ready, pr_clicks, slider):
         if not ready:
             return None
+
+        f_network = network
+
         if not slider['props']['value'] == slider['props']['max']:
             print(' * [Info] Starting time filter....')
             time_start_calculations = time.perf_counter()
@@ -380,35 +384,40 @@ def bind_callbacks(app):
 
             time_end_calculations = time.perf_counter() - time_start_calculations
             print(' * [Timing] Filter : {} seconds'.format(time_end_calculations))
-            di_net = f_network.to_cytoscape_dict()
 
         else:
             print(' * [Info] Printing the entire network....')
-            di_net = network.to_cytoscape_dict()
 
-        return di_net
+        if pr_clicks and pr_clicks % 2 == 1:
+            f_network.calculate_page_rank()
+
+        return f_network.to_cytoscape_dict()
 
     @app.callback(
         Output('cytoscape', 'elements'),
         [Input('network-ready', 'value')]
     )
-    def add_network_elements(network):
-        return network['network']
+    def add_network_elements(cy_network):
+        return cy_network['network']
 
     @app.callback(
         Output('cytoscape', 'stylesheet'),
         [Input('cytoscape', 'elements'),
-        Input('show_labels', 'n_clicks')],
+        Input('show_labels', 'n_clicks'),
+        Input('show_page_rank', 'n_clicks')],
         [State('network-ready', 'value'),
         State('cytoscape', 'stylesheet')]
     )
-    def update_stylesheet(_, clicks, network, stylesheet):
+    def update_stylesheet(_, lb_clicks, pr_clicks, cy_network, stylesheet):
         sheet = stylesheet
         if not sheet:
-            sheet = default_network_stylesheet(network)
+            sheet = default_network_stylesheet(cy_network)
 
-        if clicks and clicks % 2 == 1:
+        if lb_clicks and lb_clicks % 2 == 1:
             sheet[0]['style']['content'] = 'data(label)'
+        elif pr_clicks and pr_clicks % 2 == 1:
+            sheet[0]['style']['content'] = 'data(page_rank)'
+
         else:
             sheet[0]['style']['content'] = ''
 

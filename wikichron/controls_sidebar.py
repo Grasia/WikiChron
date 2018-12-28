@@ -18,6 +18,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from datetime import datetime
 
+
 def fold_button():
     return html.Div(
         html.Div(
@@ -32,6 +33,7 @@ def fold_button():
             'display': 'flex'
         }
     );
+
 
 def stats():
     return html.Div([
@@ -49,14 +51,32 @@ def stats():
                 ]),
         ], className='control-container')
 
+
+def metrics():
+    return html.Div([
+            html.H5('Network Metrics', className='control-title'),
+            html.Div(children=[
+                html.Div([
+                    html.Span('PageRank', className='left-metrics'),
+                    html.Button('>>', id='calculate_page_rank',
+                        className='control-button button-off right-metrics')
+                    ])
+                ], 
+                className='metrics-container')
+        ], className='control-container')
+
+
 def controls():
     return html.Div([
             html.H5('Network Controls', className='control-title'),
             html.Div([
                     html.Button('Show Labels', id='show_labels', 
                         className='control-button button-off'),
+                    html.Button('Show PageRank', id='show_page_rank', 
+                        className='control-button button-off'),
                 ])
         ], className='control-container')
+
 
 def generate_controls_sidebar():
     return html.Div(id='controls-sidebar-wrapper',
@@ -67,7 +87,8 @@ def generate_controls_sidebar():
                             fold_button(),
                             html.Div(id='controls-side-bar-content', 
                                 children=[
-                                    stats(), 
+                                    stats(),
+                                    metrics(),
                                     controls()
                                 ]),
                             gdc.Import(src='js/controls_side_bar.js')
@@ -105,10 +126,28 @@ def bind_control_callbacks(app):
         Output('show_labels', 'className'),
         [Input('show_labels', 'n_clicks')]
     )
-    def swich_labels(clicks):
+    def switch_show_labels(clicks):
         if not clicks or clicks % 2 == 0:
             return 'control-button button-off'
         return 'control-button button-on'
+
+    @app.callback(
+        Output('show_page_rank', 'className'),
+        [Input('show_page_rank', 'n_clicks')]
+    )
+    def switch_show_page_rank(clicks):
+        if not clicks or clicks % 2 == 0:
+            return 'control-button button-off'
+        return 'control-button button-on'
+
+    @app.callback(
+        Output('calculate_page_rank', 'className'),
+        [Input('calculate_page_rank', 'n_clicks')]
+    )
+    def switch_run_page_rank(clicks):
+        if not clicks or clicks % 2 == 0:
+            return 'control-button button-off right-metrics'
+        return 'control-button button-on right-metrics'
 
 
 if __name__ == '__main__':

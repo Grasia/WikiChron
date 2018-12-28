@@ -12,6 +12,18 @@
     font-size: 13px;
 }
 
+.metrics-container {
+	align-items: center;
+}
+
+.left-metrics {
+	margin-left: 1.5rem;
+}
+
+.right-metrics {
+	margin-left: 2rem;
+}
+
 .left-stats {
     float: left;
     margin-left: 1.5rem;

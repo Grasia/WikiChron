@@ -149,7 +149,8 @@ class CoEditingNetwork(BaseNetwork):
                     'label': node['label'],
                     'num_edits': node['num_edits'],
                     'first_edit': node['first_edit_c'],
-                    'last_edit': node['last_edit']
+                    'last_edit': node['last_edit'],
+                    'page_rank': "{0:.5f}".format(self.page_rank[node.index]) if self.page_rank else ''
                 }
             })
 
