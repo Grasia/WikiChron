@@ -1,0 +1,25 @@
+.fold-control-side {
+    border-bottom: solid;
+    border-width: 1px;
+}
+
+.control-container {
+    border-bottom: solid;
+    border-width: 1px;
+    padding-bottom: 1rem;
+}
+
+.stats-container {
+    display: grid;
+    font-size: 13px;
+}
+
+.left-stats {
+    float: left;
+    margin-left: 1.5rem;
+}
+
+.right-stats {
+    float: right;
+    margin-right: 1.5rem;
+}

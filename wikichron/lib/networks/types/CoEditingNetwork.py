@@ -136,8 +136,8 @@ class CoEditingNetwork(BaseNetwork):
         network = []
         min_v = float('Inf')
         max_v = -1
-        for node in self.vs:
 
+        for node in self.vs:
             if min_v > node['num_edits']:
                 min_v = node['num_edits']
             if max_v < node['num_edits']:
@@ -180,6 +180,8 @@ class CoEditingNetwork(BaseNetwork):
                             "%Y-%m-%d %H:%M:%S").strftime('%s'))
         di_net['edge_max_weight'] = max_v
         di_net['edge_min_weight'] = min_v
+        di_net['num_nodes'] = self.vcount()
+        di_net['num_edges'] = self.ecount()
         di_net['network'] = network
         return di_net
 

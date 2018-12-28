@@ -110,7 +110,7 @@ def default_network_stylesheet(network):
                     "width": 'mapData(weight, {}, {}, 1, 10)'
                         .format(network['edge_min_weight'],
                             network['edge_max_weight']),
-                    'opacity': 'mapData(w_time, 0, 2, 0.5, 1)',
+                    'opacity': 'mapData(w_time, 0, 2, 0.4, 1)',
                     'line-color': "mapData(w_time, 0, 2, #039BE5, #E53935)",
                 }
             }]
@@ -258,6 +258,34 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
                 style={'margin-top': '15px'}
                 )
 
+    def cytoscape():
+        return dash_cytoscape.Cytoscape(
+                    id='cytoscape',
+                    elements = [],
+                    layout = {
+                        'name': 'cose',
+                        'idealEdgeLength': 100,
+                        'nodeOverlap': 20,
+                        'refresh': 20,
+                        'fit': True,
+                        'padding': 30,
+                        'randomize': False,
+                        'componentSpacing': 100,
+                        'nodeRepulsion': 400000,
+                        'edgeElasticity': 100,
+                        'nestingFactor': 5,
+                        'gravity': 80,
+                        'numIter': 1000,
+                        'initialTemp': 200,
+                        'coolingFactor': 0.95,
+                        'minTemp': 1.0
+                    },
+                    style = {
+                        'height': '95vh',
+                        'width': '100%'
+                    }
+                )
+
     if debug:
         print ('Generating main...')
     wikis = wikis_arg;
@@ -286,8 +314,10 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
 
                 html.Div(id='initial-selection', style={'display': 'none'},
                             children=args_selection),
-                html.Div(id='cytoscape', style={'display': 'flex'}, children=[]),
+                html.Div(style={'display': 'flex'}, children=[cytoscape()]),
+                html.Div(id='network-ready', style={'display': 'none'}),
                 html.Div(id='signal-data', style={'display': 'none'}),
+                html.Div(id='kk', style={'display': 'none'}),
                 html.Div(id='ready', style={'display': 'none'})
         ]);
 
@@ -328,13 +358,13 @@ def bind_callbacks(app):
 
 
     @app.callback(
-        Output('cytoscape', 'children'),
+        Output('network-ready', 'value'),
         [Input('ready', 'value')],
         [State('date-slider-container', 'children')]
     )
     def update_network(ready, slider):
         if not ready:
-            return
+            return None
         if not slider['props']['value'] == slider['props']['max']:
             print(' * [Info] Starting time filter....')
             time_start_calculations = time.perf_counter()
@@ -352,33 +382,22 @@ def bind_callbacks(app):
             print(' * [Info] Printing the entire network....')
             di_net = network.to_cytoscape_dict()
 
-        return dash_cytoscape.Cytoscape(
-                    elements = di_net['network'],
-                    layout = {
-                        'name': 'cose',
-                        'idealEdgeLength': 100,
-                        'nodeOverlap': 20,
-                        'refresh': 20,
-                        'fit': True,
-                        'padding': 30,
-                        'randomize': False,
-                        'componentSpacing': 100,
-                        'nodeRepulsion': 400000,
-                        'edgeElasticity': 100,
-                        'nestingFactor': 5,
-                        'gravity': 80,
-                        'numIter': 1000,
-                        'initialTemp': 200,
-                        'coolingFactor': 0.95,
-                        'minTemp': 1.0
-                    },
-                    style = {
-                        'height': '95vh',
-                        'width': '100%'
-                    },
-                    stylesheet = default_network_stylesheet(di_net)
-                )
+        return di_net
 
+    @app.callback(
+        Output('cytoscape', 'elements'),
+        [Input('network-ready', 'value')]
+    )
+    def add_network_elements(network):
+        return network['network']
+
+    @app.callback(
+        Output('cytoscape', 'stylesheet'),
+        [Input('cytoscape', 'elements')],
+        [State('network-ready', 'value')]
+    )
+    def update_stylesheet(elements, network):
+        return default_network_stylesheet(network)
 
     @app.callback(
         Output('share-dialog', 'open'),
@@ -441,6 +460,25 @@ def bind_callbacks(app):
                     value=max_time,
                     marks=range_slider_marks
                 )
+
+    @app.callback(
+        Output('stats', 'children'),
+        [Input('network-ready', 'value')]
+    )
+    def update_stats(network):
+        date1 = datetime.fromtimestamp(network["oldest_user"]).strftime("%Y-%m-%d")
+        date2 = datetime.fromtimestamp(network["newest_user"]).strftime("%Y-%m-%d")
+        return [
+                html.Div([
+                        html.P(f'Nodes: {network["num_nodes"]}', className='left-stats'),
+                        html.P(f'First User: {date1}', className='right-stats')
+                    ]),
+                html.Div([
+                        html.P(f'Edges: {network["num_edges"]}', className='left-stats'),
+                        html.P(f'Last User: {date2}', className='right-stats')
+                    ])
+            ]
+
 
 
 if __name__ == '__main__':
