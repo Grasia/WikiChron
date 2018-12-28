@@ -28,7 +28,7 @@ import sd_material_ui
 # Local imports:
 import lib.interface as lib
 from cache import cache
-from controls_sidebar import generate_controls_sidebar
+from controls_sidebar import generate_controls_sidebar, bind_control_callbacks
 from lib.networks.types.CoEditingNetwork import CoEditingNetwork
 
 TIME_DIV = CoEditingNetwork.TIME_DIV
@@ -86,13 +86,14 @@ def default_network_stylesheet(network):
                 'selector': 'node',
                 'style': {
                     'content': '',
-                    'text-valign': 'center',
-                    'color': 'white',
-                    'text-outline-width': 2,
+                    'text-halign': 'center',
+                    'text-valign': 'top',
+                    'font-size': 'mapData(num_edits, {}, {}, 7, 18)'
+                        .format(network['user_min_edits'],
+                            network['user_max_edits']),
                     'background-color': 'mapData(first_edit, {}, {}, \
                         #004481, #B0BEC5)'.format(network['oldest_user'],
                             network['newest_user']),
-                    'text-outline-color': '#999',
                     'height': 'mapData(num_edits, {}, {}, 10, 60)'
                         .format(network['user_min_edits'],
                             network['user_max_edits']),
@@ -283,7 +284,8 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
                     style = {
                         'height': '95vh',
                         'width': '100%'
-                    }
+                    }, 
+                    stylesheet = []
                 )
 
     if debug:
@@ -317,12 +319,14 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
                 html.Div(style={'display': 'flex'}, children=[cytoscape()]),
                 html.Div(id='network-ready', style={'display': 'none'}),
                 html.Div(id='signal-data', style={'display': 'none'}),
-                html.Div(id='kk', style={'display': 'none'}),
                 html.Div(id='ready', style={'display': 'none'})
         ]);
 
 def bind_callbacks(app):
- 
+    
+    # right sidebar callbacks
+    bind_control_callbacks(app)
+
     @app.callback(
         Output('signal-data', 'value'),
         [Input('initial-selection', 'children')]
@@ -393,11 +397,22 @@ def bind_callbacks(app):
 
     @app.callback(
         Output('cytoscape', 'stylesheet'),
-        [Input('cytoscape', 'elements')],
-        [State('network-ready', 'value')]
+        [Input('cytoscape', 'elements'),
+        Input('show_labels', 'n_clicks')],
+        [State('network-ready', 'value'),
+        State('cytoscape', 'stylesheet')]
     )
-    def update_stylesheet(elements, network):
-        return default_network_stylesheet(network)
+    def update_stylesheet(_, clicks, network, stylesheet):
+        sheet = stylesheet
+        if not sheet:
+            sheet = default_network_stylesheet(network)
+
+        if clicks and clicks % 2 == 1:
+            sheet[0]['style']['content'] = 'data(label)'
+        else:
+            sheet[0]['style']['content'] = ''
+
+        return sheet
 
     @app.callback(
         Output('share-dialog', 'open'),
@@ -460,26 +475,6 @@ def bind_callbacks(app):
                     value=max_time,
                     marks=range_slider_marks
                 )
-
-    @app.callback(
-        Output('stats', 'children'),
-        [Input('network-ready', 'value')]
-    )
-    def update_stats(network):
-        date1 = datetime.fromtimestamp(network["oldest_user"]).strftime("%Y-%m-%d")
-        date2 = datetime.fromtimestamp(network["newest_user"]).strftime("%Y-%m-%d")
-        return [
-                html.Div([
-                        html.P(f'Nodes: {network["num_nodes"]}', className='left-stats'),
-                        html.P(f'First User: {date1}', className='right-stats')
-                    ]),
-                html.Div([
-                        html.P(f'Edges: {network["num_edges"]}', className='left-stats'),
-                        html.P(f'Last User: {date2}', className='right-stats')
-                    ])
-            ]
-
-
 
 if __name__ == '__main__':
 

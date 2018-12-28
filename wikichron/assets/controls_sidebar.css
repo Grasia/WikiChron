@@ -1,12 +1,10 @@
-.fold-control-side {
-    border-bottom: solid;
-    border-width: 1px;
+.control-title {
+	text-align: center;
+	background-color: #02396f;
 }
 
 .control-container {
-    border-bottom: solid;
-    border-width: 1px;
-    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .stats-container {
@@ -22,4 +20,20 @@
 .right-stats {
     float: right;
     margin-right: 1.5rem;
+}
+
+.control-button {
+	clear: both;
+	border-color: black;
+	border-width: 1px;
+}
+
+.button-on {
+	background-color: #2DCCCD;
+	color: white;
+}
+
+.button-off {
+	background-color: #49A5E6;
+	color: black;
 }

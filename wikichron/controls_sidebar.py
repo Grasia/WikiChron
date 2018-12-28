@@ -15,7 +15,8 @@ import dash
 import dash_core_components as dcc
 import grasia_dash_components as gdc
 import dash_html_components as html
-
+from dash.dependencies import Input, Output, State
+from datetime import datetime
 
 def fold_button():
     return html.Div(
@@ -27,7 +28,6 @@ def fold_button():
             ],
         ),
         id='controls-fold-container',
-        className= 'fold-control-side',
         style={
             'display': 'flex'
         }
@@ -35,7 +35,7 @@ def fold_button():
 
 def stats():
     return html.Div([
-            html.H5('Network Stats', style={'text-align': 'center'}),
+            html.H5('Network Stats', className='control-title'),
             html.Div(id='stats', className='stats-container',
                 children=[
                     html.Div([
@@ -47,7 +47,16 @@ def stats():
                         html.P('Last User: ...', className='right-stats')
                     ])
                 ]),
-        ])
+        ], className='control-container')
+
+def controls():
+    return html.Div([
+            html.H5('Network Controls', className='control-title'),
+            html.Div([
+                    html.Button('Show Labels', id='show_labels', 
+                        className='control-button button-off'),
+                ])
+        ], className='control-container')
 
 def generate_controls_sidebar():
     return html.Div(id='controls-sidebar-wrapper',
@@ -56,8 +65,11 @@ def generate_controls_sidebar():
                         className='side-bar-cn',
                         children=[
                             fold_button(),
-                            html.Div(id='controls-side-bar-content', children=[stats()], 
-                                className='control-container'),
+                            html.Div(id='controls-side-bar-content', 
+                                children=[
+                                    stats(), 
+                                    controls()
+                                ]),
                             gdc.Import(src='js/controls_side_bar.js')
                         ])
                 ],
@@ -69,23 +81,34 @@ def generate_controls_sidebar():
     );
 
 
-# def bind_callbacks(app):
+def bind_control_callbacks(app):
 
-#     @app.callback(
-#         Output('stats', 'children'),
-#         [Input('network-ready', 'value')]
-#     )
-#     def update_stats(network):
-#         return [
-#                 html.Div([
-#                         html.P(f'Nodes: {network["num_nodes"]}', className='left-stats'),
-#                         html.P(f'Edges: {network["num_edges"]}', className='right-stats')
-#                     ]),
-#                 html.Div([
-#                         html.P(f'First User: {network["oldest_user"]}', className='left-stats'),
-#                         html.P(f'Last User: {network["newest_user"]}', className='right-stats')
-#                     ])
-#             ]
+    @app.callback(
+        Output('stats', 'children'),
+        [Input('network-ready', 'value')]
+    )
+    def update_stats(network):
+        date1 = datetime.fromtimestamp(network["oldest_user"]).strftime("%Y-%m-%d")
+        date2 = datetime.fromtimestamp(network["newest_user"]).strftime("%Y-%m-%d")
+        return [
+                html.Div([
+                        html.P(f'Nodes: {network["num_nodes"]}', className='left-stats'),
+                        html.P(f'First User: {date1}', className='right-stats')
+                    ]),
+                html.Div([
+                        html.P(f'Edges: {network["num_edges"]}', className='left-stats'),
+                        html.P(f'Last User: {date2}', className='right-stats')
+                    ])
+            ]
+
+    @app.callback(
+        Output('show_labels', 'className'),
+        [Input('show_labels', 'n_clicks')]
+    )
+    def swich_labels(clicks):
+        if not clicks or clicks % 2 == 0:
+            return 'control-button button-off'
+        return 'control-button button-on'
 
 
 if __name__ == '__main__':
