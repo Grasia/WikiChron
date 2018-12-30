@@ -364,10 +364,11 @@ def bind_callbacks(app):
     @app.callback(
         Output('network-ready', 'value'),
         [Input('ready', 'value'),
-        Input('calculate_page_rank', 'n_clicks')],
+        Input('calculate_page_rank', 'n_clicks'),
+        Input('calculate_communities', 'n_clicks')],
         [State('date-slider-container', 'children')]
     )
-    def update_network(ready, pr_clicks, slider):
+    def update_network(ready, pr_clicks, com_clicks, slider):
         if not ready:
             return None
 
@@ -391,6 +392,9 @@ def bind_callbacks(app):
         if pr_clicks and pr_clicks % 2 == 1:
             f_network.calculate_page_rank()
 
+        if com_clicks and com_clicks % 2 == 1:
+            f_network.calculate_communities()
+
         return f_network.to_cytoscape_dict()
 
     @app.callback(
@@ -404,11 +408,12 @@ def bind_callbacks(app):
         Output('cytoscape', 'stylesheet'),
         [Input('cytoscape', 'elements'),
         Input('show_labels', 'n_clicks'),
-        Input('show_page_rank', 'n_clicks')],
+        Input('show_page_rank', 'n_clicks'),
+        Input('color_cluster', 'n_clicks')],
         [State('network-ready', 'value'),
         State('cytoscape', 'stylesheet')]
     )
-    def update_stylesheet(_, lb_clicks, pr_clicks, cy_network, stylesheet):
+    def update_stylesheet(_, lb_clicks, pr_clicks, com_clicks, cy_network, stylesheet):
         sheet = stylesheet
         if not sheet:
             sheet = default_network_stylesheet(cy_network)
@@ -420,6 +425,15 @@ def bind_callbacks(app):
 
         else:
             sheet[0]['style']['content'] = ''
+
+        if com_clicks and not cy_network["n_communities"] == '...' \
+        and com_clicks % 2 == 1:
+            print(cy_network["n_communities"])
+            sheet[0]['style']['background-color'] = 'data(cluster_color)'
+        else:
+            sheet[0]['style']['background-color'] = 'mapData(first_edit, {}, {}, \
+            #004481, #B0BEC5)'.format(cy_network['oldest_user'], \
+                cy_network['newest_user'])
 
         return sheet
 

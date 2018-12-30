@@ -6,7 +6,8 @@
 
 """
 
-from igraph import Graph
+from igraph import Graph, ClusterColoringPalette
+from colormap.colors import rgb2hex
 
 class BaseNetwork(Graph):
 
@@ -16,6 +17,7 @@ class BaseNetwork(Graph):
         self.code = 'base_network'
         self.name = 'Base Network'
         self.page_rank = []
+        self.num_communities = -1
 
 
     def init_network(self):
@@ -67,3 +69,13 @@ class BaseNetwork(Graph):
         Calculates the network pageRank 
         """
         self.page_rank = self.pagerank(directed=self.directed)
+
+    def calculate_communities(self):
+        """
+        Calculates communities and assigns a color per community
+        """
+        mod = self.community_multilevel(weights='weight')
+        self.num_communities = len(mod)
+        pal = ClusterColoringPalette(len(mod))
+        self.vs['cluster_color'] = list(map(lambda x: rgb2hex(x[0],x[1],x[2], normalised=True), 
+            pal.get_many(mod.membership)))

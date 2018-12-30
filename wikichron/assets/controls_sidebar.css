@@ -12,16 +12,14 @@
     font-size: 13px;
 }
 
-.metrics-container {
+.metric-container {
+	display: flex;
+	justify-content: space-around;
 	align-items: center;
 }
 
-.left-metrics {
-	margin-left: 1.5rem;
-}
-
-.right-metrics {
-	margin-left: 2rem;
+.metric-container > button {
+	padding: 0px 20px;
 }
 
 .left-stats {

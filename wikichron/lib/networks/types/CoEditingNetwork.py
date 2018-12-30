@@ -150,7 +150,10 @@ class CoEditingNetwork(BaseNetwork):
                     'num_edits': node['num_edits'],
                     'first_edit': node['first_edit_c'],
                     'last_edit': node['last_edit'],
-                    'page_rank': "{0:.5f}".format(self.page_rank[node.index]) if self.page_rank else ''
+                    'page_rank': "{0:.5f}".format(self.page_rank[node.index])
+                     if self.page_rank else '',
+                    'cluster_color': node['cluster_color'] 
+                    if self.num_communities is not -1 else ''
                 }
             })
 
@@ -183,6 +186,9 @@ class CoEditingNetwork(BaseNetwork):
         di_net['edge_min_weight'] = min_v
         di_net['num_nodes'] = self.vcount()
         di_net['num_edges'] = self.ecount()
+        di_net['max_degree'] = self.maxdegree()
+        di_net['n_communities'] = self.num_communities \
+        if self.num_communities is not -1 else '...'
         di_net['network'] = network
         return di_net
 
