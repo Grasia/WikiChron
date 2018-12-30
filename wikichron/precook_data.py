@@ -80,7 +80,7 @@ def main(*args):
             net.write_pickle(fname = os.path.join(dest_path, o_f))
         else:
             o_f = '{}{}.gml'.format(o_f, net.code)
-            net.write(f=os.path.join(dest_path, o_f), format='gml')
+            net.copy_and_write_gml(os.path.join(dest_path, o_f))
 
 
     return 0

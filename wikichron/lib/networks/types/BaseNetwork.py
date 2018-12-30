@@ -63,6 +63,13 @@ class BaseNetwork(Graph):
         """
         raise NotImplementedError('filter_by_timestamp is not implemented')
 
+    def copy_and_write_gml(self, file):
+        """
+        This function clear the network atributes instead to write an gml file
+        Parameters:
+            file: path to save
+        """
+        raise NotImplementedError('write_gml is not implemented')
 
     def calculate_page_rank(self):
         """

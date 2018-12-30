@@ -290,3 +290,21 @@ class CoEditingNetwork(BaseNetwork):
 
         return 1 + numpy.interp(
             self.TIME_DIV / t_gap, [1, self.TIME_BOUND], [0, 1])
+
+    def copy_and_write_gml(self, file):
+        o_net = CoEditingNetwork()
+        for v in self.vs:
+            o_net.add_vertex(v.index)
+            o_net.vs[v.index]['contributor_id'] = v['contributor_id']
+            o_net.vs[v.index]['label'] = v['label']
+            o_net.vs[v.index]['num_edits'] = v['num_edits']
+            o_net.vs[v.index]['first_edit'] = v['first_edit']
+            o_net.vs[v.index]['last_edit'] = v['last_edit']
+        for e in self.es:
+            o_net.add_edge(e.source, e.target)
+            o_net.es[e.index]['source'] = e['source']
+            o_net.es[e.index]['target'] = e['target']
+            o_net.es[e.index]['weight'] = e['weight']
+            o_net.es[e.index]['w_time'] = e['w_time']
+
+        o_net.write(f=file, format='gml')
