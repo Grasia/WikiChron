@@ -428,7 +428,6 @@ def bind_callbacks(app):
 
         if com_clicks and not cy_network["n_communities"] == '...' \
         and com_clicks % 2 == 1:
-            print(cy_network["n_communities"])
             sheet[0]['style']['background-color'] = 'data(cluster_color)'
         else:
             sheet[0]['style']['background-color'] = 'mapData(first_edit, {}, {}, \

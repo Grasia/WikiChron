@@ -13,5 +13,6 @@
 from .types.CoEditingNetwork import CoEditingNetwork
 
 def create_available_networks():
-    networks = [CoEditingNetwork()]
-    return networks
+	networks = []
+	networks.append(CoEditingNetwork())
+	return networks
