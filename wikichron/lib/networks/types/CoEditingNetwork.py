@@ -53,7 +53,6 @@ class CoEditingNetwork(BaseNetwork):
         mapper_v = {}
         mapper_e = {}
         count = 0
-
         for index, r in data.iterrows():
             if r['contributor_name'] == 'Anonymous':
                 continue
@@ -71,8 +70,6 @@ class CoEditingNetwork(BaseNetwork):
                 self.vs[count]['label'] = r['contributor_name']
                 self.vs[count]['num_edits'] = 0
                 self.vs[count]['first_edit'] = r['timestamp']
-                self.vs[count]['first_edit_c'] = int(datetime.strptime(
-                    str(r['timestamp']), "%Y-%m-%d %H:%M:%S").strftime('%s'))
                 count += 1
 
             self.vs[mapper_v[r['contributor_id']]]['num_edits'] += 1
@@ -89,7 +86,6 @@ class CoEditingNetwork(BaseNetwork):
                 else:
                     user_per_page[r['page_id']][r['contributor_id']] = \
                             [r['timestamp']]
-
         count = 0
         # Edges
         for k, p in user_per_page.items():
@@ -127,7 +123,6 @@ class CoEditingNetwork(BaseNetwork):
 
         for e in self.es:
             e['w_time'] = e['w_time'] / e['weight']
-
         return
 
 
@@ -142,13 +137,14 @@ class CoEditingNetwork(BaseNetwork):
                 min_v = node['num_edits']
             if max_v < node['num_edits']:
                 max_v = node['num_edits']
-
+            f_e = int(datetime.strptime(
+                    str(node['first_edit']), "%Y-%m-%d %H:%M:%S").strftime('%s'))
             network.append({
                 'data': {
                     'id': node['contributor_id'],
                     'label': node['label'],
                     'num_edits': node['num_edits'],
-                    'first_edit': node['first_edit_c'],
+                    'first_edit': f_e,
                     'last_edit': node['last_edit'],
                     'page_rank': "{0:.5f}".format(self.page_rank[node.index])
                      if self.page_rank else '',
@@ -221,7 +217,6 @@ class CoEditingNetwork(BaseNetwork):
             f_net.vs[count]['label'] = v['label']
             f_net.vs[count]['num_edits'] = v['num_edits']
             f_net.vs[count]['first_edit'] = v['first_edit']
-            f_net.vs[count]['first_edit_c'] = v['first_edit_c']
             f_net.vs[count]['last_edit'] = v['last_edit']
             mapper_v[v['contributor_id']] = count
             count += 1
