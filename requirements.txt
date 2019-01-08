@@ -8,7 +8,7 @@ colorlog==4.0.2
 colormap==1.0.2
 dash==0.34.0
 dash-core-components==0.41.0
-dash-cytoscape==0.0.2
+dash-cytoscape==0.0.3
 dash-html-components==0.13.4
 dash-renderer==0.14.3
 decorator==4.3.0
@@ -32,7 +32,6 @@ nbformat==4.4.0
 numpy==1.15.1
 pandas==0.23.4
 pexpect==4.6.0
-pkg-resources==0.0.0
 plotly==3.3.0
 powerlaw==1.4.4
 ptyprocess==0.6.0
