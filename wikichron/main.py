@@ -28,8 +28,10 @@ import sd_material_ui
 # Local imports:
 import lib.interface as lib
 from cache import cache
+from controls_sidebar import generate_controls_sidebar, bind_control_callbacks
 from lib.networks.types.CoEditingNetwork import CoEditingNetwork
-from controls_sidebar import generate_controls_sidebar
+
+TIME_DIV = CoEditingNetwork.TIME_DIV
 
 global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
@@ -48,15 +50,14 @@ def extract_network_obj_from_network_code(selected_network_code):
         raise Exception("Something went bad. Missing network type selection.")
 
 
-@cache.memoize(timeout=3600)
+#@cache.memoize(timeout=3600)
 def load_data(wiki):
     df = lib.get_dataframe_from_csv(wiki['data'])
     lib.prepare_data(df)
     df = lib.clean_up_bot_activity(df, wiki)
     return df
 
-
-@cache.memoize()
+#@cache.memoize()
 def load_and_compute_data(wiki, network_type):
     """
     Parameters
@@ -75,11 +76,45 @@ def load_and_compute_data(wiki, network_type):
     print(' * [Info] Starting calculations....')
     time_start_calculations = time.perf_counter()
     network_type.generate_from_pandas(data=df)
-    #network_type = network_type.filter_by_timestamp("2011-04-07 02:05:56")
-    di_net = network_type.to_cytoscape_dict()
     time_end_calculations = time.perf_counter() - time_start_calculations
     print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
-    return di_net
+    return network_type
+
+
+def default_network_stylesheet(network):
+    return [{
+                'selector': 'node',
+                'style': {
+                    'content': '',
+                    'text-halign': 'center',
+                    'text-valign': 'top',
+                    'font-size': 'mapData(num_edits, {}, {}, 7, 18)'
+                        .format(network['user_min_edits'],
+                            network['user_max_edits']),
+                    'background-color': 'mapData(first_edit, {}, {}, \
+                        #004481, #B0BEC5)'.format(network['oldest_user'],
+                            network['newest_user']),
+                    'height': 'mapData(num_edits, {}, {}, 10, 60)'
+                        .format(network['user_min_edits'],
+                            network['user_max_edits']),
+                    'width': 'mapData(num_edits, {}, {}, 10, 60)'
+                        .format(network['user_min_edits'],
+                            network['user_max_edits']),
+                    'border-width': '1%',
+                    'border-style': 'solid',
+                    'border-color': 'black'
+                }
+            },
+            {
+                'selector': 'edge',
+                'style': {
+                    "width": 'mapData(weight, {}, {}, 1, 10)'
+                        .format(network['edge_min_weight'],
+                            network['edge_max_weight']),
+                    'opacity': 'mapData(w_time, 0, 2, 0.4, 1)',
+                    'line-color': "mapData(w_time, 0, 2, #039BE5, #E53935)",
+                }
+            }]
 
 
 def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
@@ -155,7 +190,6 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
             ])
         );
 
-
     def share_modal(share_link, download_link):
         """
         Generates a window to share a link
@@ -204,89 +238,31 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
             )
         ])
 
+    def date_slider_control():
+        return html.Div(id='date-slider-div', className='container',
+                children=[
+                    html.Span(id='slider-header',
+                    children=[
+                        html.Strong(
+                            'Time interval (months):'),
+                        html.Span(id='display-slider-selection')
+                    ]),
 
-    if debug:
-        print ('Generating main...')
-    wikis = wikis_arg;
-    relative_time = relative_time_arg;
-    args_selection = json.dumps({"wikis": wikis, "relative_time": relative_time,
-                                "network": network_type_arg})
+                    html.Div(id='date-slider-container',
+                        style={'height': '35px'},
+                        children=[
+                            dcc.Slider(
+                                id='dates-slider'
+                        )],
+                    )
+                ],
+                style={'margin-top': '15px'}
+                )
 
-    return html.Div(
-        id='main',
-        className='control-text',
-        style={'width': '100%'},
-        children=[
-
-            generate_controls_sidebar(),
-
-            main_header(),
-
-            html.Hr(),
-
-            share_modal('{}/app/{}'.format(url_host, query_string),
-                        '{}/download/{}'.format(url_host, query_string)),
-
-            html.Div(id='initial-selection', style={'display': 'none'},
-                        children=args_selection),
-            html.Div(id='cytoscape', children=[]),
-            html.Div(id='signal-data', style={'display': 'none'}),
-            html.Div(id='ready', style={'display': 'none'})
-        ]);
-
-def bind_callbacks(app):
-
-    @app.callback(
-        Output('signal-data', 'value'),
-        [Input('initial-selection', 'children')]
-    )
-    def start_main(selection_json):
-        # get wikis x network selection
-        selection = json.loads(selection_json)
-        wiki = selection['wikis'][0]
-        network_type = extract_network_obj_from_network_code(selection['network'])
-
-        print('--> Retrieving and computing data')
-        print( '\t for the following wiki: {}'.format( wiki['name'] ))
-        print( '\trepresented as this network: {}'.format( network_type.name ))
-        load_and_compute_data(wiki, network_type)
-        print('<-- Done retrieving and computing data!')
-
-        return True
-
-
-    @app.callback(
-        Output('ready', 'value'),
-        [Input('signal-data', 'value')]
-    )
-    def ready_to_plot_networks(signal):
-        #print (signal)
-        if not signal:
-            print('not ready!')
-            return False
-        if debug:
-            print('Ready to plot network!')
-        return True
-
-
-    @app.callback(
-        Output('cytoscape', 'children'),
-        [Input('ready', 'value'),
-        Input('initial-selection', 'children')]
-    )
-    def show_network(ready, selection_json):
-        if not ready: # waiting for all parameters to be ready
-            return
-
-        # get wikis x network selection
-        selection = json.loads(selection_json)
-        wiki = selection['wikis'][0]
-        network_type = extract_network_obj_from_network_code(selection['network'])
-
-        network = load_and_compute_data(wiki, network_type)
-
+    def cytoscape():
         return dash_cytoscape.Cytoscape(
-                    elements = network['network'],
+                    id='cytoscape',
+                    elements = [],
                     layout = {
                         'name': 'cose',
                         'idealEdgeLength': 100,
@@ -306,46 +282,159 @@ def bind_callbacks(app):
                         'minTemp': 1.0
                     },
                     style = {
-                        'height': '100%',
-                        'width': '100%',
-                        'position': 'absolute'
-                    },
-                    stylesheet = [{
-                        'selector': 'node',
-                        'style': {
-                            'content': '',
-                            'text-valign': 'center',
-                            'color': 'white',
-                            'text-outline-width': 2,
-                            'background-color': 'mapData(first_edit, {}, {}, \
-                                #004481, #B0BEC5)'.format(network['oldest_user'],
-                                    network['newest_user']),
-                            'text-outline-color': '#999',
-                            'height': 'mapData(num_edits, {}, {}, 10, 60)'
-                                .format(network['user_min_edits'],
-                                    network['user_max_edits']),
-                            'width': 'mapData(num_edits, {}, {}, 10, 60)'
-                                .format(network['user_min_edits'],
-                                    network['user_max_edits']),
-                            'border-width': '1%',
-                            'border-style': 'solid',
-                            'border-color': 'black'
-                        }
-                    },
-                    {
-                        'selector': 'edge',
-                        'style': {
-                            "width": 'mapData(weight, {}, {}, 1, 10)'
-                                .format(network['edge_min_weight'],
-                                    network['edge_max_weight']),
-                            'opacity': 'mapData(weight, {}, {}, 0.2, 1)'
-                                .format(network['edge_min_weight'],
-                                    network['edge_max_weight']),
-                            'line-color': "#E53935",
-                        }
-                    }]
+                        'height': '95vh',
+                        'width': '100%'
+                    }, 
+                    stylesheet = []
                 )
 
+    if debug:
+        print ('Generating main...')
+    wikis = wikis_arg;
+    relative_time = relative_time_arg;
+    args_selection = json.dumps({"wikis": wikis, "relative_time": relative_time,
+                                "network": network_type_arg})
+
+    return html.Div(
+            id='main',
+            className='control-text',
+            style={'width': '100%'},
+            children=[
+
+                generate_controls_sidebar(),
+
+                main_header(),
+
+                html.Hr(),
+
+                date_slider_control(),
+
+                html.Hr(style={'margin-bottom': '0px'}),
+
+                share_modal('{}/app/{}'.format(url_host, query_string),
+                            '{}/download/{}'.format(url_host, query_string)),
+
+                html.Div(id='initial-selection', style={'display': 'none'},
+                            children=args_selection),
+                html.Div(style={'display': 'flex'}, children=[cytoscape()]),
+                html.Div(id='network-ready', style={'display': 'none'}),
+                html.Div(id='signal-data', style={'display': 'none'}),
+                html.Div(id='ready', style={'display': 'none'})
+        ]);
+
+def bind_callbacks(app):
+    
+    # right sidebar callbacks
+    bind_control_callbacks(app)
+
+    @app.callback(
+        Output('signal-data', 'value'),
+        [Input('initial-selection', 'children')]
+    )
+    def start_main(selection_json):
+        # get wikis x network selection
+        selection = json.loads(selection_json)
+        wiki = selection['wikis'][0]
+        network_type = extract_network_obj_from_network_code(selection['network'])
+
+        print('--> Retrieving and computing data')
+        print( '\t for the following wiki: {}'.format( wiki['name'] ))
+        print( '\trepresented as this network: {}'.format( network_type.name ))
+        global network
+        network = load_and_compute_data(wiki, network_type)
+        print('<-- Done retrieving and computing data!')
+        return True
+      
+
+    @app.callback(
+        Output('ready', 'value'),
+        [Input('signal-data', 'value'),
+        Input('dates-slider', 'value')]
+    )
+    def ready_to_plot_networks(*args):
+        #print (args)
+        if not all(args):
+            print('not ready!')
+            return False
+        if debug:
+            print('Ready to plot network!')
+        return True
+
+
+    @app.callback(
+        Output('network-ready', 'value'),
+        [Input('ready', 'value'),
+        Input('calculate_page_rank', 'n_clicks'),
+        Input('calculate_communities', 'n_clicks')],
+        [State('date-slider-container', 'children')]
+    )
+    def update_network(ready, pr_clicks, com_clicks, slider):
+        if not ready:
+            return None
+
+        f_network = network
+
+        if not slider['props']['value'] == slider['props']['max']:
+            print(' * [Info] Starting time filter....')
+            time_start_calculations = time.perf_counter()
+            
+            origin = int(datetime.strptime(str(network['oldest_user']), 
+            "%Y-%m-%d %H:%M:%S").strftime('%s'))
+            f_network = network.filter_by_time(origin + slider['props']['value']
+             * TIME_DIV)
+
+            time_end_calculations = time.perf_counter() - time_start_calculations
+            print(' * [Timing] Filter : {} seconds'.format(time_end_calculations))
+
+        else:
+            print(' * [Info] Printing the entire network....')
+
+        if pr_clicks and pr_clicks % 2 == 1:
+            f_network.calculate_page_rank()
+
+        if com_clicks and com_clicks % 2 == 1:
+            f_network.calculate_communities()
+
+        return f_network.to_cytoscape_dict()
+
+    @app.callback(
+        Output('cytoscape', 'elements'),
+        [Input('network-ready', 'value')]
+    )
+    def add_network_elements(cy_network):
+        return cy_network['network']
+
+    @app.callback(
+        Output('cytoscape', 'stylesheet'),
+        [Input('cytoscape', 'elements'),
+        Input('show_labels', 'n_clicks'),
+        Input('show_page_rank', 'n_clicks'),
+        Input('color_cluster', 'n_clicks')],
+        [State('network-ready', 'value'),
+        State('cytoscape', 'stylesheet')]
+    )
+    def update_stylesheet(_, lb_clicks, pr_clicks, com_clicks, cy_network, stylesheet):
+        sheet = stylesheet
+        if not sheet:
+            sheet = default_network_stylesheet(cy_network)
+
+        if lb_clicks and lb_clicks % 2 == 1:
+            sheet[0]['style']['content'] = 'data(label)'
+        elif pr_clicks and pr_clicks % 2 == 1:
+            sheet[0]['style']['content'] = 'data(page_rank)'
+
+        else:
+            sheet[0]['style']['content'] = ''
+
+        if com_clicks and not cy_network["n_communities"] == '...' \
+        and com_clicks % 2 == 1:
+            sheet[0]['style']['background-color'] = 'data(cluster_color)'
+        else:
+            sheet[0]['style']['background-color'] = 'mapData(first_edit, {}, {}, \
+            #004481, #B0BEC5)'.format(cy_network['oldest_user'], \
+                cy_network['newest_user'])
+
+        return sheet
 
     @app.callback(
         Output('share-dialog', 'open'),
@@ -362,6 +451,52 @@ def bind_callbacks(app):
 
         return # bind_callbacks
 
+
+    @app.callback(
+        Output('date-slider-container', 'children'),
+        [Input('signal-data', 'value')]
+    )
+    def update_slider(signal):
+        if not signal:
+            return dcc.Slider(id='dates-slider')
+
+        origin = int(datetime.strptime(str(network['oldest_user']), 
+            "%Y-%m-%d %H:%M:%S").strftime('%s'))
+        end = int(datetime.strptime(str(network['newest_user']), 
+            "%Y-%m-%d %H:%M:%S").strftime('%s'))
+
+        time_gap = end - origin
+        max_time = time_gap // TIME_DIV
+
+        #~ max_number_of_marks = 11
+        if max_time < 12:
+            step_for_marks = 1
+        elif max_time < 33:
+            step_for_marks = 3
+        elif max_time < 66:
+            step_for_marks = 6
+        elif max_time < 121:
+            step_for_marks = 12
+        elif max_time < 264:
+            step_for_marks = 24
+        else:
+            step_for_marks = 36
+
+        range_slider_marks = {i: datetime.fromtimestamp(origin
+         + i * TIME_DIV).strftime('%b %Y') for i in range(1, 
+         max_time-step_for_marks, step_for_marks)}
+
+        range_slider_marks[max_time] = datetime.fromtimestamp(
+        origin + max_time * TIME_DIV).strftime('%b %Y')
+
+        return  dcc.Slider(
+                    id='dates-slider',
+                    min=1,
+                    max=max_time,
+                    step=1,
+                    value=max_time,
+                    marks=range_slider_marks
+                )
 
 if __name__ == '__main__':
 

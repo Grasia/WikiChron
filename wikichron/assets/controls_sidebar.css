@@ -1,0 +1,49 @@
+.control-title {
+	text-align: center;
+	background-color: #02396f;
+}
+
+.control-container {
+    margin-bottom: 1.5rem;
+}
+
+.stats-container {
+    display: grid;
+    font-size: 13px;
+}
+
+.metric-container {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+}
+
+.metric-container > button {
+	padding: 0px 20px;
+}
+
+.left-stats {
+    float: left;
+    margin-left: 1.5rem;
+}
+
+.right-stats {
+    float: right;
+    margin-right: 1.5rem;
+}
+
+.control-button {
+	clear: both;
+	border-color: black;
+	border-width: 1px;
+}
+
+.button-on {
+	background-color: #2DCCCD;
+	color: white;
+}
+
+.button-off {
+	background-color: #49A5E6;
+	color: black;
+}
