@@ -344,7 +344,7 @@ def bind_callbacks(app):
         network = load_and_compute_data(wiki, network_type)
         print('<-- Done retrieving and computing data!')
         return True
-
+      
 
     @app.callback(
         Output('ready', 'value'),

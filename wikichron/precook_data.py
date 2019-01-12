@@ -65,7 +65,7 @@ def main(*args):
         df = lib.get_dataframe_from_csv(os.path.join(data_dir, wiki['data']))
         lib.prepare_data(df)
         df = lib.clean_up_bot_activity(df, wiki)
-
+ 
         net = CoEditingNetwork()
         print(f"Generating network data for {wiki['name']}")
         time_start_generating_network = time.perf_counter()
