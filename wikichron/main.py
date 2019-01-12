@@ -82,6 +82,10 @@ def load_and_compute_data(wiki, network_type):
 
 
 def default_network_stylesheet(network):
+    edge_width = 'mapData(weight, {}, {}, 1, 10)'.format(
+        network['edge_min_weight'], network['edge_max_weight'])
+    if network['edge_min_weight'] == network['edge_max_weight']:
+        edge_width = '1'
     return [{
                 'selector': 'node',
                 'style': {
@@ -92,7 +96,7 @@ def default_network_stylesheet(network):
                         .format(network['user_min_edits'],
                             network['user_max_edits']),
                     'background-color': 'mapData(first_edit, {}, {}, \
-                        #004481, #B0BEC5)'.format(network['oldest_user'],
+                        #B0BEC5, #004481)'.format(network['oldest_user'],
                             network['newest_user']),
                     'height': 'mapData(num_edits, {}, {}, 10, 60)'
                         .format(network['user_min_edits'],
@@ -108,9 +112,7 @@ def default_network_stylesheet(network):
             {
                 'selector': 'edge',
                 'style': {
-                    "width": 'mapData(weight, {}, {}, 1, 10)'
-                        .format(network['edge_min_weight'],
-                            network['edge_max_weight']),
+                    "width": edge_width,
                     'opacity': 'mapData(w_time, 0, 2, 0.4, 1)',
                     'line-color': "mapData(w_time, 0, 2, #039BE5, #E53935)",
                 }
@@ -431,7 +433,7 @@ def bind_callbacks(app):
             sheet[0]['style']['background-color'] = 'data(cluster_color)'
         else:
             sheet[0]['style']['background-color'] = 'mapData(first_edit, {}, {}, \
-            #004481, #B0BEC5)'.format(cy_network['oldest_user'], \
+            #B0BEC5, #004481)'.format(cy_network['oldest_user'], \
                 cy_network['newest_user'])
 
         return sheet
