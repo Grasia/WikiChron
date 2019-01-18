@@ -16,7 +16,13 @@ This flavour of WikiChron will show you insightful visualizations of wikis in th
 * [python-igraph] (https://igraph.org/python/) -> it's a c package so it depends on your OS
 
 ### Install instructions
-Simply run: `pip3 install -r requirements.txt`
+The dependency `python-igraph` needs to compile some C code, so, in order to install it, you priorly need some dev libraries for python, xml, zlib and C compiler utilities.
+
+For Ubuntu 16.04/18.04 and derivatives, you can use the following command to install those:
+
+`sudo apt-get install build-essential python3-dev libxml2 libxml2-dev zlib1g-dev`
+
+After that, simply run: `pip3 install -r requirements.txt`. pip will install (and build for the case of python-igraph) all the dependencies you need.
 
 ### Using a virtual environment
 A good pratice is to use a virtual environment in order to isolate the development environment from your personal stuff. This skips issues about having different Python versions, pip packages in the wrong place or requiring sudo privileges and so on.
@@ -112,6 +118,3 @@ WikiChron is used for science and, accordingly, we have presented the tool in so
   * [Freely available here](https://aisel.aisnet.org/cgi/viewcontent.cgi?article=1072&context=ecis2018_rip)
 * Abel Serrano, Javier Arroyo, and Samer Hassan. 2018. Participation Inequality in Wikis: A Temporal Analysis Using WikiChron. In Proceedings of the 14th International Symposium on Open Collaboration (OpenSym '18). ACM, New York, NY, USA, Article 12, 7 pages. DOI: https://doi.org/10.1145/3233391.3233536.
   * [Freely available here](http://www.opensym.org/wp-content/uploads/2018/07/OpenSym2018_paper_31-1.pdf)
-
-
-
