@@ -1,5 +1,23 @@
 # Change Log for WikiChron
 
+## 1.2.0 - 2018-01-18
+
+**Spliting up from WikiChron codebase.** From now on this changelog corresponds uniquely to Wikichron - networks
+and it is not related to the version number that [Wikichron "Classic"](https://github.com/grasia/WikiChron) is following.
+
+### Added
+- Networks visualization!!! 🕸️ -> using CoSE network layout
+- Controls sidebar
+- Co-Editing network for wikis
+- Time traveling for the network
+- Network statistics
+- Network metrics: pagerank, communities
+- export network to GML
+- deps: dash-cytoscape, python-igraph
+### Updated
+- deps: python to python 3.6
+
+
 ## 1.1.1 - 2018-10-31
 ### Added
 - Icon in the header which displays a dialog showing sharing and downloading links for current selection. Closes #53
