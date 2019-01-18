@@ -7,7 +7,7 @@
 
    Created on: 23-oct-2017
 
-   Copyright 2017-2018 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
+   Copyright 2017-2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
 # built-in imports
 import flask
@@ -72,19 +72,19 @@ meta_tags = [
     },
     {
         'name': 'description',
-        'content': 'WikiChron is a web tool for the analysis and visualization of the evolution of wiki online communities'
+        'content': 'WikiChron networks is a web tool for the analysis and visualization of the network made by wiki online communities'
     },
     {
         'name': 'og:title',
-        'content': 'WikiChron'
+        'content': 'WikiChron - Networks'
     },
     {
         'name': 'og:description',
-        'content': 'WikiChron is a web tool for the visualization of wikis evolution'
+        'content': 'WikiChron Networks is a web tool for the visualization of wikis networks'
     },
     {
         'name': 'og:url',
-        'content': 'http://wikichron.science/'
+        'content': 'http://wikichron.science:8080/'
     },
     {
         'name': 'og:image',
@@ -92,7 +92,7 @@ meta_tags = [
     },
     {
         'name': 'twitter:title',
-        'content': 'WikiChron'
+        'content': 'WikiChron - Networks'
     },
 ]
 
@@ -413,12 +413,12 @@ def start_download_data_server():
 def create_app():
     print('Creating new Dash instance...')
     global app;
-    app = dash.Dash('WikiChron',
+    app = dash.Dash('WikiChron - Networks',
                     meta_tags = meta_tags,
                     external_stylesheets=external_stylesheets,
                     url_base_pathname=wikichron_base_pathname,
                     assets_folder=assets_folder)
-    app.title = 'WikiChron'
+    app.title = 'WikiChron - Networks'
     server = app.server
     app.config['suppress_callback_exceptions'] = True
 
@@ -471,7 +471,7 @@ def init_app(app):
     start_redirection_server()
     start_download_data_server()
 
-    print('¡¡¡¡ Welcome to WikiChron ' + __version__ +' !!!!')
+    print('¡¡¡¡ Welcome to WikiChron-networks ' + __version__ +' !!!!')
     print('Using version ' + dash.__version__ + ' of Dash.')
     print('Using version ' + dash_renderer.__version__ + ' of Dash renderer.')
     print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
