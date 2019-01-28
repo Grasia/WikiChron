@@ -7,35 +7,26 @@
     margin-bottom: 1.5rem;
 }
 
+.control-container > div {
+	display: grid;
+}
+
+.metrics-section{
+	margin: 1rem 0rem 0.5rem 0rem;
+}
+
 .stats-container {
-    display: grid;
     font-size: 13px;
 }
 
-.metric-container {
-	display: flex;
-	justify-content: space-around;
-	align-items: center;
-}
-
-.metric-container > button {
-	padding: 0px 20px;
-}
-
-.left-stats {
-    float: left;
+.left-element {
     margin-left: 1.5rem;
+    float: left;
 }
 
-.right-stats {
-    float: right;
+.right-element {
     margin-right: 1.5rem;
-}
-
-.control-button {
-	clear: both;
-	border-color: black;
-	border-width: 1px;
+    float: right;
 }
 
 .button-on {

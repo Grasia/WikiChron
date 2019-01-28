@@ -41,16 +41,16 @@ def stats():
             html.Div(id='stats', className='stats-container',
                 children=[
                     html.Div([
-                        html.P('Nodes: ...', className='left-stats'),
-                        html.P('First User: ...', className='right-stats')
+                        html.P('Nodes: ...', className='left-element'),
+                        html.P('First User: ...', className='right-element')
                     ]),
                     html.Div([
-                        html.P('Edges: ...', className='left-stats'),
-                        html.P('Last User: ...', className='right-stats')
+                        html.P('Edges: ...', className='left-element'),
+                        html.P('Last User: ...', className='right-element')
                     ]),
                     html.Div([
-                        html.P('Communities: ...', className='left-stats', id='n_communities'),
-                        html.P('Max Hub Degree: ...', className='right-stats')
+                        html.P('Communities: ...', className='left-element', id='n_communities'),
+                        html.P('Max Hub Degree: ...', className='right-element')
                     ])
                 ]),
         ], className='control-container')
@@ -59,21 +59,18 @@ def stats():
 def metrics():
     return html.Div([
             html.H5('Network Metrics', className='control-title'),
-            html.Div([
+            html.Div(children=[
                 html.Div(children=[
-                    html.Span('PageRank'),
-                    html.Button('>>', id='calculate_page_rank',
-                        className='control-button button-off')
-                    ], 
-                className='metric-container'),
-                html.Div(children=[
-                    html.Span('Communities'),
-                    html.Button('>>', id='calculate_communities',
-                        className='control-button button-off')
-                    ], 
-                className='metric-container'),
-
-                ])
+                    html.Span('PageRank', className='left-element'),
+                    html.Button('Run', id='calculate_page_rank',
+                        className='right-element button-off'),
+                    ], className='metrics-section'),
+                html.Div([
+                    html.Span('Communities', className='left-element'),
+                    html.Button('Run', id='calculate_communities',
+                        className='right-element button-off')
+                ], className='metrics-section')
+            ])
         ], className='control-container')
 
 
@@ -126,18 +123,18 @@ def bind_control_callbacks(app):
         date2 = datetime.fromtimestamp(cy_network["newest_user"]).strftime("%Y-%m-%d")
         return [
                 html.Div([
-                        html.P(f'Nodes: {cy_network["num_nodes"]}', className='left-stats'),
-                        html.P(f'First User: {date1}', className='right-stats')
+                        html.P(f'Nodes: {cy_network["num_nodes"]}', className='left-element'),
+                        html.P(f'First User: {date1}', className='right-element')
                     ]),
                 html.Div([
-                        html.P(f'Edges: {cy_network["num_edges"]}', className='left-stats'),
-                        html.P(f'Last User: {date2}', className='right-stats')
+                        html.P(f'Edges: {cy_network["num_edges"]}', className='left-element'),
+                        html.P(f'Last User: {date2}', className='right-element')
                     ]),
                 html.Div([
                         html.P(f'Communities: {cy_network["n_communities"]}', 
-                            className='left-stats', id='n_communities'),
+                            className='left-element', id='n_communities'),
                         html.P(f'Max Hub Degree: {cy_network["max_degree"]}', 
-                            className='right-stats')
+                            className='right-element')
                     ])
             ]
 
@@ -165,8 +162,8 @@ def bind_control_callbacks(app):
     )
     def switch_run_page_rank(clicks):
         if not clicks or clicks % 2 == 0:
-            return 'control-button button-off'
-        return 'control-button button-on'
+            return 'right-element button-off'
+        return 'right-element button-on'
 
     @app.callback(
         Output('color_cluster', 'className'),
@@ -183,8 +180,8 @@ def bind_control_callbacks(app):
     )
     def switch_run_communities(clicks):
         if not clicks or clicks % 2 == 0:
-            return 'control-button button-off'
-        return 'control-button button-on'
+            return 'right-element button-off'
+        return 'right-element button-on'
 
     @app.callback(
         Output('n_communities', 'content'),

@@ -92,21 +92,21 @@ def default_network_stylesheet(network):
                     'content': '',
                     'text-halign': 'center',
                     'text-valign': 'top',
+                    'text-background-color': '#FFFFFF',
+                    'text-background-opacity': '1',
+                    'text-background-shape': 'roundrectangle',
                     'font-size': 'mapData(num_edits, {}, {}, 7, 18)'
                         .format(network['user_min_edits'],
                             network['user_max_edits']),
                     'background-color': 'mapData(first_edit, {}, {}, \
-                        #B0BEC5, #004481)'.format(network['oldest_user'],
+                        #64B5F6, #0D47A1)'.format(network['oldest_user'],
                             network['newest_user']),
                     'height': 'mapData(num_edits, {}, {}, 10, 60)'
                         .format(network['user_min_edits'],
                             network['user_max_edits']),
                     'width': 'mapData(num_edits, {}, {}, 10, 60)'
                         .format(network['user_min_edits'],
-                            network['user_max_edits']),
-                    'border-width': '1%',
-                    'border-style': 'solid',
-                    'border-color': 'black'
+                            network['user_max_edits'])
                 }
             },
             {
@@ -114,7 +114,7 @@ def default_network_stylesheet(network):
                 'style': {
                     "width": edge_width,
                     'opacity': 'mapData(w_time, 0, 2, 0.4, 1)',
-                    'line-color': "mapData(w_time, 0, 2, #039BE5, #E53935)",
+                    'line-color': "mapData(w_time, 0, 2, #9E9E9E, #000000)",
                 }
             }]
 
@@ -433,7 +433,7 @@ def bind_callbacks(app):
             sheet[0]['style']['background-color'] = 'data(cluster_color)'
         else:
             sheet[0]['style']['background-color'] = 'mapData(first_edit, {}, {}, \
-            #B0BEC5, #004481)'.format(cy_network['oldest_user'], \
+            #64B5F6, #0D47A1)'.format(cy_network['oldest_user'], \
                 cy_network['newest_user'])
 
         return sheet
