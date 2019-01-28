@@ -8,7 +8,7 @@ colorlog==4.0.2
 colormap==1.0.2
 dash==0.34.0
 dash-core-components==0.41.0
-dash-cytoscape==0.0.3
+dash-cytoscape==0.0.4
 dash-html-components==0.13.4
 dash-renderer==0.14.3
 decorator==4.3.0
