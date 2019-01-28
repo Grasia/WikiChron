@@ -8,8 +8,22 @@
 
 import numpy
 import math
+
 from datetime import datetime
 from .BaseNetwork import BaseNetwork
+
+
+def remove_non_article_data(df):
+   """
+      Filter out all edits made on non-article pages.
+
+      df -- data to be filtered.
+      Return a dataframe derived from the original but with all the
+         editions made in non-article pages removed
+   """
+   # namespace 0 => wiki article
+   return df[df['page_ns'] == 0]
+
 
 class CoEditingNetwork(BaseNetwork):
     """
@@ -29,9 +43,9 @@ class CoEditingNetwork(BaseNetwork):
             * target: contributor_id
             * weight: the number of cooperation in different pages on the wiki,
                       differents editions on the same page computes only once.
-            * s_pg: a dict with the source node page_id as key and timestamp 
+            * s_pg: a dict with the source node page_id as key and timestamp
                     edits in that page as value
-            * t_pg: a dict with the target node page_id as key and timestamp 
+            * t_pg: a dict with the target node page_id as key and timestamp
                     edits in that page as value
 
     """
@@ -46,13 +60,16 @@ class CoEditingNetwork(BaseNetwork):
         self['newest_user'] = None
         self.name = 'Co-Editing'
         self.code = 'co_editing_network'
-        
+
 
     def generate_from_pandas(self, data):
         user_per_page = {}
         mapper_v = {}
         mapper_e = {}
         count = 0
+
+        data = remove_non_article_data(data)
+
         for index, r in data.iterrows():
             if r['contributor_name'] == 'Anonymous':
                 continue
@@ -148,7 +165,7 @@ class CoEditingNetwork(BaseNetwork):
                     'last_edit': node['last_edit'],
                     'page_rank': "{0:.5f}".format(self.page_rank[node.index])
                      if self.page_rank else '',
-                    'cluster_color': node['cluster_color'] 
+                    'cluster_color': node['cluster_color']
                     if self.num_communities is not -1 else ''
                 }
             })
@@ -176,7 +193,7 @@ class CoEditingNetwork(BaseNetwork):
 
         di_net['oldest_user'] = int(datetime.strptime(str(self['oldest_user']),
                             "%Y-%m-%d %H:%M:%S").strftime('%s'))
-        di_net['newest_user'] = int(datetime.strptime(str(self['newest_user']), 
+        di_net['newest_user'] = int(datetime.strptime(str(self['newest_user']),
                             "%Y-%m-%d %H:%M:%S").strftime('%s'))
         di_net['edge_max_weight'] = max_v
         di_net['edge_min_weight'] = min_v
@@ -270,15 +287,15 @@ class CoEditingNetwork(BaseNetwork):
         """
         Calculates the weight based on time between 2 editions
 
-        Parameters: 
+        Parameters:
             -tsp1: a timestamp
             -tsp2: a timestamp
 
         Returns: a number which represent the w_time
         """
-        t1 = int(datetime.strptime(str(tsp1), 
+        t1 = int(datetime.strptime(str(tsp1),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))
-        t2 = int(datetime.strptime(str(tsp2), 
+        t2 = int(datetime.strptime(str(tsp2),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))
         t_gap = math.fabs(t1 - t2)
 
