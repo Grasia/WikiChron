@@ -42,7 +42,6 @@ global precooked_net_dir;
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 precooked_net_dir = os.getenv('PRECOOKED_NETWORK_DIR', 'precooked_data/networks')
 
-
 def extract_network_obj_from_network_code(selected_network_code):
     if selected_network_code:
         return CoEditingNetwork()
@@ -326,7 +325,7 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
 
 def bind_callbacks(app):
 
-    # right sidebar callbacks
+    # Right sidebar callbacks
     bind_control_callbacks(app)
 
     @app.callback(
@@ -338,7 +337,6 @@ def bind_callbacks(app):
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0] #TOBEFIXED
         network_type = extract_network_obj_from_network_code(selection['network'])
-
         print('--> Retrieving and computing data')
         print( '\t for the following wiki: {}'.format( wiki['name'] ))
         print( '\trepresented as this network: {}'.format( network_type.name ))
