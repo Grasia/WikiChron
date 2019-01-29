@@ -50,14 +50,14 @@ def extract_network_obj_from_network_code(selected_network_code):
         raise Exception("Something went bad. Missing network type selection.")
 
 
-#@cache.memoize(timeout=3600)
+@cache.memoize(timeout=3600)
 def load_data(wiki):
     df = lib.get_dataframe_from_csv(wiki['data'])
     lib.prepare_data(df)
     df = lib.clean_up_bot_activity(df, wiki)
     return df
 
-#@cache.memoize()
+@cache.memoize()
 def load_and_compute_data(wiki, network_type):
     """
     Parameters
@@ -286,7 +286,7 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
                     style = {
                         'height': '95vh',
                         'width': '100%'
-                    }, 
+                    },
                     stylesheet = []
                 )
 
@@ -325,7 +325,7 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
         ]);
 
 def bind_callbacks(app):
-    
+
     # right sidebar callbacks
     bind_control_callbacks(app)
 
@@ -336,17 +336,16 @@ def bind_callbacks(app):
     def start_main(selection_json):
         # get wikis x network selection
         selection = json.loads(selection_json)
-        wiki = selection['wikis'][0]
+        wiki = selection['wikis'][0] #TOBEFIXED
         network_type = extract_network_obj_from_network_code(selection['network'])
 
         print('--> Retrieving and computing data')
         print( '\t for the following wiki: {}'.format( wiki['name'] ))
         print( '\trepresented as this network: {}'.format( network_type.name ))
-        global network
         network = load_and_compute_data(wiki, network_type)
         print('<-- Done retrieving and computing data!')
         return True
-      
+
 
     @app.callback(
         Output('ready', 'value'),
@@ -368,21 +367,27 @@ def bind_callbacks(app):
         [Input('ready', 'value'),
         Input('calculate_page_rank', 'n_clicks'),
         Input('calculate_communities', 'n_clicks')],
-        [State('date-slider-container', 'children')]
+        [State('initial-selection', 'children'),
+        State('date-slider-container', 'children')]
     )
-    def update_network(ready, pr_clicks, com_clicks, slider):
+    def update_network(ready, pr_clicks, com_clicks, selection_json, slider):
         if not ready:
             return None
 
-        f_network = network
+        # get network instance from selection
+        selection = json.loads(selection_json)
+        wiki = selection['wikis'][0] #TOBEFIXED
+        network_type = extract_network_obj_from_network_code(selection['network'])
+
+        network = load_and_compute_data(wiki, network_type)
 
         if not slider['props']['value'] == slider['props']['max']:
             print(' * [Info] Starting time filter....')
             time_start_calculations = time.perf_counter()
-            
-            origin = int(datetime.strptime(str(network['oldest_user']), 
+
+            origin = int(datetime.strptime(str(network['oldest_user']),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))
-            f_network = network.filter_by_time(origin + slider['props']['value']
+            network = network.filter_by_time(origin + slider['props']['value']
              * TIME_DIV)
 
             time_end_calculations = time.perf_counter() - time_start_calculations
@@ -392,12 +397,12 @@ def bind_callbacks(app):
             print(' * [Info] Printing the entire network....')
 
         if pr_clicks and pr_clicks % 2 == 1:
-            f_network.calculate_page_rank()
+            network.calculate_page_rank()
 
         if com_clicks and com_clicks % 2 == 1:
-            f_network.calculate_communities()
+            network.calculate_communities()
 
-        return f_network.to_cytoscape_dict()
+        return network.to_cytoscape_dict()
 
     @app.callback(
         Output('cytoscape', 'elements'),
@@ -456,15 +461,22 @@ def bind_callbacks(app):
 
     @app.callback(
         Output('date-slider-container', 'children'),
-        [Input('signal-data', 'value')]
+        [Input('signal-data', 'value')],
+        [State('initial-selection', 'children')]
     )
-    def update_slider(signal):
+    def update_slider(signal, selection_json):
         if not signal:
             return dcc.Slider(id='dates-slider')
 
-        origin = int(datetime.strptime(str(network['oldest_user']), 
+         # get network instance from selection
+        selection = json.loads(selection_json)
+        wiki = selection['wikis'][0] #TOBEFIXED
+        network_type = extract_network_obj_from_network_code(selection['network'])
+        network = load_and_compute_data(wiki, network_type)
+
+        origin = int(datetime.strptime(str(network['oldest_user']),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))
-        end = int(datetime.strptime(str(network['newest_user']), 
+        end = int(datetime.strptime(str(network['newest_user']),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))
 
         time_gap = end - origin
@@ -485,7 +497,7 @@ def bind_callbacks(app):
             step_for_marks = 36
 
         range_slider_marks = {i: datetime.fromtimestamp(origin
-         + i * TIME_DIV).strftime('%b %Y') for i in range(1, 
+         + i * TIME_DIV).strftime('%b %Y') for i in range(1,
          max_time-step_for_marks, step_for_marks)}
 
         range_slider_marks[max_time] = datetime.fromtimestamp(
