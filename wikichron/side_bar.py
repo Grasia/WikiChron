@@ -143,14 +143,14 @@ def wikis_tab(wikis, selected_wikis):
 
 def networks_tab(networks, selected_network):
 
-    networks_options = [{'label': nw.name, 'value': nw.code} for nw in networks]
+    networks_options = [{'label': nw.NAME, 'value': nw.CODE} for nw in networks]
 
     networks_checklist = html.Div(
                            [dcc.Checklist(
                                 id='network-selection',
                                 className='aside-checklist-category eleven columns',
                                 options=networks_options,
-                                values=[networks[0].code],
+                                values=[networks[0].CODE],
                                 labelClassName='aside-checklist-option',
                                 labelStyle={'display': 'block'}
                             )],

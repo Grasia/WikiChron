@@ -30,6 +30,8 @@ import lib.interface as lib
 from cache import cache
 from controls_sidebar import generate_controls_sidebar, bind_control_callbacks
 from lib.networks.types.CoEditingNetwork import CoEditingNetwork
+from lib.cytoscape_decorator.Stylesheet import Stylesheet
+from lib.cytoscape_decorator.CoEditingCytoscapeDecorator import CoEditingCytoscapeDecorator
 
 TIME_DIV = CoEditingNetwork.TIME_DIV
 
@@ -42,9 +44,18 @@ global precooked_net_dir;
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 precooked_net_dir = os.getenv('PRECOOKED_NETWORK_DIR', 'precooked_data/networks')
 
+
 def extract_network_obj_from_network_code(selected_network_code):
     if selected_network_code:
         return CoEditingNetwork()
+    else:
+        raise Exception("Something went bad. Missing network type selection.")
+
+
+# TODO: IMPORT THIS FUNCTION FROM lib
+def factory_stylesheet_decorator(selected_network_code, stylesheet):
+    if selected_network_code == CoEditingNetwork.CODE:
+        return CoEditingCytoscapeDecorator(stylesheet)
     else:
         raise Exception("Something went bad. Missing network type selection.")
 
@@ -78,44 +89,6 @@ def load_and_compute_data(wiki, network_type):
     time_end_calculations = time.perf_counter() - time_start_calculations
     print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
     return network_type
-
-
-def default_network_stylesheet(network):
-    edge_width = 'mapData(weight, {}, {}, 1, 10)'.format(
-        network['edge_min_weight'], network['edge_max_weight'])
-    if network['edge_min_weight'] == network['edge_max_weight']:
-        edge_width = '1'
-    return [{
-                'selector': 'node',
-                'style': {
-                    'content': '',
-                    'text-halign': 'center',
-                    'text-valign': 'top',
-                    'text-background-color': '#FFFFFF',
-                    'text-background-opacity': '1',
-                    'text-background-shape': 'roundrectangle',
-                    'font-size': 'mapData(num_edits, {}, {}, 7, 18)'
-                        .format(network['user_min_edits'],
-                            network['user_max_edits']),
-                    'background-color': 'mapData(first_edit, {}, {}, \
-                        #64B5F6, #0D47A1)'.format(network['oldest_user'],
-                            network['newest_user']),
-                    'height': 'mapData(num_edits, {}, {}, 10, 60)'
-                        .format(network['user_min_edits'],
-                            network['user_max_edits']),
-                    'width': 'mapData(num_edits, {}, {}, 10, 60)'
-                        .format(network['user_min_edits'],
-                            network['user_max_edits'])
-                }
-            },
-            {
-                'selector': 'edge',
-                'style': {
-                    "width": edge_width,
-                    'opacity': 'mapData(w_time, 0, 2, 0.4, 1)',
-                    'line-color': "mapData(w_time, 0, 2, #9E9E9E, #000000)",
-                }
-            }]
 
 
 def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
@@ -286,7 +259,7 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
                         'height': '95vh',
                         'width': '100%'
                     },
-                    stylesheet = []
+                    stylesheet = Stylesheet.make_basic_stylesheet()
                 )
 
     if debug:
@@ -339,7 +312,7 @@ def bind_callbacks(app):
         network_type = extract_network_obj_from_network_code(selection['network'])
         print('--> Retrieving and computing data')
         print( '\t for the following wiki: {}'.format( wiki['name'] ))
-        print( '\trepresented as this network: {}'.format( network_type.name ))
+        print( '\trepresented as this network: {}'.format( network_type.NAME ))
         network = load_and_compute_data(wiki, network_type)
         print('<-- Done retrieving and computing data!')
         return True
@@ -383,6 +356,7 @@ def bind_callbacks(app):
             print(' * [Info] Starting time filter....')
             time_start_calculations = time.perf_counter()
 
+            #TODO CHANGE IT
             origin = int(datetime.strptime(str(network['oldest_user']),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))
             network = network.filter_by_time(origin + slider['props']['value']
@@ -416,33 +390,34 @@ def bind_callbacks(app):
         Input('show_page_rank', 'n_clicks'),
         Input('color_cluster', 'n_clicks')],
         [State('network-ready', 'value'),
-        State('cytoscape', 'stylesheet')]
+        State('cytoscape', 'stylesheet'),
+        State('initial-selection', 'children')]
     )
-    def update_stylesheet(_, lb_clicks, pr_clicks, com_clicks, cy_network, stylesheet):
+    def update_stylesheet(_, lb_clicks, pr_clicks, com_clicks, cy_network, 
+            stylesheet, selection_json):
+
         if not cy_network:
-            return []
-            
-        sheet = stylesheet
-        if not sheet:
-            sheet = default_network_stylesheet(cy_network)
+            return Stylesheet.make_basic_stylesheet()
+
+        selection = json.loads(selection_json)
+        sheet = Stylesheet(stylesheet)
+        decorator = factory_stylesheet_decorator(selection['network'][0], sheet)
+        decorator.all_transformations(cy_network)
 
         if lb_clicks and lb_clicks % 2 == 1:
-            sheet[0]['style']['content'] = 'data(label)'
+            decorator.set_label('data(label)')
         elif pr_clicks and pr_clicks % 2 == 1:
-            sheet[0]['style']['content'] = 'data(page_rank)'
-
+            decorator.set_label('data(page_rank)')
         else:
-            sheet[0]['style']['content'] = ''
+            decorator.set_label('')
 
         if com_clicks and not cy_network["n_communities"] == '...' \
         and com_clicks % 2 == 1:
-            sheet[0]['style']['background-color'] = 'data(cluster_color)'
+            decorator.color_nodes_by_cluster()
         else:
-            sheet[0]['style']['background-color'] = 'mapData(first_edit, {}, {}, \
-            #64B5F6, #0D47A1)'.format(cy_network['oldest_user'], \
-                cy_network['newest_user'])
+            decorator.color_nodes(cy_network)
 
-        return sheet
+        return decorator.stylesheet.cy_stylesheet
 
     @app.callback(
         Output('share-dialog', 'open'),
@@ -475,6 +450,7 @@ def bind_callbacks(app):
         network_type = extract_network_obj_from_network_code(selection['network'])
         network = load_and_compute_data(wiki, network_type)
 
+        #TODO CHANGE IT
         origin = int(datetime.strptime(str(network['oldest_user']),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))
         end = int(datetime.strptime(str(network['newest_user']),

@@ -53,37 +53,35 @@ class CoEditingNetwork(BaseNetwork):
     #aprox 1 month = 30 days
     TIME_DIV = 60 * 60 * 24 * 30
     TIME_BOUND = 24 * 15
+    NAME = 'Co-Editing'
+    CODE = 'co_editing_network'
 
-    def __init__(self, is_directed = False, name = 'Co-Editing', 
-            code = 'co_editing_network', page_rank = [], num_communities = -1,
-            graph = {}):
+    def __init__(self, is_directed = False, page_rank = [], num_communities = -1,
+            graph = {}, *others):
         super().__init__(is_directed = is_directed, page_rank = page_rank, 
             num_communities = num_communities, graph = graph)
         if not graph:
             self['oldest_user'] = None
             self['newest_user'] = None
-        self.name = name
-        self.code = code
 
-    def __getnewargs_ex__(self):
-        graph = {
-            'n': self.n,
-            'edges': self.edges,
-            'directed': self.directed,
-            'graph_attrs': self.graph_attrs,
-            'vertex_attrs': self.vertex_attrs,
-            'edge_attrs': self.edge_attrs
-        }
-        args = (self.name, self.code, self.page_rank, 
-                self.num_communities, graph)
-        kwargs = {
-            'name': self.name,
-            'code': self.code,
-            'page_rank': self.page_rank,
-            'num_communities': self.num_communities,
-            'graph': graph
-        }
-        return (args, kwargs)
+
+    # def __getnewargs_ex__(self):
+    #     graph = {
+    #         'n': self.n,
+    #         'edges': self.edges,
+    #         'directed': self.directed,
+    #         'graph_attrs': self.graph_attrs,
+    #         'vertex_attrs': self.vertex_attrs,
+    #         'edge_attrs': self.edge_attrs
+    #     }
+    #     args = (self.page_rank, self.num_communities, graph)
+    #     kwargs = {
+    #         'page_rank': self.page_rank,
+    #         'num_communities': self.num_communities,
+    #         'graph': graph
+    #     }
+    #     return (args, kwargs)
+
 
     def generate_from_pandas(self, data):
         user_per_page = {}

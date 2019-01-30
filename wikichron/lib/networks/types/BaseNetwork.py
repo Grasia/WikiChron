@@ -11,8 +11,10 @@ from colormap.colors import rgb2hex
 
 class BaseNetwork(Graph):
 
-    def __init__(self, is_directed = False, code = 'base_network', 
-                name = 'Base Network', page_rank = [], num_communities = -1,
+    NAME = 'Base Network'
+    CODE = 'base_network'
+
+    def __init__(self, is_directed = False, page_rank = [], num_communities = -1,
                 graph = {}):
         if not graph:
             super().__init__(directed=is_directed)
@@ -20,8 +22,7 @@ class BaseNetwork(Graph):
             super().__init__(n = graph['n'], edges = graph['edges'], 
                 directed = graph['directed'], graph_attrs = graph['graph_attrs'],
                 vertex_attrs = graph['vertex_attrs'], edge_attrs = graph['edge_attrs'])
-        self.code = code
-        self.name = name
+            
         self.page_rank = page_rank
         self.num_communities = num_communities
 
