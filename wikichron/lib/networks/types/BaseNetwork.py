@@ -93,7 +93,7 @@ class BaseNetwork(Graph):
         """
         Calculates the network pageRank 
         """
-        self.page_rank = self.pagerank(directed=self.directed)
+        self.page_rank = self.pagerank(directed=self.is_directed())
 
     def calculate_communities(self):
         """

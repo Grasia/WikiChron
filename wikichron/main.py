@@ -407,7 +407,7 @@ def bind_callbacks(app):
         [Input('network-ready', 'value')]
     )
     def add_network_elements(cy_network):
-        return cy_network['network']
+        return cy_network['network'] if cy_network else []
 
     @app.callback(
         Output('cytoscape', 'stylesheet'),
@@ -419,6 +419,9 @@ def bind_callbacks(app):
         State('cytoscape', 'stylesheet')]
     )
     def update_stylesheet(_, lb_clicks, pr_clicks, com_clicks, cy_network, stylesheet):
+        if not cy_network:
+            return []
+            
         sheet = stylesheet
         if not sheet:
             sheet = default_network_stylesheet(cy_network)
