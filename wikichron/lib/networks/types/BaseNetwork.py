@@ -11,13 +11,19 @@ from colormap.colors import rgb2hex
 
 class BaseNetwork(Graph):
 
-    def __init__(self, is_directed = False):
-        super().__init__(directed=is_directed)
-        self.directed = is_directed
-        self.code = 'base_network'
-        self.name = 'Base Network'
-        self.page_rank = []
-        self.num_communities = -1
+    def __init__(self, is_directed = False, code = 'base_network', 
+                name = 'Base Network', page_rank = [], num_communities = -1,
+                graph = {}):
+        if not graph:
+            super().__init__(directed=is_directed)
+        else:
+            super().__init__(n = graph['n'], edges = graph['edges'], 
+                directed = graph['directed'], graph_attrs = graph['graph_attrs'],
+                vertex_attrs = graph['vertex_attrs'], edge_attrs = graph['edge_attrs'])
+        self.code = code
+        self.name = name
+        self.page_rank = page_rank
+        self.num_communities = num_communities
 
 
     def init_network(self):
@@ -26,6 +32,18 @@ class BaseNetwork(Graph):
         Use this instead of the default constructor
         """
         return __init_(self)
+
+
+    def __getnewargs_ex__(self):
+        """
+        A function to write and read objects with pickle.
+        This function is called by __new__() upon unpickling.
+
+        Return: A pair (args, kwargs) where args is a tuple of positional
+                arguments and kwargs a dictionary of named arguments for 
+                constructing the object
+        """
+        raise NotImplementedError('__getnewargs_ex__ is not implemented')
 
 
     def generate_from_pandas(self, data):
@@ -75,7 +93,7 @@ class BaseNetwork(Graph):
         """
         Calculates the network pageRank 
         """
-        self.page_rank = self.pagerank(directed=self.directed)
+        self.page_rank = self.pagerank(directed=self.is_directed())
 
     def calculate_communities(self):
         """

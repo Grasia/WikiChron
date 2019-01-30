@@ -34,26 +34,29 @@ def fold_button():
         }
     );
 
-
-def stats():
+def stats_section():
     return html.Div([
             html.H5('Network Stats', className='control-title'),
-            html.Div(id='stats', className='stats-container',
-                children=[
-                    html.Div([
-                        html.P('Nodes: ...', className='left-element'),
-                        html.P('First User: ...', className='right-element')
-                    ]),
-                    html.Div([
-                        html.P('Edges: ...', className='left-element'),
-                        html.P('Last User: ...', className='right-element')
-                    ]),
-                    html.Div([
-                        html.P('Communities: ...', className='left-element', id='n_communities'),
-                        html.P('Max Hub Degree: ...', className='right-element')
-                    ])
-                ]),
-        ], className='control-container')
+            html.Div(id='stats', className='stats-container', children=stats())
+            ], className='control-container')
+
+def stats(stat1 = 'Nodes: ...', stat2 = 'First User: ...', stat3 = 'Edges: ...',
+        stat4 = 'Last User: ...', stat5 = 'Communities: ...',
+        stat6 = 'Max Hub Degree: ...'):
+
+    return [
+            html.Div([
+                html.P(stat1, className='left-element'),
+                html.P(stat2, className='right-element')
+            ]),
+            html.Div([
+                html.P(stat3, className='left-element'),
+                html.P(stat4, className='right-element')
+            ]),
+            html.Div([
+                html.P(stat5, className='left-element', id='n_communities'),
+                html.P(stat6, className='right-element')
+            ])]
 
 
 def metrics():
@@ -97,7 +100,7 @@ def generate_controls_sidebar():
                             fold_button(),
                             html.Div(id='controls-side-bar-content', 
                                 children=[
-                                    stats(),
+                                    stats_section(),
                                     metrics(),
                                     controls()
                                 ]),
@@ -119,24 +122,17 @@ def bind_control_callbacks(app):
         [Input('network-ready', 'value')]
     )
     def update_stats(cy_network):
+        if not cy_network:
+            return stats()
+
         date1 = datetime.fromtimestamp(cy_network["oldest_user"]).strftime("%Y-%m-%d")
         date2 = datetime.fromtimestamp(cy_network["newest_user"]).strftime("%Y-%m-%d")
-        return [
-                html.Div([
-                        html.P(f'Nodes: {cy_network["num_nodes"]}', className='left-element'),
-                        html.P(f'First User: {date1}', className='right-element')
-                    ]),
-                html.Div([
-                        html.P(f'Edges: {cy_network["num_edges"]}', className='left-element'),
-                        html.P(f'Last User: {date2}', className='right-element')
-                    ]),
-                html.Div([
-                        html.P(f'Communities: {cy_network["n_communities"]}', 
-                            className='left-element', id='n_communities'),
-                        html.P(f'Max Hub Degree: {cy_network["max_degree"]}', 
-                            className='right-element')
-                    ])
-            ]
+
+        return stats(stat1 = f'Nodes: {cy_network["num_nodes"]}', stat2 = f'First User: {date1}',
+            stat3 = f'Edges: {cy_network["num_edges"]}', stat4 = f'Last User: {date2}',
+            stat5 = f'Communities: {cy_network["n_communities"]}',
+            stat6 = f'Max Hub Degree: {cy_network["max_degree"]}')
+
 
     @app.callback(
         Output('show_labels', 'className'),
