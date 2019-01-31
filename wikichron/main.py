@@ -29,11 +29,9 @@ import sd_material_ui
 import lib.interface as lib
 from cache import cache
 from controls_sidebar import generate_controls_sidebar, bind_control_callbacks
-from lib.networks.types.CoEditingNetwork import CoEditingNetwork
 from lib.cytoscape_decorator.Stylesheet import Stylesheet
-from lib.cytoscape_decorator.CoEditingCytoscapeDecorator import CoEditingCytoscapeDecorator
 
-TIME_DIV = CoEditingNetwork.TIME_DIV
+TIME_DIV = 60 * 60 * 24 * 30
 
 global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
@@ -43,21 +41,6 @@ global data_dir;
 global precooked_net_dir;
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 precooked_net_dir = os.getenv('PRECOOKED_NETWORK_DIR', 'precooked_data/networks')
-
-
-def extract_network_obj_from_network_code(selected_network_code):
-    if selected_network_code:
-        return CoEditingNetwork()
-    else:
-        raise Exception("Something went bad. Missing network type selection.")
-
-
-# TODO: IMPORT THIS FUNCTION FROM lib
-def factory_stylesheet_decorator(selected_network_code, stylesheet):
-    if selected_network_code == CoEditingNetwork.CODE:
-        return CoEditingCytoscapeDecorator(stylesheet)
-    else:
-        raise Exception("Something went bad. Missing network type selection.")
 
 
 @cache.memoize(timeout=3600)
@@ -309,7 +292,7 @@ def bind_callbacks(app):
         # get wikis x network selection
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0] #TOBEFIXED
-        network_type = extract_network_obj_from_network_code(selection['network'])
+        network_type = lib.factory_network(selection['network'])
         print('--> Retrieving and computing data')
         print( '\t for the following wiki: {}'.format( wiki['name'] ))
         print( '\trepresented as this network: {}'.format( network_type.NAME ))
@@ -348,7 +331,7 @@ def bind_callbacks(app):
         # get network instance from selection
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0] #TOBEFIXED
-        network_type = extract_network_obj_from_network_code(selection['network'])
+        network_type = lib.factory_network(selection['network'])
 
         network = load_and_compute_data(wiki, network_type)
 
@@ -394,14 +377,14 @@ def bind_callbacks(app):
         State('initial-selection', 'children')]
     )
     def update_stylesheet(_, lb_clicks, pr_clicks, com_clicks, cy_network, 
-            stylesheet, selection_json):
+        stylesheet, selection_json):
 
         if not cy_network:
             return Stylesheet.make_basic_stylesheet()
 
         selection = json.loads(selection_json)
         sheet = Stylesheet(stylesheet)
-        decorator = factory_stylesheet_decorator(selection['network'][0], sheet)
+        decorator = lib.factory_stylesheet_decorator(selection['network'][0], sheet)
         decorator.all_transformations(cy_network)
 
         if lb_clicks and lb_clicks % 2 == 1:
@@ -447,7 +430,7 @@ def bind_callbacks(app):
          # get network instance from selection
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0] #TOBEFIXED
-        network_type = extract_network_obj_from_network_code(selection['network'])
+        network_type = lib.factory_network(selection['network'])
         network = load_and_compute_data(wiki, network_type)
 
         #TODO CHANGE IT

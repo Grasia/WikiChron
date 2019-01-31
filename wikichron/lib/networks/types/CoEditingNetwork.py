@@ -12,19 +12,6 @@ import math
 from datetime import datetime
 from .BaseNetwork import BaseNetwork
 
-
-def remove_non_article_data(df):
-   """
-      Filter out all edits made on non-article pages.
-
-      df -- data to be filtered.
-      Return a dataframe derived from the original but with all the
-         editions made in non-article pages removed
-   """
-   # namespace 0 => wiki article
-   return df[df['page_ns'] == 0]
-
-
 class CoEditingNetwork(BaseNetwork):
     """
     This network is based on the editors cooperation, this means, the nodes
@@ -89,7 +76,7 @@ class CoEditingNetwork(BaseNetwork):
         mapper_e = {}
         count = 0
 
-        data = remove_non_article_data(data)
+        data = self.remove_non_article_data(data)
 
         for index, r in data.iterrows():
             if r['contributor_name'] == 'Anonymous':
@@ -347,3 +334,14 @@ class CoEditingNetwork(BaseNetwork):
             o_net.es[e.index]['w_time'] = e['w_time']
 
         o_net.write(f=file, format='gml')
+
+    def remove_non_article_data(self, df):
+       """
+          Filter out all edits made on non-article pages.
+
+          df -- data to be filtered.
+          Return a dataframe derived from the original but with all the
+             editions made in non-article pages removed
+       """
+       # namespace 0 => wiki article
+       return df[df['page_ns'] == 0]

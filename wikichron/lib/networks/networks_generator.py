@@ -16,3 +16,9 @@ def create_available_networks():
 	networks = []
 	networks.append(CoEditingNetwork())
 	return networks
+
+def factory_network(selected_network_code):
+    if selected_network_code:
+        return CoEditingNetwork()
+    else:
+        raise Exception("Something went bad. Missing network type selection.")

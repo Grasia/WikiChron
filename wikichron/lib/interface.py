@@ -17,6 +17,7 @@ from .metrics import available_metrics as _available_metrics
 from .metrics import metrics_dict
 from .metrics import stats
 from .networks import available_networks as _available_networks
+from .networks.networks_generator import factory_network as _factory_network
 import os
 import pandas as pd
 import time
@@ -56,6 +57,17 @@ def prepare_data(df):
    """
    return df.sort_values(by='timestamp', inplace=True)
 
+def factory_stylesheet_decorator(selected_network_code, stylesheet):
+    from .networks.types.CoEditingNetwork import CoEditingNetwork
+    from .cytoscape_decorator.CoEditingCytoscapeDecorator import CoEditingCytoscapeDecorator
+
+    if selected_network_code == CoEditingNetwork.CODE:
+        return CoEditingCytoscapeDecorator(stylesheet)
+    else:
+        raise Exception("Something went bad. Missing network type selection.")
+
+def factory_network(selected_network_code):
+  return _factory_network(selected_network_code)
 
 def compute_metrics_on_dataframe(metrics, df):
    """
