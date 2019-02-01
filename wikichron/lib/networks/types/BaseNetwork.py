@@ -9,17 +9,19 @@
 from igraph import Graph, ClusterColoringPalette
 from colormap.colors import rgb2hex
 
-class BaseNetwork(Graph):
+class BaseNetwork():
 
-    def __init__(self, is_directed = False, code = 'base_network', 
+    def __init__(self, is_directed = False, code = 'base_network',
                 name = 'Base Network', page_rank = [], num_communities = -1,
                 graph = {}):
         if not graph:
-            super().__init__(directed=is_directed)
+            self.graph = Graph(directed=is_directed)
         else:
-            super().__init__(n = graph['n'], edges = graph['edges'], 
-                directed = graph['directed'], graph_attrs = graph['graph_attrs'],
-                vertex_attrs = graph['vertex_attrs'], edge_attrs = graph['edge_attrs'])
+            print(f'\n\n\n BaseNetwork __init__ {graph}')
+            self.graph = graph
+            #~ (n = graph['n'], edges = graph['edges'],
+                #~ directed = graph['directed'], graph_attrs = graph['graph_attrs'],
+                #~ vertex_attrs = graph['vertex_attrs'], edge_attrs = graph['edge_attrs'])
         self.code = code
         self.name = name
         self.page_rank = page_rank
@@ -34,16 +36,16 @@ class BaseNetwork(Graph):
         return __init_(self)
 
 
-    def __getnewargs_ex__(self):
-        """
-        A function to write and read objects with pickle.
-        This function is called by __new__() upon unpickling.
+    #~ def __getnewargs_ex__(self):
+        #~ """
+        #~ A function to write and read objects with pickle.
+        #~ This function is called by __new__() upon unpickling.
 
-        Return: A pair (args, kwargs) where args is a tuple of positional
-                arguments and kwargs a dictionary of named arguments for 
-                constructing the object
-        """
-        raise NotImplementedError('__getnewargs_ex__ is not implemented')
+        #~ Return: A pair (args, kwargs) where args is a tuple of positional
+                #~ arguments and kwargs a dictionary of named arguments for
+                #~ constructing the object
+        #~ """
+            #~ raise NotImplementedError('__getnewargs_ex__ is not implemented')
 
 
     def generate_from_pandas(self, data):
@@ -91,16 +93,16 @@ class BaseNetwork(Graph):
 
     def calculate_page_rank(self):
         """
-        Calculates the network pageRank 
+        Calculates the network pageRank
         """
-        self.page_rank = self.pagerank(directed=self.is_directed())
+        self.page_rank = self.graph.pagerank(directed=self.graph.is_directed())
 
     def calculate_communities(self):
         """
         Calculates communities and assigns a color per community
         """
-        mod = self.community_multilevel(weights='weight')
+        mod = self.graph.community_multilevel(weights='weight')
         self.num_communities = len(mod)
         pal = ClusterColoringPalette(len(mod))
-        self.vs['cluster_color'] = list(map(lambda x: rgb2hex(x[0],x[1],x[2], normalised=True), 
+        self.graph.vs['cluster_color'] = list(map(lambda x: rgb2hex(x[0],x[1],x[2], normalised=True),
             pal.get_many(mod.membership)))
