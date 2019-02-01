@@ -57,7 +57,7 @@ def load_data(wiki):
     return df
 
 @cache.memoize()
-def load_and_compute_data(wiki, network_type):
+def load_and_compute_data(wiki, network_code):
     """
     Parameters
         - wiki: Related info about the wiki selected.
@@ -72,6 +72,7 @@ def load_and_compute_data(wiki, network_type):
     print(' * [Timing] Loading csvs : {} seconds'.format(time_end_loading_csvs) )
 
     # generate network:
+    network_type = extract_network_obj_from_network_code(network_code)
     print(' * [Info] Starting calculations....')
     time_start_calculations = time.perf_counter()
     network_type.generate_from_pandas(data=df)
@@ -80,10 +81,10 @@ def load_and_compute_data(wiki, network_type):
     return network_type
 
 
-def default_network_stylesheet(network):
+def default_network_stylesheet(cy_network):
     edge_width = 'mapData(weight, {}, {}, 1, 10)'.format(
-        network['edge_min_weight'], network['edge_max_weight'])
-    if network['edge_min_weight'] == network['edge_max_weight']:
+        cy_network['edge_min_weight'], cy_network['edge_max_weight'])
+    if cy_network['edge_min_weight'] == cy_network['edge_max_weight']:
         edge_width = '1'
     return [{
                 'selector': 'node',
@@ -95,17 +96,17 @@ def default_network_stylesheet(network):
                     'text-background-opacity': '1',
                     'text-background-shape': 'roundrectangle',
                     'font-size': 'mapData(num_edits, {}, {}, 7, 18)'
-                        .format(network['user_min_edits'],
-                            network['user_max_edits']),
+                        .format(cy_network['user_min_edits'],
+                            cy_network['user_max_edits']),
                     'background-color': 'mapData(first_edit, {}, {}, \
-                        #64B5F6, #0D47A1)'.format(network['oldest_user'],
-                            network['newest_user']),
+                        #64B5F6, #0D47A1)'.format(cy_network['oldest_user'],
+                            cy_network['newest_user']),
                     'height': 'mapData(num_edits, {}, {}, 10, 60)'
-                        .format(network['user_min_edits'],
-                            network['user_max_edits']),
+                        .format(cy_network['user_min_edits'],
+                            cy_network['user_max_edits']),
                     'width': 'mapData(num_edits, {}, {}, 10, 60)'
-                        .format(network['user_min_edits'],
-                            network['user_max_edits'])
+                        .format(cy_network['user_min_edits'],
+                            cy_network['user_max_edits'])
                 }
             },
             {
@@ -336,11 +337,11 @@ def bind_callbacks(app):
         # get wikis x network selection
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0] #TOBEFIXED
-        network_type = extract_network_obj_from_network_code(selection['network'])
+        network_code = selection['network']
         print('--> Retrieving and computing data')
         print( '\t for the following wiki: {}'.format( wiki['name'] ))
-        print( '\trepresented as this network: {}'.format( network_type.name ))
-        network = load_and_compute_data(wiki, network_type)
+        print( '\trepresented as this network: {}'.format( network_code ))
+        network = load_and_compute_data(wiki, network_code)
         print('<-- Done retrieving and computing data!')
         return True
 
@@ -375,15 +376,15 @@ def bind_callbacks(app):
         # get network instance from selection
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0] #TOBEFIXED
-        network_type = extract_network_obj_from_network_code(selection['network'])
+        network_code = selection['network']
 
-        network = load_and_compute_data(wiki, network_type)
+        network = load_and_compute_data(wiki, network_code)
 
         if not slider['props']['value'] == slider['props']['max']:
             print(' * [Info] Starting time filter....')
             time_start_calculations = time.perf_counter()
 
-            origin = int(datetime.strptime(str(network['oldest_user']),
+            origin = int(datetime.strptime(str(network.oldest_user),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))
             network = network.filter_by_time(origin + slider['props']['value']
              * TIME_DIV)
@@ -421,7 +422,7 @@ def bind_callbacks(app):
     def update_stylesheet(_, lb_clicks, pr_clicks, com_clicks, cy_network, stylesheet):
         if not cy_network:
             return []
-            
+
         sheet = stylesheet
         if not sheet:
             sheet = default_network_stylesheet(cy_network)
@@ -472,12 +473,12 @@ def bind_callbacks(app):
          # get network instance from selection
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0] #TOBEFIXED
-        network_type = extract_network_obj_from_network_code(selection['network'])
-        network = load_and_compute_data(wiki, network_type)
+        network_code = selection['network']
+        network = load_and_compute_data(wiki, network_code)
 
-        origin = int(datetime.strptime(str(network['oldest_user']),
+        origin = int(datetime.strptime(str(network.oldest_user),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))
-        end = int(datetime.strptime(str(network['newest_user']),
+        end = int(datetime.strptime(str(network.newest_user),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))
 
         time_gap = end - origin
