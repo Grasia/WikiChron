@@ -89,6 +89,18 @@ The easiest way is to follow the Dash instructions: https://plot.ly/dash/deploym
 
 There is a script called `deploy.sh` which launches the app with the latest code in master and provides the appropriate arguments. Check it out and modify to suit your needs.
 
+## gunicorn config
+
+For the deployment you need to set some configuration in a file called `gunicorn_config.py`.
+
+You can start by copying the sample config file located in this repo and then edit the config parameters needed to suit your specific needs:
+
+`cp sample_gunicorn_config.py gunicorn_config.py`
+
+The documentation about the gunicorn settings allowed in this file can be found [in the official gunicorn documentation](https://docs.gunicorn.org/en/stable/settings.html#settings).
+
+The environment variable `WIKICHRON_DATA_DIR` is bypassed directly to WikiChron and sets the directory where WikiChron will look for the wiki data files, as it was explained previously in the [Run the application section](#run-the-application).
+
 ## Setup cache
 If you want to run WikiChron in production, you should setup a RedisDB server and add the corresponding parameters to the cache.py file.
 
@@ -111,6 +123,3 @@ WikiChron is used for science and, accordingly, we have presented the tool in so
   * [Freely available here](https://aisel.aisnet.org/cgi/viewcontent.cgi?article=1072&context=ecis2018_rip)
 * Abel Serrano, Javier Arroyo, and Samer Hassan. 2018. Participation Inequality in Wikis: A Temporal Analysis Using WikiChron. In Proceedings of the 14th International Symposium on Open Collaboration (OpenSym '18). ACM, New York, NY, USA, Article 12, 7 pages. DOI: https://doi.org/10.1145/3233391.3233536.
   * [Freely available here](http://www.opensym.org/wp-content/uploads/2018/07/OpenSym2018_paper_31-1.pdf)
-
-
-
