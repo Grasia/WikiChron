@@ -1,7 +1,7 @@
 """
 
  Author: Youssef El Faqir El Rhazoui
- Date: 13/12/2018
+ Date: 13/Dec/2018
  Distributed under the terms of the GPLv3 license.
 
 """
@@ -44,8 +44,9 @@ class CoEditingNetwork(BaseNetwork):
     CODE = 'co_editing_network'
 
     def __init__(self, is_directed = False, page_rank = [], num_communities = -1,
-            graph = {}, *others):
-        super().__init__(is_directed = is_directed, page_rank = page_rank, 
+            graph = {},
+            *garbage): #NEEDEDTOWORK: non-expected extra args
+        super().__init__(is_directed = is_directed, page_rank = page_rank,
             num_communities = num_communities, graph = graph)
         if not graph:
             self['oldest_user'] = None

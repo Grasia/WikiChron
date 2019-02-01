@@ -1,7 +1,7 @@
 """
 
  Author: Youssef El Faqir El Rhazoui
- Date: 13/12/2018
+ Date: 13/Dec/2018
  Distributed under the terms of the GPLv3 license.
 
 """
@@ -15,14 +15,15 @@ class BaseNetwork(Graph):
     CODE = 'base_network'
 
     def __init__(self, is_directed = False, page_rank = [], num_communities = -1,
-                graph = {}):
+                graph = {},
+                *garbage): #NEEDEDTOWORK: non-expected extra args
         if not graph:
             super().__init__(directed=is_directed)
         else:
-            super().__init__(n = graph['n'], edges = graph['edges'], 
+            super().__init__(n = graph['n'], edges = graph['edges'],
                 directed = graph['directed'], graph_attrs = graph['graph_attrs'],
                 vertex_attrs = graph['vertex_attrs'], edge_attrs = graph['edge_attrs'])
-            
+
         self.page_rank = page_rank
         self.num_communities = num_communities
 
@@ -41,7 +42,7 @@ class BaseNetwork(Graph):
         This function is called by __new__() upon unpickling.
 
         Return: A pair (args, kwargs) where args is a tuple of positional
-                arguments and kwargs a dictionary of named arguments for 
+                arguments and kwargs a dictionary of named arguments for
                 constructing the object
         """
         raise NotImplementedError('__getnewargs_ex__ is not implemented')
@@ -92,7 +93,7 @@ class BaseNetwork(Graph):
 
     def calculate_page_rank(self):
         """
-        Calculates the network pageRank 
+        Calculates the network pageRank
         """
         self.page_rank = self.pagerank(directed=self.is_directed())
 
@@ -103,5 +104,5 @@ class BaseNetwork(Graph):
         mod = self.community_multilevel(weights='weight')
         self.num_communities = len(mod)
         pal = ClusterColoringPalette(len(mod))
-        self.vs['cluster_color'] = list(map(lambda x: rgb2hex(x[0],x[1],x[2], normalised=True), 
+        self.vs['cluster_color'] = list(map(lambda x: rgb2hex(x[0],x[1],x[2], normalised=True),
             pal.get_many(mod.membership)))
