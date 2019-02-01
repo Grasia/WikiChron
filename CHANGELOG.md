@@ -1,5 +1,11 @@
 # Change Log for WikiChron
 
+## 1.3.2 - 2018-02-01
+
+### Fixed
+- Fix cache of network (Really) -> Previous version was not working because of a bug with the cache.
+
+
 ## 1.3.1 - 2018-02-01
 
 ### Fixed
