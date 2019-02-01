@@ -181,7 +181,7 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
                         ),
                         html.A(
                             html.Img(src='/assets/ico-github.svg'),
-                            href='https://github.com/Grasia/WikiChron',
+                            href='https://github.com/Grasia/WikiChron-networks',
                             target='_blank',
                             className='icon',
                             title='Github repo'
@@ -421,7 +421,7 @@ def bind_callbacks(app):
     def update_stylesheet(_, lb_clicks, pr_clicks, com_clicks, cy_network, stylesheet):
         if not cy_network:
             return []
-            
+
         sheet = stylesheet
         if not sheet:
             sheet = default_network_stylesheet(cy_network)
