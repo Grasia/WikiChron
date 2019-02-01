@@ -7,8 +7,8 @@
 
    Created on: 14-nov-2017
 
-   Copyright 2017-2018 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>, 
-                      Youssef El Faqir El Rhazoui 
+   Copyright 2017-2018 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>,
+                      Youssef El Faqir El Rhazoui
 """
 
 import numpy as np
@@ -26,13 +26,16 @@ from warnings import warn
 global data_dir;
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 
+
 def get_available_metrics():
-   """ Return a list of the currently available metrics. """
-   return _available_metrics
+    """ Return a list of the currently available metrics. """
+    return _available_metrics
+
 
 def get_available_networks():
-   """ Return a list of the currently available networks. """
-   return _available_networks
+    """ Return a list of the currently available networks. """
+    return _available_networks
+
 
 def remove_bots_activity(df, bots_ids):
    """
@@ -43,8 +46,9 @@ def remove_bots_activity(df, bots_ids):
       Return a dataframe derived from the original but with all the
          editions made by bot users removed
    """
-   bots = np.array(bots_ids)
-   return df[~df['contributor_id'].isin(bots)]
+    bots = np.array(bots_ids)
+    return df[~df['contributor_id'].isin(bots)]
+
 
 def prepare_data(df):
    """
@@ -55,7 +59,8 @@ def prepare_data(df):
       Modifies inplace the input data as well as returns that data
       in the appropiate format for further calling of metric functions.
    """
-   return df.sort_values(by='timestamp', inplace=True)
+    return df.sort_values(by='timestamp', inplace=True)
+
 
 def factory_stylesheet_decorator(selected_network_code, stylesheet):
     from .networks.types.CoEditingNetwork import CoEditingNetwork
@@ -66,8 +71,10 @@ def factory_stylesheet_decorator(selected_network_code, stylesheet):
     else:
         raise Exception("Something went bad. Missing network type selection.")
 
+
 def factory_network(selected_network_code):
-  return _factory_network(selected_network_code)
+    return _factory_network(selected_network_code)
+
 
 def compute_metrics_on_dataframe(metrics, df):
    """
@@ -77,13 +84,13 @@ def compute_metrics_on_dataframe(metrics, df):
       df -- Dataframe to compute and calculate the metrics on.
       Return a list of panda series corresponding to the provided metrics.
    """
-   index = stats.calculate_index_all_months(df) #TOIMPROVE
-   metrics_data = []
-   for metric in metrics:
-      metric_series = metric.calculate(df, index)
-      metric_series.name = '{}<>{}'.format(df.index.name,metric.code)
-      metrics_data.append(metric_series)
-   return metrics_data
+    index = stats.calculate_index_all_months(df) #TOIMPROVE
+    metrics_data = []
+    for metric in metrics:
+        metric_series = metric.calculate(df, index)
+        metric_series.name = '{}<>{}'.format(df.index.name,metric.code)
+        metrics_data.append(metric_series)
+    return metrics_data
 
 # Too inefficient with the current implementation
 # TOIMPROVE
@@ -130,7 +137,7 @@ def get_network_from_bin(name, network_t):
     """
     Find and read a network from a bin file
 
-    Parameters: 
+    Parameters:
       - name: the network name
       - network_t: the network type
 
@@ -141,4 +148,3 @@ def get_network_from_bin(name, network_t):
     Raise Exception:
       - network_t is not avaliable
     """
-    

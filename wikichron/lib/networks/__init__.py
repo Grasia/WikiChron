@@ -16,4 +16,4 @@ print('Generating available networks...')
 available_networks = create_available_networks()
 print('This is the list of types of networks available currently:')
 for nw in available_networks:
-   print(f"\t * {nw.NAME}");
+    print(f"\t * {nw.NAME}");

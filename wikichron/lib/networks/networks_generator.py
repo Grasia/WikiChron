@@ -13,9 +13,9 @@
 from .types.CoEditingNetwork import CoEditingNetwork
 
 def create_available_networks():
-	networks = []
-	networks.append(CoEditingNetwork())
-	return networks
+    networks = []
+    networks.append(CoEditingNetwork())
+    return networks
 
 def factory_network(selected_network_code):
     if selected_network_code:
