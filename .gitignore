@@ -1,3 +1,4 @@
+gunicorn_config.py
 __pycache__/
 npm-debug.log
 venv/
