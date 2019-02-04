@@ -376,15 +376,15 @@ def bind_callbacks(app):
         State('cytoscape', 'stylesheet'),
         State('initial-selection', 'children')]
     )
-    def update_stylesheet(_, lb_clicks, pr_clicks, com_clicks, cy_network, 
+    def update_stylesheet(_, lb_clicks, pr_clicks, com_clicks, cy_network,
         stylesheet, selection_json):
 
         if not cy_network:
             return Stylesheet.make_basic_stylesheet()
 
         selection = json.loads(selection_json)
-        sheet = Stylesheet(stylesheet)
-        decorator = lib.factory_stylesheet_decorator(selection['network'][0], sheet)
+        stylesheet = Stylesheet(stylesheet)
+        decorator = lib.factory_stylesheet_decorator(selection['network'][0], stylesheet)
         decorator.all_transformations(cy_network)
 
         if lb_clicks and lb_clicks % 2 == 1:
