@@ -56,8 +56,8 @@ data_dir = os.environ['WIKICHRON_DATA_DIR']
 APP_HOSTNAME = 'http://wikichron.science';
 port = 8890;
 wikichron_base_pathname = '/app/';
-#~ assets_url_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets');
 assets_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets');
+assets_url_path = os.path.join(wikichron_base_pathname, 'assets')
 
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', # dash stylesheet
@@ -88,7 +88,7 @@ meta_tags = [
     },
     {
         'name': 'og:image',
-        'content': '/assets/logo_wikichron.png'
+        'content': '{}/logo_wikichron.png'.format(assets_url_path)
     },
     {
         'name': 'twitter:title',
@@ -194,10 +194,10 @@ def generate_welcome_page():
     return html.Div(id='welcome-container',
             className='container',
             children=[
-                html.Div(html.Img(src='/assets/line-graph.svg')),
+                html.Div(html.Img(src='{}/line-graph.svg'.format(assets_url_path))),
                 html.H2([
                     'Welcome to ',
-                    html.Span(html.Img(src='/assets/tipo-logo.svg'),
+                    html.Span(html.Img(src='{}/tipo-logo.svg'.format(assets_url_path)),
                         style={'vertical-align': 'text-bottom'}
                     )]
                 ),

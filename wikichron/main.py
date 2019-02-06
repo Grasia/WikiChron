@@ -30,6 +30,7 @@ import lib.interface as lib
 from cache import cache
 from controls_sidebar import generate_controls_sidebar, bind_control_callbacks
 from lib.networks.types.CoEditingNetwork import CoEditingNetwork
+from app import assets_url_path
 
 TIME_DIV = CoEditingNetwork.TIME_DIV
 
@@ -146,7 +147,7 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
                         'justify-content': 'space-between'},
                 children=[
                     html.Span([
-                            html.Img(src='/assets/logo_wikichron.svg'),
+                            html.Img(src='{}/logo_wikichron.svg'.format(assets_url_path)),
                             html.Span('    '),
                             html.Strong(
                                 html.Em('Networks'),
@@ -160,13 +161,13 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
                         id='tool-title'),
                     html.Div([
                         html.A(
-                            html.Img(src='/assets/share.svg'),
+                            html.Img(src='{}/share.svg'.format(assets_url_path)),
                             id='share-button',
                             className='icon',
                             title='Share current selection'
                         ),
                         html.A(
-                            html.Img(src='/assets/cloud_download.svg'),
+                            html.Img(src='{}/cloud_download.svg'.format(assets_url_path)),
                             href=href_download_button,
                             id='download-button',
                             target='_blank',
@@ -174,14 +175,14 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
                             title='Download data'
                         ),
                         html.A(
-                            html.Img(src='/assets/documentation.svg'),
+                            html.Img(src='{}/documentation.svg'.format(assets_url_path)),
                             href='https://github.com/Grasia/WikiChron/wiki/',
                             target='_blank',
                             className='icon',
                             title='Documentation'
                         ),
                         html.A(
-                            html.Img(src='/assets/ico-github.svg'),
+                            html.Img(src='{}/ico-github.svg'.format(assets_url_path)),
                             href='https://github.com/Grasia/WikiChron-networks',
                             target='_blank',
                             className='icon',
