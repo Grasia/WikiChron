@@ -182,7 +182,7 @@ def networks_tab(networks, selected_network):
 def compare_button():
     return (
         html.Div(
-            html.Button('COMPARE',
+            html.Button('GENERATE',
                         id='compare-button',
                         className='action-button',
                         type='button',

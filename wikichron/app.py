@@ -188,19 +188,26 @@ def generate_welcome_page():
                 html.Div(html.Img(src='{}/line-graph.svg'.format(assets_url_path))),
                 html.H2([
                     'Welcome to ',
-                    html.Span(html.Img(src='{}/tipo-logo.svg'.format(assets_url_path)),
-                        style={'vertical-align': 'text-bottom'}
-                    )]
-                ),
+                    #~ html.Span(html.Img(src='{}/tipo-logo.svg'.format(assets_url_path)),
+                        #~ style={'vertical-align': 'text-bottom'}
+
+
+                    html.Span([
+                            html.Img(src='{}/tipo-logo.svg'.format(assets_url_path)),
+                        ]
+                    ),
+
+
+                   html.Strong(
+                                html.Em('*Networks*'),
+                                style={
+                                    'marginLeft': '15px',
+                                }
+                            )
+                ]),
                 html.Center([
-                    html.P('Select some wikis and metrics from the sidebar on the left and press compare to start.',
+                    html.P('Select one wiki and one network type from the sidebar on the left and press "generate" to start.',
                         style={'font-size': 'large'}),
-                    html.P(['You can read more info about WikiChron basic concepts and assumptions ',
-                            html.A('here',
-                                    href='https://github.com/Grasia/WikiChron/wiki/Basic-concepts',
-                                    target='_blank'),
-                            '.'],
-                        style={'font-size': 'large'})
                 ])
             ]
     )
