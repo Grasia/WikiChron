@@ -1,17 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 """
-This script generates the main content of the site, this content includes
+   app.py
+
+   Descp: This script generates the main content of the site, this content includes
 serveral interpretations of the network, which is generated from the wikis
 data.
 
+   Created on: 07-dec-2018
+
+   Copyright 2017-2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
+   Copyright 2017-2019 Youssef El Faqir El Rhazoui
 """
-#
-# Author: Youssef El Faqir El Rhazoui
-# Based on Abel 'Akronix' Serrano Juste <akronix5@gmail.com> code
-# Date: 07/12/2018
-# Distributed under the terms of the GPLv3 license.
-#
 
 import os
 import time

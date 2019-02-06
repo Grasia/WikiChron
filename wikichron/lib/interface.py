@@ -7,15 +7,12 @@
 
    Created on: 14-nov-2017
 
-   Copyright 2017-2018 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>, 
-                      Youssef El Faqir El Rhazoui 
+   Copyright 2017-2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>,
+                      Youssef El Faqir El Rhazoui
 """
 
 import numpy as np
 
-from .metrics import available_metrics as _available_metrics
-from .metrics import metrics_dict
-from .metrics import stats
 from .networks import available_networks as _available_networks
 import os
 import pandas as pd
@@ -118,7 +115,7 @@ def get_network_from_bin(name, network_t):
     """
     Find and read a network from a bin file
 
-    Parameters: 
+    Parameters:
       - name: the network name
       - network_t: the network type
 
@@ -129,4 +126,3 @@ def get_network_from_bin(name, network_t):
     Raise Exception:
       - network_t is not avaliable
     """
-    

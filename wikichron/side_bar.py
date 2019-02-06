@@ -21,7 +21,6 @@ from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import grasia_dash_components as gdc
 import dash_html_components as html
-from lib.metrics.metric import MetricCategory
 
 # GLOBAL VARIABLES
 
@@ -29,10 +28,6 @@ global app;
 
 global debug;
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
-
-global metric_categories_order;
-metric_categories_order = [MetricCategory.PAGES, MetricCategory.EDITIONS, MetricCategory.USERS, MetricCategory.RATIOS, MetricCategory.DISTRIBUTION]
-category_names = ['PAGES', 'EDITIONS', 'USERS', 'RATIOS', 'DISTRIBUTION']
 
 wikis_categories_order = ['SMALL', 'MEDIUM', 'LARGE', 'VERY LARGE']
 wikis_categories_descp = ['More than 100 pages', 'More than 1000 pages', 'More than 10k pages', 'More than 10k pages']
