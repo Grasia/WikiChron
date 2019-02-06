@@ -234,7 +234,7 @@ def app_bind_callbacks(app):
                 (wikis) = extract_wikis_from_selection_dict(selection)
                 (network) = selection['network']
 
-                relative_time = len(wikis) > 1
+                relative_time = len(wikis) > 1 #TOREMOVE
 
                 return main.generate_main_content(wikis, network,
                                                 relative_time, query_string, APP_HOSTNAME)
@@ -289,7 +289,7 @@ def app_bind_callbacks(app):
                 # we might have selection of wikis and metrics in the query string,
                 #  so sidebar should start with those selected.
                 pre_selected_wikis   = selection['wikis'] if 'wikis' in selection else []
-                pre_selected_network = selection['network'] if 'network' in selection else None
+                pre_selected_network = selection['network'][0] if 'network' in selection else None
 
                 return side_bar.generate_side_bar(available_wikis, available_networks,
                                                     pre_selected_wikis, pre_selected_network)

@@ -145,12 +145,14 @@ def networks_tab(networks, selected_network):
 
     networks_options = [{'label': nw.name, 'value': nw.code} for nw in networks]
 
+    default_network = selected_network if selected_network else networks[0].code
+
     networks_checklist = html.Div(
-                           [dcc.Checklist(
+                           [dcc.RadioItems(
                                 id='network-selection',
                                 className='aside-checklist-category eleven columns',
                                 options=networks_options,
-                                values=[networks[0].code],
+                                value=default_network,
                                 labelClassName='aside-checklist-option',
                                 labelStyle={'display': 'block'}
                             )],
@@ -269,7 +271,7 @@ def bind_callbacks(app):
     @app.callback(Output('url', 'search'),
                [Input('compare-button', 'n_clicks')],
                 [State(generate_wikis_accordion_id(name), 'values') for name in wikis_categories_order] +
-                [State('network-selection', 'values')]
+                [State('network-selection', 'value')]
     )
     def compare_selection(btn_clicks,
                         wikis_selection_large, wikis_selection_big, wikis_selection_medium, wikis_selection_small,
@@ -286,7 +288,7 @@ def bind_callbacks(app):
     # simple callbacks to enable / disable 'compare' button
     @app.callback(Output('compare-button', 'disabled'),
                 [Input(generate_wikis_accordion_id(name), 'values') for name in wikis_categories_order] +
-                [Input('network-selection', 'values')]
+                [Input('network-selection', 'value')]
     )
     def enable_compare_button(wikis_selection_large, wikis_selection_big, wikis_selection_medium, wikis_selection_small,
                             network_selection):
