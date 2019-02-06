@@ -23,6 +23,11 @@ input[type=checkbox] {
   margin-right: 12px;
 }
 
+input[type=radio] {
+  transform: scale(1.5);
+  margin-right: 12px;
+}
+
 /* Dash */
 
 ._dash-undo-redo {
