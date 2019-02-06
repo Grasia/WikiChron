@@ -234,10 +234,8 @@ def app_bind_callbacks(app):
                 (wikis) = extract_wikis_from_selection_dict(selection)
                 (network) = selection['network']
 
-                relative_time = len(wikis) > 1 #TOREMOVE
-
                 return main.generate_main_content(wikis, network,
-                                                relative_time, query_string, APP_HOSTNAME)
+                                                query_string, APP_HOSTNAME)
 
 
         print('There is not a valid wikis & metrics tuple selection yet for plotting any graph')

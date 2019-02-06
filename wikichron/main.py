@@ -120,7 +120,7 @@ def default_network_stylesheet(cy_network):
             }]
 
 
-def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
+def generate_main_content(wikis_arg, network_type_arg,
                             query_string, url_host):
     """
     It generates the main content
@@ -294,9 +294,7 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
     if debug:
         print ('Generating main...')
     wikis = wikis_arg;
-    relative_time = relative_time_arg;
-    args_selection = json.dumps({"wikis": wikis, "relative_time": relative_time,
-                                "network": network_type_arg})
+    args_selection = json.dumps({"wikis": wikis, "network": network_type_arg})
 
     return html.Div(
             id='main',
@@ -530,8 +528,7 @@ if __name__ == '__main__':
     app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
     app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
 
-    relative_time = False
-    app.layout = generate_main_content(wikis, metrics, relative_time)
+    app.layout = generate_main_content(wikis, metrics)
 
     bind_callbacks(app)
 
