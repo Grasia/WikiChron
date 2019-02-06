@@ -17,6 +17,7 @@ function hideControlsSideBar() {
     // hide side bar
     document.getElementById('controls-side-bar-content').style.display = 'none';
     document.getElementById('controls-side-bar').style.flex = 'unset';
+    document.getElementById('controls-sidebar-wrapper').style.width = 'unset';
 
     // set show bar in arrow
     fold_container = document.getElementById('controls-fold-img-container');
