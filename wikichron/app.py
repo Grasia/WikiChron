@@ -116,18 +116,11 @@ else: # load piwik only in production:
     to_import_js.append('js/piwik.js')
 
 
-#~ tabs = [
-    #~ {'value': 1, 'icon': '/assets/white_graphic.svg'},
-    #~ {'value': 2, 'icon': '/assets/white_graphic.svg'},
-    #~ {'value': 3, 'icon': '/assets/white_graphic.svg'},
-    #~ {'value': 4, 'icon': '/assets/white_graphic.svg'},
-#~ ]
-
-
 def get_available_wikis(data_dir):
     wikis_json_file = open(os.path.join(data_dir, 'wikis.json'))
     wikis = json.load(wikis_json_file)
     return wikis
+
 
 # other global variables:
 
@@ -171,8 +164,6 @@ def set_layout():
             dcc.Location(id='url', refresh=False),
             html.Div(id='on-load', style={'display': 'none'}),
 
-            #~ generate_tabs_bar(tabs),
-            #~ side_bar.generate_side_bar(available_wikis, available_metrics),
             html.Div(id='side-bar-root', className='side-bar-cn'),
             html.Div(id='main-root', style={'flex': 'auto'}),
             html.Div(id='sidebar-selection', style={'display': 'none'}),
