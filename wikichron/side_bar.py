@@ -290,6 +290,8 @@ def bind_callbacks(app):
         wikis_selection = wikis_selection_large + wikis_selection_big + wikis_selection_medium + wikis_selection_small
         print ('User selection: {} {}'.format(wikis_selection, network_selection))
         if wikis_selection and network_selection:
+            if len(wikis_selection) > 1:
+                return True
             return False
         else:
             return True
