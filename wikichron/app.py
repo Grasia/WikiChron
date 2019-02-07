@@ -233,7 +233,7 @@ def app_bind_callbacks(app):
 
                 network = {}
                 network['code'] = selection['network']
-                network['name'] = get_network_name_from_code(network['code'][0])
+                network['name'] = get_network_name_from_code(network['code'])
 
                 return main.generate_main_content(wikis, network,
                                                 query_string, APP_HOSTNAME)
@@ -257,6 +257,11 @@ def app_bind_callbacks(app):
 
         # get only the parameters we are interested in for the side_bar selection
         selection = { param: query_string_dict[param] for param in set(query_string_dict.keys()) & selection_params }
+
+        # change value for network selection from a list to a single string
+        #  since user can select only one network at a time
+        if 'network' in selection:
+            selection['network'] = selection['network'][0]
 
         if debug:
             print('selection to write in query string: {}'.format(selection))
@@ -288,6 +293,10 @@ def app_bind_callbacks(app):
                 # we might have selection of wikis and metrics in the query string,
                 #  so sidebar should start with those selected.
                 pre_selected_wikis   = selection['wikis'] if 'wikis' in selection else []
+
+                # change value for network selection from a list to a single string
+                # (first network we got of the query string),
+                # since user can select only one network at a time
                 pre_selected_network = selection['network'][0] if 'network' in selection else None
 
                 return side_bar.generate_side_bar(available_wikis, available_networks,

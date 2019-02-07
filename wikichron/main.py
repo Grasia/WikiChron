@@ -305,7 +305,6 @@ def generate_main_content(wikis_arg, network_type_arg,
     network_type_code = network_type_arg['code']
     args_selection = json.dumps({"wikis": wikis_arg, "network": network_type_code})
 
-
     selected_wiki_name = wikis_arg[0]['name']
     selected_network_name = network_type_arg['name']
 
