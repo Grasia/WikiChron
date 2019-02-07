@@ -242,7 +242,7 @@ def generate_main_content(wikis_arg, network_type_arg, relative_time_arg,
                         'height': '95vh',
                         'width': '100%'
                     },
-                    stylesheet = Stylesheet.make_basic_stylesheet()
+                    stylesheet = Stylesheet().cy_stylesheet
                 )
 
     if debug:
@@ -380,7 +380,7 @@ def bind_callbacks(app):
         stylesheet, selection_json):
 
         if not cy_network:
-            return Stylesheet.make_basic_stylesheet()
+            return Stylesheet().cy_stylesheet
 
         selection = json.loads(selection_json)
         stylesheet = Stylesheet(stylesheet)

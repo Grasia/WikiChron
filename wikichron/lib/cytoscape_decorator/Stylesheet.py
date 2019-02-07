@@ -15,7 +15,7 @@ class Stylesheet(metaclass=abc.ABCMeta):
 
 	def __init__(self, cy_stylesheet = []):
 		if not cy_stylesheet:
-			self.cy_stylesheet = _make_basic_stylesheet()
+			self.cy_stylesheet = self.make_basic_stylesheet()
 		else:
 			self.cy_stylesheet = cy_stylesheet
 
@@ -53,7 +53,7 @@ class Stylesheet(metaclass=abc.ABCMeta):
 		self.cy_stylesheet[0]['style']['content'] = text
 
 
-	def _make_basic_stylesheet():
+	def make_basic_stylesheet(self):
 		return [{
                 'selector': 'node',
                 'style': {
