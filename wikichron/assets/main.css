@@ -38,6 +38,14 @@
     font-size: 12px;
 }
 
+#selection-title {
+    font-weight: 500;
+}
+
+.date-slider-div {
+    margin-top: 25px;
+}
+
 .selector {
     padding: 10px;
     background: #ededed78;

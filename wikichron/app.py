@@ -134,11 +134,11 @@ selection_params = {'wikis', 'metrics', 'network'}
 
 
 #--------- AUX FUNCS ----------------------------------------------------------#
-
-def extract_wikis_and_metrics_from_selection_dict(selection):
-    wikis = [ available_wikis_dict[wiki_url] for wiki_url in selection['wikis'] ]
-    metrics = [ available_metrics_dict[metric] for metric in selection['metrics'] ]
-    return (wikis, metrics)
+def get_network_name_from_code(network_code):
+    for nw in available_networks:
+        if nw.code == network_code:
+            return nw.name
+    return None
 
 
 def extract_wikis_from_selection_dict(selection):
@@ -230,7 +230,10 @@ def app_bind_callbacks(app):
             if selection.get('wikis') and selection.get('network'):
 
                 (wikis) = extract_wikis_from_selection_dict(selection)
-                (network) = selection['network']
+
+                network = {}
+                network['code'] = selection['network']
+                network['name'] = get_network_name_from_code(network['code'][0])
 
                 return main.generate_main_content(wikis, network,
                                                 query_string, APP_HOSTNAME)

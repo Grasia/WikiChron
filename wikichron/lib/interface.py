@@ -26,9 +26,11 @@ def get_available_metrics():
    """ Return a list of the currently available metrics. """
    return _available_metrics
 
+
 def get_available_networks():
    """ Return a list of the currently available networks. """
    return _available_networks
+
 
 def remove_bots_activity(df, bots_ids):
    """
@@ -41,6 +43,7 @@ def remove_bots_activity(df, bots_ids):
    """
    bots = np.array(bots_ids)
    return df[~df['contributor_id'].isin(bots)]
+
 
 def prepare_data(df):
    """

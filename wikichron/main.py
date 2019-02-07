@@ -44,7 +44,7 @@ global precooked_net_dir;
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 precooked_net_dir = os.getenv('PRECOOKED_NETWORK_DIR', 'precooked_data/networks')
 
-def extract_network_obj_from_network_code(selected_network_code):
+def extract_network_obj_from_network_code(selected_network_code): #TORENAME
     if selected_network_code:
         return CoEditingNetwork()
     else:
@@ -194,6 +194,13 @@ def generate_main_content(wikis_arg, network_type_arg,
             ])
         );
 
+    def selection_title(selected_wiki, selected_network):
+        selection_text = (f'You are viewing network: {selected_network} of wiki: {selected_wiki}')
+        return html.Div([
+            html.H3(selection_text, id = 'selection-title')],
+            className = 'container'
+        )
+
     def share_modal(share_link, download_link):
         """
         Generates a window to share a link
@@ -294,8 +301,14 @@ def generate_main_content(wikis_arg, network_type_arg,
 
     if debug:
         print ('Generating main...')
-    wikis = wikis_arg;
-    args_selection = json.dumps({"wikis": wikis, "network": network_type_arg})
+
+    network_type_code = network_type_arg['code']
+    args_selection = json.dumps({"wikis": wikis_arg, "network": network_type_arg})
+
+    print(f"\n\n\n {args_selection}")
+
+    selected_wiki_name = wikis_arg[0]['name']
+    selected_network_name = network_type_arg['name']
 
     return html.Div(
             id='main',
@@ -308,6 +321,8 @@ def generate_main_content(wikis_arg, network_type_arg,
                 main_header(),
 
                 html.Hr(),
+
+                selection_title(selected_wiki_name, selected_network_name),
 
                 date_slider_control(),
 
