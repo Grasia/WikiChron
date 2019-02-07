@@ -29,12 +29,6 @@
     float: right;
 }
 
-.button-on {
-    background-color: #2DCCCD;
-    color: white;
-}
-
-.button-off {
-    background-color: #49A5E6;
-    color: black;
+.control-button {
+    margin: 10px 20px 10px 20px;
 }

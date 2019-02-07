@@ -66,15 +66,15 @@ def metrics():
                 html.Div(children=[
                     html.Span('PageRank', className='left-element'),
                     html.Button('Run', id='calculate_page_rank',
-                        type='button',
-                        className='right-element button-off'),
+                                type='button',
+                                className='right-element action-button'),
                     ],
                     className='metrics-section'),
                 html.Div([
                     html.Span('Communities', className='left-element'),
                     html.Button('Run', id='calculate_communities',
-                        type='button',
-                        className='right-element button-off')
+                                type='button',
+                                className='right-element action-button')
                 ],
                 className='metrics-section')
             ])
@@ -86,11 +86,11 @@ def controls():
             html.H5('Network Controls', className='control-title'),
             html.Div([
                     html.Button('Show Labels', id='show_labels',
-                        className='control-button button-off'),
+                        className='control-button action-button'),
                     html.Button('Show PageRank', id='show_page_rank',
-                        className='control-button button-off'),
+                        className='control-button action-button'),
                     html.Button('Color by Cluster', id='color_cluster',
-                        className='control-button button-off'),
+                        className='control-button action-button'),
                 ])
         ], className='control-container')
 
@@ -144,8 +144,9 @@ def bind_control_callbacks(app):
     )
     def switch_show_labels(clicks):
         if not clicks or clicks % 2 == 0:
-            return 'control-button button-off'
-        return 'control-button button-on'
+            return 'control-button action-button'
+        return 'control-button action-button-pressed'
+
 
     @app.callback(
         Output('show_page_rank', 'className'),
@@ -153,17 +154,9 @@ def bind_control_callbacks(app):
     )
     def switch_show_page_rank(clicks):
         if not clicks or clicks % 2 == 0:
-            return 'control-button button-off'
-        return 'control-button button-on'
+            return 'control-button action-button'
+        return 'control-button action-button-pressed'
 
-    @app.callback(
-        Output('calculate_page_rank', 'className'),
-        [Input('calculate_page_rank', 'n_clicks')]
-    )
-    def switch_run_page_rank(clicks):
-        if not clicks or clicks % 2 == 0:
-            return 'right-element button-off'
-        return 'right-element button-on'
 
     @app.callback(
         Output('color_cluster', 'className'),
@@ -171,17 +164,49 @@ def bind_control_callbacks(app):
     )
     def switch_color_by_cluster(clicks):
         if not clicks or clicks % 2 == 0:
-            return 'control-button button-off'
-        return 'control-button button-on'
+            return 'control-button action-button'
+        return 'control-button action-button-pressed'
+
+
+    @app.callback(
+        Output('calculate_page_rank', 'className'),
+        [Input('calculate_page_rank', 'n_clicks')]
+    )
+    def switch_run_page_rank(clicks):
+        if not clicks:
+            return 'right-element action-button'
+        return 'right-element action-button-pressed'
+
 
     @app.callback(
         Output('calculate_communities', 'className'),
         [Input('calculate_communities', 'n_clicks')]
     )
     def switch_run_communities(clicks):
-        if not clicks or clicks % 2 == 0:
-            return 'right-element button-off'
-        return 'right-element button-on'
+        if not clicks:
+            return 'right-element action-button'
+        return 'right-element action-button-pressed'
+
+
+    @app.callback(
+        Output('calculate_page_rank', 'disabled'),
+        [Input('calculate_page_rank', 'n_clicks')]
+    )
+    def disable_button_run_page_rank(clicks):
+        if not clicks:
+            return False
+        return True
+
+
+    @app.callback(
+        Output('calculate_communities', 'disabled'),
+        [Input('calculate_communities', 'n_clicks')]
+    )
+    def disable_button_run_communities(clicks):
+        if not clicks:
+            return False
+        return True
+
 
     @app.callback(
         Output('n_communities', 'content'),
@@ -190,6 +215,7 @@ def bind_control_callbacks(app):
     )
     def show_num_communities(_, cy_network):
         return f'Communities: {cy_network["n_communities"]}'
+
 
 if __name__ == '__main__':
     print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
