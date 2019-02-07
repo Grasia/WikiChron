@@ -104,16 +104,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
                         'justify-content': 'space-between'},
                 children=[
                     html.Span([
-                            html.Img(src='{}/logo_wikichron.svg'.format(assets_url_path)),
-                            html.Span('    '),
-                            html.Strong(
-                                html.Em('Networks'),
-                                style={
-                                    'marginLeft': '15px',
-                                    'fontSize': 'large',
-                                    'textDecoration': 'underline'
-                                }
-                            )
+                            html.Img(src='{}/wikichron_networks_logo.svg'.format(assets_url_path))
                         ],
                         id='tool-title'),
                     html.Div([
@@ -274,7 +265,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
 
                 main_header(),
 
-                html.Hr(),
+                html.Hr(style={'margin-top': '0px'}),
 
                 selection_title(selected_wiki_name, selected_network_name),
 
