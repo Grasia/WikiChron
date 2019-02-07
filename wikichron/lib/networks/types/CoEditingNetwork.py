@@ -1,7 +1,7 @@
 """
 
  Author: Youssef El Faqir El Rhazoui
- Date: 13/12/2018
+ Date: 13/Dec/2018
  Distributed under the terms of the GPLv3 license.
 
 """
@@ -11,19 +11,6 @@ import math
 
 from datetime import datetime
 from .BaseNetwork import BaseNetwork
-
-
-def remove_non_article_data(df):
-   """
-      Filter out all edits made on non-article pages.
-
-      df -- data to be filtered.
-      Return a dataframe derived from the original but with all the
-         editions made in non-article pages removed
-   """
-   # namespace 0 => wiki article
-   return df[df['page_ns'] == 0]
-
 
 class CoEditingNetwork(BaseNetwork):
     """
@@ -53,6 +40,8 @@ class CoEditingNetwork(BaseNetwork):
     #aprox 1 month = 30 days
     TIME_DIV = 60 * 60 * 24 * 30
     TIME_BOUND = 24 * 15
+    NAME = 'Co-Editing'
+    CODE = 'co_editing_network'
 
     def __init__(self, is_directed = False, name = 'Co-Editing',
             code = 'co_editing_network', page_rank = [], num_communities = -1,
@@ -91,7 +80,7 @@ class CoEditingNetwork(BaseNetwork):
         mapper_e = {}
         count = 0
 
-        data = remove_non_article_data(data)
+        data = self.remove_non_article_data(data)
 
         for index, r in data.iterrows():
             if r['contributor_name'] == 'Anonymous':
@@ -348,3 +337,15 @@ class CoEditingNetwork(BaseNetwork):
             o_net.graph.es[e.index]['w_time'] = e['w_time']
 
         o_net.graph.write(f=file, format='gml')
+
+
+    def remove_non_article_data(self, df):
+       """
+          Filter out all edits made on non-article pages.
+
+          df -- data to be filtered.
+          Return a dataframe derived from the original but with all the
+             editions made in non-article pages removed
+       """
+       # namespace 0 => wiki article
+       return df[df['page_ns'] == 0]

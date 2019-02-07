@@ -30,10 +30,11 @@ import sd_material_ui
 import lib.interface as lib
 from cache import cache
 from controls_sidebar import generate_controls_sidebar, bind_control_callbacks
-from lib.networks.types.CoEditingNetwork import CoEditingNetwork
 from app import assets_url_path
+from lib.cytoscape_decorator.Stylesheet import Stylesheet
+from lib.cytoscape_decorator.factory_stylesheet_decorator import factory_stylesheet_cytoscape_decorator
 
-TIME_DIV = CoEditingNetwork.TIME_DIV
+TIME_DIV = 60 * 60 * 24 * 30
 
 global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
@@ -43,12 +44,6 @@ global data_dir;
 global precooked_net_dir;
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 precooked_net_dir = os.getenv('PRECOOKED_NETWORK_DIR', 'precooked_data/networks')
-
-def construct_network_obj_from_network_code(network_code):
-    if network_code:
-        return CoEditingNetwork()
-    else:
-        raise Exception("Something went bad. Missing network type selection.")
 
 
 @cache.memoize(timeout=3600)
@@ -74,7 +69,7 @@ def load_and_compute_data(wiki, network_code):
     print(' * [Timing] Loading csvs : {} seconds'.format(time_end_loading_csvs) )
 
     # generate network:
-    network_type = construct_network_obj_from_network_code(network_code)
+    network_type = lib.factory_network(network_code)
     print(' * [Info] Starting calculations....')
     time_start_calculations = time.perf_counter()
     network_type.generate_from_pandas(data=df)
@@ -83,46 +78,7 @@ def load_and_compute_data(wiki, network_code):
     return network_type
 
 
-def default_network_stylesheet(cy_network):
-    edge_width = 'mapData(weight, {}, {}, 1, 10)'.format(
-        cy_network['edge_min_weight'], cy_network['edge_max_weight'])
-    if cy_network['edge_min_weight'] == cy_network['edge_max_weight']:
-        edge_width = '1'
-    return [{
-                'selector': 'node',
-                'style': {
-                    'content': '',
-                    'text-halign': 'center',
-                    'text-valign': 'top',
-                    'text-background-color': '#FFFFFF',
-                    'text-background-opacity': '1',
-                    'text-background-shape': 'roundrectangle',
-                    'font-size': 'mapData(num_edits, {}, {}, 7, 18)'
-                        .format(cy_network['user_min_edits'],
-                            cy_network['user_max_edits']),
-                    'background-color': 'mapData(first_edit, {}, {}, \
-                        #64B5F6, #0D47A1)'.format(cy_network['oldest_user'],
-                            cy_network['newest_user']),
-                    'height': 'mapData(num_edits, {}, {}, 10, 60)'
-                        .format(cy_network['user_min_edits'],
-                            cy_network['user_max_edits']),
-                    'width': 'mapData(num_edits, {}, {}, 10, 60)'
-                        .format(cy_network['user_min_edits'],
-                            cy_network['user_max_edits'])
-                }
-            },
-            {
-                'selector': 'edge',
-                'style': {
-                    "width": edge_width,
-                    'opacity': 'mapData(w_time, 0, 2, 0.4, 1)',
-                    'line-color': "mapData(w_time, 0, 2, #9E9E9E, #000000)",
-                }
-            }]
-
-
-def generate_main_content(wikis_arg, network_type_arg,
-                            query_string, url_host):
+def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
     """
     It generates the main content
     Parameters:
@@ -296,7 +252,7 @@ def generate_main_content(wikis_arg, network_type_arg,
                         'height': '95vh',
                         'width': '100%'
                     },
-                    stylesheet = []
+                    stylesheet = Stylesheet().cy_stylesheet
                 )
 
     if debug:
@@ -390,7 +346,6 @@ def bind_callbacks(app):
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0]
         network_code = selection['network']
-
         network = load_and_compute_data(wiki, network_code)
 
         if not slider['props']['value'] == slider['props']['max']:
@@ -430,33 +385,35 @@ def bind_callbacks(app):
         Input('show_page_rank', 'n_clicks'),
         Input('color_cluster', 'n_clicks')],
         [State('network-ready', 'value'),
-        State('cytoscape', 'stylesheet')]
+        State('cytoscape', 'stylesheet'),
+        State('initial-selection', 'children')]
     )
-    def update_stylesheet(_, lb_clicks, pr_clicks, com_clicks, cy_network, stylesheet):
-        if not cy_network:
-            return []
+    def update_stylesheet(_, lb_clicks, pr_clicks, com_clicks, cy_network,
+        stylesheet, selection_json):
 
-        sheet = stylesheet
-        if not sheet:
-            sheet = default_network_stylesheet(cy_network)
+        if not cy_network:
+            return Stylesheet().cy_stylesheet
+
+        selection = json.loads(selection_json)
+        network_code = selection['network']
+        stylesheet = Stylesheet(stylesheet)
+        decorator = factory_stylesheet_cytoscape_decorator(network_code, stylesheet)
+        decorator.all_transformations(cy_network)
 
         if lb_clicks and lb_clicks % 2 == 1:
-            sheet[0]['style']['content'] = 'data(label)'
+            decorator.set_label('data(label)')
         elif pr_clicks and pr_clicks % 2 == 1:
-            sheet[0]['style']['content'] = 'data(page_rank)'
-
+            decorator.set_label('data(page_rank)')
         else:
-            sheet[0]['style']['content'] = ''
+            decorator.set_label('')
 
         if com_clicks and not cy_network["n_communities"] == '...' \
         and com_clicks % 2 == 1:
-            sheet[0]['style']['background-color'] = 'data(cluster_color)'
+            decorator.color_nodes_by_cluster()
         else:
-            sheet[0]['style']['background-color'] = 'mapData(first_edit, {}, {}, \
-            #64B5F6, #0D47A1)'.format(cy_network['oldest_user'], \
-                cy_network['newest_user'])
+            decorator.color_nodes(cy_network)
 
-        return sheet
+        return decorator.stylesheet.cy_stylesheet
 
     @app.callback(
         Output('share-dialog', 'open'),

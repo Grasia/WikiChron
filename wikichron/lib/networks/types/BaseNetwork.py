@@ -1,7 +1,7 @@
 """
 
  Author: Youssef El Faqir El Rhazoui
- Date: 13/12/2018
+ Date: 13/Dec/2018
  Distributed under the terms of the GPLv3 license.
 
 """
@@ -11,19 +11,18 @@ from colormap.colors import rgb2hex
 
 class BaseNetwork():
 
+    NAME = 'Base Network'
+    CODE = 'base_network'
+
     def __init__(self, is_directed = False, code = 'base_network',
                 name = 'Base Network', page_rank = [], num_communities = -1,
                 graph = {}):
+
         if not graph:
             self.graph = Graph(directed=is_directed)
         else:
-            print(f'\n\n\n BaseNetwork __init__ {graph}')
             self.graph = graph
-            #~ (n = graph['n'], edges = graph['edges'],
-                #~ directed = graph['directed'], graph_attrs = graph['graph_attrs'],
-                #~ vertex_attrs = graph['vertex_attrs'], edge_attrs = graph['edge_attrs'])
-        self.code = code
-        self.name = name
+
         self.page_rank = page_rank
         self.num_communities = num_communities
 
@@ -40,7 +39,6 @@ class BaseNetwork():
         #~ """
         #~ A function to write and read objects with pickle.
         #~ This function is called by __new__() upon unpickling.
-
         #~ Return: A pair (args, kwargs) where args is a tuple of positional
                 #~ arguments and kwargs a dictionary of named arguments for
                 #~ constructing the object

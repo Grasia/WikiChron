@@ -138,9 +138,9 @@ def wikis_tab(wikis, selected_wikis):
 
 def networks_tab(networks, selected_network):
 
-    networks_options = [{'label': nw.name, 'value': nw.code} for nw in networks]
+    networks_options = [{'label': nw.NAME, 'value': nw.CODE} for nw in networks]
 
-    default_network = selected_network if selected_network else networks[0].code
+    default_network = selected_network if selected_network else networks[0].CODE
 
     networks_checklist = html.Div(
                            [dcc.RadioItems(
