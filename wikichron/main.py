@@ -217,8 +217,8 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
                 style={'margin-top': '15px'}
                 )
 
-    def cytoscape():
-        return dash_cytoscape.Cytoscape(
+    def cytoscape_component():
+        cytoscape = dash_cytoscape.Cytoscape(
                     id='cytoscape',
                     elements = [],
                     layout = {
@@ -244,7 +244,8 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
                         'width': '100%'
                     },
                     stylesheet = Stylesheet().cy_stylesheet
-                )
+        )
+        return html.Div(style={'display': 'flex'}, children=[cytoscape])
 
     if debug:
         print ('Generating main...')
@@ -278,7 +279,9 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
 
                 html.Div(id='initial-selection', style={'display': 'none'},
                             children=args_selection),
-                html.Div(style={'display': 'flex'}, children=[cytoscape()]),
+
+                cytoscape_component(),
+
                 html.Div(id='network-ready', style={'display': 'none'}),
                 html.Div(id='signal-data', style={'display': 'none'}),
                 html.Div(id='ready', style={'display': 'none'})
