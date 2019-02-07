@@ -195,7 +195,7 @@ def generate_main_content(wikis_arg, network_type_arg,
         );
 
     def selection_title(selected_wiki, selected_network):
-        selection_text = (f'You are viewing network: {selected_network} of wiki: {selected_wiki}')
+        selection_text = (f'You are viewing the {selected_network} network for wiki: {selected_wiki}')
         return html.Div([
             html.H3(selection_text, id = 'selection-title')],
             className = 'container'
