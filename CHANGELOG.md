@@ -1,5 +1,22 @@
 # Change Log for WikiChron
 
+## 1.3.1 - 2018-02-01
+
+### Fixed
+- Usage of global variable: network
+- Fix cache of network
+
+
+## 1.3.0 - 2018-01-28
+
+### Changed
+- Ïmprovements in ux
+- Removed non-articles from co-editing network
+
+### Updated
+- deps: dash-cytoscape to 0.0.4
+
+
 ## 1.2.0 - 2018-01-18
 
 **Spliting up from WikiChron codebase.** From now on this changelog corresponds uniquely to Wikichron - networks
