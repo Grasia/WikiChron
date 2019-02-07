@@ -336,7 +336,7 @@ def bind_callbacks(app):
     def start_main(selection_json):
         # get wikis x network selection
         selection = json.loads(selection_json)
-        wiki = selection['wikis'][0] #TOBEFIXED
+        wiki = selection['wikis'][0]
         network_code = selection['network']
         print('--> Retrieving and computing data')
         print( '\t for the following wiki: {}'.format( wiki['name'] ))
@@ -375,7 +375,7 @@ def bind_callbacks(app):
 
         # get network instance from selection
         selection = json.loads(selection_json)
-        wiki = selection['wikis'][0] #TOBEFIXED
+        wiki = selection['wikis'][0]
         network_code = selection['network']
 
         network = load_and_compute_data(wiki, network_code)
@@ -472,7 +472,7 @@ def bind_callbacks(app):
 
          # get network instance from selection
         selection = json.loads(selection_json)
-        wiki = selection['wikis'][0] #TOBEFIXED
+        wiki = selection['wikis'][0]
         network_code = selection['network']
         network = load_and_compute_data(wiki, network_code)
 
