@@ -1,6 +1,6 @@
 .control-title {
-	text-align: center;
-	background-color: #02396f;
+    text-align: center;
+    background-color: #02396f;
 }
 
 .control-container {
@@ -8,11 +8,11 @@
 }
 
 .control-container > div {
-	display: grid;
+    display: grid;
 }
 
 .metrics-section{
-	margin: 1rem 0rem 0.5rem 0rem;
+    margin: 1rem 0rem 0.5rem 0rem;
 }
 
 .stats-container {
@@ -30,11 +30,11 @@
 }
 
 .button-on {
-	background-color: #2DCCCD;
-	color: white;
+    background-color: #2DCCCD;
+    color: white;
 }
 
 .button-off {
-	background-color: #49A5E6;
-	color: black;
+    background-color: #49A5E6;
+    color: black;
 }

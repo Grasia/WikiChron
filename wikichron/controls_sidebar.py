@@ -66,13 +66,17 @@ def metrics():
                 html.Div(children=[
                     html.Span('PageRank', className='left-element'),
                     html.Button('Run', id='calculate_page_rank',
+                        type='button',
                         className='right-element button-off'),
-                    ], className='metrics-section'),
+                    ],
+                    className='metrics-section'),
                 html.Div([
                     html.Span('Communities', className='left-element'),
                     html.Button('Run', id='calculate_communities',
+                        type='button',
                         className='right-element button-off')
-                ], className='metrics-section')
+                ],
+                className='metrics-section')
             ])
         ], className='control-container')
 
@@ -81,11 +85,11 @@ def controls():
     return html.Div([
             html.H5('Network Controls', className='control-title'),
             html.Div([
-                    html.Button('Show Labels', id='show_labels', 
+                    html.Button('Show Labels', id='show_labels',
                         className='control-button button-off'),
-                    html.Button('Show PageRank', id='show_page_rank', 
+                    html.Button('Show PageRank', id='show_page_rank',
                         className='control-button button-off'),
-                    html.Button('Color by Cluster', id='color_cluster', 
+                    html.Button('Color by Cluster', id='color_cluster',
                         className='control-button button-off'),
                 ])
         ], className='control-container')
@@ -98,7 +102,7 @@ def generate_controls_sidebar():
                         className='side-bar-cn',
                         children=[
                             fold_button(),
-                            html.Div(id='controls-side-bar-content', 
+                            html.Div(id='controls-side-bar-content',
                                 children=[
                                     stats_section(),
                                     metrics(),

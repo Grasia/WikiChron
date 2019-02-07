@@ -7,7 +7,7 @@ function setEvents() {
 
 function hideControlsSideBar() {
 
-    console.log('Pressed hide side bar...');
+    console.log('Pressed hide controls side bar...');
     // makes arrows point to the left <<
     fold_button = document.getElementById('controls-fold-button');
     fold_button.style.transform = "rotateY(180deg)";
@@ -27,7 +27,7 @@ function hideControlsSideBar() {
 
 function showControlsSideBar() {
 
-    console.log('Pressed show side bar...');
+    console.log('Pressed show controls side bar...');
 
     // makes arrows point to the right >>
     fold_button = document.getElementById('controls-fold-button');
