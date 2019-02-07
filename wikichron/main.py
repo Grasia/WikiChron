@@ -44,8 +44,8 @@ global precooked_net_dir;
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 precooked_net_dir = os.getenv('PRECOOKED_NETWORK_DIR', 'precooked_data/networks')
 
-def extract_network_obj_from_network_code(selected_network_code): #TORENAME
-    if selected_network_code:
+def construct_network_obj_from_network_code(network_code):
+    if network_code:
         return CoEditingNetwork()
     else:
         raise Exception("Something went bad. Missing network type selection.")
@@ -74,7 +74,7 @@ def load_and_compute_data(wiki, network_code):
     print(' * [Timing] Loading csvs : {} seconds'.format(time_end_loading_csvs) )
 
     # generate network:
-    network_type = extract_network_obj_from_network_code(network_code)
+    network_type = construct_network_obj_from_network_code(network_code)
     print(' * [Info] Starting calculations....')
     time_start_calculations = time.perf_counter()
     network_type.generate_from_pandas(data=df)
@@ -303,9 +303,8 @@ def generate_main_content(wikis_arg, network_type_arg,
         print ('Generating main...')
 
     network_type_code = network_type_arg['code']
-    args_selection = json.dumps({"wikis": wikis_arg, "network": network_type_arg})
+    args_selection = json.dumps({"wikis": wikis_arg, "network": network_type_code})
 
-    print(f"\n\n\n {args_selection}")
 
     selected_wiki_name = wikis_arg[0]['name']
     selected_network_name = network_type_arg['name']
@@ -354,7 +353,7 @@ def bind_callbacks(app):
         wiki = selection['wikis'][0]
         network_code = selection['network']
         print('--> Retrieving and computing data')
-        print( '\t for the following wiki: {}'.format( wiki['name'] ))
+        print( '\t for the following wiki: {}'.format( wiki['url'] ))
         print( '\trepresented as this network: {}'.format( network_code ))
         network = load_and_compute_data(wiki, network_code)
         print('<-- Done retrieving and computing data!')

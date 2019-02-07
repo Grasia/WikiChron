@@ -127,7 +127,7 @@ def get_available_wikis(data_dir):
 available_networks = lib.get_available_networks()
 available_wikis = get_available_wikis(data_dir)
 available_wikis_dict = {wiki['url']: wiki for wiki in available_wikis}
-selection_params = {'wikis', 'metrics', 'network'}
+selection_params = {'wikis', 'network'}
 
 
 ######### BEGIN CODE ###########################################################
