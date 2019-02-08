@@ -4,7 +4,7 @@
    Descp: A class to implement the decorator pattern in order to make an
      easier implementation of networks stylesheet
 
-   Created on: 30/01/2019
+   Created on: 30-01-2019
 
    Copyright 2019 Youssef 'FRYoussef' El Faqir el Rhazoui <f.r.youssef@hotmail.com>
 """
