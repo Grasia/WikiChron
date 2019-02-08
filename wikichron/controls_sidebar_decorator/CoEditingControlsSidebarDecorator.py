@@ -10,8 +10,13 @@
 """
 
 import abc
+import json
 import dash_html_components as html
+from dash.dependencies import Input, Output, State
+from datetime import datetime
 from .BaseControlsSidebarDecorator import BaseControlsSidebarDecorator
+from lib.cytoscape_decorator.Stylesheet import Stylesheet
+from lib.cytoscape_decorator.factory_stylesheet_decorator import factory_stylesheet_cytoscape_decorator
 
 class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
@@ -21,22 +26,28 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
     def add_stats_section(self):
         super().add_stats_section()
-
-        stats = [
-            html.Div([
-                html.P('Nodes: ...', className='left-element'),
-                html.P('First User: ...', className='right-element')
-            ]),
-            html.Div([
-                html.P('Edges: ...', className='left-element'),
-                html.P('Last User: ...', className='right-element')
-            ]),
-            html.Div([
-                html.P('Communities: ...', className='left-element', id='n_communities'),
-                html.P('Max Hub Degree: ...', className='right-element')
-            ])]
-
+        stats = CoEditingControlsSidebarDecorator.default_stats()
         self.add_stats(stats)
+
+
+    @staticmethod
+    def default_stats(st1 = 'Nodes: ...', st2 = 'First User: ...', 
+            st3 = 'Edges: ...', st4 = 'Last User: ...', st5 = 'Communities: ...',
+            st6 = 'Max Hub Degree: ...'):
+
+        return [
+                html.Div([
+                    html.P(st1, className='left-element'),
+                    html.P(st2, className='right-element')
+                ]),
+                html.Div([
+                    html.P(st3, className='left-element'),
+                    html.P(st4, className='right-element')
+                ]),
+                html.Div([
+                    html.P(st5, className='left-element', id='n_communities'),
+                    html.P(st6, className='right-element')
+                ])]
 
 
     def add_metrics_section(self):
@@ -81,3 +92,143 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
         self.add_stats_section()
         self.add_metrics_section()
         self.add_options_section()
+
+
+def bind_callbacks(app):
+
+    @app.callback(
+        Output('stats', 'children'),
+        [Input('network-ready', 'value')]
+    )
+    def update_stats(cy_network):
+        if not cy_network:
+            return CoEditingControlsSidebarDecorator.default_stats()
+
+        date1 = datetime.fromtimestamp(cy_network["oldest_user"]).strftime("%Y-%m-%d")
+        date2 = datetime.fromtimestamp(cy_network["newest_user"]).strftime("%Y-%m-%d")
+
+        return CoEditingControlsSidebarDecorator.default_stats(
+            st1 = f'Nodes: {cy_network["num_nodes"]}', 
+            st2 = f'First User: {date1}',
+            st3 = f'Edges: {cy_network["num_edges"]}', 
+            st4 = f'Last User: {date2}',
+            st5 = f'Communities: {cy_network["n_communities"]}',
+            st6 = f'Max Hub Degree: {cy_network["max_degree"]}'
+            )
+
+
+    @app.callback(
+        Output('show_labels', 'className'),
+        [Input('show_labels', 'n_clicks')]
+    )
+    def switch_show_labels(clicks):
+        if not clicks or clicks % 2 == 0:
+            return 'control-button action-button'
+        return 'control-button action-button-pressed'
+
+
+    @app.callback(
+        Output('show_page_rank', 'className'),
+        [Input('show_page_rank', 'n_clicks')]
+    )
+    def switch_show_page_rank(clicks):
+        if not clicks or clicks % 2 == 0:
+            return 'control-button action-button'
+        return 'control-button action-button-pressed'
+
+
+    @app.callback(
+        Output('color_cluster', 'className'),
+        [Input('color_cluster', 'n_clicks')]
+    )
+    def switch_color_by_cluster(clicks):
+        if not clicks or clicks % 2 == 0:
+            return 'control-button action-button'
+        return 'control-button action-button-pressed'
+
+
+    @app.callback(
+        Output('calculate_page_rank', 'className'),
+        [Input('calculate_page_rank', 'n_clicks')]
+    )
+    def switch_run_page_rank(clicks):
+        if not clicks:
+            return 'right-element action-button'
+        return 'right-element action-button-pressed'
+
+
+    @app.callback(
+        Output('calculate_communities', 'className'),
+        [Input('calculate_communities', 'n_clicks')]
+    )
+    def switch_run_communities(clicks):
+        if not clicks:
+            return 'right-element action-button'
+        return 'right-element action-button-pressed'
+
+
+    @app.callback(
+        Output('calculate_page_rank', 'disabled'),
+        [Input('calculate_page_rank', 'n_clicks')]
+    )
+    def disable_button_run_page_rank(clicks):
+        if not clicks:
+            return False
+        return True
+
+
+    @app.callback(
+        Output('calculate_communities', 'disabled'),
+        [Input('calculate_communities', 'n_clicks')]
+    )
+    def disable_button_run_communities(clicks):
+        if not clicks:
+            return False
+        return True
+
+
+    @app.callback(
+        Output('n_communities', 'content'),
+        [Input('calculate_communities', 'n_clicks')],
+        [State('network-ready', 'value')]
+    )
+    def show_num_communities(_, cy_network):
+        return f'Communities: {cy_network["n_communities"]}'
+
+
+    @app.callback(
+        Output('cytoscape', 'stylesheet'),
+        [Input('cytoscape', 'elements'),
+        Input('show_labels', 'n_clicks'),
+        Input('show_page_rank', 'n_clicks'),
+        Input('color_cluster', 'n_clicks')],
+        [State('network-ready', 'value'),
+        State('cytoscape', 'stylesheet'),
+        State('initial-selection', 'children')]
+    )
+    def update_stylesheet(_, lb_clicks, pr_clicks, com_clicks, cy_network,
+        stylesheet, selection_json):
+
+        if not cy_network:
+            return Stylesheet().cy_stylesheet
+
+        selection = json.loads(selection_json)
+        network_code = selection['network']
+        stylesheet = Stylesheet(stylesheet)
+        decorator = factory_stylesheet_cytoscape_decorator(network_code, stylesheet)
+        decorator.all_transformations(cy_network)
+
+        if lb_clicks and lb_clicks % 2 == 1:
+            decorator.set_label('data(label)')
+        elif pr_clicks and pr_clicks % 2 == 1:
+            decorator.set_label('data(page_rank)')
+        else:
+            decorator.set_label('')
+
+        if com_clicks and not cy_network["n_communities"] == '...' \
+        and com_clicks % 2 == 1:
+            decorator.color_nodes_by_cluster()
+        else:
+            decorator.color_nodes(cy_network)
+
+        return stylesheet.cy_stylesheet

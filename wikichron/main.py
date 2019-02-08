@@ -32,9 +32,9 @@ from cache import cache
 #from controls_sidebar import generate_controls_sidebar, bind_control_callbacks
 from app import assets_url_path
 from lib.cytoscape_decorator.Stylesheet import Stylesheet
-from lib.cytoscape_decorator.factory_stylesheet_decorator import factory_stylesheet_cytoscape_decorator
 from controls_sidebar_decorator.ControlsSidebar import ControlsSidebar
 from controls_sidebar_decorator.factory_sidebar_decorator import factory_sidebar_decorator
+from controls_sidebar_decorator.factory_sidebar_decorator import bind_controls_sidebar_callbacks
 
 TIME_DIV = 60 * 60 * 24 * 30
 
@@ -295,6 +295,9 @@ def bind_callbacks(app):
 
     # Right sidebar callbacks
     #bind_control_callbacks(app)
+    #########
+    bind_controls_sidebar_callbacks('co_editing_network', app)
+    #########
 
     @app.callback(
         Output('signal-data', 'value'),
@@ -376,42 +379,6 @@ def bind_callbacks(app):
     def add_network_elements(cy_network):
         return cy_network['network'] if cy_network else []
 
-    @app.callback(
-        Output('cytoscape', 'stylesheet'),
-        [Input('cytoscape', 'elements'),
-        Input('show_labels', 'n_clicks'),
-        Input('show_page_rank', 'n_clicks'),
-        Input('color_cluster', 'n_clicks')],
-        [State('network-ready', 'value'),
-        State('cytoscape', 'stylesheet'),
-        State('initial-selection', 'children')]
-    )
-    def update_stylesheet(_, lb_clicks, pr_clicks, com_clicks, cy_network,
-        stylesheet, selection_json):
-
-        if not cy_network:
-            return Stylesheet().cy_stylesheet
-
-        selection = json.loads(selection_json)
-        network_code = selection['network']
-        stylesheet = Stylesheet(stylesheet)
-        decorator = factory_stylesheet_cytoscape_decorator(network_code, stylesheet)
-        decorator.all_transformations(cy_network)
-
-        if lb_clicks and lb_clicks % 2 == 1:
-            decorator.set_label('data(label)')
-        elif pr_clicks and pr_clicks % 2 == 1:
-            decorator.set_label('data(page_rank)')
-        else:
-            decorator.set_label('')
-
-        if com_clicks and not cy_network["n_communities"] == '...' \
-        and com_clicks % 2 == 1:
-            decorator.color_nodes_by_cluster()
-        else:
-            decorator.color_nodes(cy_network)
-
-        return decorator.stylesheet.cy_stylesheet
 
     @app.callback(
         Output('share-dialog', 'open'),

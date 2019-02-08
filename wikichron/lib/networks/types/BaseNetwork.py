@@ -95,15 +95,17 @@ class BaseNetwork():
         """
         Calculates the network pageRank
         """
-        self.page_rank = self.graph.pagerank(directed=self.graph.is_directed())
+        if not self.page_rank:
+            self.page_rank = self.graph.pagerank(directed=self.graph.is_directed())
 
 
     def calculate_communities(self):
         """
         Calculates communities and assigns a color per community
         """
-        mod = self.graph.community_multilevel(weights='weight')
-        self.num_communities = len(mod)
-        pal = ClusterColoringPalette(len(mod))
-        self.graph.vs['cluster_color'] = list(map(lambda x: rgb2hex(x[0],x[1],x[2], normalised=True),
-            pal.get_many(mod.membership)))
+        if not self.num_communities:
+            mod = self.graph.community_multilevel(weights='weight')
+            self.num_communities = len(mod)
+            pal = ClusterColoringPalette(len(mod))
+            self.graph.vs['cluster_color'] = list(map(lambda x: rgb2hex(x[0],x[1],x[2], normalised=True),
+                pal.get_many(mod.membership)))
