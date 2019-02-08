@@ -29,10 +29,12 @@ import sd_material_ui
 # Local imports:
 import lib.interface as lib
 from cache import cache
-from controls_sidebar import generate_controls_sidebar, bind_control_callbacks
+#from controls_sidebar import generate_controls_sidebar, bind_control_callbacks
 from app import assets_url_path
 from lib.cytoscape_decorator.Stylesheet import Stylesheet
 from lib.cytoscape_decorator.factory_stylesheet_decorator import factory_stylesheet_cytoscape_decorator
+from controls_sidebar_decorator.ControlsSidebar import ControlsSidebar
+from controls_sidebar_decorator.factory_sidebar_decorator import factory_sidebar_decorator
 
 TIME_DIV = 60 * 60 * 24 * 30
 
@@ -253,13 +255,18 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
     selected_wiki_name = wikis_arg[0]['name']
     selected_network_name = network_type_arg['name']
 
+    controls_sidebar = ControlsSidebar()
+    sidebar_decorator = factory_sidebar_decorator(network_type_code, controls_sidebar)
+    sidebar_decorator.add_all_sections()
+
     return html.Div(
             id='main',
             className='control-text',
             style={'width': '100%'},
             children=[
 
-                generate_controls_sidebar(),
+                #generate_controls_sidebar(),
+                controls_sidebar.build(),
 
                 main_header(),
 
@@ -287,7 +294,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
 def bind_callbacks(app):
 
     # Right sidebar callbacks
-    bind_control_callbacks(app)
+    #bind_control_callbacks(app)
 
     @app.callback(
         Output('signal-data', 'value'),
