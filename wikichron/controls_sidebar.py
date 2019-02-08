@@ -120,7 +120,7 @@ def generate_controls_sidebar():
 
 
 def bind_control_callbacks(app):
-
+    
     @app.callback(
         Output('stats', 'children'),
         [Input('network-ready', 'value')]
