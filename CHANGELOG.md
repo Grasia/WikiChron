@@ -1,5 +1,16 @@
 # Change Log for WikiChron
 
+## 1.4.0 - 2018-02-13
+
+### Added
+- WikiChron-networks own logos
+- updated deps: dash, dash components and dash-renderer, certifi
+- better styling and UX
+- stylesheet decorator pattern for cytoscape
+
+### Fixed
+- Bug with cytoscape component events (Workaround)
+
 ## 1.3.2 - 2018-02-01
 
 ### Fixed
