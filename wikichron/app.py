@@ -182,26 +182,15 @@ def generate_welcome_page():
     return html.Div(id='welcome-container',
             className='container',
             children=[
-                html.Div(html.Img(src='{}/line-graph.svg'.format(assets_url_path))),
+                html.Div(html.Img(src='{}/network-graph.svg'.format(assets_url_path))),
                 html.H2([
-                    'Welcome to ',
-                    #~ html.Span(html.Img(src='{}/tipo-logo.svg'.format(assets_url_path)),
-                        #~ style={'vertical-align': 'text-bottom'}
-
-
-                    html.Span([
-                            html.Img(src='{}/tipo-logo.svg'.format(assets_url_path)),
-                        ]
-                    ),
-
-
-                   html.Strong(
-                                html.Em('*Networks*'),
-                                style={
-                                    'marginLeft': '15px',
-                                }
-                            )
-                ]),
+                        html.Span('Welcome to '),
+                        html.Span(
+                            html.Img(src='{}/tipo-logo-networks.svg'.format(assets_url_path)),
+                        ),
+                    ],
+                    style = {'display': 'flex'}
+                ),
                 html.Center([
                     html.P('Select one wiki and one network type from the sidebar on the left and press "generate" to start.',
                         style={'font-size': 'large'}),
