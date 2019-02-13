@@ -88,8 +88,10 @@ def controls():
                     html.Button('Show Labels', id='show_labels',
                         className='control-button action-button'),
                     html.Button('Show PageRank', id='show_page_rank',
+                        disabled=True,
                         className='control-button action-button'),
                     html.Button('Color by Cluster', id='color_cluster',
+                        disabled=True,
                         className='control-button action-button'),
                 ])
         ], className='control-container')
@@ -206,6 +208,26 @@ def bind_control_callbacks(app):
         if not clicks:
             return False
         return True
+
+
+    @app.callback(
+        Output('show_page_rank', 'disabled'),
+        [Input('calculate_page_rank', 'n_clicks')]
+    )
+    def disable_toggle_show_page_rank(clicks):
+        if not clicks:
+            return True
+        return False
+
+
+    @app.callback(
+        Output('color_cluster', 'disabled'),
+        [Input('calculate_communities', 'n_clicks')]
+    )
+    def disable_toggle_show_communities(clicks):
+        if not clicks:
+            return True
+        return False
 
 
     @app.callback(
