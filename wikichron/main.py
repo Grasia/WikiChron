@@ -241,7 +241,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
                     },
                     style = {
                         'height': '95vh',
-                        'width': '100%'
+                        'width': 'calc(100% - 300px)'
                     },
                     stylesheet = Stylesheet().cy_stylesheet
         )

@@ -165,7 +165,6 @@ def set_layout():
             html.Div(id='side-bar-root', className='side-bar-cn'),
             html.Div(id='main-root', style={'flex': 'auto'}),
             html.Div(id='sidebar-selection', style={'display': 'none'}),
-            html.Div(id='test', style={'display': 'none'})
         ]
     );
 
