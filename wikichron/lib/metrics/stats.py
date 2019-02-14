@@ -131,11 +131,7 @@ def users_active_more_than_x_editions(data, index, x):
 
 
 def users_active(data, index):
-    monthly_data = data.groupby(pd.Grouper(key='timestamp', freq='MS'))
-    series = monthly_data.apply(lambda x: len(x.contributor_id.unique()))
-    if index is not None:
-        series = series.reindex(index, fill_value=0)
-    return series
+    return users_active_more_than_x_editions(data, index, 1)
 
 
 def users_new(data, index):
