@@ -34,11 +34,6 @@ from cache import cache
 global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
-# get csv data location (data/ by default)
-global data_dir;
-data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
-
-
 
 def extract_metrics_objs_from_metrics_codes(metric_codes):
     metrics = [ lib.metrics_dict[metric] for metric in metric_codes ]
@@ -47,26 +42,9 @@ def extract_metrics_objs_from_metrics_codes(metric_codes):
 
 @cache.memoize(timeout=3600)
 def load_data(wiki):
-    df = get_dataframe_from_csv(wiki['data'])
+    df = lib.get_dataframe_from_csv(wiki['data'])
     lib.prepare_data(df)
     df = clean_up_bot_activity(df, wiki)
-    return df
-
-
-def get_dataframe_from_csv(csv):
-    """ Read and parse a csv and return the corresponding pandas dataframe"""
-    print('Loading csv for ' + csv)
-    time_start_loading_one_csv = time.perf_counter()
-    df = pd.read_csv(os.path.join(data_dir, csv),
-                    delimiter=';', quotechar='|',
-                    index_col=False)
-    df['timestamp']=pd.to_datetime(df['timestamp'],format='%Y-%m-%dT%H:%M:%SZ')
-    #~ df.set_index(df['timestamp'], inplace=True) # generate a datetime index
-    #~ print(df.info())
-    print('!!Loaded csv for ' + csv)
-    time_end_loading_one_csv = time.perf_counter() - time_start_loading_one_csv
-    print(' * [Timing] Loading {} : {} seconds'.format(csv, time_end_loading_one_csv) )
-    df.index.name = csv
     return df
 
 

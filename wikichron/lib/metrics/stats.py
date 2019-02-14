@@ -124,6 +124,19 @@ def users_active(data, index):
     return series
 
 
+#this metric is the same as the users_active, but getting rid of anonymous users	
+def users_registered_active(data, index):
+    # get rid of anonymous users and procceed as it was done in the previous metric.
+    user_registered = data[data['contributor_name'] != 'Anonymous']
+    return users_active(user_registered, index)
+
+
+# this metric is the complementary to users_registered_active: now, we get rid of registered users and focus on anonymous users.
+def users_anonymous_active(data, index):
+    user_anonymous = data[data['contributor_name'] == 'Anonymous']
+    return users_active(user_anonymous, index)
+
+
 def users_new(data, index):
     users = data.drop_duplicates('contributor_id')
     series = users.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
