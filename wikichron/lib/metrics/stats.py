@@ -127,11 +127,7 @@ def users_active_more_than_x_editions(data, index, x):
     return series
 
 
-##### callable user metrics #####
-
-
-def users_active(data, index):
-    return users_active_more_than_x_editions(data, index, 1)
+##### callable users metrics #####
 
 
 def users_new(data, index):
@@ -170,19 +166,40 @@ def users_new_registered(data, index):
 
 def users_registered_accum(data, index):
     return (users_new_registered(data, index).cumsum())
+  
+ 
+def users_active(data, index):
+    return users_active_more_than_x_editions(data, index, 1)
 
-#this metric gets, per month, those users who have contributed to the wiki in more than 4 editions.
+  
+# this metric is the same as the users_active, but getting rid of anonymous users	
+def users_registered_active(data, index):
+    # get rid of anonymous users and procceed as it was done in the previous metric.
+    user_registered = data[data['contributor_name'] != 'Anonymous']
+    return users_active(user_registered, index)
+
+
+# this metric is the complementary to users_registered_active: now, we get rid of registered users and focus on anonymous users.
+def users_anonymous_active(data, index):
+    user_anonymous = data[data['contributor_name'] == 'Anonymous']
+    return users_active(user_anonymous, index)
+
+  
+# this metric gets, per month, those users who have contributed to the wiki in more than 4 editions.
 def users_active_more_than_4_editions(data, index):
     return users_active_more_than_x_editions(data, index, 4)
 
-#this metric gets, per month, those users who have contributed to the wiki in more than 24 editions.
+  
+# this metric gets, per month, those users who have contributed to the wiki in more than 24 editions.
 def users_active_more_than_24_editions(data, index):
     return users_active_more_than_x_editions(data, index, 24)
 
-#this metric gets, per month, those users who have contributed to the wiki in more than 99 editions.
+  
+# this metric gets, per month, those users who have contributed to the wiki in more than 99 editions.
 def users_active_more_than_99_editions(data, index):
     return users_active_more_than_x_editions(data, index, 99)
 
+  
 ########################################################################
 
 # RATIOS

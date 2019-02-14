@@ -57,7 +57,7 @@ def compute_metrics_on_dataframe(metrics, df):
    metrics_data = []
    for metric in metrics:
       metric_series = metric.calculate(df, index)
-      metric_series.name = '{}>{}'.format(df.index.name,metric.code)
+      metric_series.name = '{}<>{}'.format(df.index.name,metric.code)
       metrics_data.append(metric_series)
    return metrics_data
 
