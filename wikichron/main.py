@@ -53,11 +53,12 @@ def load_data(wiki):
     return df
 
 @cache.memoize()
-def load_and_compute_data(wiki, network_code):
+def load_and_compute_data(wiki, network_code, t_to_filter = ''):
     """
     Parameters
         - wiki: Related info about the wiki selected.
         - network_type: network selected. It is an instance of BaseNetwork.
+        - t_to_filter: a formated string "%Y-%m-%d %H:%M:%S", to filter the pandas obj 
     Return: Data representing the network.
     """
 
@@ -71,7 +72,7 @@ def load_and_compute_data(wiki, network_code):
     network_type = lib.factory_network(network_code)
     print(' * [Info] Starting calculations....')
     time_start_calculations = time.perf_counter()
-    network_type.generate_from_pandas(data=df)
+    network_type.generate_from_pandas(df=df, t_to_filter = t_to_filter)
     time_end_calculations = time.perf_counter() - time_start_calculations
     print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
     return network_type
@@ -337,9 +338,10 @@ def bind_callbacks(app):
         Input('calculate_page_rank', 'n_clicks'),
         Input('calculate_communities', 'n_clicks')],
         [State('initial-selection', 'children'),
-        State('date-slider-container', 'children')]
+        State('date-slider-container', 'children'),
+        State('network-ready', 'value')]
     )
-    def update_network(ready, pr_clicks, com_clicks, selection_json, slider):
+    def update_network(ready, pr_clicks, com_clicks, selection_json, slider, cy_network):
         if not ready:
             return None
 
@@ -347,22 +349,26 @@ def bind_callbacks(app):
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0]
         network_code = selection['network']
-        network = load_and_compute_data(wiki, network_code)
+        
 
         if not slider['props']['value'] == slider['props']['max']:
             print(' * [Info] Starting time filter....')
             time_start_calculations = time.perf_counter()
 
-            origin = int(datetime.strptime(str(network.oldest_user),
-            "%Y-%m-%d %H:%M:%S").strftime('%s'))
-            network = network.filter_by_time(origin + slider['props']['value']
-             * TIME_DIV)
+            t_to_filter = cy_network['oldest_user'] + slider['props']['value'] * TIME_DIV
+            t_to_filter = datetime.fromtimestamp(t_to_filter)\
+                .strftime("%Y-%m-%d %H:%M:%S")
+
+            network = load_and_compute_data(wiki, network_code, t_to_filter)
+            #network = network.filter_by_time(origin + slider['props']['value']
+            # * TIME_DIV)
 
             time_end_calculations = time.perf_counter() - time_start_calculations
             print(' * [Timing] Filter : {} seconds'.format(time_end_calculations))
 
         else:
             print(' * [Info] Printing the entire network....')
+            network = load_and_compute_data(wiki, network_code)
 
         if pr_clicks and pr_clicks % 2 == 1:
             network.calculate_page_rank()

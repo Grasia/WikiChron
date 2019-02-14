@@ -429,7 +429,6 @@ def create_app():
     # skeleton.css: (Already included in dash stylesheet)
     #~ app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
 
-
     cache.set_up_cache(app, debug)
 
     return app

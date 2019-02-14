@@ -27,10 +27,10 @@ class Stylesheet(metaclass=abc.ABCMeta):
 		self.cy_stylesheet[0]['style']['background-color'] = 'data(cluster_color)'
 
 
-	def size_nodes(self, _):
+	def size_nodes(self, network):
 		self.cy_stylesheet[0]['style']['height'] = '30'
 		self.cy_stylesheet[0]['style']['width'] = '30'
-		self.size_font_labels()
+		self.size_font_labels(network)
 
 
 	def size_font_labels(self, _):
