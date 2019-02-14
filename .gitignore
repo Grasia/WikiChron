@@ -1,7 +1,7 @@
 gunicorn_config.py
 __pycache__/
 npm-debug.log
-venv/
+venv*/
 data/
 precooked_data/
 .python-version
