@@ -5,5 +5,5 @@
 
    Copyright 2017-2018 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
-__version__ = '1.1.1'
+__version__ = '1.2.0'
 

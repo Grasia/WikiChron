@@ -1,5 +1,25 @@
 # Change Log for WikiChron
 
+## 1.2.0 - 2018-02-14
+
+### Added
+- New metric: Active registered users (#56)
+- New metric: Active anonymous users (#56)
+- development script
+
+### Changed
+- csv data now is comma separated instead of semicolon separated
+- Code cleaning and refactor
+
+### Updated
+- docs & README
+- requirements
+- deployment config and script
+
+
+### Fixed
+- Duplicated html id for sidebar: https://github.com/Grasia/WikiChron/commit/a623e452a9ea61958bd34ffb77f56a4381a164fb
+
 ## 1.1.1 - 2018-10-31
 ### Added
 - Icon in the header which displays a dialog showing sharing and downloading links for current selection. Closes #53
