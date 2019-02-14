@@ -58,11 +58,9 @@ def get_dataframe_from_csv(csv):
     print('Loading csv for ' + csv)
     time_start_loading_one_csv = time.perf_counter()
     df = pd.read_csv(os.path.join(data_dir, csv),
-                    delimiter=';', quotechar='|',
+                    delimiter=',', quotechar='|',
                     index_col=False)
     df['timestamp']=pd.to_datetime(df['timestamp'],format='%Y-%m-%dT%H:%M:%SZ')
-    #~ df.set_index(df['timestamp'], inplace=True) # generate a datetime index
-    #~ print(df.info())
     print('!!Loaded csv for ' + csv)
     time_end_loading_one_csv = time.perf_counter() - time_start_loading_one_csv
     print(' * [Timing] Loading {} : {} seconds'.format(csv, time_end_loading_one_csv) )
