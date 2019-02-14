@@ -21,6 +21,7 @@ from .networks import available_networks as _available_networks
 from .networks.networks_generator import factory_network as _factory_network
 
 
+# get csv data location (data/ by default)
 global data_dir;
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 
