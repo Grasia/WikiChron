@@ -1,4 +1,16 @@
-# Change Log for WikiChron
+# Change Log for WikiChron-networks
+
+## 1.4.1 - 2018-02-14
+
+### Changed
+- csv data now is comma separated instead of semicolon separated
+- Corrected meta Open Graph meta tags
+
+### Updated
+- docs
+
+### Removed
+- unnecesary code and assets
 
 ## 1.4.0 - 2018-02-13
 
