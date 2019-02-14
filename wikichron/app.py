@@ -72,7 +72,7 @@ meta_tags = [
     },
     {
         'name': 'description',
-        'content': 'WikiChron networks is a web tool for the analysis and visualization of the network made by wiki online communities'
+        'content': 'WikiChron Networks is a web tool for the analysis and visualization of different networks within wiki online communities'
     },
     {
         'name': 'og:title',
@@ -80,15 +80,19 @@ meta_tags = [
     },
     {
         'name': 'og:description',
-        'content': 'WikiChron Networks is a web tool for the visualization of wikis networks'
+        'content': 'WikiChron Networks is a web tool for the visualization of networks within wikis'
     },
     {
         'name': 'og:url',
-        'content': 'http://wikichron.science:8080/'
+        'content': 'http://networks.wikichron.science/'
     },
     {
         'name': 'og:image',
-        'content': '{}/logo_wikichron.png'.format(assets_url_path)
+        'content': '{}/wikichron_networks_logo.png'.format(assets_url_path)
+    },
+    {
+        'name': 'og:image:width',
+        'content': '600'
     },
     {
         'name': 'twitter:title',
