@@ -115,6 +115,20 @@ def edits_user_talk(data, index):
 
 # Users
 
+##### Helper functions #####
+
+
+def users_active_more_than_x_editions(data, index, x):
+    monthly_edits = data.groupby([pd.Grouper(key='timestamp', freq='MS'), 'contributor_name']).size()
+    monthly_edits_filtered = monthly_edits[monthly_edits > x].to_frame(name='pages_edited').reset_index()
+    series = monthly_edits_filtered.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
+    if index is not None:
+        series = series.reindex(index, fill_value=0)
+    return series
+
+
+##### callable user metrics #####
+
 
 def users_active(data, index):
     monthly_data = data.groupby(pd.Grouper(key='timestamp', freq='MS'))
@@ -162,22 +176,16 @@ def users_registered_accum(data, index):
     return (users_new_registered(data, index).cumsum())
 
 #this metric gets, per month, those users who have contributed to the wiki in more than 4 editions.
-def users_active_more_than_4(data, index):
-    monthly = data.groupby(pd.Grouper(key='timestamp', freq = 'MS'))
-    series = monthly.apply(lambda x: len(x.groupby(['contributor_id']).size().where(lambda y: y>4).dropna()))
-    return series
+def users_active_more_than_4_editions(data, index):
+    return users_active_more_than_x_editions(data, index, 4)
 
 #this metric gets, per month, those users who have contributed to the wiki in more than 24 editions.
-def users_active_more_than_24(data, index):
-    monthly = data.groupby(pd.Grouper(key='timestamp', freq = 'MS'))
-    series = monthly.apply(lambda x: len(x.groupby(['contributor_id']).size().where(lambda y: y>24).dropna()))
-    return series
+def users_active_more_than_24_editions(data, index):
+    return users_active_more_than_x_editions(data, index, 24)
 
 #this metric gets, per month, those users who have contributed to the wiki in more than 99 editions.
-def users_active_more_than_99(data, index):
-    monthly = data.groupby(pd.Grouper(key='timestamp', freq = 'MS'))
-    series = monthly.apply(lambda x: len(x.groupby(['contributor_id']).size().where(lambda y: y>99).dropna()))
-    return series
+def users_active_more_than_99_editions(data, index):
+    return users_active_more_than_x_editions(data, index, 99)
 
 ########################################################################
 
