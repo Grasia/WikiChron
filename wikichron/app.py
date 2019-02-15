@@ -49,9 +49,7 @@ debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
 # get csv data location (data/ by default)
 global data_dir;
-if not 'WIKICHRON_DATA_DIR' in os.environ:
-    os.environ['WIKICHRON_DATA_DIR'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../data')
-data_dir = os.environ['WIKICHRON_DATA_DIR']
+data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 
 # global app config
 APP_HOSTNAME = 'http://wikichron.science';

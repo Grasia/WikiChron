@@ -277,7 +277,7 @@ def bind_callbacks(app):
         print('--> Retrieving and computing data')
         print( '\t for the following wiki: {}'.format( wiki['url'] ))
         print( '\trepresented as this network: {}'.format( network_code ))
-        network = data_handler.load_and_compute_data(wiki, network_code)
+        network = data_handler.get_network(wiki, network_code)
         print('<-- Done retrieving and computing data!')
         return True
 
@@ -324,7 +324,7 @@ def bind_callbacks(app):
             t_to_filter = datetime.fromtimestamp(t_to_filter)\
                 .strftime("%Y-%m-%d %H:%M:%S")
 
-            network = data_handler.load_and_compute_data(wiki, network_code, t_to_filter)
+            network = data_handler.get_network(wiki, network_code, t_to_filter)
             #network = network.filter_by_time(origin + slider['props']['value']
             # * TIME_DIV)
 
@@ -333,7 +333,7 @@ def bind_callbacks(app):
 
         else:
             print(' * [Info] Printing the entire network....')
-            network = data_handler.load_and_compute_data(wiki, network_code)
+            network = data_handler.get_network(wiki, network_code)
 
         if pr_clicks and pr_clicks % 2 == 1:
             network.calculate_page_rank()
@@ -380,7 +380,7 @@ def bind_callbacks(app):
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0]
         network_code = selection['network']
-        network = data_handler.load_and_compute_data(wiki, network_code)
+        network = data_handler.get_network(wiki, network_code)
 
         origin = int(datetime.strptime(str(network.oldest_user),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))

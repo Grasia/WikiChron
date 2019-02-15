@@ -26,14 +26,11 @@ import lib.interface as lib
 global data_dir;
 global precooked_net_dir;
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
-#~ if not 'WIKICHRON_DATA_DIR' in os.environ:
-    #~ os.environ['WIKICHRON_DATA_DIR'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../data')
-#~ data_dir = os.environ['WIKICHRON_DATA_DIR']
 precooked_net_dir = os.getenv('PRECOOKED_NETWORK_DIR', 'precooked_data/networks')
 
 
 @cache.memoize()
-def load_data(wiki):
+def read_data(wiki):
     df = get_dataframe_from_csv(wiki['data'])
     prepare_data(df)
     df = clean_up_bot_activity(df, wiki)
@@ -41,7 +38,7 @@ def load_data(wiki):
 
 
 @cache.memoize(timeout=3600)
-def load_and_compute_data(wiki, network_code, t_to_filter = ''):
+def get_network(wiki, network_code, t_to_filter = ''):
     """
     Parameters
         - wiki: Related info about the wiki selected.
@@ -52,7 +49,7 @@ def load_and_compute_data(wiki, network_code, t_to_filter = ''):
 
     # load data from csvs:
     time_start_loading_csvs = time.perf_counter()
-    df = load_data(wiki)
+    df = read_data(wiki)
     time_end_loading_csvs = time.perf_counter() - time_start_loading_csvs
     print(' * [Timing] Loading csvs : {} seconds'.format(time_end_loading_csvs) )
 
