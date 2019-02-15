@@ -18,6 +18,10 @@ function hideSideBar() {
     document.getElementById('side-bar-content').style.display = 'none';
     document.getElementById('side-bar-root').style.flex = 'unset';
 
+    // correct offset to dash-cytoscape events (Workaround #22):
+    document.getElementById('cytoscape').style.paddingLeft = '300px';
+
+
     // set show bar in arrow
     fold_container = document.getElementById('fold-img-container');
     fold_container.onclick = showSideBar;
@@ -37,6 +41,9 @@ function showSideBar() {
     // show side bar
     document.getElementById('side-bar-content').style.display = '';
     document.getElementById('side-bar-root').style.flex = '';
+
+    // unmake offset given to dash-cytoscape events (Workaround #22):
+    document.getElementById('cytoscape').style.paddingLeft = '';
 
     // set hide bar in arrow
     fold_container = document.getElementById('fold-img-container');

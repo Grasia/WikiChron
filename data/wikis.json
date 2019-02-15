@@ -26,9 +26,9 @@
 			"34480145"
 		],
 		"name": "200Movies Wiki",
-		"articles": 89,
-		"pages": 712,
-		"edits": 879,
+		"articles": 90,
+		"pages": 714,
+		"edits": 882,
 		"users": 4
 	},
 	{
@@ -63,13 +63,13 @@
 		],
 		"name": "Cocktails Wiki",
 		"articles": 1532,
-		"pages": 4984,
-		"edits": 24014,
-		"users": 259
+		"pages": 4988,
+		"edits": 24022,
+		"users": 260
 	},
 	{
 		"url": "es.lagunanegra.wikia.com",
-		"data": "eslagunanegra_pages_full.csv",
+		"data": "es.lagunanegra.wikia.com.csv",
 		"botsids": [
 			"22439",
 			"49312",
@@ -99,7 +99,7 @@
 		"name": "Laguna Negra Wiki",
 		"articles": 234,
 		"pages": 1061,
-		"edits": 3933,
+		"edits": 3935,
 		"users": 69
 	},
 	{
@@ -132,10 +132,10 @@
 			"34480145"
 		],
 		"name": "Shaman King Wiki",
-		"articles": 409,
-		"pages": 2957,
-		"edits": 12622,
-		"users": 161
+		"articles": 417,
+		"pages": 2985,
+		"edits": 12716,
+		"users": 163
 	},
 	{
 		"url": "proteins.wikia.com",
@@ -207,9 +207,9 @@
 		],
 		"name": "Zeldapedia",
 		"articles": 8048,
-		"pages": 64877,
-		"edits": 538778,
-		"users": 8081
+		"pages": 65009,
+		"edits": 541089,
+		"users": 8123
 	},
 	{
 		"url": "de.undertale.wikia.com",
@@ -239,8 +239,8 @@
 		],
 		"name": "Undertale Wikia",
 		"articles": 333,
-		"pages": 3005,
-		"edits": 6310,
+		"pages": 3009,
+		"edits": 6320,
 		"users": 107
 	}
 ]

@@ -1,4 +1,27 @@
-# Change Log for WikiChron
+# Change Log for WikiChron-networks
+
+## 1.4.1 - 2018-02-14
+
+### Changed
+- csv data now is comma separated instead of semicolon separated
+- Corrected meta Open Graph meta tags
+
+### Updated
+- docs
+
+### Removed
+- unnecesary code and assets
+
+## 1.4.0 - 2018-02-13
+
+### Added
+- WikiChron-networks own logos
+- updated deps: dash, dash components and dash-renderer, certifi
+- better styling and UX
+- stylesheet decorator pattern for cytoscape
+
+### Fixed
+- Bug with cytoscape component events (Workaround)
 
 ## 1.3.2 - 2018-02-01
 

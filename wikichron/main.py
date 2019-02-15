@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-   app.py
+   main.py
 
    Descp: This script generates the main content of the site, this content includes
 serveral interpretations of the network, which is generated from the wikis
@@ -14,6 +14,7 @@ data.
    Copyright 2017-2019 Youssef El Faqir El Rhazoui
 """
 
+# Built-in imports
 import os
 import time
 import json
@@ -28,7 +29,7 @@ import sd_material_ui
 
 # Local imports:
 import lib.interface as lib
-from cache import cache
+import data_controller
 #from controls_sidebar import generate_controls_sidebar, bind_control_callbacks
 from app import assets_url_path
 from lib.cytoscape_decorator.Stylesheet import Stylesheet
@@ -40,46 +41,6 @@ TIME_DIV = 60 * 60 * 24 * 30
 
 global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
-
-# get csv data location (data/ by default)
-global data_dir;
-global precooked_net_dir;
-data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
-precooked_net_dir = os.getenv('PRECOOKED_NETWORK_DIR', 'precooked_data/networks')
-
-
-@cache.memoize(timeout=3600)
-def load_data(wiki):
-    df = lib.get_dataframe_from_csv(wiki['data'])
-    lib.prepare_data(df)
-    df = lib.clean_up_bot_activity(df, wiki)
-    return df
-
-@cache.memoize()
-def load_and_compute_data(wiki, network_code, t_to_filter = ''):
-    """
-    Parameters
-        - wiki: Related info about the wiki selected.
-        - network_type: network selected. It is an instance of BaseNetwork.
-        - t_to_filter: a formated string "%Y-%m-%d %H:%M:%S", to filter the pandas obj 
-    Return: Data representing the network.
-    """
-
-    # load data from csvs:
-    time_start_loading_csvs = time.perf_counter()
-    df = load_data(wiki)
-    time_end_loading_csvs = time.perf_counter() - time_start_loading_csvs
-    print(' * [Timing] Loading csvs : {} seconds'.format(time_end_loading_csvs) )
-
-    # generate network:
-    network_type = lib.factory_network(network_code)
-    print(' * [Info] Starting calculations....')
-    time_start_calculations = time.perf_counter()
-    network_type.generate_from_pandas(df=df, t_to_filter = t_to_filter)
-    time_end_calculations = time.perf_counter() - time_start_calculations
-    print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
-    return network_type
-
 
 def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
     """
@@ -244,7 +205,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
                     },
                     style = {
                         'height': '95vh',
-                        'width': '100%'
+                        'width': 'calc(100% - 300px)'
                     },
                     stylesheet = Stylesheet().cy_stylesheet
         )
@@ -315,7 +276,7 @@ def bind_callbacks(app):
         print('--> Retrieving and computing data')
         print( '\t for the following wiki: {}'.format( wiki['url'] ))
         print( '\trepresented as this network: {}'.format( network_code ))
-        network = load_and_compute_data(wiki, network_code)
+        network = data_controller.get_network(wiki, network_code)
         print('<-- Done retrieving and computing data!')
         return True
 
@@ -352,7 +313,6 @@ def bind_callbacks(app):
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0]
         network_code = selection['network']
-        
 
         if not slider['props']['value'] == slider['props']['max']:
             print(' * [Info] Starting time filter....')
@@ -362,7 +322,7 @@ def bind_callbacks(app):
             t_to_filter = datetime.fromtimestamp(t_to_filter)\
                 .strftime("%Y-%m-%d %H:%M:%S")
 
-            network = load_and_compute_data(wiki, network_code, t_to_filter)
+            network = data_controller.get_network(wiki, network_code, t_to_filter)
             #network = network.filter_by_time(origin + slider['props']['value']
             # * TIME_DIV)
 
@@ -371,7 +331,7 @@ def bind_callbacks(app):
 
         else:
             print(' * [Info] Printing the entire network....')
-            network = load_and_compute_data(wiki, network_code)
+            network = data_controller.get_network(wiki, network_code)
 
         if pr_clicks and pr_clicks % 2 == 1:
             network.calculate_page_rank()
@@ -418,7 +378,7 @@ def bind_callbacks(app):
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0]
         network_code = selection['network']
-        network = load_and_compute_data(wiki, network_code)
+        network = data_controller.get_network(wiki, network_code)
 
         origin = int(datetime.strptime(str(network.oldest_user),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))

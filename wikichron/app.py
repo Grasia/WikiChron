@@ -3,12 +3,13 @@
 """
    app.py
 
-   Descp:
+   Descp: Code related to the Dash app.
 
    Created on: 23-oct-2017
 
    Copyright 2017-2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
+
 # built-in imports
 import flask
 import glob
@@ -48,9 +49,7 @@ debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
 # get csv data location (data/ by default)
 global data_dir;
-if not 'WIKICHRON_DATA_DIR' in os.environ:
-    os.environ['WIKICHRON_DATA_DIR'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../data')
-data_dir = os.environ['WIKICHRON_DATA_DIR']
+data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 
 # global app config
 APP_HOSTNAME = 'http://wikichron.science';
@@ -72,7 +71,7 @@ meta_tags = [
     },
     {
         'name': 'description',
-        'content': 'WikiChron networks is a web tool for the analysis and visualization of the network made by wiki online communities'
+        'content': 'WikiChron Networks is a web tool for the analysis and visualization of different networks within wiki online communities'
     },
     {
         'name': 'og:title',
@@ -80,15 +79,19 @@ meta_tags = [
     },
     {
         'name': 'og:description',
-        'content': 'WikiChron Networks is a web tool for the visualization of wikis networks'
+        'content': 'WikiChron Networks is a web tool for the visualization of networks within wikis'
     },
     {
         'name': 'og:url',
-        'content': 'http://wikichron.science:8080/'
+        'content': 'http://networks.wikichron.science/'
     },
     {
         'name': 'og:image',
-        'content': '{}/logo_wikichron.png'.format(assets_url_path)
+        'content': '{}/wikichron_networks_logo.png'.format(assets_url_path)
+    },
+    {
+        'name': 'og:image:width',
+        'content': '600'
     },
     {
         'name': 'twitter:title',
@@ -165,7 +168,6 @@ def set_layout():
             html.Div(id='side-bar-root', className='side-bar-cn'),
             html.Div(id='main-root', style={'flex': 'auto'}),
             html.Div(id='sidebar-selection', style={'display': 'none'}),
-            html.Div(id='test', style={'display': 'none'})
         ]
     );
 
@@ -183,26 +185,15 @@ def generate_welcome_page():
     return html.Div(id='welcome-container',
             className='container',
             children=[
-                html.Div(html.Img(src='{}/line-graph.svg'.format(assets_url_path))),
+                html.Div(html.Img(src='{}/network-graph.svg'.format(assets_url_path))),
                 html.H2([
-                    'Welcome to ',
-                    #~ html.Span(html.Img(src='{}/tipo-logo.svg'.format(assets_url_path)),
-                        #~ style={'vertical-align': 'text-bottom'}
-
-
-                    html.Span([
-                            html.Img(src='{}/tipo-logo.svg'.format(assets_url_path)),
-                        ]
-                    ),
-
-
-                   html.Strong(
-                                html.Em('*Networks*'),
-                                style={
-                                    'marginLeft': '15px',
-                                }
-                            )
-                ]),
+                        html.Span('Welcome to '),
+                        html.Span(
+                            html.Img(src='{}/tipo-logo-networks.svg'.format(assets_url_path)),
+                        ),
+                    ],
+                    style = {'display': 'flex'}
+                ),
                 html.Center([
                     html.P('Select one wiki and one network type from the sidebar on the left and press "generate" to start.',
                         style={'font-size': 'large'}),
