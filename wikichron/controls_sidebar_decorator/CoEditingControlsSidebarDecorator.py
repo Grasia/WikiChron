@@ -9,6 +9,7 @@
    Copyright 2019 Youssef 'FRYoussef' El Faqir el Rhazoui <f.r.youssef@hotmail.com>
 """
 
+import time
 import abc
 import json
 import dash_html_components as html
@@ -17,7 +18,8 @@ from datetime import datetime
 
 from .BaseControlsSidebarDecorator import BaseControlsSidebarDecorator
 from lib.cytoscape_decorator.CoEditingStylesheet import CoEditingStylesheet
-
+from lib.networks.types.CoEditingNetwork import CoEditingNetwork
+import data_controller
 
 class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
@@ -105,8 +107,8 @@ def bind_callbacks(app):
         if not cy_network:
             return CoEditingControlsSidebarDecorator.default_stats()
 
-        date1 = datetime.fromtimestamp(cy_network["oldest_user"]).strftime("%Y-%m-%d")
-        date2 = datetime.fromtimestamp(cy_network["newest_user"]).strftime("%Y-%m-%d")
+        date1 = datetime.fromtimestamp(cy_network["first_entry"]).strftime("%Y-%m-%d")
+        date2 = datetime.fromtimestamp(cy_network["last_entry"]).strftime("%Y-%m-%d")
 
         return CoEditingControlsSidebarDecorator.default_stats(
             st1 = f'Nodes: {cy_network["num_nodes"]}', 
@@ -228,3 +230,48 @@ def bind_callbacks(app):
             co_stylesheet.color_nodes(cy_network)
 
         return co_stylesheet.cy_stylesheet
+
+
+    @app.callback(
+        Output('network-ready', 'value'),
+        [Input('ready', 'value'),
+        Input('calculate_page_rank', 'n_clicks'),
+        Input('calculate_communities', 'n_clicks')],
+        [State('initial-selection', 'children'),
+        State('date-slider-container', 'children'),
+        State('network-ready', 'value')]
+    )
+    def update_network(ready, pr_clicks, com_clicks, selection_json, slider, cy_network):
+        if not ready:
+            return None
+
+        # get network instance from selection
+        selection = json.loads(selection_json)
+        wiki = selection['wikis'][0]
+        network_code = selection['network']
+
+        if not slider['props']['value'] == slider['props']['max']:
+            print(' * [Info] Starting time filter....')
+            time_start_calculations = time.perf_counter()
+
+            t_to_filter = cy_network['first_entry'] + slider['props']['value'] * \
+            CoEditingNetwork.TIME_DIV
+            t_to_filter = datetime.fromtimestamp(t_to_filter)\
+                .strftime("%Y-%m-%d %H:%M:%S")
+
+            network = data_controller.get_network(wiki, network_code, t_to_filter)
+
+            time_end_calculations = time.perf_counter() - time_start_calculations
+            print(' * [Timing] Filter : {} seconds'.format(time_end_calculations))
+
+        else:
+            print(' * [Info] Printing the entire network....')
+            network = data_controller.get_network(wiki, network_code)
+
+        if pr_clicks and pr_clicks % 2 == 1:
+            network.calculate_page_rank()
+
+        if com_clicks and com_clicks % 2 == 1:
+            network.calculate_communities()
+
+        return network.to_cytoscape_dict()

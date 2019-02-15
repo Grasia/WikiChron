@@ -261,22 +261,22 @@ def bind_callbacks(app):
     # Right sidebar callbacks
     #bind_control_callbacks(app)
     #########
-    #bind_controls_sidebar_callbacks('co_editing_network', app)
+    bind_controls_sidebar_callbacks('co_editing_network', app)
     #########
 
-    @app.callback(
-        Output('bind_sidebar', 'value'),
-        [Input('initial-selection', 'children')],
-        [State('bind_sidebar', 'value')]
-    )
-    def bind_sidebar_callbacks(selection_json, bind_sidebar):
-        selection = json.loads(selection_json)
-        network_code = selection['network']
-        if bind_sidebar is network_code:
-            return network_code
+    # @app.callback(
+    #     Output('bind_sidebar', 'value'),
+    #     [Input('initial-selection', 'children')],
+    #     [State('bind_sidebar', 'value')]
+    # )
+    # def bind_sidebar_callbacks(selection_json, bind_sidebar):
+    #     selection = json.loads(selection_json)
+    #     network_code = selection['network']
+    #     if bind_sidebar is network_code:
+    #         return network_code
 
-        bind_controls_sidebar_callbacks(network_code, app)
-        return network_code
+    #     bind_controls_sidebar_callbacks(network_code, app)
+    #     return network_code
 
 
     @app.callback(
@@ -310,51 +310,6 @@ def bind_callbacks(app):
             print('Ready to plot network!')
         return True
 
-
-    @app.callback(
-        Output('network-ready', 'value'),
-        [Input('ready', 'value'),
-        Input('calculate_page_rank', 'n_clicks'),
-        Input('calculate_communities', 'n_clicks')],
-        [State('initial-selection', 'children'),
-        State('date-slider-container', 'children'),
-        State('network-ready', 'value')]
-    )
-    def update_network(ready, pr_clicks, com_clicks, selection_json, slider, cy_network):
-        if not ready:
-            return None
-
-        # get network instance from selection
-        selection = json.loads(selection_json)
-        wiki = selection['wikis'][0]
-        network_code = selection['network']
-
-        if not slider['props']['value'] == slider['props']['max']:
-            print(' * [Info] Starting time filter....')
-            time_start_calculations = time.perf_counter()
-
-            t_to_filter = cy_network['oldest_user'] + slider['props']['value'] * TIME_DIV
-            t_to_filter = datetime.fromtimestamp(t_to_filter)\
-                .strftime("%Y-%m-%d %H:%M:%S")
-
-            network = data_controller.get_network(wiki, network_code, t_to_filter)
-            #network = network.filter_by_time(origin + slider['props']['value']
-            # * TIME_DIV)
-
-            time_end_calculations = time.perf_counter() - time_start_calculations
-            print(' * [Timing] Filter : {} seconds'.format(time_end_calculations))
-
-        else:
-            print(' * [Info] Printing the entire network....')
-            network = data_controller.get_network(wiki, network_code)
-
-        if pr_clicks and pr_clicks % 2 == 1:
-            network.calculate_page_rank()
-
-        if com_clicks and com_clicks % 2 == 1:
-            network.calculate_communities()
-
-        return network.to_cytoscape_dict()
 
     @app.callback(
         Output('cytoscape', 'elements'),
@@ -395,9 +350,9 @@ def bind_callbacks(app):
         network_code = selection['network']
         network = data_controller.get_network(wiki, network_code)
 
-        origin = int(datetime.strptime(str(network.oldest_user),
+        origin = int(datetime.strptime(str(network.first_entry),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))
-        end = int(datetime.strptime(str(network.newest_user),
+        end = int(datetime.strptime(str(network.last_entry),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))
 
         time_gap = end - origin

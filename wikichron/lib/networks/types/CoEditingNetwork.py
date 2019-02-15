@@ -39,16 +39,12 @@ class CoEditingNetwork(BaseNetwork):
     NAME = 'Co-Editing'
     CODE = 'co_editing_network'
 
-    def __init__(self, is_directed = False, name = 'Co-Editing',
-            code = 'co_editing_network', page_rank = [], num_communities = -1,
-            graph = {}, oldest_user = None, newest_user = None):
+    def __init__(self, is_directed = False, page_rank = [], num_communities = -1,
+            graph = {}, first_entry = None, last_entry = None):
 
         super().__init__(is_directed = is_directed, page_rank = page_rank,
-            num_communities = num_communities, graph = graph)
-        self.oldest_user = oldest_user
-        self.newest_user = newest_user
-        self.name = name
-        self.code = code
+            num_communities = num_communities, first_entry = first_entry,
+            last_entry = last_entry, graph = graph)
 
 
     def generate_from_pandas(self, df, t_to_filter = ''):
@@ -65,10 +61,10 @@ class CoEditingNetwork(BaseNetwork):
             if r['contributor_name'] == 'Anonymous':
                 continue
 
-            if not self.oldest_user:
-                self.oldest_user = r['timestamp']
+            if not self.first_entry:
+                self.first_entry = r['timestamp']
 
-            self.newest_user = r['timestamp']
+            self.last_entry = r['timestamp']
 
             # Nodes
             if not r['contributor_id'] in mapper_v:
@@ -176,9 +172,9 @@ class CoEditingNetwork(BaseNetwork):
                 }
             })
 
-        di_net['oldest_user'] = int(datetime.strptime(str(self.oldest_user),
+        di_net['first_entry'] = int(datetime.strptime(str(self.first_entry),
                             "%Y-%m-%d %H:%M:%S").strftime('%s'))
-        di_net['newest_user'] = int(datetime.strptime(str(self.newest_user),
+        di_net['last_entry'] = int(datetime.strptime(str(self.last_entry),
                             "%Y-%m-%d %H:%M:%S").strftime('%s'))
         di_net['edge_max_weight'] = max_v
         di_net['edge_min_weight'] = min_v

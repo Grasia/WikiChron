@@ -14,9 +14,9 @@ class BaseNetwork():
     NAME = 'Base Network'
     CODE = 'base_network'
 
-    def __init__(self, is_directed = False, code = 'base_network',
-                name = 'Base Network', page_rank = [], num_communities = -1,
-                graph = {}):
+    def __init__(self, is_directed = False, page_rank = [], 
+            num_communities = -1, first_entry = None, 
+            last_entry = None, graph = {},):
 
         if not graph:
             self.graph = Graph(directed=is_directed)
@@ -25,6 +25,8 @@ class BaseNetwork():
 
         self.page_rank = page_rank
         self.num_communities = num_communities
+        self.first_entry = first_entry
+        self.last_entry = last_entry 
 
 
     def init_network(self):
