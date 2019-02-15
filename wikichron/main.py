@@ -45,20 +45,21 @@ global precooked_net_dir;
 precooked_net_dir = os.getenv('PRECOOKED_NETWORK_DIR', 'precooked_data/networks')
 
 
-@cache.memoize(timeout=3600)
+@cache.memoize()
 def load_data(wiki):
     df = lib.get_dataframe_from_csv(wiki['data'])
     lib.prepare_data(df)
     df = lib.clean_up_bot_activity(df, wiki)
     return df
 
-@cache.memoize()
+
+@cache.memoize(timeout=3600)
 def load_and_compute_data(wiki, network_code, t_to_filter = ''):
     """
     Parameters
         - wiki: Related info about the wiki selected.
         - network_type: network selected. It is an instance of BaseNetwork.
-        - t_to_filter: a formated string "%Y-%m-%d %H:%M:%S", to filter the pandas obj 
+        - t_to_filter: a formated string "%Y-%m-%d %H:%M:%S", to filter the pandas obj
     Return: Data representing the network.
     """
 
@@ -349,7 +350,7 @@ def bind_callbacks(app):
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0]
         network_code = selection['network']
-        
+
 
         if not slider['props']['value'] == slider['props']['max']:
             print(' * [Info] Starting time filter....')
