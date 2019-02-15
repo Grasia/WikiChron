@@ -14,14 +14,14 @@ from .CoEditingControlsSidebarDecorator import bind_callbacks as co_edit_bind_ca
 
 
 def factory_sidebar_decorator(selected_network_code, sidebar):
-    if selected_network_code == CoEditingNetwork.CODE:
-        return CoEditingControlsSidebarDecorator(sidebar)
-    else:
-        raise Exception("Something went bad. Missing network type selection.")
+	if selected_network_code == CoEditingNetwork.CODE:
+		return CoEditingControlsSidebarDecorator(sidebar)
+	else:
+		raise Exception("Something went bad. Missing network type selection.")
 
 
 def bind_controls_sidebar_callbacks(selected_network_code, app):
-    if selected_network_code == CoEditingNetwork.CODE:
-        co_edit_bind_callbacks(app)
-    else:
-        raise Exception("Something went bad. Missing network type selection.")
+	if selected_network_code == CoEditingNetwork.CODE:
+		co_edit_bind_callbacks(app)
+	else:
+		raise Exception("Something went bad. Missing network type selection.")

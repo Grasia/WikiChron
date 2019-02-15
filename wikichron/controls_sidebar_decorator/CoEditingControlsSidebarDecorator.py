@@ -14,9 +14,10 @@ import json
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from datetime import datetime
+
 from .BaseControlsSidebarDecorator import BaseControlsSidebarDecorator
-from lib.cytoscape_decorator.Stylesheet import Stylesheet
-from lib.cytoscape_decorator.factory_stylesheet_decorator import factory_stylesheet_cytoscape_decorator
+from lib.cytoscape_decorator.CoEditingStylesheet import CoEditingStylesheet
+
 
 class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
@@ -27,7 +28,7 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
     def add_stats_section(self):
         super().add_stats_section()
         stats = CoEditingControlsSidebarDecorator.default_stats()
-        self.add_stats(stats)
+        self.add_stats_content(stats)
 
 
     @staticmethod
@@ -70,7 +71,7 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
                 className='metrics-section')
             ]
 
-        self.add_metrics(metrics)
+        self.add_metrics_content(metrics)
 
 
     def add_options_section(self):
@@ -85,7 +86,7 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
                         className='control-button action-button'),
                 ]
 
-        self.add_options(options)
+        self.add_options_content(options)
 
 
     def add_all_sections(self):
@@ -203,32 +204,27 @@ def bind_callbacks(app):
         Input('show_page_rank', 'n_clicks'),
         Input('color_cluster', 'n_clicks')],
         [State('network-ready', 'value'),
-        State('cytoscape', 'stylesheet'),
-        State('initial-selection', 'children')]
+        State('cytoscape', 'stylesheet')]
     )
-    def update_stylesheet(_, lb_clicks, pr_clicks, com_clicks, cy_network,
-        stylesheet, selection_json):
+    def update_stylesheet(_, lb_clicks, pr_clicks, com_clicks, cy_network, stylesheet):
 
         if not cy_network:
-            return Stylesheet().cy_stylesheet
+            return CoEditingStylesheet().cy_stylesheet
 
-        selection = json.loads(selection_json)
-        network_code = selection['network']
-        stylesheet = Stylesheet(stylesheet)
-        decorator = factory_stylesheet_cytoscape_decorator(network_code, stylesheet)
-        decorator.all_transformations(cy_network)
+        co_stylesheet = CoEditingStylesheet(stylesheet)
+        co_stylesheet.all_transformations(cy_network)
 
         if lb_clicks and lb_clicks % 2 == 1:
-            decorator.set_label('data(label)')
+            co_stylesheet.set_label('data(label)')
         elif pr_clicks and pr_clicks % 2 == 1:
-            decorator.set_label('data(page_rank)')
+            co_stylesheet.set_label('data(page_rank)')
         else:
-            decorator.set_label('')
+            co_stylesheet.set_label('')
 
         if com_clicks and not cy_network["n_communities"] == '...' \
         and com_clicks % 2 == 1:
-            decorator.color_nodes_by_cluster()
+            co_stylesheet.color_nodes_by_cluster()
         else:
-            decorator.color_nodes(cy_network)
+            co_stylesheet.color_nodes(cy_network)
 
-        return stylesheet.cy_stylesheet
+        return co_stylesheet.cy_stylesheet

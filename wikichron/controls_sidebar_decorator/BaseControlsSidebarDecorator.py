@@ -23,24 +23,24 @@ class BaseControlsSidebarDecorator(ControlsSidebar, metaclass=abc.ABCMeta):
         self.sidebar.add_stats_section()
 
 
-    def add_stats(self, html_stats):
-        self.sidebar.add_stats(html_stats)
+    def add_stats_content(self, html_stats):
+        self.sidebar.add_stats_content(html_stats)
 
 
     def add_metrics_section(self):
         self.sidebar.add_metrics_section()
 
 
-    def add_metrics(self, html_metrics):
-        self.sidebar.add_metrics(html_metrics)
+    def add_metrics_content(self, html_metrics):
+        self.sidebar.add_metrics_content(html_metrics)
 
 
     def add_options_section(self):
         self.sidebar.add_options_section()
 
 
-    def add_options(self, html_options):
-        self.sidebar.add_options(html_options)
+    def add_options_content(self, html_options):
+        self.sidebar.add_options_content(html_options)
 
 
     def add_all_sections(self):

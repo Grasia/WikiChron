@@ -1,8 +1,7 @@
 """
-   Stylesheet.py
+   BaseStylesheet.py
 
-   Descp: A class to implement the decorator pattern in order to make an
-     easier implementation of networks stylesheet
+   Descp: A base class to warp the cytoscape stylesheet
 
    Created on: 30-01-2019
 
@@ -10,7 +9,7 @@
 """
 import abc
 
-class Stylesheet(metaclass=abc.ABCMeta):
+class BaseStylesheet(metaclass=abc.ABCMeta):
 
 
 	def __init__(self, cy_stylesheet = []):
@@ -52,7 +51,7 @@ class Stylesheet(metaclass=abc.ABCMeta):
 	def set_label(self, text):
 		self.cy_stylesheet[0]['style']['content'] = text
 
-
+	
 	def make_basic_stylesheet(self):
 		return [{
                 'selector': 'node',

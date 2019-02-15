@@ -47,7 +47,7 @@ class ControlsSidebar(metaclass=abc.ABCMeta):
                     className='control-container')
 
 
-    def add_stats(self, html_stats):
+    def add_stats_content(self, html_stats):
         self.stats_section.children[1].children = html_stats
 
 
@@ -58,7 +58,7 @@ class ControlsSidebar(metaclass=abc.ABCMeta):
                 ], className='control-container')
 
 
-    def add_metrics(self, html_metrics):
+    def add_metrics_content(self, html_metrics):
         self.metrics_section.children[1].children = html_metrics
 
 
@@ -69,7 +69,7 @@ class ControlsSidebar(metaclass=abc.ABCMeta):
                 ], className='control-container')
 
 
-    def add_options(self, html_options):
+    def add_options_content(self, html_options):
         self.options_section.children[1].children = html_options
 
 

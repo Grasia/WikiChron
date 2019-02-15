@@ -30,9 +30,8 @@ import sd_material_ui
 # Local imports:
 import lib.interface as lib
 import data_controller
-#from controls_sidebar import generate_controls_sidebar, bind_control_callbacks
 from app import assets_url_path
-from lib.cytoscape_decorator.Stylesheet import Stylesheet
+from lib.cytoscape_decorator.BaseStylesheet import BaseStylesheet
 from controls_sidebar_decorator.ControlsSidebar import ControlsSidebar
 from controls_sidebar_decorator.factory_sidebar_decorator import factory_sidebar_decorator
 from controls_sidebar_decorator.factory_sidebar_decorator import bind_controls_sidebar_callbacks
@@ -207,7 +206,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
                         'height': '95vh',
                         'width': 'calc(100% - 300px)'
                     },
-                    stylesheet = Stylesheet().cy_stylesheet
+                    stylesheet = BaseStylesheet().cy_stylesheet
         )
         return html.Div(style={'display': 'flex'}, children=[cytoscape])
 
@@ -253,7 +252,8 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
 
                 html.Div(id='network-ready', style={'display': 'none'}),
                 html.Div(id='signal-data', style={'display': 'none'}),
-                html.Div(id='ready', style={'display': 'none'})
+                html.Div(id='ready', style={'display': 'none'}),
+                html.Div(id='bind_sidebar', style={'display': 'none'})
         ]);
 
 def bind_callbacks(app):
@@ -261,8 +261,23 @@ def bind_callbacks(app):
     # Right sidebar callbacks
     #bind_control_callbacks(app)
     #########
-    bind_controls_sidebar_callbacks('co_editing_network', app)
+    #bind_controls_sidebar_callbacks('co_editing_network', app)
     #########
+
+    @app.callback(
+        Output('bind_sidebar', 'value'),
+        [Input('initial-selection', 'children')],
+        [State('bind_sidebar', 'value')]
+    )
+    def bind_sidebar_callbacks(selection_json, bind_sidebar):
+        selection = json.loads(selection_json)
+        network_code = selection['network']
+        if bind_sidebar is network_code:
+            return network_code
+
+        bind_controls_sidebar_callbacks(network_code, app)
+        return network_code
+
 
     @app.callback(
         Output('signal-data', 'value'),
