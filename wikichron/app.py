@@ -3,12 +3,13 @@
 """
    app.py
 
-   Descp:
+   Descp: Code related to the Dash app.
 
    Created on: 23-oct-2017
 
    Copyright 2017-2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
+
 # built-in imports
 import flask
 import glob
