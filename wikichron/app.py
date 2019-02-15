@@ -139,8 +139,8 @@ selection_params = {'wikis', 'network'}
 #--------- AUX FUNCS ----------------------------------------------------------#
 def get_network_name_from_code(network_code):
     for nw in available_networks:
-        if nw.code == network_code:
-            return nw.name
+        if nw.CODE == network_code:
+            return nw.NAME
     return None
 
 

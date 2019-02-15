@@ -20,13 +20,13 @@ class CoEditingStylesheet(BaseStylesheet, metaclass=abc.ABCMeta):
 
 
 	def color_nodes(self, network):
-		if network['oldest_user'] == network['newest_user']:
+		if network['first_entry'] == network['last_entry']:
 			super().color_nodes(network)
 			return
 
 		self.cy_stylesheet[0]['style']['background-color'] = \
-			f"mapData(first_edit, {network['oldest_user']}, \
-			{network['newest_user']}, #64B5F6, #0D47A1)"
+			f"mapData(first_edit, {network['first_entry']}, \
+			{network['last_entry']}, #64B5F6, #0D47A1)"
 
 
 	def size_nodes(self, network):
