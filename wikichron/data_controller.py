@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-   data_handler.py
+   data_controller.py
 
    Descp: A file with functions which intermediate between the data and the
 WikiChron code.
