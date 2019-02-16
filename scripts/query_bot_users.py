@@ -17,16 +17,38 @@ import sys
 import json
 import re
 
-wikia_api_endpoint = '/api.php?action=query&list=groupmembers&gmgroups=bot|bot-global&gmlimit=500&format=json'
-mediawiki_api_endpoint = '/w/api.php?action=query&list=allusers&augroup=bot&aulimit=500&auprop=groups&format=json'
+wikia_api_endpoint = 'api.php?action=query&list=groupmembers&gmgroups=bot|bot-global&gmlimit=500&format=json'
+mediawiki_api_endpoint = 'api.php?action=query&list=allusers&augroup=bot&aulimit=500&auprop=groups&format=json'
 
 def mediawiki_get_bots_ids(base_url):
    """
    Query the mediwiki api enpoint for standard mediawiki wikis
     and returns a list of bot userids
    """
-   url = base_url + mediawiki_api_endpoint
-   print(url)
+   def api_probing(base_url):
+
+      if base_url[-1:] != '/':
+         base_url += ('/')
+
+      url = base_url + 'w/' + mediawiki_api_endpoint
+      if (requests.get(url)):
+         return url
+
+      url = base_url + 'wiki/' + mediawiki_api_endpoint
+      if (requests.get(url)):
+         return url
+
+      url = base_url + mediawiki_api_endpoint
+      if (requests.get(url)):
+         return url
+
+      return None
+
+
+   url = api_probing(base_url)
+   if not url:
+      raise Exception('Not wiki endpoint found in this url: {}'.format(base_url))
+   print('Making request to: {}'.format(url))
    continue_query = True
    bots_ids = []
    while (continue_query):
@@ -45,6 +67,8 @@ def wikia_get_bots_ids(base_url, offset=0):
    """
    Query the mediawiki enpoint for Wikia wikis and returns a list of bot userids
    """
+   if base_url[:-1] != '/':
+      base_url += ('/')
    url = base_url + wikia_api_endpoint + '&gmoffset={}'.format(offset)
    #~ print(url)
    r = requests.get(url)
@@ -73,7 +97,7 @@ def main():
             Syntax: python3 query_bot_users url1 [url2, url3,...]""";
 
    if(len(sys.argv)) >= 2:
-      if sys.argv[0] == 'help':
+      if sys.argv[1] == 'help':
          print(help);
          exit(0)
 

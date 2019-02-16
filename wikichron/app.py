@@ -20,6 +20,7 @@ from warnings import warn
 from urllib.parse import parse_qs, urljoin
 from codecs import decode
 from io import BytesIO
+import zipfile
 
 # Dash framework imports
 import dash
@@ -30,6 +31,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import plotly.graph_objs as go
+import sd_material_ui
 
 # Other external imports:
 from flask import request
@@ -51,6 +53,7 @@ if not 'WIKICHRON_DATA_DIR' in os.environ:
 data_dir = os.environ['WIKICHRON_DATA_DIR']
 
 # global app config
+APP_HOSTNAME = 'http://wikichron.science';
 port = 8880;
 wikichron_base_pathname = '/app/';
 #~ assets_url_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets');
@@ -58,7 +61,7 @@ assets_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets
 
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', # dash stylesheet
-                        #~ 'https://codepen.io/akronix/pen/BJNgRB.css',  # fontawesome css
+                        'https://use.fontawesome.com/releases/v5.0.9/css/all.css',  # fontawesome css
 ]
 
 
@@ -94,7 +97,7 @@ meta_tags = [
 ]
 
 # js files being serve by this server:
-local_available_js = ['side_bar.js', 'piwik.js']
+local_available_js = ['side_bar.js', 'main.share_modal.js', 'piwik.js']
 
 # list of js files to import from the app (either local or remote)
 to_import_js = []
@@ -159,10 +162,19 @@ def set_layout():
 
             #~ generate_tabs_bar(tabs),
             #~ side_bar.generate_side_bar(available_wikis, available_metrics),
-            html.Div(id='side-bar'),
+            html.Div(id='side-bar-root', className='side-bar-cn'),
             html.Div(id='main-root', style={'flex': 'auto'}),
             html.Div(id='sidebar-selection', style={'display': 'none'}),
             html.Div(id='test', style={'display': 'none'})
+        ]
+    );
+
+
+def load_external_dash_libs_in_layout():
+    return html.Div(id='external-dash-libs',
+        style={'display': 'none'},
+        children=[
+            sd_material_ui.Divider()
         ]
     );
 
@@ -216,7 +228,7 @@ def app_bind_callbacks(app):
                 relative_time = len(wikis) > 1
 
                 return main.generate_main_content(wikis, metrics,
-                                                relative_time, query_string)
+                                                relative_time, query_string, APP_HOSTNAME)
 
 
         print('There is not a valid wikis & metrics tuple selection yet for plotting any graph')
@@ -243,9 +255,9 @@ def app_bind_callbacks(app):
         return (json.dumps(selection))
 
 
-    @app.callback(Output('side-bar', 'children'),
+    @app.callback(Output('side-bar-root', 'children'),
         [Input('url', 'pathname')],
-        [State('side-bar', 'children'),
+        [State('side-bar-root', 'children'),
         State('url', 'search')],
     )
     def generate_side_bar_onload(pathname, sidebar, query_string):
@@ -345,11 +357,14 @@ def start_download_data_server():
 
         data = main.load_and_compute_data(wikis, metrics)
 
-        wikis_df = []
+        # output in-memory zip file
+        in_memory_zip = BytesIO()
+        zipfile_ob = zipfile.ZipFile(in_memory_zip, mode='w',
+                                    compression=zipfile.ZIP_DEFLATED)
 
         # For each wiki, create a DataFrame and add a column for the data of
         #   each metric.
-        # Then, merge all the wikis in one DataFrame
+        # Then, generate a csv for that DataFrame and append it to the output zip file
         # Remember this is the structure of data: data[metric][wiki]
         for wiki_idx in range(len(data[0])):
 
@@ -361,21 +376,24 @@ def start_download_data_server():
 
             wiki_df = pd.DataFrame()
             for metric in data:
+                # assign the name of the metric as the name of the column for its data:
                 wiki_df[metric[wiki_idx].name] = metric[wiki_idx]
 
-            wikis_df.append(wiki_df)
+            csv_str = wiki_df.to_csv()
+            # append dataframe csv to zip file with name of the wiki:
+            zipfile_ob.writestr('{}.csv'.format(wikis[wiki_idx]['name']), csv_str)
 
-        # join all wiki DataFrames in one:
-        output_df = pd.concat(wikis_df, join='outer', axis=1)
-
-        output_str = output_df.to_csv()
-
-        output_buffer = BytesIO()
-        output_buffer.write(output_str.encode('utf-8'))
-        output_buffer.seek(0)
-        return flask.send_file(output_buffer, as_attachment=True,
-                    attachment_filename='computed_data.csv',
-                    mimetype='text/csv')
+        # testing zip format and integrity
+        error = zipfile_ob.testzip()
+        if error is None:
+            zipfile_ob.close()
+            in_memory_zip.seek(0) # move ByteIO cursor to the start
+            return flask.send_file(in_memory_zip, as_attachment=True,
+                        attachment_filename='computed_data.zip',
+                        mimetype='application/zip')
+        else:
+            zipfile_ob.close()
+            raise Exeption('There was an error compressing the data in a zip file: {}'.format(error))
 
     return
 
@@ -398,9 +416,6 @@ def create_app():
 
     # uncoment for offline serving of js:
     #~ app.scripts.config.serve_locally = True
-
-    # In case we ever need font awesome icons:
-    #~ app.css.append_css({"external_url": "https://use.fontawesome.com/releases/v5.0.9/css/all.css"})
 
     # skeleton.css: (Already included in dash stylesheet)
     #~ app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
@@ -432,6 +447,7 @@ def set_up_app(app):
     print('Setting up layout...')
     app.layout = html.Div([
         set_layout(),
+        load_external_dash_libs_in_layout()
     ])
     app.layout.children += set_external_imports()
     return
