@@ -39,9 +39,9 @@ def generate_metrics():
     metrics.append(Metric('users_accum', 'Total users', MetricCategory.USERS, stats.users_accum, 'Users who have made at least one edition accumulated at every month.'))
     metrics.append(Metric('users_registered_accum', 'Total registered users', MetricCategory.USERS, stats.users_registered_accum, 'Total registered users at every month. Note that users have to have made at least one edition and they have to be logged with their account when they did that edition.'))
     metrics.append(Metric('users_anonymous_accum', 'Total anonymous users', MetricCategory.USERS, stats.users_anonymous_accum, 'Anonymous users who have made at least one edition accumulated at every month. Anonymous are identified by their ip.'))
-    metrics.append(Metric('users_active_more_than_4', 'Active users with more than 4 editions', MetricCategory.USERS, stats.users_active_more_than_4_editions, 'Active users who have made more than 4 editions in a month.'))
-    metrics.append(Metric('users_active_more_than_24', 'Active users with more than 24 editions', MetricCategory.USERS, stats.users_active_more_than_24_editions, 'Active users who have made more than 24 editions in a month.'))
-    metrics.append(Metric('users_active_more_than_99', 'Active users with more than 99 editions', MetricCategory.USERS, stats.users_active_more_than_99_editions, 'Active users who have made more than 99 editions in a month.'))
+    metrics.append(Metric('users_active_more_than_4', 'users w/more than 4 edits', MetricCategory.USERS, stats.users_active_more_than_4_editions, 'Active users who have made more than 4 editions in a month.'))
+    metrics.append(Metric('users_active_more_than_24', 'users w/more than 24 edits', MetricCategory.USERS, stats.users_active_more_than_24_editions, 'Active users who have made more than 24 editions in a month.'))
+    metrics.append(Metric('users_active_more_than_99', 'users w/more than 99 edits', MetricCategory.USERS, stats.users_active_more_than_99_editions, 'Active users who have made more than 99 editions in a month.'))
 
     # RATIO
     metrics.append(Metric('edits_per_users_monthly', 'Edits per users', MetricCategory.RATIOS, stats.edits_per_users_monthly, 'Number of edits for every month per number of active users that month'))
