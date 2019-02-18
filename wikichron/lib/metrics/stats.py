@@ -115,26 +115,19 @@ def edits_user_talk(data, index):
 
 # Users
 
+##### Helper functions #####
 
-def users_active(data, index):
-    monthly_data = data.groupby(pd.Grouper(key='timestamp', freq='MS'))
-    series = monthly_data.apply(lambda x: len(x.contributor_id.unique()))
+
+def users_active_more_than_x_editions(data, index, x):
+    monthly_edits = data.groupby([pd.Grouper(key='timestamp', freq='MS'), 'contributor_name']).size()
+    monthly_edits_filtered = monthly_edits[monthly_edits > x].to_frame(name='pages_edited').reset_index()
+    series = monthly_edits_filtered.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
     if index is not None:
         series = series.reindex(index, fill_value=0)
     return series
 
 
-#this metric is the same as the users_active, but getting rid of anonymous users	
-def users_registered_active(data, index):
-    # get rid of anonymous users and procceed as it was done in the previous metric.
-    user_registered = data[data['contributor_name'] != 'Anonymous']
-    return users_active(user_registered, index)
-
-
-# this metric is the complementary to users_registered_active: now, we get rid of registered users and focus on anonymous users.
-def users_anonymous_active(data, index):
-    user_anonymous = data[data['contributor_name'] == 'Anonymous']
-    return users_active(user_anonymous, index)
+##### callable users metrics #####
 
 
 def users_new(data, index):
@@ -173,7 +166,40 @@ def users_new_registered(data, index):
 
 def users_registered_accum(data, index):
     return (users_new_registered(data, index).cumsum())
+  
+ 
+def users_active(data, index):
+    return users_active_more_than_x_editions(data, index, 1)
 
+  
+# this metric is the same as the users_active, but getting rid of anonymous users	
+def users_registered_active(data, index):
+    # get rid of anonymous users and procceed as it was done in the previous metric.
+    user_registered = data[data['contributor_name'] != 'Anonymous']
+    return users_active(user_registered, index)
+
+
+# this metric is the complementary to users_registered_active: now, we get rid of registered users and focus on anonymous users.
+def users_anonymous_active(data, index):
+    user_anonymous = data[data['contributor_name'] == 'Anonymous']
+    return users_active(user_anonymous, index)
+
+  
+# this metric gets, per month, those users who have contributed to the wiki in more than 4 editions.
+def users_active_more_than_4_editions(data, index):
+    return users_active_more_than_x_editions(data, index, 4)
+
+  
+# this metric gets, per month, those users who have contributed to the wiki in more than 24 editions.
+def users_active_more_than_24_editions(data, index):
+    return users_active_more_than_x_editions(data, index, 24)
+
+  
+# this metric gets, per month, those users who have contributed to the wiki in more than 99 editions.
+def users_active_more_than_99_editions(data, index):
+    return users_active_more_than_x_editions(data, index, 99)
+
+  
 ########################################################################
 
 # RATIOS
