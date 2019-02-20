@@ -27,12 +27,6 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
         super().__init__(sidebar)
 
 
-    def add_stats_section(self):
-        super().add_stats_section()
-        stats = CoEditingControlsSidebarDecorator.default_stats()
-        self.add_stats_content(stats)
-
-
     @staticmethod
     def default_stats(st1 = 'Nodes: ...', st2 = 'First User: ...', 
             st3 = 'Edges: ...', st4 = 'Last User: ...', st5 = 'Communities: ...',
@@ -53,10 +47,9 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
                 ])]
 
 
-    def add_metrics_section(self):
-        super().add_metrics_section()
-
-        metrics = [
+    @staticmethod
+    def default_metrics():
+        return [
                 html.Div(children=[
                     html.Span('PageRank', className='left-element'),
                     html.Button('Run', id='calculate_page_rank',
@@ -73,13 +66,9 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
                 className='metrics-section')
             ]
 
-        self.add_metrics_content(metrics)
-
-
-    def add_options_section(self):
-        super().add_options_section()
-
-        options = [
+    @staticmethod
+    def default_options():
+        return [
                     html.Button('Show Labels', id='show_labels',
                         className='control-button action-button'),
                     html.Button('Show PageRank', id='show_page_rank',
@@ -88,7 +77,20 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
                         className='control-button action-button'),
                 ]
 
-        self.add_options_content(options)
+
+    def add_stats_section(self):
+        stats = self.default_stats()
+        super().add_stats_section(stats)
+
+
+    def add_metrics_section(self):
+        metrics = self.default_metrics()
+        super().add_metrics_section(metrics)
+
+
+    def add_options_section(self):
+        options = self.default_options()
+        super().add_options_section(options)
 
 
     def add_all_sections(self):

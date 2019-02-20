@@ -19,29 +19,19 @@ class BaseControlsSidebarDecorator(ControlsSidebar, metaclass=abc.ABCMeta):
         self.sidebar = sidebar
 
 
-    def add_stats_section(self):
-        self.sidebar.add_stats_section()
+    def add_stats_section(self, stats_content):
+        self.sidebar.add_stats_section(stats_content)
 
 
-    def add_stats_content(self, html_stats):
-        self.sidebar.add_stats_content(html_stats)
+    def add_metrics_section(self, metrics_content):
+        self.sidebar.add_metrics_section(metrics_content)
 
 
-    def add_metrics_section(self):
-        self.sidebar.add_metrics_section()
+    def add_options_section(self, options_content):
+        self.sidebar.add_options_section(options_content)
 
 
-    def add_metrics_content(self, html_metrics):
-        self.sidebar.add_metrics_content(html_metrics)
-
-
-    def add_options_section(self):
-        self.sidebar.add_options_section()
-
-
-    def add_options_content(self, html_options):
-        self.sidebar.add_options_content(html_options)
-
-
-    def add_all_sections(self):
-        self.sidebar.add_all_sections()
+    def add_all_sections(self, stats_content, metrics_content, 
+        options_content):
+        self.sidebar.add_all_sections(stats_content, metrics_content, 
+            options_content)

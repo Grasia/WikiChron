@@ -253,21 +253,20 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
                 html.Div(id='network-ready', style={'display': 'none'}),
                 html.Div(id='signal-data', style={'display': 'none'}),
                 html.Div(id='ready', style={'display': 'none'}),
-                html.Div(id='bind_sidebar', style={'display': 'none'})
+                html.Div(id='bind_ctl_sidebar', style={'display': 'none'})
         ]);
 
 def bind_callbacks(app):
 
     # Right sidebar callbacks
-    #bind_control_callbacks(app)
     #########
     bind_controls_sidebar_callbacks('co_editing_network', app)
     #########
 
     # @app.callback(
-    #     Output('bind_sidebar', 'value'),
+    #     Output('bind_ctl_sidebar', 'value'),
     #     [Input('initial-selection', 'children')],
-    #     [State('bind_sidebar', 'value')]
+    #     [State('bind_ctl_sidebar', 'value')]
     # )
     # def bind_sidebar_callbacks(selection_json, bind_sidebar):
     #     selection = json.loads(selection_json)

@@ -39,44 +39,35 @@ class ControlsSidebar(metaclass=abc.ABCMeta):
         );
 
 
-    def add_stats_section(self):
+    def add_stats_section(self, html_stats):
         self.stats_section = html.Div([
                     html.H5('Network Stats', className='control-title'),
                     html.Div(id='stats', className='stats-container', children=[])
                     ], 
                     className='control-container')
-
-
-    def add_stats_content(self, html_stats):
         self.stats_section.children[1].children = html_stats
 
 
-    def add_metrics_section(self):
+    def add_metrics_section(self, html_metrics):
         self.metrics_section = html.Div([
                     html.H5('Network Metrics', className='control-title'),
                     html.Div(children=[])
                 ], className='control-container')
+        self.metrics_section.children[1].children = html_metrics  
 
 
-    def add_metrics_content(self, html_metrics):
-        self.metrics_section.children[1].children = html_metrics
-
-
-    def add_options_section(self):
+    def add_options_section(self, html_options):
         self.options_section = html.Div([
                     html.H5('Network Options', className='control-title'),
                     html.Div(children=[])
                 ], className='control-container')
-
-
-    def add_options_content(self, html_options):
         self.options_section.children[1].children = html_options
+        
 
-
-    def add_all_sections(self):
-        self.add_stats_section()
-        self.add_metrics_section()
-        self.add_options_section()
+    def add_all_sections(self, html_stats, html_metrics, html_options):
+        self.add_stats_section(html_stats)
+        self.add_metrics_section(html_metrics)
+        self.add_options_section(html_options)
 
 
     def build(self):
