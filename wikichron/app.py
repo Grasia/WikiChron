@@ -3,12 +3,13 @@
 """
    app.py
 
-   Descp:
+   Descp: Code related to the Dash app.
 
    Created on: 23-oct-2017
 
    Copyright 2017-2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
+
 # built-in imports
 import flask
 import glob
@@ -48,9 +49,7 @@ debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
 # get csv data location (data/ by default)
 global data_dir;
-if not 'WIKICHRON_DATA_DIR' in os.environ:
-    os.environ['WIKICHRON_DATA_DIR'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../data')
-data_dir = os.environ['WIKICHRON_DATA_DIR']
+data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 
 # global app config
 APP_HOSTNAME = 'http://wikichron.science';
@@ -140,8 +139,8 @@ selection_params = {'wikis', 'network'}
 #--------- AUX FUNCS ----------------------------------------------------------#
 def get_network_name_from_code(network_code):
     for nw in available_networks:
-        if nw.code == network_code:
-            return nw.name
+        if nw.CODE == network_code:
+            return nw.NAME
     return None
 
 
@@ -428,7 +427,6 @@ def create_app():
 
     # skeleton.css: (Already included in dash stylesheet)
     #~ app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
-
 
     cache.set_up_cache(app, debug)
 

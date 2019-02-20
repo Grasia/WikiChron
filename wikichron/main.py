@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-   app.py
+   main.py
 
    Descp: This script generates the main content of the site, this content includes
 serveral interpretations of the network, which is generated from the wikis
@@ -14,6 +14,7 @@ data.
    Copyright 2017-2019 Youssef El Faqir El Rhazoui
 """
 
+# Built-in imports
 import os
 import time
 import json
@@ -28,52 +29,17 @@ import sd_material_ui
 
 # Local imports:
 import lib.interface as lib
-from cache import cache
-from controls_sidebar import generate_controls_sidebar, bind_control_callbacks
+import data_controller
 from app import assets_url_path
-from lib.cytoscape_decorator.Stylesheet import Stylesheet
-from lib.cytoscape_decorator.factory_stylesheet_decorator import factory_stylesheet_cytoscape_decorator
+from lib.cytoscape_decorator.BaseStylesheet import BaseStylesheet
+from controls_sidebar_decorator.ControlsSidebar import ControlsSidebar
+from controls_sidebar_decorator.factory_sidebar_decorator import factory_sidebar_decorator
+from controls_sidebar_decorator.factory_sidebar_decorator import bind_controls_sidebar_callbacks
 
 TIME_DIV = 60 * 60 * 24 * 30
 
 global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
-
-global precooked_net_dir;
-precooked_net_dir = os.getenv('PRECOOKED_NETWORK_DIR', 'precooked_data/networks')
-
-
-@cache.memoize(timeout=3600)
-def load_data(wiki):
-    df = lib.get_dataframe_from_csv(wiki['data'])
-    lib.prepare_data(df)
-    df = lib.clean_up_bot_activity(df, wiki)
-    return df
-
-@cache.memoize()
-def load_and_compute_data(wiki, network_code):
-    """
-    Parameters
-        - wiki: Related info about the wiki selected.
-        - network_type: network selected. It is an instance of BaseNetwork.
-    Return: Data representing the network.
-    """
-
-    # load data from csvs:
-    time_start_loading_csvs = time.perf_counter()
-    df = load_data(wiki)
-    time_end_loading_csvs = time.perf_counter() - time_start_loading_csvs
-    print(' * [Timing] Loading csvs : {} seconds'.format(time_end_loading_csvs) )
-
-    # generate network:
-    network_type = lib.factory_network(network_code)
-    print(' * [Info] Starting calculations....')
-    time_start_calculations = time.perf_counter()
-    network_type.generate_from_pandas(data=df)
-    time_end_calculations = time.perf_counter() - time_start_calculations
-    print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
-    return network_type
-
 
 def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
     """
@@ -240,7 +206,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
                         'height': '95vh',
                         'width': 'calc(100% - 300px)'
                     },
-                    stylesheet = Stylesheet().cy_stylesheet
+                    stylesheet = BaseStylesheet().cy_stylesheet
         )
         return html.Div(style={'display': 'flex'}, children=[cytoscape])
 
@@ -253,13 +219,18 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
     selected_wiki_name = wikis_arg[0]['name']
     selected_network_name = network_type_arg['name']
 
+    controls_sidebar = ControlsSidebar()
+    sidebar_decorator = factory_sidebar_decorator(network_type_code, controls_sidebar)
+    sidebar_decorator.add_all_sections()
+
     return html.Div(
             id='main',
             className='control-text',
             style={'width': '100%'},
             children=[
 
-                generate_controls_sidebar(),
+                #generate_controls_sidebar(),
+                controls_sidebar.build(),
 
                 main_header(),
 
@@ -281,13 +252,31 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
 
                 html.Div(id='network-ready', style={'display': 'none'}),
                 html.Div(id='signal-data', style={'display': 'none'}),
-                html.Div(id='ready', style={'display': 'none'})
+                html.Div(id='ready', style={'display': 'none'}),
+                html.Div(id='bind_ctl_sidebar', style={'display': 'none'})
         ]);
 
 def bind_callbacks(app):
 
     # Right sidebar callbacks
-    bind_control_callbacks(app)
+    #########
+    bind_controls_sidebar_callbacks('co_editing_network', app)
+    #########
+
+    # @app.callback(
+    #     Output('bind_ctl_sidebar', 'value'),
+    #     [Input('initial-selection', 'children')],
+    #     [State('bind_ctl_sidebar', 'value')]
+    # )
+    # def bind_sidebar_callbacks(selection_json, bind_sidebar):
+    #     selection = json.loads(selection_json)
+    #     network_code = selection['network']
+    #     if bind_sidebar is network_code:
+    #         return network_code
+
+    #     bind_controls_sidebar_callbacks(network_code, app)
+    #     return network_code
+
 
     @app.callback(
         Output('signal-data', 'value'),
@@ -301,7 +290,7 @@ def bind_callbacks(app):
         print('--> Retrieving and computing data')
         print( '\t for the following wiki: {}'.format( wiki['url'] ))
         print( '\trepresented as this network: {}'.format( network_code ))
-        network = load_and_compute_data(wiki, network_code)
+        network = data_controller.get_network(wiki, network_code)
         print('<-- Done retrieving and computing data!')
         return True
 
@@ -322,89 +311,12 @@ def bind_callbacks(app):
 
 
     @app.callback(
-        Output('network-ready', 'value'),
-        [Input('ready', 'value'),
-        Input('calculate_page_rank', 'n_clicks'),
-        Input('calculate_communities', 'n_clicks')],
-        [State('initial-selection', 'children'),
-        State('date-slider-container', 'children')]
-    )
-    def update_network(ready, pr_clicks, com_clicks, selection_json, slider):
-        if not ready:
-            return None
-
-        # get network instance from selection
-        selection = json.loads(selection_json)
-        wiki = selection['wikis'][0]
-        network_code = selection['network']
-        network = load_and_compute_data(wiki, network_code)
-
-        if not slider['props']['value'] == slider['props']['max']:
-            print(' * [Info] Starting time filter....')
-            time_start_calculations = time.perf_counter()
-
-            origin = int(datetime.strptime(str(network.oldest_user),
-            "%Y-%m-%d %H:%M:%S").strftime('%s'))
-            network = network.filter_by_time(origin + slider['props']['value']
-             * TIME_DIV)
-
-            time_end_calculations = time.perf_counter() - time_start_calculations
-            print(' * [Timing] Filter : {} seconds'.format(time_end_calculations))
-
-        else:
-            print(' * [Info] Printing the entire network....')
-
-        if pr_clicks and pr_clicks % 2 == 1:
-            network.calculate_page_rank()
-
-        if com_clicks and com_clicks % 2 == 1:
-            network.calculate_communities()
-
-        return network.to_cytoscape_dict()
-
-    @app.callback(
         Output('cytoscape', 'elements'),
         [Input('network-ready', 'value')]
     )
     def add_network_elements(cy_network):
         return cy_network['network'] if cy_network else []
 
-    @app.callback(
-        Output('cytoscape', 'stylesheet'),
-        [Input('cytoscape', 'elements'),
-        Input('show_labels', 'n_clicks'),
-        Input('show_page_rank', 'n_clicks'),
-        Input('color_cluster', 'n_clicks')],
-        [State('network-ready', 'value'),
-        State('cytoscape', 'stylesheet'),
-        State('initial-selection', 'children')]
-    )
-    def update_stylesheet(_, lb_clicks, pr_clicks, com_clicks, cy_network,
-        stylesheet, selection_json):
-
-        if not cy_network:
-            return Stylesheet().cy_stylesheet
-
-        selection = json.loads(selection_json)
-        network_code = selection['network']
-        stylesheet = Stylesheet(stylesheet)
-        decorator = factory_stylesheet_cytoscape_decorator(network_code, stylesheet)
-        decorator.all_transformations(cy_network)
-
-        if lb_clicks and lb_clicks % 2 == 1:
-            decorator.set_label('data(label)')
-        elif pr_clicks and pr_clicks % 2 == 1:
-            decorator.set_label('data(page_rank)')
-        else:
-            decorator.set_label('')
-
-        if com_clicks and not cy_network["n_communities"] == '...' \
-        and com_clicks % 2 == 1:
-            decorator.color_nodes_by_cluster()
-        else:
-            decorator.color_nodes(cy_network)
-
-        return decorator.stylesheet.cy_stylesheet
 
     @app.callback(
         Output('share-dialog', 'open'),
@@ -435,11 +347,11 @@ def bind_callbacks(app):
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0]
         network_code = selection['network']
-        network = load_and_compute_data(wiki, network_code)
+        network = data_controller.get_network(wiki, network_code)
 
-        origin = int(datetime.strptime(str(network.oldest_user),
+        origin = int(datetime.strptime(str(network.first_entry),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))
-        end = int(datetime.strptime(str(network.newest_user),
+        end = int(datetime.strptime(str(network.last_entry),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))
 
         time_gap = end - origin

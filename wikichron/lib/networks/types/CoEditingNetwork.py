@@ -30,10 +30,6 @@ class CoEditingNetwork(BaseNetwork):
             * target: contributor_id
             * weight: the number of cooperation in different pages on the wiki,
                       differents editions on the same page computes only once.
-            * s_pg: a dict with the source node page_id as key and timestamp
-                    edits in that page as value
-            * t_pg: a dict with the target node page_id as key and timestamp
-                    edits in that page as value
 
     """
 
@@ -43,53 +39,32 @@ class CoEditingNetwork(BaseNetwork):
     NAME = 'Co-Editing'
     CODE = 'co_editing_network'
 
-    def __init__(self, is_directed = False, name = 'Co-Editing',
-            code = 'co_editing_network', page_rank = [], num_communities = -1,
-            graph = {}, oldest_user = None, newest_user = None):
+    def __init__(self, is_directed = False, page_rank = [], num_communities = -1,
+            graph = {}, first_entry = None, last_entry = None):
+
         super().__init__(is_directed = is_directed, page_rank = page_rank,
-            num_communities = num_communities, graph = graph)
-        self.oldest_user = oldest_user
-        self.newest_user = newest_user
-        self.name = name
-        self.code = code
+            num_communities = num_communities, first_entry = first_entry,
+            last_entry = last_entry, graph = graph)
 
-    #~ def __getnewargs_ex__(self):
-        #~ print('Calling __getnewargs_ex__')
-        #~ graph = {
-            #~ 'n': self.n,
-            #~ 'edges': self.edges,
-            #~ 'directed': self.directed,
-            #~ 'graph_attrs': self.graph_attrs,
-            #~ 'vertex_attrs': self.vertex_attrs,
-            #~ 'edge_attrs': self.edge_attrs
-        #~ }
-        #~ args = (self.name, self.code, self.page_rank,
-                #~ self.num_communities, graph)
-        #~ kwargs = {
-            #~ 'name': self.name,
-            #~ 'code': self.code,
-            #~ 'page_rank': self.page_rank,
-            #~ 'num_communities': self.num_communities,
-            #~ 'graph': graph
-        #~ }
-        #~ return (args, kwargs)
 
-    def generate_from_pandas(self, data):
+    def generate_from_pandas(self, df, t_to_filter = ''):
         user_per_page = {}
         mapper_v = {}
         mapper_e = {}
         count = 0
 
-        data = self.remove_non_article_data(data)
+        if t_to_filter:
+            df = df[df['timestamp'] < t_to_filter]
+        df = self.remove_non_article_data(df)
 
-        for index, r in data.iterrows():
+        for index, r in df.iterrows():
             if r['contributor_name'] == 'Anonymous':
                 continue
 
-            if not self.oldest_user:
-                self.oldest_user = r['timestamp']
+            if not self.first_entry:
+                self.first_entry = r['timestamp']
 
-            self.newest_user = r['timestamp']
+            self.last_entry = r['timestamp']
 
             # Nodes
             if not r['contributor_id'] in mapper_v:
@@ -125,15 +100,11 @@ class CoEditingNetwork(BaseNetwork):
                         self.graph.es[mapper_e[f'{k_i}{k_j}']]['weight'] += 1
                         self.graph.es[mapper_e[f'{k_i}{k_j}']]['w_time'] += \
                             self.calculate_w_time(v_i[-1], v_j[-1])
-                        self.graph.es[mapper_e[f'{k_i}{k_j}']]['s_pg'][k] = v_i
-                        self.graph.es[mapper_e[f'{k_i}{k_j}']]['t_pg'][k] = v_j
                         continue
                     if f'{k_j}{k_i}' in mapper_e:
                         self.graph.es[mapper_e[f'{k_j}{k_i}']]['weight'] += 1
                         self.graph.es[mapper_e[f'{k_j}{k_i}']]['w_time'] += \
                             self.calculate_w_time(v_j[-1], v_i[-1])
-                        self.graph.es[mapper_e[f'{k_j}{k_i}']]['s_pg'][k] = v_j
-                        self.graph.es[mapper_e[f'{k_j}{k_i}']]['t_pg'][k] = v_i
                         continue
 
                     self.graph.add_edge(mapper_v[k_i], mapper_v[k_j])
@@ -145,8 +116,6 @@ class CoEditingNetwork(BaseNetwork):
                     self.graph.es[mapper_e[f'{k_i}{k_j}']]['id'] = f'{k_i}{k_j}'
                     self.graph.es[mapper_e[f'{k_i}{k_j}']]['source'] = k_i
                     self.graph.es[mapper_e[f'{k_i}{k_j}']]['target'] = k_j
-                    self.graph.es[mapper_e[f'{k_i}{k_j}']]['s_pg'] = {k: v_i}
-                    self.graph.es[mapper_e[f'{k_i}{k_j}']]['t_pg'] = {k: v_j}
 
                 aux[k_i] = v_i
 
@@ -203,9 +172,9 @@ class CoEditingNetwork(BaseNetwork):
                 }
             })
 
-        di_net['oldest_user'] = int(datetime.strptime(str(self.oldest_user),
+        di_net['first_entry'] = int(datetime.strptime(str(self.first_entry),
                             "%Y-%m-%d %H:%M:%S").strftime('%s'))
-        di_net['newest_user'] = int(datetime.strptime(str(self.newest_user),
+        di_net['last_entry'] = int(datetime.strptime(str(self.last_entry),
                             "%Y-%m-%d %H:%M:%S").strftime('%s'))
         di_net['edge_max_weight'] = max_v
         di_net['edge_min_weight'] = min_v
@@ -216,82 +185,6 @@ class CoEditingNetwork(BaseNetwork):
         if self.num_communities is not -1 else '...'
         di_net['network'] = network
         return di_net
-
-
-    def filter_by_time(self, t_filter):
-        t = t_filter
-        t1 = int(datetime.strptime(str(self.oldest_user), "%Y-%m-%d %H:%M:%S")
-                                .strftime('%s'))
-        if t < t1:
-            raise Exception('{} is older than the wiki creation {}'
-                                .format(t_filter, self.oldest_user))
-
-        f_net = CoEditingNetwork(oldest_user = self.oldest_user,
-                                newest_user = self.oldest_user)
-
-        #let's filter the nodes
-        count = 0
-        mapper_v = {}
-        for v in self.graph.vs:
-            t1 = int(datetime.strptime(str(v['first_edit']), "%Y-%m-%d %H:%M:%S")
-                                .strftime('%s'))
-            if t < t1:
-                continue
-
-            if v['first_edit'] > f_net.newest_user:
-                f_net.newest_user = v['first_edit']
-            f_net.graph.add_vertex(count)
-            f_net.graph.vs[count]['contributor_id'] = v['contributor_id']
-            f_net.graph.vs[count]['label'] = v['label']
-            f_net.graph.vs[count]['num_edits'] = v['num_edits']
-            f_net.graph.vs[count]['first_edit'] = v['first_edit']
-            f_net.graph.vs[count]['last_edit'] = v['last_edit']
-            mapper_v[v['contributor_id']] = count
-            count += 1
-
-        # now the edges
-        count = 0
-        for e in self.graph.es:
-            s_p = {}
-            t_p = {}
-            # source filter
-            for k, p in e['s_pg'].items():
-                s_p[k] = []
-                for ts in p:
-                    t1 = int(datetime.strptime(str(ts), "%Y-%m-%d %H:%M:%S")
-                                .strftime('%s'))
-                    if t > t1:
-                        s_p[k].append(ts)
-
-            # target filter
-            for k, p in e['t_pg'].items():
-                t_p[k] = []
-                for ts in p:
-                    t1 = int(datetime.strptime(str(ts), "%Y-%m-%d %H:%M:%S")
-                                .strftime('%s'))
-                    if t > t1:
-                        t_p[k].append(ts)
-
-            # weight filter
-            weight = 0
-            w_time = 0
-            for k, _ in e['s_pg'].items():
-                if len(s_p[k]) > 0 and len(t_p[k]) > 0:
-                    weight += 1
-                    w_time += self.calculate_w_time(s_p[k][-1], t_p[k][-1])
-
-
-            if weight > 0:
-                f_net.graph.add_edge(mapper_v[e['source']], mapper_v[e['target']])
-                f_net.graph.es[count]['weight'] = weight
-                f_net.graph.es[count]['w_time'] = w_time / weight
-                f_net.graph.es[count]['id'] = e['id']
-                f_net.graph.es[count]['source'] = e['source']
-                f_net.graph.es[count]['target'] = e['target']
-                f_net.graph.es[count]['s_pg'] = s_p
-                f_net.graph.es[count]['t_pg'] = t_p
-                count += 1
-        return f_net
 
 
     def calculate_w_time(self, tsp1, tsp2):
@@ -318,25 +211,6 @@ class CoEditingNetwork(BaseNetwork):
 
         return 1 + numpy.interp(
             self.TIME_DIV / t_gap, [1, self.TIME_BOUND], [0, 1])
-
-
-    def copy_and_write_gml(self, file):
-        o_net = CoEditingNetwork()
-        for v in self.graph.vs:
-            o_net.graph.add_vertex(v.index)
-            o_net.graph.vs[v.index]['contributor_id'] = v['contributor_id']
-            o_net.graph.vs[v.index]['label'] = v['label']
-            o_net.graph.vs[v.index]['num_edits'] = v['num_edits']
-            o_net.graph.vs[v.index]['first_edit'] = v['first_edit']
-            o_net.graph.vs[v.index]['last_edit'] = v['last_edit']
-        for e in self.graph.es:
-            o_net.graph.add_edge(e.source, e.target)
-            o_net.graph.es[e.index]['source'] = e['source']
-            o_net.graph.es[e.index]['target'] = e['target']
-            o_net.graph.es[e.index]['weight'] = e['weight']
-            o_net.graph.es[e.index]['w_time'] = e['w_time']
-
-        o_net.graph.write(f=file, format='gml')
 
 
     def remove_non_article_data(self, df):
