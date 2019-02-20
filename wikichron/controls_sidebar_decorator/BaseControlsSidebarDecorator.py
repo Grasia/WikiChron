@@ -31,11 +31,11 @@ class BaseControlsSidebarDecorator(ControlsSidebar, metaclass=abc.ABCMeta):
         self.sidebar.add_options_section(options_content)
 
 
-    def add_all_sections(self, stats_content, metrics_content, 
+    def add_all_sections(self, stats_content, metrics_content,
         options_content):
-        self.sidebar.add_all_sections(stats_content, metrics_content, 
+        self.sidebar.add_all_sections(stats_content, metrics_content,
             options_content)
 
     @abc.abstractclassmethod
     def bind_callbacks(cls, app):
-        pass
+        raise NotImplementedError

@@ -28,7 +28,7 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
 
     @staticmethod
-    def default_stats(st1 = 'Nodes: ...', st2 = 'First User: ...', 
+    def default_stats(st1 = 'Nodes: ...', st2 = 'First User: ...',
             st3 = 'Edges: ...', st4 = 'Last User: ...', st5 = 'Communities: ...',
             st6 = 'Max Hub Degree: ...'):
 
@@ -114,9 +114,9 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             date2 = datetime.fromtimestamp(cy_network["last_entry"]).strftime("%Y-%m-%d")
 
             return CoEditingControlsSidebarDecorator.default_stats(
-                st1 = f'Nodes: {cy_network["num_nodes"]}', 
+                st1 = f'Nodes: {cy_network["num_nodes"]}',
                 st2 = f'First User: {date1}',
-                st3 = f'Edges: {cy_network["num_edges"]}', 
+                st3 = f'Edges: {cy_network["num_edges"]}',
                 st4 = f'Last User: {date2}',
                 st5 = f'Communities: {cy_network["n_communities"]}',
                 st6 = f'Max Hub Degree: {cy_network["max_degree"]}'
