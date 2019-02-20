@@ -99,181 +99,182 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
         self.add_options_section()
 
 
-def bind_callbacks(app):
+    @classmethod
+    def bind_callbacks(cls, app):
 
-    @app.callback(
-        Output('stats', 'children'),
-        [Input('network-ready', 'value')]
-    )
-    def update_stats(cy_network):
-        if not cy_network:
-            return CoEditingControlsSidebarDecorator.default_stats()
+        @app.callback(
+            Output('stats', 'children'),
+            [Input('network-ready', 'value')]
+        )
+        def update_stats(cy_network):
+            if not cy_network:
+                return CoEditingControlsSidebarDecorator.default_stats()
 
-        date1 = datetime.fromtimestamp(cy_network["first_entry"]).strftime("%Y-%m-%d")
-        date2 = datetime.fromtimestamp(cy_network["last_entry"]).strftime("%Y-%m-%d")
+            date1 = datetime.fromtimestamp(cy_network["first_entry"]).strftime("%Y-%m-%d")
+            date2 = datetime.fromtimestamp(cy_network["last_entry"]).strftime("%Y-%m-%d")
 
-        return CoEditingControlsSidebarDecorator.default_stats(
-            st1 = f'Nodes: {cy_network["num_nodes"]}', 
-            st2 = f'First User: {date1}',
-            st3 = f'Edges: {cy_network["num_edges"]}', 
-            st4 = f'Last User: {date2}',
-            st5 = f'Communities: {cy_network["n_communities"]}',
-            st6 = f'Max Hub Degree: {cy_network["max_degree"]}'
-            )
-
-
-    @app.callback(
-        Output('show_labels', 'className'),
-        [Input('show_labels', 'n_clicks')]
-    )
-    def switch_show_labels(clicks):
-        if not clicks or clicks % 2 == 0:
-            return 'control-button action-button'
-        return 'control-button action-button-pressed'
+            return CoEditingControlsSidebarDecorator.default_stats(
+                st1 = f'Nodes: {cy_network["num_nodes"]}', 
+                st2 = f'First User: {date1}',
+                st3 = f'Edges: {cy_network["num_edges"]}', 
+                st4 = f'Last User: {date2}',
+                st5 = f'Communities: {cy_network["n_communities"]}',
+                st6 = f'Max Hub Degree: {cy_network["max_degree"]}'
+                )
 
 
-    @app.callback(
-        Output('show_page_rank', 'className'),
-        [Input('show_page_rank', 'n_clicks')]
-    )
-    def switch_show_page_rank(clicks):
-        if not clicks or clicks % 2 == 0:
-            return 'control-button action-button'
-        return 'control-button action-button-pressed'
+        @app.callback(
+            Output('show_labels', 'className'),
+            [Input('show_labels', 'n_clicks')]
+        )
+        def switch_show_labels(clicks):
+            if not clicks or clicks % 2 == 0:
+                return 'control-button action-button'
+            return 'control-button action-button-pressed'
 
 
-    @app.callback(
-        Output('color_cluster', 'className'),
-        [Input('color_cluster', 'n_clicks')]
-    )
-    def switch_color_by_cluster(clicks):
-        if not clicks or clicks % 2 == 0:
-            return 'control-button action-button'
-        return 'control-button action-button-pressed'
+        @app.callback(
+            Output('show_page_rank', 'className'),
+            [Input('show_page_rank', 'n_clicks')]
+        )
+        def switch_show_page_rank(clicks):
+            if not clicks or clicks % 2 == 0:
+                return 'control-button action-button'
+            return 'control-button action-button-pressed'
 
 
-    @app.callback(
-        Output('calculate_page_rank', 'className'),
-        [Input('calculate_page_rank', 'n_clicks')]
-    )
-    def switch_run_page_rank(clicks):
-        if not clicks:
-            return 'right-element action-button'
-        return 'right-element action-button-pressed'
+        @app.callback(
+            Output('color_cluster', 'className'),
+            [Input('color_cluster', 'n_clicks')]
+        )
+        def switch_color_by_cluster(clicks):
+            if not clicks or clicks % 2 == 0:
+                return 'control-button action-button'
+            return 'control-button action-button-pressed'
 
 
-    @app.callback(
-        Output('calculate_communities', 'className'),
-        [Input('calculate_communities', 'n_clicks')]
-    )
-    def switch_run_communities(clicks):
-        if not clicks:
-            return 'right-element action-button'
-        return 'right-element action-button-pressed'
+        @app.callback(
+            Output('calculate_page_rank', 'className'),
+            [Input('calculate_page_rank', 'n_clicks')]
+        )
+        def switch_run_page_rank(clicks):
+            if not clicks:
+                return 'right-element action-button'
+            return 'right-element action-button-pressed'
 
 
-    @app.callback(
-        Output('calculate_page_rank', 'disabled'),
-        [Input('calculate_page_rank', 'n_clicks')]
-    )
-    def disable_button_run_page_rank(clicks):
-        if not clicks:
-            return False
-        return True
+        @app.callback(
+            Output('calculate_communities', 'className'),
+            [Input('calculate_communities', 'n_clicks')]
+        )
+        def switch_run_communities(clicks):
+            if not clicks:
+                return 'right-element action-button'
+            return 'right-element action-button-pressed'
 
 
-    @app.callback(
-        Output('calculate_communities', 'disabled'),
-        [Input('calculate_communities', 'n_clicks')]
-    )
-    def disable_button_run_communities(clicks):
-        if not clicks:
-            return False
-        return True
+        @app.callback(
+            Output('calculate_page_rank', 'disabled'),
+            [Input('calculate_page_rank', 'n_clicks')]
+        )
+        def disable_button_run_page_rank(clicks):
+            if not clicks:
+                return False
+            return True
 
 
-    @app.callback(
-        Output('n_communities', 'content'),
-        [Input('calculate_communities', 'n_clicks')],
-        [State('network-ready', 'value')]
-    )
-    def show_num_communities(_, cy_network):
-        return f'Communities: {cy_network["n_communities"]}'
+        @app.callback(
+            Output('calculate_communities', 'disabled'),
+            [Input('calculate_communities', 'n_clicks')]
+        )
+        def disable_button_run_communities(clicks):
+            if not clicks:
+                return False
+            return True
 
 
-    @app.callback(
-        Output('cytoscape', 'stylesheet'),
-        [Input('cytoscape', 'elements'),
-        Input('show_labels', 'n_clicks'),
-        Input('show_page_rank', 'n_clicks'),
-        Input('color_cluster', 'n_clicks')],
-        [State('network-ready', 'value'),
-        State('cytoscape', 'stylesheet')]
-    )
-    def update_stylesheet(_, lb_clicks, pr_clicks, com_clicks, cy_network, stylesheet):
-
-        if not cy_network:
-            return CoEditingStylesheet().cy_stylesheet
-
-        co_stylesheet = CoEditingStylesheet(stylesheet)
-        co_stylesheet.all_transformations(cy_network)
-
-        if lb_clicks and lb_clicks % 2 == 1:
-            co_stylesheet.set_label('data(label)')
-        elif pr_clicks and pr_clicks % 2 == 1:
-            co_stylesheet.set_label('data(page_rank)')
-        else:
-            co_stylesheet.set_label('')
-
-        if com_clicks and not cy_network["n_communities"] == '...' \
-        and com_clicks % 2 == 1:
-            co_stylesheet.color_nodes_by_cluster()
-        else:
-            co_stylesheet.color_nodes(cy_network)
-
-        return co_stylesheet.cy_stylesheet
+        @app.callback(
+            Output('n_communities', 'content'),
+            [Input('calculate_communities', 'n_clicks')],
+            [State('network-ready', 'value')]
+        )
+        def show_num_communities(_, cy_network):
+            return f'Communities: {cy_network["n_communities"]}'
 
 
-    @app.callback(
-        Output('network-ready', 'value'),
-        [Input('ready', 'value'),
-        Input('calculate_page_rank', 'n_clicks'),
-        Input('calculate_communities', 'n_clicks')],
-        [State('initial-selection', 'children'),
-        State('date-slider-container', 'children'),
-        State('network-ready', 'value')]
-    )
-    def update_network(ready, pr_clicks, com_clicks, selection_json, slider, cy_network):
-        if not ready:
-            return None
+        @app.callback(
+            Output('cytoscape', 'stylesheet'),
+            [Input('cytoscape', 'elements'),
+            Input('show_labels', 'n_clicks'),
+            Input('show_page_rank', 'n_clicks'),
+            Input('color_cluster', 'n_clicks')],
+            [State('network-ready', 'value'),
+            State('cytoscape', 'stylesheet')]
+        )
+        def update_stylesheet(_, lb_clicks, pr_clicks, com_clicks, cy_network, stylesheet):
 
-        # get network instance from selection
-        selection = json.loads(selection_json)
-        wiki = selection['wikis'][0]
-        network_code = selection['network']
+            if not cy_network:
+                return CoEditingStylesheet().cy_stylesheet
 
-        if not slider['props']['value'] == slider['props']['max']:
-            print(' * [Info] Starting time filter....')
-            time_start_calculations = time.perf_counter()
+            co_stylesheet = CoEditingStylesheet(stylesheet)
+            co_stylesheet.all_transformations(cy_network)
 
-            t_to_filter = cy_network['first_entry'] + slider['props']['value'] * \
-            CoEditingNetwork.TIME_DIV
-            t_to_filter = datetime.fromtimestamp(t_to_filter)\
-                .strftime("%Y-%m-%d %H:%M:%S")
+            if lb_clicks and lb_clicks % 2 == 1:
+                co_stylesheet.set_label('data(label)')
+            elif pr_clicks and pr_clicks % 2 == 1:
+                co_stylesheet.set_label('data(page_rank)')
+            else:
+                co_stylesheet.set_label('')
 
-            network = data_controller.get_network(wiki, network_code, t_to_filter)
+            if com_clicks and not cy_network["n_communities"] == '...' \
+            and com_clicks % 2 == 1:
+                co_stylesheet.color_nodes_by_cluster()
+            else:
+                co_stylesheet.color_nodes(cy_network)
 
-            time_end_calculations = time.perf_counter() - time_start_calculations
-            print(' * [Timing] Filter : {} seconds'.format(time_end_calculations))
+            return co_stylesheet.cy_stylesheet
 
-        else:
-            print(' * [Info] Printing the entire network....')
-            network = data_controller.get_network(wiki, network_code)
 
-        if pr_clicks and pr_clicks % 2 == 1:
-            network.calculate_page_rank()
+        @app.callback(
+            Output('network-ready', 'value'),
+            [Input('ready', 'value'),
+            Input('calculate_page_rank', 'n_clicks'),
+            Input('calculate_communities', 'n_clicks')],
+            [State('initial-selection', 'children'),
+            State('date-slider-container', 'children'),
+            State('network-ready', 'value')]
+        )
+        def update_network(ready, pr_clicks, com_clicks, selection_json, slider, cy_network):
+            if not ready:
+                return None
 
-        if com_clicks and com_clicks % 2 == 1:
-            network.calculate_communities()
+            # get network instance from selection
+            selection = json.loads(selection_json)
+            wiki = selection['wikis'][0]
+            network_code = selection['network']
 
-        return network.to_cytoscape_dict()
+            if not slider['props']['value'] == slider['props']['max']:
+                print(' * [Info] Starting time filter....')
+                time_start_calculations = time.perf_counter()
+
+                t_to_filter = cy_network['first_entry'] + slider['props']['value'] * \
+                CoEditingNetwork.TIME_DIV
+                t_to_filter = datetime.fromtimestamp(t_to_filter)\
+                    .strftime("%Y-%m-%d %H:%M:%S")
+
+                network = data_controller.get_network(wiki, network_code, t_to_filter)
+
+                time_end_calculations = time.perf_counter() - time_start_calculations
+                print(' * [Timing] Filter : {} seconds'.format(time_end_calculations))
+
+            else:
+                print(' * [Info] Printing the entire network....')
+                network = data_controller.get_network(wiki, network_code)
+
+            if pr_clicks and pr_clicks % 2 == 1:
+                network.calculate_page_rank()
+
+            if com_clicks and com_clicks % 2 == 1:
+                network.calculate_communities()
+
+            return network.to_cytoscape_dict()

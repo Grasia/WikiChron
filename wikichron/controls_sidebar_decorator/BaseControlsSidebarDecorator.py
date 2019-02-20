@@ -35,3 +35,7 @@ class BaseControlsSidebarDecorator(ControlsSidebar, metaclass=abc.ABCMeta):
         options_content):
         self.sidebar.add_all_sections(stats_content, metrics_content, 
             options_content)
+
+    @abc.abstractclassmethod
+    def bind_callbacks(cls, app):
+        pass

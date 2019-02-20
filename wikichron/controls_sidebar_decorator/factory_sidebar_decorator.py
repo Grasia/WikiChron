@@ -10,7 +10,6 @@
 
 from lib.networks.types.CoEditingNetwork import CoEditingNetwork
 from .CoEditingControlsSidebarDecorator import CoEditingControlsSidebarDecorator
-from .CoEditingControlsSidebarDecorator import bind_callbacks as co_edit_bind_callbacks
 
 
 def factory_sidebar_decorator(selected_network_code, sidebar):
@@ -22,6 +21,6 @@ def factory_sidebar_decorator(selected_network_code, sidebar):
 
 def bind_controls_sidebar_callbacks(selected_network_code, app):
 	if selected_network_code == CoEditingNetwork.CODE:
-		co_edit_bind_callbacks(app)
+		CoEditingControlsSidebarDecorator.bind_callbacks(app = app)
 	else:
 		raise Exception("Something went bad. Missing network type selection.")
