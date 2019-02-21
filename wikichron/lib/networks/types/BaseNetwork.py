@@ -14,7 +14,7 @@ class BaseNetwork():
     NAME = 'Base Network'
     CODE = 'base_network'
 
-    def __init__(self, is_directed = False, page_rank = [], 
+    def __init__(self, is_directed = False, 
             num_communities = -1, first_entry = None, 
             last_entry = None, graph = {},):
 
@@ -23,7 +23,6 @@ class BaseNetwork():
         else:
             self.graph = graph
 
-        self.page_rank = page_rank
         self.num_communities = num_communities
         self.first_entry = first_entry
         self.last_entry = last_entry 
@@ -77,8 +76,18 @@ class BaseNetwork():
         """
         Calculates the network pageRank
         """
-        if not self.page_rank:
-            self.page_rank = self.graph.pagerank(directed=self.graph.is_directed())
+        if not 'page_rank' in self.graph.vs.attributes():
+            self.graph.vs['page_rank'] = self.graph.pagerank(
+                directed=self.graph.is_directed(), weights = 'weight')
+
+
+    def calculate_betweenness(self):
+        """
+        Calculates the network betweenness
+        """
+        if not 'betweenness' in self.graph.vs.attributes():
+            self.graph.vs['betweenness'] = self.graph.betweenness(
+                directed=self.graph.is_directed(), weights = 'weight')
 
 
     def calculate_communities(self):
@@ -87,6 +96,7 @@ class BaseNetwork():
         """
         if self.num_communities is -1:
             mod = self.graph.community_multilevel(weights='weight')
+            self.graph.vs['cluster'] = mod
             self.num_communities = len(mod)
             pal = ClusterColoringPalette(len(mod))
             self.graph.vs['cluster_color'] = list(map(lambda x: rgb2hex(x[0],x[1],x[2], normalised=True),

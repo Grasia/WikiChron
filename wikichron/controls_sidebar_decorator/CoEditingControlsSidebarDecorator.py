@@ -59,6 +59,13 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
                                 className='right-element action-button'),
                     ],
                     className='metrics-section'),
+                html.Div(children=[
+                    html.Span('Betweenness', className='left-element'),
+                    html.Button('Run', id='calculate_betweenness',
+                                type='button',
+                                className='right-element action-button'),
+                    ],
+                    className='metrics-section'),
                 html.Div([
                     html.Span('Communities', className='left-element'),
                     html.Button('Run', id='calculate_communities',
@@ -73,10 +80,12 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
         return [
                     html.Button('Show Labels', id='show_labels',
                         className='control-button action-button'),
+                    html.Button('Show Edits', id='show_edits',
+                        className='control-button action-button'),
                     html.Button('Show PageRank', id='show_page_rank',
                         disabled=True,
                         className='control-button action-button'),
-                    html.Button('Show Edits', id='show_edits',
+                    html.Button('Show Betweenness', id='show_betweenness',
                         className='control-button action-button'),
                     html.Button('Color by Cluster', id='color_cluster',
                         disabled=True,
@@ -150,6 +159,16 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
 
         @app.callback(
+            Output('show_betweenness', 'className'),
+            [Input('show_betweenness', 'n_clicks')]
+        )
+        def switch_show_betweenness(clicks):
+            if not clicks or clicks % 2 == 0:
+                return 'control-button action-button'
+            return 'control-button action-button-pressed'
+
+
+        @app.callback(
             Output('show_edits', 'className'),
             [Input('show_edits', 'n_clicks')]
         )
@@ -180,6 +199,16 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
 
         @app.callback(
+            Output('calculate_betweenness', 'className'),
+            [Input('calculate_betweenness', 'n_clicks')]
+        )
+        def switch_run_betweenness(clicks):
+            if not clicks:
+                return 'right-element action-button'
+            return 'right-element action-button-pressed'
+
+
+        @app.callback(
             Output('calculate_communities', 'className'),
             [Input('calculate_communities', 'n_clicks')]
         )
@@ -194,6 +223,16 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             [Input('calculate_page_rank', 'n_clicks')]
         )
         def disable_button_run_page_rank(clicks):
+            if not clicks:
+                return False
+            return True
+
+
+        @app.callback(
+            Output('calculate_betweenness', 'disabled'),
+            [Input('calculate_betweenness', 'n_clicks')]
+        )
+        def disable_button_run_betweenness(clicks):
             if not clicks:
                 return False
             return True
@@ -244,11 +283,13 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             Input('show_labels', 'n_clicks'),
             Input('show_page_rank', 'n_clicks'),
             Input('show_edits', 'n_clicks'),
+            Input('show_betweenness', 'n_clicks'),
             Input('color_cluster', 'n_clicks')],
             [State('network-ready', 'value'),
             State('cytoscape', 'stylesheet')]
         )
-        def update_stylesheet(_, lb_clicks, pr_clicks, ed_clicks, com_clicks, cy_network, stylesheet):
+        def update_stylesheet(_, lb_clicks, pr_clicks, ed_clicks, bet_clicks,
+            com_clicks, cy_network, stylesheet):
 
             if not cy_network:
                 return CoEditingStylesheet().cy_stylesheet
@@ -258,10 +299,12 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
             if lb_clicks and lb_clicks % 2:
                 co_stylesheet.set_label('data(label)')
-            elif pr_clicks and pr_clicks % 2:
-                co_stylesheet.set_label('data(page_rank)')
             elif ed_clicks and ed_clicks % 2:
                  co_stylesheet.set_label('data(num_edits)')
+            elif pr_clicks and pr_clicks % 2:
+                co_stylesheet.set_label('data(page_rank)')
+            elif bet_clicks and bet_clicks % 2:
+                co_stylesheet.set_label('data(betweenness)')
             else:
                 co_stylesheet.set_label('')
 
@@ -278,11 +321,12 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             Output('network-ready', 'value'),
             [Input('ready', 'value'),
             Input('calculate_page_rank', 'n_clicks'),
+            Input('calculate_betweenness', 'n_clicks'),
             Input('calculate_communities', 'n_clicks')],
             [State('initial-selection', 'children'),
             State('date-slider-container', 'children')]
         )
-        def update_network(ready, pr_clicks, com_clicks, selection_json, slider):
+        def update_network(ready, pr_clicks, bet_clicks, com_clicks, selection_json, slider):
             if not ready:
                 return None
 
@@ -310,10 +354,13 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             time_end_calculations = time.perf_counter() - time_start_calculations
             print(f' * [Timing] Network builded in {time_end_calculations} seconds')
 
-            if pr_clicks and pr_clicks % 2 == 1:
+            if pr_clicks and pr_clicks % 2:
                 network.calculate_page_rank()
 
-            if com_clicks and com_clicks % 2 == 1:
+            if bet_clicks and bet_clicks % 2:
+                network.calculate_betweenness()
+
+            if com_clicks and com_clicks % 2:
                 network.calculate_communities()
 
             return network.to_cytoscape_dict()

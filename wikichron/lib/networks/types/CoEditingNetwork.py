@@ -39,10 +39,10 @@ class CoEditingNetwork(BaseNetwork):
     NAME = 'Co-Editing'
     CODE = 'co_editing_network'
 
-    def __init__(self, is_directed = False, page_rank = [], num_communities = -1,
+    def __init__(self, is_directed = False, num_communities = -1,
             graph = {}, first_entry = None, last_entry = None):
 
-        super().__init__(is_directed = is_directed, page_rank = page_rank,
+        super().__init__(is_directed = is_directed,
             num_communities = num_communities, first_entry = first_entry,
             last_entry = last_entry, graph = graph)
 
@@ -138,6 +138,7 @@ class CoEditingNetwork(BaseNetwork):
                 max_v = node['num_edits']
             f_e = int(datetime.strptime(
                     str(node['first_edit']), "%Y-%m-%d %H:%M:%S").strftime('%s'))
+
             network.append({
                 'data': {
                     'id': node['contributor_id'],
@@ -145,10 +146,12 @@ class CoEditingNetwork(BaseNetwork):
                     'num_edits': node['num_edits'],
                     'first_edit': f_e,
                     'last_edit': node['last_edit'],
-                    'page_rank': "{0:.5f}".format(self.page_rank[node.index])
-                     if self.page_rank else '',
-                    'cluster_color': node['cluster_color']
-                    if self.num_communities is not -1 else ''
+                    'page_rank': "{0:.5f}".format(node['page_rank']) 
+                        if 'page_rank' in self.graph.vs.attributes() else '',
+                    'betweenness': "{0:.5f}".format(node['betweenness']) 
+                        if 'betweenness' in self.graph.vs.attributes() else '',
+                    'cluster_color': node['cluster_color']  
+                        if self.num_communities is not -1 else ''
                 }
             })
 
