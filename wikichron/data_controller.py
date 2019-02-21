@@ -37,13 +37,19 @@ def read_data(wiki):
     return df
 
 
+def get_first_entry(wiki):
+    df = read_data(wiki)
+    return df['timestamp'].min()
+
+
 @cache.memoize(timeout=3600)
-def get_network(wiki, network_code, t_to_filter = ''):
+def get_network(wiki, network_code, lower_bound = '', upper_bound = ''):
     """
     Parameters
         - wiki: Related info about the wiki selected.
         - network_type: network selected. It is an instance of BaseNetwork.
-        - t_to_filter: a formated string "%Y-%m-%d %H:%M:%S", to filter the pandas obj
+        - lower_bound: a formated string "%Y-%m-%d %H:%M:%S", to filter the pandas obj
+        - upper_bound: a formated string "%Y-%m-%d %H:%M:%S", to filter the pandas obj
     Return: Data representing the network.
     """
 
@@ -57,7 +63,8 @@ def get_network(wiki, network_code, t_to_filter = ''):
     network_type = lib.factory_network(network_code)
     print(' * [Info] Starting calculations....')
     time_start_calculations = time.perf_counter()
-    network_type.generate_from_pandas(df=df, t_to_filter = t_to_filter)
+    network_type.generate_from_pandas(df=df, lower_bound = lower_bound, 
+        upper_bound = upper_bound)
     time_end_calculations = time.perf_counter() - time_start_calculations
     print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
     return network_type

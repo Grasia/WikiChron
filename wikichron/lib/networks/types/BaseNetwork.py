@@ -37,7 +37,7 @@ class BaseNetwork():
         return __init_(self)
 
 
-    def generate_from_pandas(self, df, t_to_filter):
+    def generate_from_pandas(self, df, lower_bound, upper_bound):
         """
         Generates a graph from a pandas data
 
@@ -45,7 +45,9 @@ class BaseNetwork():
             -df: A pandas object with the wiki info (read from csv),
                    must be order by timestamp
 
-            -t_to_filter: a formated string "%Y-%m-%d %H:%M:%S", 
+            -lower_bound: a formated string "%Y-%m-%d %H:%M:%S", 
+                    to filter by time the df 
+            -upper_bound: a formated string "%Y-%m-%d %H:%M:%S", 
                     to filter by time the df 
         Return: A graph with the network representation.
         """
