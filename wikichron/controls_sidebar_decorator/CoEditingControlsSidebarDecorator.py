@@ -19,7 +19,7 @@ from dash.dependencies import Input, Output, State
 from datetime import datetime
 
 from .BaseControlsSidebarDecorator import BaseControlsSidebarDecorator
-from lib.cytoscape_decorator.CoEditingStylesheet import CoEditingStylesheet
+from lib.cytoscape_stylesheet.CoEditingStylesheet import CoEditingStylesheet
 from lib.networks.types.CoEditingNetwork import CoEditingNetwork
 import data_controller
 
@@ -75,6 +75,8 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
                         className='control-button action-button'),
                     html.Button('Show PageRank', id='show_page_rank',
                         disabled=True,
+                        className='control-button action-button'),
+                    html.Button('Show Edits', id='show_edits',
                         className='control-button action-button'),
                     html.Button('Color by Cluster', id='color_cluster',
                         disabled=True,
@@ -142,6 +144,16 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             [Input('show_page_rank', 'n_clicks')]
         )
         def switch_show_page_rank(clicks):
+            if not clicks or clicks % 2 == 0:
+                return 'control-button action-button'
+            return 'control-button action-button-pressed'
+
+
+        @app.callback(
+            Output('show_edits', 'className'),
+            [Input('show_edits', 'n_clicks')]
+        )
+        def switch_show_edits(clicks):
             if not clicks or clicks % 2 == 0:
                 return 'control-button action-button'
             return 'control-button action-button-pressed'
@@ -231,11 +243,12 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             [Input('cytoscape', 'elements'),
             Input('show_labels', 'n_clicks'),
             Input('show_page_rank', 'n_clicks'),
+            Input('show_edits', 'n_clicks'),
             Input('color_cluster', 'n_clicks')],
             [State('network-ready', 'value'),
             State('cytoscape', 'stylesheet')]
         )
-        def update_stylesheet(_, lb_clicks, pr_clicks, com_clicks, cy_network, stylesheet):
+        def update_stylesheet(_, lb_clicks, pr_clicks, ed_clicks, com_clicks, cy_network, stylesheet):
 
             if not cy_network:
                 return CoEditingStylesheet().cy_stylesheet
@@ -243,10 +256,12 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             co_stylesheet = CoEditingStylesheet(stylesheet)
             co_stylesheet.all_transformations(cy_network)
 
-            if lb_clicks and lb_clicks % 2 == 1:
+            if lb_clicks and lb_clicks % 2:
                 co_stylesheet.set_label('data(label)')
-            elif pr_clicks and pr_clicks % 2 == 1:
+            elif pr_clicks and pr_clicks % 2:
                 co_stylesheet.set_label('data(page_rank)')
+            elif ed_clicks and ed_clicks % 2:
+                 co_stylesheet.set_label('data(num_edits)')
             else:
                 co_stylesheet.set_label('')
 

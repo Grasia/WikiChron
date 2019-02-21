@@ -31,7 +31,7 @@ import sd_material_ui
 import lib.interface as lib
 import data_controller
 from app import assets_url_path
-from lib.cytoscape_decorator.BaseStylesheet import BaseStylesheet
+from lib.cytoscape_stylesheet.BaseStylesheet import BaseStylesheet
 from controls_sidebar_decorator.ControlsSidebar import ControlsSidebar
 from controls_sidebar_decorator.factory_sidebar_decorator import factory_sidebar_decorator
 from controls_sidebar_decorator.factory_sidebar_decorator import bind_controls_sidebar_callbacks
