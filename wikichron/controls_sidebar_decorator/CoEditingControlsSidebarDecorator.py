@@ -241,10 +241,9 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             Input('calculate_page_rank', 'n_clicks'),
             Input('calculate_communities', 'n_clicks')],
             [State('initial-selection', 'children'),
-            State('date-slider-container', 'children'),
-            State('network-ready', 'value')]
+            State('date-slider-container', 'children')]
         )
-        def update_network(ready, pr_clicks, com_clicks, selection_json, slider, cy_network):
+        def update_network(ready, pr_clicks, com_clicks, selection_json, slider):
             if not ready:
                 return None
 
@@ -253,23 +252,24 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             wiki = selection['wikis'][0]
             network_code = selection['network']
 
-            if not slider['props']['value'] == slider['props']['max']:
-                print(' * [Info] Starting time filter....')
-                time_start_calculations = time.perf_counter()
+            print(' * [Info] Building the network....')
+            time_start_calculations = time.perf_counter()
 
-                t_to_filter = cy_network['first_entry'] + slider['props']['value'] * \
-                CoEditingNetwork.TIME_DIV
-                t_to_filter = datetime.fromtimestamp(t_to_filter)\
-                    .strftime("%Y-%m-%d %H:%M:%S")
+            first_entry = data_controller.get_first_entry(wiki)
+            first_entry = int(datetime.strptime(str(first_entry), "%Y-%m-%d %H:%M:%S").strftime('%s'))
 
-                network = data_controller.get_network(wiki, network_code, t_to_filter)
+            upper_bound = first_entry + slider['props']['value'][1] * \
+            CoEditingNetwork.TIME_DIV
+            lower_bound = first_entry + slider['props']['value'][0] * \
+            CoEditingNetwork.TIME_DIV
 
-                time_end_calculations = time.perf_counter() - time_start_calculations
-                print(' * [Timing] Filter : {} seconds'.format(time_end_calculations))
+            upper_bound = datetime.fromtimestamp(upper_bound).strftime("%Y-%m-%d %H:%M:%S")
+            lower_bound = datetime.fromtimestamp(lower_bound).strftime("%Y-%m-%d %H:%M:%S")
 
-            else:
-                print(' * [Info] Printing the entire network....')
-                network = data_controller.get_network(wiki, network_code)
+            network = data_controller.get_network(wiki, network_code, lower_bound, upper_bound)
+
+            time_end_calculations = time.perf_counter() - time_start_calculations
+            print(f' * [Timing] Network builded in {time_end_calculations} seconds')
 
             if pr_clicks and pr_clicks % 2 == 1:
                 network.calculate_page_rank()
