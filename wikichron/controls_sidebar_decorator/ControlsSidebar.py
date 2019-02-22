@@ -43,7 +43,7 @@ class ControlsSidebar(metaclass=abc.ABCMeta):
         self.stats_section = html.Div([
                     html.H5('Network Stats', className='control-title'),
                     html.Div(id='stats', className='stats-container', children=[])
-                    ], 
+                    ],
                     className='control-container')
         self.stats_section.children[1].children = html_stats
 
@@ -53,7 +53,7 @@ class ControlsSidebar(metaclass=abc.ABCMeta):
                     html.H5('Network Metrics', className='control-title'),
                     html.Div(children=[])
                 ], className='control-container')
-        self.metrics_section.children[1].children = html_metrics  
+        self.metrics_section.children[1].children = html_metrics
 
 
     def add_options_section(self, html_options):
@@ -62,7 +62,7 @@ class ControlsSidebar(metaclass=abc.ABCMeta):
                     html.Div(children=[])
                 ], className='control-container')
         self.options_section.children[1].children = html_options
-        
+
 
     def add_all_sections(self, html_stats, html_metrics, html_options):
         self.add_stats_section(html_stats)
@@ -83,7 +83,7 @@ class ControlsSidebar(metaclass=abc.ABCMeta):
                                                 self.metrics_section,
                                                 self.options_section
                                             ]),
-                                        gdc.Import(src='../js/controls_side_bar.js')
+                                        gdc.Import(src='js/controls_side_bar.js')
                                     ])
                             ],
                             style={
@@ -91,5 +91,5 @@ class ControlsSidebar(metaclass=abc.ABCMeta):
                                 'flexDirection': 'row-reverse'
                             }
                         );
-        
+
         return self.html_sidebar
