@@ -172,7 +172,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
                     html.Div(id='date-slider-container',
                         style={'height': '35px'},
                         children=[
-                            dcc.Slider(
+                            dcc.RangeSlider(
                                 id='dates-slider'
                         )],
                     )
@@ -378,12 +378,12 @@ def bind_callbacks(app):
         range_slider_marks[max_time] = datetime.fromtimestamp(
         origin + max_time * TIME_DIV).strftime('%b %Y')
 
-        return  dcc.Slider(
+        return  dcc.RangeSlider(
                     id='dates-slider',
                     min=1,
                     max=max_time,
                     step=1,
-                    value=max_time,
+                    value=[1, max_time],
                     marks=range_slider_marks
                 )
 

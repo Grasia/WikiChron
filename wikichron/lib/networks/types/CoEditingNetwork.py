@@ -47,14 +47,15 @@ class CoEditingNetwork(BaseNetwork):
             last_entry = last_entry, graph = graph)
 
 
-    def generate_from_pandas(self, df, t_to_filter = ''):
+    def generate_from_pandas(self, df, lower_bound = '', upper_bound = ''):
         user_per_page = {}
         mapper_v = {}
         mapper_e = {}
         count = 0
 
-        if t_to_filter:
-            df = df[df['timestamp'] < t_to_filter]
+        if lower_bound:
+            df = df[lower_bound <= df['timestamp']]
+            df = df[df['timestamp'] <= upper_bound]
         df = self.remove_non_article_data(df)
 
         for index, r in df.iterrows():
