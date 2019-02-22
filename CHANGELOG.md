@@ -1,5 +1,23 @@
 # Change Log for WikiChron-networks
 
+## 1.5.0 - 2018-02-22
+### Added
+* New metric: Betweenness
+* New metric: Edits count
+* Download network inGML feature (by url)
+
+### Changed
+* Controls sidebar implements decorator pattern
+* Data related functions moved to data_controller
+* cystoscape stylesheet per network type.
+* Simple slider by Range Slider. #14
+* Use generate_from_pandas to filter the network model (previously only to construct it)
+
+### Fixed
+* Better sidebar offset correction: https://github.com/Grasia/WikiChron-networks/commit/0bcf9d46dbe0e2343be1e8629ef80e2326b0a1a1
+* Better styling for controls sidebar
+
+
 ## 1.4.1 - 2018-02-14
 
 ### Changed
