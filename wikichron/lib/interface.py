@@ -15,11 +15,6 @@ from .networks import available_networks as _available_networks
 from .networks.networks_generator import factory_network as _factory_network
 
 
-def get_available_metrics():
-    """ Return a list of the currently available metrics. """
-    return _available_metrics
-
-
 def get_available_networks():
     """ Return a list of the currently available networks. """
     return _available_networks

@@ -18,8 +18,10 @@ import numpy as np
 import time
 from warnings import warn
 
-# Local imports:
 from cache import cache
+
+
+# Local imports:
 import lib.interface as lib
 
 # get csv data location (data/ by default)
@@ -37,11 +39,6 @@ def read_data(wiki):
     return df
 
 
-def get_first_entry(wiki):
-    df = read_data(wiki)
-    return df['timestamp'].min()
-
-
 @cache.memoize(timeout=3600)
 def get_network(wiki, network_code, lower_bound = '', upper_bound = ''):
     """
@@ -52,7 +49,6 @@ def get_network(wiki, network_code, lower_bound = '', upper_bound = ''):
         - upper_bound: a formated string "%Y-%m-%d %H:%M:%S", to filter the pandas obj
     Return: Data representing the network.
     """
-
     # load data from csvs:
     time_start_loading_csvs = time.perf_counter()
     df = read_data(wiki)
@@ -68,6 +64,11 @@ def get_network(wiki, network_code, lower_bound = '', upper_bound = ''):
     time_end_calculations = time.perf_counter() - time_start_calculations
     print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
     return network_type
+
+
+def get_first_entry(wiki):
+    df = read_data(wiki)
+    return df['timestamp'].min()
 
 
 def remove_bots_activity(df, bots_ids):
