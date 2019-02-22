@@ -86,6 +86,7 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
                         disabled=True,
                         className='control-button action-button'),
                     html.Button('Show Betweenness', id='show_betweenness',
+                        disabled=True,
                         className='control-button action-button'),
                     html.Button('Color by Cluster', id='color_cluster',
                         disabled=True,
@@ -263,6 +264,16 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             [Input('calculate_communities', 'n_clicks')]
         )
         def disable_toggle_show_communities(clicks):
+            if not clicks:
+                return True
+            return False
+
+
+        @app.callback(
+            Output('show_betweenness', 'disabled'),
+            [Input('calculate_betweenness', 'n_clicks')]
+        )
+        def disable_toggle_show_betweenness(clicks):
             if not clicks:
                 return True
             return False
