@@ -64,7 +64,7 @@ class BaseNetwork():
         raise NotImplementedError('to_cytoscape_dict is not implemented')
 
 
-    def copy_and_write_gml(self, file):
+    def write_gml(self, file):
         """
         Writes a gml file
         Parameters:

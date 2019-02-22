@@ -17,10 +17,11 @@ import os
 import json
 import glob
 import time
+from fs.tempfs import TempFS
 from warnings import warn
 from urllib.parse import parse_qs, urljoin
 from codecs import decode
-from io import BytesIO
+from io import TextIOBase
 import zipfile
 
 # Dash framework imports
@@ -154,7 +155,6 @@ def set_external_imports():
         return [gdc.Import()]
     else:
         return [gdc.Import(src=src) for src in to_import_js];
-
 
 #--------- LAYOUT ----------------------------------------------------------#
 
@@ -347,7 +347,7 @@ def start_download_data_server():
             return False
         # check we have at least one metric and one wiki selected
         if not 'wikis' in selection or len(selection['wikis']) < 1 \
-        or 'metrics' not in selection or len(selection['metrics']) < 1:
+        or 'network' not in selection or len(selection['network']) < 1:
             return False
         # everything OK
         else:
@@ -361,47 +361,17 @@ def start_download_data_server():
         if not is_valid(selection):
             return 'Nothing to download!'
 
-        (wikis, metrics) = extract_wikis_and_metrics_from_selection_dict(selection)
+        wikis = extract_wikis_from_selection_dict(selection)
+        network_code = selection['network'][0]
+        network = data_controller.get_network(wiki = wikis[0], network_code = network_code)
 
-        data = main.load_and_compute_data(wikis, metrics)
+        tmp = TempFS()
 
-        # output in-memory zip file
-        in_memory_zip = BytesIO()
-        zipfile_ob = zipfile.ZipFile(in_memory_zip, mode='w',
-                                    compression=zipfile.ZIP_DEFLATED)
+        tmp.create('network.gml')
+        path = tmp.getsyspath('/network.gml')
 
-        # For each wiki, create a DataFrame and add a column for the data of
-        #   each metric.
-        # Then, generate a csv for that DataFrame and append it to the output zip file
-        # Remember this is the structure of data: data[metric][wiki]
-        for wiki_idx in range(len(data[0])):
-
-            # These two following lines are equivalent to the other next 3 lines
-            #   but they are, probably, more difficult to understand and
-            #  to maintain, although probably more pandas-ish:
-            #~ metrics_data_for_this_wiki = [metric[wiki_idx] for metric in data ]
-            #~ wiki_df = pd.concat(metrics_data_for_this_wiki, axis=1)
-
-            wiki_df = pd.DataFrame()
-            for metric in data:
-                # assign the name of the metric as the name of the column for its data:
-                wiki_df[metric[wiki_idx].name] = metric[wiki_idx]
-
-            csv_str = wiki_df.to_csv()
-            # append dataframe csv to zip file with name of the wiki:
-            zipfile_ob.writestr('{}.csv'.format(wikis[wiki_idx]['name']), csv_str)
-
-        # testing zip format and integrity
-        error = zipfile_ob.testzip()
-        if error is None:
-            zipfile_ob.close()
-            in_memory_zip.seek(0) # move ByteIO cursor to the start
-            return flask.send_file(in_memory_zip, as_attachment=True,
-                        attachment_filename='computed_data.zip',
-                        mimetype='application/zip')
-        else:
-            zipfile_ob.close()
-            raise Exeption('There was an error compressing the data in a zip file: {}'.format(error))
+        network.write_gml(file = path)
+        return flask.send_file(filename_or_fp = path, as_attachment=True, attachment_filename='network.gml')
 
     return
 
@@ -426,9 +396,11 @@ def create_app():
     #~ app.scripts.config.serve_locally = True
 
     # skeleton.css: (Already included in dash stylesheet)
-    #~ app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
+    #~ app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})    
 
     cache.set_up_cache(app, debug)
+    global data_controller
+    import data_controller
 
     return app
 
