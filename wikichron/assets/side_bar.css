@@ -5,7 +5,6 @@
     flex: 0 0 300px;
     color: white;
     font-size: 16px;
-    padding-bottom: 100px;
     min-height: 100vh;
     min-height: -webkit-fill-available;
 }
@@ -24,9 +23,11 @@
 
 #controls-sidebar-wrapper {
     z-index: 2;
-    position: fixed;
+    position: absolute;
     right: 0;
-    width: 300px;
+    top: 0;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
 }
 
 #controls-side-bar:hover {

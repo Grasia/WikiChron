@@ -203,7 +203,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
                         'minTemp': 1.0
                     },
                     style = {
-                        'height': '95vh',
+                        'height': '65vh',
                         'width': 'calc(100% - 300px)'
                     },
                     stylesheet = BaseStylesheet().cy_stylesheet
@@ -226,7 +226,6 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
     return html.Div(
             id='main',
             className='control-text',
-            style={'width': '100%'},
             children=[
 
                 #generate_controls_sidebar(),

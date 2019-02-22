@@ -1,5 +1,11 @@
 /* Main */
 
+#main {
+    width: '100%';
+    position: relative;
+}
+
+
 #icons-bar {
     display: flex;
     justify-content: space-between;
@@ -20,11 +26,6 @@
 
 .control-text {
     font-size: 16px;
-}
-
-#time-axis-selection {
-    vertical-align: top;
-    display: inline-block;
 }
 
 #slider-header {
