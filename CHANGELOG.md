@@ -1,5 +1,9 @@
 # Change Log for WikiChron-networks
 
+## 1.5.1 - 2018-02-25
+### Fixed
+* Bug when loading data from non-default directory (external directory).
+
 ## 1.5.0 - 2018-02-22
 ### Added
 * New metric: Betweenness
