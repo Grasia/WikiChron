@@ -40,7 +40,7 @@ from flask import request
 import pandas as pd
 
 # Local imports:
-import lib.interface as lib
+import networks.interface
 from version import __version__
 import cache
 
@@ -128,7 +128,7 @@ def get_available_wikis(data_dir):
 
 # other global variables:
 
-available_networks = lib.get_available_networks()
+available_networks = networks.interface.get_available_networks()
 available_wikis = get_available_wikis(data_dir)
 available_wikis_dict = {wiki['url']: wiki for wiki in available_wikis}
 selection_params = {'wikis', 'network'}
@@ -396,7 +396,7 @@ def create_app():
     #~ app.scripts.config.serve_locally = True
 
     # skeleton.css: (Already included in dash stylesheet)
-    #~ app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})    
+    #~ app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
 
     cache.set_up_cache(app, debug)
     global data_controller

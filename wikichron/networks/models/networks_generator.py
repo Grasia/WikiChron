@@ -10,7 +10,7 @@
    Copyright 2017-2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
 
-from .types.CoEditingNetwork import CoEditingNetwork
+from .CoEditingNetwork import CoEditingNetwork
 
 def create_available_networks():
     networks = []
@@ -18,7 +18,7 @@ def create_available_networks():
     return networks
 
 def factory_network(selected_network_code):
-	if selected_network_code:
-		return CoEditingNetwork()
-	else:
-		raise Exception("Something went bad. Missing network type selection.")
+        if selected_network_code:
+                return CoEditingNetwork()
+        else:
+                raise Exception("Something went bad. Missing network type selection.")

@@ -8,8 +8,8 @@
 
 import numpy
 import math
-
 from datetime import datetime
+
 from .BaseNetwork import BaseNetwork
 
 class CoEditingNetwork(BaseNetwork):
@@ -146,11 +146,11 @@ class CoEditingNetwork(BaseNetwork):
                     'num_edits': node['num_edits'],
                     'first_edit': f_e,
                     'last_edit': node['last_edit'],
-                    'page_rank': "{0:.5f}".format(node['page_rank']) 
+                    'page_rank': "{0:.5f}".format(node['page_rank'])
                         if 'page_rank' in self.graph.vs.attributes() else '',
-                    'betweenness': "{0:.5f}".format(node['betweenness']) 
+                    'betweenness': "{0:.5f}".format(node['betweenness'])
                         if 'betweenness' in self.graph.vs.attributes() else '',
-                    'cluster_color': node['cluster_color']  
+                    'cluster_color': node['cluster_color']
                         if self.num_communities is not -1 else ''
                 }
             })

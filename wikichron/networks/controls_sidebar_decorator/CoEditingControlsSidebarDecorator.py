@@ -19,8 +19,8 @@ from dash.dependencies import Input, Output, State
 from datetime import datetime
 
 from .BaseControlsSidebarDecorator import BaseControlsSidebarDecorator
-from lib.cytoscape_stylesheet.CoEditingStylesheet import CoEditingStylesheet
-from lib.networks.types.CoEditingNetwork import CoEditingNetwork
+from networks.cytoscape_stylesheet.CoEditingStylesheet import CoEditingStylesheet
+from networks.models.CoEditingNetwork import CoEditingNetwork
 import data_controller
 
 class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
