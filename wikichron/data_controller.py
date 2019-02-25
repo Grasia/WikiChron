@@ -59,7 +59,7 @@ def get_network(wiki, network_code, lower_bound = '', upper_bound = ''):
     network_type = lib.factory_network(network_code)
     print(' * [Info] Starting calculations....')
     time_start_calculations = time.perf_counter()
-    network_type.generate_from_pandas(df=df, lower_bound = lower_bound, 
+    network_type.generate_from_pandas(df=df, lower_bound = lower_bound,
         upper_bound = upper_bound)
     time_end_calculations = time.perf_counter() - time_start_calculations
     print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
@@ -101,7 +101,7 @@ def get_dataframe_from_csv(csv):
 
     print('Loading csv for ' + csv)
     time_start_loading_one_csv = time.perf_counter()
-    df = pd.read_csv(os.path.join('data/', csv),
+    df = pd.read_csv(os.path.join(data_dir, csv),
                     delimiter=',', quotechar='|',
                     index_col=False)
     df['timestamp']=pd.to_datetime(df['timestamp'],format='%Y-%m-%dT%H:%M:%SZ')
