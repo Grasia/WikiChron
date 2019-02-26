@@ -26,6 +26,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 import grasia_dash_components as gdc
 import sd_material_ui
+from flask import current_app
 
 # Local imports:
 import data_controller
@@ -60,6 +61,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
         Return: An HTML object with the header content
         """
         href_download_button = '/download/{}'.format(query_string)
+        print(f'\n\n\nConfiggg!!:  {current_app.config}')
         return (html.Div(id='header',
                 className='container',
                 style={'display': 'flex', 'align-items': 'center', \

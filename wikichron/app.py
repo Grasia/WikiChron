@@ -377,16 +377,16 @@ def start_download_data_server():
 
 #--------- APP CREATION FUNCS -------------------------------------------------#
 
-def create_app():
+def create_dash_app(server):
     print('Creating new Dash instance...')
     global app;
-    app = dash.Dash('WikiChron - Networks',
+    app = dash.Dash('WikiChron - Networks', # TO CHANGE by __name__
+                    server = server,
                     meta_tags = meta_tags,
                     external_stylesheets=external_stylesheets,
                     url_base_pathname=wikichron_base_pathname,
                     assets_folder=assets_folder)
     app.title = 'WikiChron - Networks'
-    server = app.server
     app.config['suppress_callback_exceptions'] = True
 
     # uncoment for offline serving of css:
@@ -405,7 +405,7 @@ def create_app():
     return app
 
 
-def init_app_callbacks(app):
+def _init_app_callbacks(app):
     global side_bar
     import side_bar
     global main
@@ -420,7 +420,7 @@ def init_app_callbacks(app):
 def set_up_app(app):
     # bind callbacks
     print('Binding callbacks...')
-    init_app_callbacks(app)
+    _init_app_callbacks(app)
 
     # set app layout
     print('Setting up layout...')
@@ -432,13 +432,15 @@ def set_up_app(app):
     return
 
 
-def init_app(app):
+# TOMOVE
+def start_aux_servers(app):
 
     # start auxiliar servers:
     start_js_server()
     start_redirection_server()
     start_download_data_server()
 
+    # TOMOVE
     print('¡¡¡¡ Welcome to WikiChron-networks ' + __version__ +' !!!!')
     print('Using version ' + dash.__version__ + ' of Dash.')
     print('Using version ' + dash_renderer.__version__ + ' of Dash renderer.')
@@ -456,18 +458,20 @@ def run(app):
 
 ######### BEGIN MAIN ###########################################################
 
-# create and config Dash instance
-app = create_app()
-
-# set layout, import startup js and bind callbacks
-set_up_app(app)
-
-# init auxiliar servers & deps
-init_app(app)
-
 print ('This is __name__: {}'.format(__name__))
 if __name__ == '__main__':
+    server = Flask(__name__)
+
+    # create and config Dash instance
+    app = create_dash_app(server)
+
+    # set layout, import startup js and bind callbacks
+    set_up_app(app)
+
+    # init auxiliar servers & deps
+    start_aux_servers(app)
+
     run(app)
 
-else:
-    server = app.server
+#~ else:
+    #~ server = app.server
