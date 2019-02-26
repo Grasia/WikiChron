@@ -22,7 +22,7 @@ from cache import cache
 
 
 # Local imports:
-import lib.interface as lib
+import networks.interface
 
 # get csv data location (data/ by default)
 global data_dir;
@@ -56,7 +56,7 @@ def get_network(wiki, network_code, lower_bound = '', upper_bound = ''):
     print(' * [Timing] Loading csvs : {} seconds'.format(time_end_loading_csvs) )
 
     # generate network:
-    network_type = lib.factory_network(network_code)
+    network_type = networks.interface.factory_network(network_code)
     print(' * [Info] Starting calculations....')
     time_start_calculations = time.perf_counter()
     network_type.generate_from_pandas(df=df, lower_bound = lower_bound,

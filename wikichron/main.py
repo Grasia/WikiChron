@@ -28,13 +28,12 @@ import grasia_dash_components as gdc
 import sd_material_ui
 
 # Local imports:
-import lib.interface as lib
 import data_controller
 from app import assets_url_path
-from lib.cytoscape_stylesheet.BaseStylesheet import BaseStylesheet
-from controls_sidebar_decorator.ControlsSidebar import ControlsSidebar
-from controls_sidebar_decorator.factory_sidebar_decorator import factory_sidebar_decorator
-from controls_sidebar_decorator.factory_sidebar_decorator import bind_controls_sidebar_callbacks
+from networks.cytoscape_stylesheet.BaseStylesheet import BaseStylesheet
+from networks.controls_sidebar_decorator.ControlsSidebar import ControlsSidebar
+from networks.controls_sidebar_decorator.factory_sidebar_decorator import factory_sidebar_decorator
+from networks.controls_sidebar_decorator.factory_sidebar_decorator import bind_controls_sidebar_callbacks
 
 TIME_DIV = 60 * 60 * 24 * 30
 
@@ -262,20 +261,6 @@ def bind_callbacks(app):
     bind_controls_sidebar_callbacks('co_editing_network', app)
     #########
 
-    # @app.callback(
-    #     Output('bind_ctl_sidebar', 'value'),
-    #     [Input('initial-selection', 'children')],
-    #     [State('bind_ctl_sidebar', 'value')]
-    # )
-    # def bind_sidebar_callbacks(selection_json, bind_sidebar):
-    #     selection = json.loads(selection_json)
-    #     network_code = selection['network']
-    #     if bind_sidebar is network_code:
-    #         return network_code
-
-    #     bind_controls_sidebar_callbacks(network_code, app)
-    #     return network_code
-
 
     @app.callback(
         Output('signal-data', 'value'),
@@ -386,23 +371,3 @@ def bind_callbacks(app):
                     marks=range_slider_marks
                 )
 
-if __name__ == '__main__':
-
-    data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
-
-    wikis = ['eslagunanegra_pages_full', 'cocktails', 'es.shamanking.wikia.com']
-
-    available_metrics = lib.get_available_metrics()
-    metrics = []
-    metrics.append(available_metrics[0])
-    metrics.append(available_metrics[1])
-
-    app = dash.Dash()
-    app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
-    app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
-
-    app.layout = generate_main_content(wikis, metrics)
-
-    bind_callbacks(app)
-
-    app.run_server(debug=debug, port=8053)
