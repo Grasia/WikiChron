@@ -111,8 +111,6 @@ local_available_js = [
 # list of js files to import from the app (either local or remote)
 to_import_js = []
 
-global app;
-
 if debug:
     print('=> You are in DEBUG MODE <=')
 
@@ -304,7 +302,7 @@ def app_bind_callbacks(app):
 
 #--------- BEGIN AUX SERVERS --------------------------------------------------#
 
-def start_redirection_server():
+def start_redirection_server(app):
     # Redirects index to /app
     @app.server.route('/')
     def redirect_index_to_app():
@@ -317,7 +315,7 @@ def start_redirection_server():
 # So that's why we still need this function to serve the js files but don't load them
 # automatically when the app is loaded, but when we want to do it.
 # It might have a better solution, but let it _just work_
-def start_js_server():
+def start_js_server(app):
     static_js_route = 'js/'
     js_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                  static_js_route)
@@ -339,7 +337,7 @@ def start_js_server():
     return
 
 
-def start_download_data_server():
+def start_download_data_server(app):
 
     def is_valid(selection):
         # check empty query string
@@ -379,7 +377,6 @@ def start_download_data_server():
 
 def create_dash_app(server):
     print('Creating new Dash instance...')
-    global app;
     app = dash.Dash('WikiChron - Networks', # TO CHANGE by __name__
                     server = server,
                     meta_tags = meta_tags,
@@ -436,9 +433,9 @@ def set_up_app(app):
 def start_aux_servers(app):
 
     # start auxiliar servers:
-    start_js_server()
-    start_redirection_server()
-    start_download_data_server()
+    start_js_server(app)
+    start_redirection_server(app)
+    start_download_data_server(app)
 
     # TOMOVE
     print('¡¡¡¡ Welcome to WikiChron-networks ' + __version__ +' !!!!')
@@ -460,6 +457,7 @@ def run(app):
 
 print ('This is __name__: {}'.format(__name__))
 if __name__ == '__main__':
+    from flask import Flask
     server = Flask(__name__)
 
     # create and config Dash instance
@@ -473,5 +471,4 @@ if __name__ == '__main__':
 
     run(app)
 
-#~ else:
-    #~ server = app.server
+

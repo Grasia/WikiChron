@@ -30,7 +30,6 @@ from flask import current_app
 
 # Local imports:
 import data_controller
-from app import assets_url_path
 from networks.cytoscape_stylesheet.BaseStylesheet import BaseStylesheet
 from networks.controls_sidebar_decorator.ControlsSidebar import ControlsSidebar
 from networks.controls_sidebar_decorator.factory_sidebar_decorator import factory_sidebar_decorator
@@ -40,6 +39,7 @@ TIME_DIV = 60 * 60 * 24 * 30
 
 global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
+
 
 def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
     """
@@ -54,6 +54,9 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
     Return: An HTML object with the main content
     """
 
+    # Contructs the assets_url_path for image sources:
+    assets_url_path = os.path.join('/app/', 'assets') #TOCHANGE: use a config var
+
     def main_header():
         """
         Generates the main header
@@ -61,7 +64,6 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
         Return: An HTML object with the header content
         """
         href_download_button = '/download/{}'.format(query_string)
-        print(f'\n\n\nConfiggg!!:  {current_app.config}')
         return (html.Div(id='header',
                 className='container',
                 style={'display': 'flex', 'align-items': 'center', \

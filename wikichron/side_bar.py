@@ -24,8 +24,6 @@ import dash_html_components as html
 
 # GLOBAL VARIABLES
 
-global app;
-
 global debug;
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
