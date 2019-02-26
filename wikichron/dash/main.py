@@ -152,7 +152,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
                         className='share-modal-paragraph-info-cn'
                       )
                     ]),
-                    gdc.Import(src='js/main.share_modal.js')
+                    gdc.Import(src='/js/main.share_modal.js')
                     ],
                     id='share-dialog-inner-div'
                 ),

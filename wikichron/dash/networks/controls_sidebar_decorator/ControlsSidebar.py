@@ -83,7 +83,7 @@ class ControlsSidebar(metaclass=abc.ABCMeta):
                                                 self.metrics_section,
                                                 self.options_section
                                             ]),
-                                        gdc.Import(src='js/controls_side_bar.js')
+                                        gdc.Import(src='/js/controls_side_bar.js')
                                     ])
                             ],
                             style={

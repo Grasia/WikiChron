@@ -12,7 +12,7 @@ from config import Config
 # run the full Flask + Dash altogether.
 sys.path.append('wikichron/dash')
 
-from wikichron.dash.app import create_dash_app, start_aux_servers, set_up_app
+from wikichron.dash.app import create_dash_app, set_up_app
 
 def create_app(config_class = Config):
     print('Creating Flask instance...')
@@ -28,7 +28,6 @@ def create_app(config_class = Config):
 def register_dashapp(server):
     dashapp = create_dash_app(server)
     set_up_app(dashapp)
-    start_aux_servers(dashapp)
 
 
 def register_blueprints(server):

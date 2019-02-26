@@ -234,7 +234,7 @@ def generate_side_bar(wikis, networks, pre_selected_wikis = [], pre_selected_net
                     compare_button(),
                 ]
             ),
-            gdc.Import(src='js/side_bar.js')
+            gdc.Import(src='/js/side_bar.js')
         ]
     );
 

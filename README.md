@@ -56,7 +56,7 @@ You need to have a `wikis.json` file in your data_dir/ directory with some metad
 You can find some helpful instructions on how to edit or automatically generate this file using a script [in this page of the WikiChron's wiki](https://github.com/Grasia/WikiChron/wiki/How-to-add-a-new-wiki#modify-the-wikisjson-file).
 
 ## Run the application
-Use: `python3 -m wikichron` or `python3 wikichron/app.py`
+Use: `FLASK_ENV=development python3 -m wikichron.dash`
 
 The webapp will be locally available under http://127.0.0.1:8890/app/
 
@@ -64,7 +64,7 @@ Optionally, you can specify a directory with the csv data of the wikis you want 
 
 For instance, suppose that your data is stored in `/var/tmp`, you might launch wikichron using that directory with:
 
-`WIKICHRON_DATA_DIR='/var/tmp' python3 wikichron/app.py`
+`WIKICHRON_DATA_DIR='/var/tmp' FLASK_ENV=development python -m wikichron.dash`
 
 It will show all the files ending in .csv as wikis available to analyze and plot.
 
