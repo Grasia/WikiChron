@@ -335,7 +335,7 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             Input('calculate_betweenness', 'n_clicks'),
             Input('calculate_communities', 'n_clicks')],
             [State('initial-selection', 'children'),
-            State('date-slider-container', 'children')]
+            State('dates-slider', 'value')]
         )
         def update_network(ready, pr_clicks, bet_clicks, com_clicks, selection_json, slider):
             if not ready:
@@ -352,9 +352,9 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             first_entry = data_controller.get_first_entry(wiki)
             first_entry = int(datetime.strptime(str(first_entry), "%Y-%m-%d %H:%M:%S").strftime('%s'))
 
-            upper_bound = first_entry + slider['props']['value'][1] * \
+            upper_bound = first_entry + slider[1] * \
             CoEditingNetwork.TIME_DIV
-            lower_bound = first_entry + slider['props']['value'][0] * \
+            lower_bound = first_entry + slider[0] * \
             CoEditingNetwork.TIME_DIV
 
             upper_bound = datetime.fromtimestamp(upper_bound).strftime("%Y-%m-%d %H:%M:%S")
