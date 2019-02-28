@@ -7,6 +7,7 @@
 
    Created on: 23-oct-2017
 
+   Copyright 2017-2019 Youssef 'FRYoussef' El Faqir El Rhazoui <f.r.youssef@hotmail.com>
    Copyright 2017-2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
 
