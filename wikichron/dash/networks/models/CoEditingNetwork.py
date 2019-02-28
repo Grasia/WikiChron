@@ -186,7 +186,9 @@ class CoEditingNetwork(BaseNetwork):
         di_net['num_edges'] = self.graph.ecount()
         di_net['max_degree'] = self.graph.maxdegree()
         di_net['n_communities'] = self.num_communities \
-        if self.num_communities is not -1 else '...'
+            if self.num_communities is not -1 else '...'
+        di_net['assortativity'] = self.graph['assortativity_degree'] \
+            if 'assortativity_degree' in self.graph.attributes() else '...'
         di_net['network'] = network
         return di_net
 

@@ -101,3 +101,17 @@ class BaseNetwork():
             pal = ClusterColoringPalette(len(mod))
             self.graph.vs['cluster_color'] = list(map(lambda x: rgb2hex(x[0],x[1],x[2], normalised=True),
                 pal.get_many(mod.membership)))
+
+
+    def calculate_assortativity_degree(self):
+        """
+        Calculates the assortativity degree and put it as an graph attrb.
+        * Reference:
+            Newman MEJ: Assortative mixing in networks, Phys Rev Lett89:208701, 
+            2002.@see:assortativity_degree()when thetypes are the vertex degrees
+        """
+        assortativity = self.graph.assortativity_degree(self.graph.is_directed())
+        if assortativity:
+            assortativity = "{0:.5f}".format(assortativity)
+
+        self.graph['assortativity_degree'] = assortativity
