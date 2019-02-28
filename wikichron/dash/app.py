@@ -15,6 +15,7 @@
 import os
 import json
 import time
+from datetime import datetime
 from warnings import warn
 
 # Dash framework imports
@@ -117,7 +118,7 @@ def get_available_wikis(data_dir):
 available_networks = networks.interface.get_available_networks()
 available_wikis = get_available_wikis(data_dir)
 available_wikis_dict = {wiki['url']: wiki for wiki in available_wikis}
-selection_params = {'wikis', 'network'}
+selection_params = {'wikis', 'network', 'lower_bound', 'upper_bound'}
 
 
 ######### BEGIN CODE ###########################################################
@@ -316,7 +317,16 @@ def start_download_data_server(app):
 
         wikis = extract_wikis_from_selection_dict(selection)
         network_code = selection['network'][0]
-        network = data_controller.get_network(wiki = wikis[0], network_code = network_code)
+        lower_bound = ''
+        upper_bound = ''
+        if 'lower_bound' and 'upper_bound' in selection.keys():
+            lower_bound = int(selection['lower_bound'][0])
+            upper_bound = int(selection['upper_bound'][0])
+            upper_bound = datetime.fromtimestamp(upper_bound).strftime("%Y-%m-%d %H:%M:%S")
+            lower_bound = datetime.fromtimestamp(lower_bound).strftime("%Y-%m-%d %H:%M:%S")
+
+        network = data_controller.get_network(wikis[0], network_code, 
+                lower_bound, upper_bound)
 
         tmp = TempFS()
 

@@ -24,9 +24,11 @@ import dash_cytoscape
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
 import grasia_dash_components as gdc
 import sd_material_ui
 from flask import current_app
+from urllib.parse import parse_qs, urlencode
 
 # Local imports:
 import data_controller
@@ -36,6 +38,8 @@ from networks.controls_sidebar_decorator.factory_sidebar_decorator import factor
 from networks.controls_sidebar_decorator.factory_sidebar_decorator import bind_controls_sidebar_callbacks
 
 TIME_DIV = 60 * 60 * 24 * 30
+
+selection_params = {'wikis', 'network', 'lower_bound', 'upper_bound'}
 
 global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
@@ -375,3 +379,39 @@ def bind_callbacks(app):
                     marks=range_slider_marks
                 )
 
+
+    @app.callback(
+        Output('download-button', 'href'),
+        [Input('dates-slider', 'value')],
+        [State('url', 'search'),
+        State('initial-selection', 'children')]
+    )
+    def update_download_url(slider, query_string, selection_json):
+        if not slider:
+            raise PreventUpdate()
+
+        selection = json.loads(selection_json)
+        wiki = selection['wikis'][0]
+
+        # Attention! query_string includes heading ? symbol
+        query_string_dict = parse_qs(query_string[1:])
+
+        # get only the parameters we are interested in for the side_bar selection
+        selection = { param: query_string_dict[param] for param in set(query_string_dict.keys()) & selection_params }
+
+        # Let's parse the time values 
+        first_entry = data_controller.get_first_entry(wiki)
+        first_entry = int(datetime.strptime(str(first_entry), "%Y-%m-%d %H:%M:%S").strftime('%s'))
+        upper_bound = first_entry + slider[1] * TIME_DIV
+        lower_bound = first_entry + slider[0] * TIME_DIV
+
+        # Now, time to update the query
+        selection['upper_bound'] = upper_bound
+        selection['lower_bound'] = lower_bound
+        new_query = urlencode(selection,  doseq=True)
+        href = f'/download/?{new_query}'
+
+        if debug:
+            print(f'Download href updated to: {href}')
+
+        return href
