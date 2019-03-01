@@ -32,7 +32,7 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
     @staticmethod
     def default_stats(st1 = 'Nodes: ...', st2 = 'First User: ...',
             st3 = 'Edges: ...', st4 = 'Last User: ...', st5 = 'Communities: ...',
-            st6 = 'Max Hub Degree: ...'):
+            st6 = 'Max Hub Degree: ...', st7 = 'Assortativity Degree: ...'):
 
         return [
                 html.Div([
@@ -46,6 +46,9 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
                 html.Div([
                     html.P(st5, className='left-element', id='n_communities'),
                     html.P(st6, className='right-element')
+                ]),
+                html.Div([
+                    html.P(st7, className='left-element', id='assort_degree')
                 ])]
 
 
@@ -69,6 +72,13 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
                 html.Div([
                     html.Span('Communities', className='left-element'),
                     html.Button('Run', id='calculate_communities',
+                                type='button',
+                                className='right-element action-button')
+                ],
+                className='metrics-section'),
+                html.Div([
+                    html.Span('Assortativity', className='left-element'),
+                    html.Button('Run', id='calc_assort_degree',
                                 type='button',
                                 className='right-element action-button')
                 ],
@@ -135,7 +145,8 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
                 st3 = f'Edges: {cy_network["num_edges"]}',
                 st4 = f'Last User: {date2}',
                 st5 = f'Communities: {cy_network["n_communities"]}',
-                st6 = f'Max Hub Degree: {cy_network["max_degree"]}'
+                st6 = f'Max Hub Degree: {cy_network["max_degree"]}',
+                st7 = f'Assortativity Degree: {cy_network["assortativity"]}'
                 )
 
 
@@ -220,6 +231,16 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
 
         @app.callback(
+            Output('calc_assort_degree', 'className'),
+            [Input('calc_assort_degree', 'n_clicks')]
+        )
+        def switch_run_assortativity(clicks):
+            if not clicks:
+                return 'right-element action-button'
+            return 'right-element action-button-pressed'
+
+
+        @app.callback(
             Output('calculate_page_rank', 'disabled'),
             [Input('calculate_page_rank', 'n_clicks')]
         )
@@ -284,8 +305,17 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             [Input('calculate_communities', 'n_clicks')],
             [State('network-ready', 'value')]
         )
-        def show_num_communities(_, cy_network):
+        def update_num_communities(_, cy_network):
             return f'Communities: {cy_network["n_communities"]}'
+
+
+        @app.callback(
+            Output('assort_degree', 'content'),
+            [Input('calc_assort_degree', 'n_clicks')],
+            [State('network-ready', 'value')]
+        )
+        def update_assortativity(_, cy_network):
+            return f'Assortativity Degree: {cy_network["assortativity"]}'
 
 
         @app.callback(
@@ -333,11 +363,14 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             [Input('ready', 'value'),
             Input('calculate_page_rank', 'n_clicks'),
             Input('calculate_betweenness', 'n_clicks'),
-            Input('calculate_communities', 'n_clicks')],
+            Input('calculate_communities', 'n_clicks'),
+            Input('calc_assort_degree', 'n_clicks')],
             [State('initial-selection', 'children'),
             State('dates-slider', 'value')]
         )
-        def update_network(ready, pr_clicks, bet_clicks, com_clicks, selection_json, slider):
+        def update_network(ready, pr_clicks, bet_clicks, com_clicks, assor_clicks,
+            selection_json, slider):
+
             if not ready:
                 return None
 
@@ -373,5 +406,8 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
             if com_clicks and com_clicks % 2:
                 network.calculate_communities()
+
+            if assor_clicks and assor_clicks % 2:
+                network.calculate_assortativity_degree()
 
             return network.to_cytoscape_dict()
