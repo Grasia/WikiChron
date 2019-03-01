@@ -51,7 +51,6 @@ data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 
 # global app config
 APP_HOSTNAME = 'http://wikichron.science'; # TOMOVE to a config var
-port = 8890;
 wikichron_base_pathname = '/app/'; # TOMOVE to a config var
 assets_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets');
 assets_url_path = os.path.join(wikichron_base_pathname, 'assets')
@@ -325,7 +324,7 @@ def start_download_data_server(app):
             upper_bound = datetime.fromtimestamp(upper_bound).strftime("%Y-%m-%d %H:%M:%S")
             lower_bound = datetime.fromtimestamp(lower_bound).strftime("%Y-%m-%d %H:%M:%S")
 
-        network = data_controller.get_network(wikis[0], network_code, 
+        network = data_controller.get_network(wikis[0], network_code,
                 lower_bound, upper_bound)
 
         tmp = TempFS()
@@ -402,10 +401,5 @@ def set_up_app(app):
     print('Using version ' + gdc.__version__ + ' of Grasia Dash Components.')
     print('Using version ' + html.__version__ + ' of Dash Html Components.')
 
-    return
-
-
-def run(app):
-    app.run_server(debug=debug, port=port)
     return
 

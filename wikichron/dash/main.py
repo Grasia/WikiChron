@@ -235,7 +235,6 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
             className='control-text',
             children=[
 
-                #generate_controls_sidebar(),
                 controls_sidebar.build(),
 
                 main_header(),
@@ -399,7 +398,7 @@ def bind_callbacks(app):
         # get only the parameters we are interested in for the side_bar selection
         selection = { param: query_string_dict[param] for param in set(query_string_dict.keys()) & selection_params }
 
-        # Let's parse the time values 
+        # Let's parse the time values
         first_entry = data_controller.get_first_entry(wiki)
         first_entry = int(datetime.strptime(str(first_entry), "%Y-%m-%d %H:%M:%S").strftime('%s'))
         upper_bound = first_entry + slider[1] * TIME_DIV

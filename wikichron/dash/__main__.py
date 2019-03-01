@@ -7,11 +7,13 @@ import pandas as pd
 import flask
 
 # local imports
-from app import create_dash_app, set_up_app, run
+from app import create_dash_app, set_up_app
 
+global debug;
+debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
-wikichron_base_pathname = '/app/'; #TOCHANGE use config var
-
+wikichron_base_pathname = '/app/';
+port = 8890;
 
 # This part is only for launching of the dash app in standalone mode only #
 # When using the Flask app, this doesn't need to be run #
@@ -66,6 +68,11 @@ def start_aux_servers(app):
     start_js_server(app)
     start_redirection_server(app)
 
+    return
+
+
+def run(app):
+    app.run_server(debug=debug, port=port)
     return
 
 

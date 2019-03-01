@@ -295,32 +295,3 @@ def bind_callbacks(app):
             return True
     return
 
-if __name__ == '__main__':
-
-    print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
-    print('Using version ' + gdc.__version__ + ' of Grasia Dash Components.')
-
-    global app;
-
-    app = dash.Dash()
-
-    app.scripts.config.serve_locally = True
-
-#~ app.scripts.append_script({ "external_url": "app.js"})
-    from app import get_available_wikis
-    available_wikis = get_available_wikis('data/')
-
-    from lib.interface import get_available_networks
-    app.layout = html.Div(id='app-layout',
-        style={'display': 'flex'},
-        children=[
-            generate_side_bar(available_wikis, get_available_networks()),
-        ]
-    );
-    #~ bind_callbacks(app)
-
-    app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
-    app.css.append_css({"external_url": "https://codepen.io/akronix/pen/rpQgqQ.css"})
-
-    app.run_server(port=8052, debug=True)
-
