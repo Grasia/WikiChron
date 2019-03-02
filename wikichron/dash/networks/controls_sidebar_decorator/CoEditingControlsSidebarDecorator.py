@@ -168,15 +168,11 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             Output('cytoscape', 'stylesheet'),
             [Input('cytoscape', 'elements'),
             Input('show-labels', 'n_clicks'),
-            Input('show-page-rank', 'n_clicks'),
-            Input('show-edits', 'n_clicks'),
-            Input('show-betweenness', 'n_clicks'),
             Input('color-cluster', 'n_clicks')],
             [State('network-ready', 'value'),
             State('cytoscape', 'stylesheet')]
         )
-        def update_stylesheet(_, lb_clicks, pr_clicks, ed_clicks, bet_clicks,
-            com_clicks, cy_network, stylesheet):
+        def update_stylesheet(_, lb_clicks, com_clicks, cy_network, stylesheet):
 
             if not cy_network:
                 raise PreventUpdate()
@@ -186,12 +182,6 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
             if lb_clicks and lb_clicks % 2:
                 co_stylesheet.set_label('label')
-            elif ed_clicks and ed_clicks % 2:
-                 co_stylesheet.set_label('num_edits')
-            elif pr_clicks and pr_clicks % 2:
-                co_stylesheet.set_label('page_rank')
-            elif bet_clicks and bet_clicks % 2:
-                co_stylesheet.set_label('betweenness')
             else:
                 co_stylesheet.set_label('')
 
@@ -244,6 +234,8 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
                 raise PreventUpdate()
 
             tms = [int(tm_pr), int(tm_edits), int(tm_bet)]
-            tm_metrics = {key:value for key, value in zip(tms, CoEditingNetwork.AVALIABLE_METRICS)}
+            tm_metrics = {key:value for key, value in zip(tms, CoEditingNetwork.AVALIABLE_METRICS.keys())}
+            print(tms)
+            print(tm_metrics)
             max_key = max(tm_metrics, key=int)
             return tm_metrics[max_key]
