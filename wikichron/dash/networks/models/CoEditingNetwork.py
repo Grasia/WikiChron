@@ -39,7 +39,7 @@ class CoEditingNetwork(BaseNetwork):
     TIME_BOUND = 24 * 15
     NAME = 'Co-Editing'
     CODE = 'co_editing_network'
-    AVALIABLE_METRICS = {'num_edits', 'betweenness', 'page_rank'}
+    AVALIABLE_METRICS = {'page_rank', 'num_edits', 'betweenness'}
 
     def __init__(self, is_directed = False, graph = {}, 
         first_entry = None, last_entry = None):

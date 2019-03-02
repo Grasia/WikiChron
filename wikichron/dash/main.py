@@ -255,11 +255,13 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
                             children=args_selection),
 
                 cytoscape_component(),
+                html.Div(id='table-container', children=[]),
 
                 html.Div(id='network-ready', style={'display': 'none'}),
                 html.Div(id='signal-data', style={'display': 'none'}),
-                html.Div(id='ready', style={'display': 'none'})
-        ]);
+                html.Div(id='ready', style={'display': 'none'}),
+                html.Div(id='metric-to-show', style={'display': 'none'})
+        ])
 
 
 def bind_callbacks(app):
@@ -270,6 +272,31 @@ def bind_callbacks(app):
     ############################
 
 
+    @app.callback(
+        Output('table-container', 'children'),
+        [Input('metric-to-show', 'value')],
+        [State('network-ready', 'value'),
+        State('initial-selection', 'children'),
+        State('dates-slider', 'value')]
+    )
+    def update_ranking(metric, ready, selection_json, slider):
+        if not ready or not metric:
+            raise PreventUpdate()
+        
+        selection = json.loads(selection_json)
+        wiki = selection['wikis'][0]
+        network_code = selection['network']
+        (lower, upper) = data_controller.get_network_time_bounds(wiki, slider[0], slider[1])
+        network = data_controller.get_network(wiki, network_code, lower, upper)
+        df = network.get_metric_dataframe(metric)
+
+        return dash_table.DataTable(
+            id='ranking-table',
+            columns=[{"name": i, "id": i} for i in df.columns],
+            data=df.to_dict("rows"),
+        )
+
+        
     @app.callback(
         Output('ready', 'value'),
         [Input('dates-slider', 'value')]

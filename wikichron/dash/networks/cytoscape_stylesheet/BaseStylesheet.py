@@ -49,7 +49,8 @@ class BaseStylesheet(metaclass=abc.ABCMeta):
 
 
 	def set_label(self, text):
-		self.cy_stylesheet[0]['style']['content'] = text
+		content = f'data({text})' if text else ''
+		self.cy_stylesheet[0]['style']['content'] = content
 
 	
 	def make_basic_stylesheet(self):

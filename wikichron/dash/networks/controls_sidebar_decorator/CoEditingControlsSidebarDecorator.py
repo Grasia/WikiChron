@@ -13,9 +13,11 @@
 
 import time
 import json
+from datetime import datetime
+
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
-from datetime import datetime
+from dash.exceptions import PreventUpdate
 
 from .BaseControlsSidebarDecorator import BaseControlsSidebarDecorator
 from networks.cytoscape_stylesheet.CoEditingStylesheet import CoEditingStylesheet
@@ -54,16 +56,21 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
     @staticmethod
     def default_options():
         return [
-                    html.Button('Show Labels', id='show_labels',
-                        className='control-button action-button'),
-                    html.Button('Show Edits', id='show_edits',
-                        className='control-button action-button'),
-                    html.Button('Show PageRank', id='show_page_rank',
-                        className='control-button action-button'),
-                    html.Button('Show Betweenness', id='show_betweenness',
-                        className='control-button action-button'),
-                    html.Button('Color by Cluster', id='color_cluster',
-                        className='control-button action-button'),
+                    html.Button('Show Labels', id='show-labels',
+                        className='control-button action-button',
+                        n_clicks_timestamp='0'),
+                    html.Button('Show Edits', id='show-edits',
+                        className='control-button action-button',
+                        n_clicks_timestamp='0'),
+                    html.Button('Show PageRank', id='show-page-rank',
+                        className='control-button action-button',
+                        n_clicks_timestamp='0'),
+                    html.Button('Show Betweenness', id='show-betweenness',
+                        className='control-button action-button',
+                        n_clicks_timestamp='0'),
+                    html.Button('Color by Cluster', id='color-cluster',
+                        className='control-button action-button',
+                        n_clicks_timestamp='0'),
                 ]
 
 
@@ -108,8 +115,8 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
 
         @app.callback(
-            Output('show_labels', 'className'),
-            [Input('show_labels', 'n_clicks')]
+            Output('show-labels', 'className'),
+            [Input('show-labels', 'n_clicks')]
         )
         def switch_show_labels(clicks):
             if not clicks or clicks % 2 == 0:
@@ -118,8 +125,8 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
 
         @app.callback(
-            Output('show_page_rank', 'className'),
-            [Input('show_page_rank', 'n_clicks')]
+            Output('show-page-rank', 'className'),
+            [Input('show-page-rank', 'n_clicks')]
         )
         def switch_show_page_rank(clicks):
             if not clicks or clicks % 2 == 0:
@@ -128,8 +135,8 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
 
         @app.callback(
-            Output('show_betweenness', 'className'),
-            [Input('show_betweenness', 'n_clicks')]
+            Output('show-betweenness', 'className'),
+            [Input('show-betweenness', 'n_clicks')]
         )
         def switch_show_betweenness(clicks):
             if not clicks or clicks % 2 == 0:
@@ -138,8 +145,8 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
 
         @app.callback(
-            Output('show_edits', 'className'),
-            [Input('show_edits', 'n_clicks')]
+            Output('show-edits', 'className'),
+            [Input('show-edits', 'n_clicks')]
         )
         def switch_show_edits(clicks):
             if not clicks or clicks % 2 == 0:
@@ -148,8 +155,8 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
 
         @app.callback(
-            Output('color_cluster', 'className'),
-            [Input('color_cluster', 'n_clicks')]
+            Output('color-cluster', 'className'),
+            [Input('color-cluster', 'n_clicks')]
         )
         def switch_color_by_cluster(clicks):
             if not clicks or clicks % 2 == 0:
@@ -160,11 +167,11 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
         @app.callback(
             Output('cytoscape', 'stylesheet'),
             [Input('cytoscape', 'elements'),
-            Input('show_labels', 'n_clicks'),
-            Input('show_page_rank', 'n_clicks'),
-            Input('show_edits', 'n_clicks'),
-            Input('show_betweenness', 'n_clicks'),
-            Input('color_cluster', 'n_clicks')],
+            Input('show-labels', 'n_clicks'),
+            Input('show-page-rank', 'n_clicks'),
+            Input('show-edits', 'n_clicks'),
+            Input('show-betweenness', 'n_clicks'),
+            Input('color-cluster', 'n_clicks')],
             [State('network-ready', 'value'),
             State('cytoscape', 'stylesheet')]
         )
@@ -178,13 +185,13 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             co_stylesheet.all_transformations(cy_network)
 
             if lb_clicks and lb_clicks % 2:
-                co_stylesheet.set_label('data(label)')
+                co_stylesheet.set_label('label')
             elif ed_clicks and ed_clicks % 2:
-                 co_stylesheet.set_label('data(num_edits)')
+                 co_stylesheet.set_label('num_edits')
             elif pr_clicks and pr_clicks % 2:
-                co_stylesheet.set_label('data(page_rank)')
+                co_stylesheet.set_label('page_rank')
             elif bet_clicks and bet_clicks % 2:
-                co_stylesheet.set_label('data(betweenness)')
+                co_stylesheet.set_label('betweenness')
             else:
                 co_stylesheet.set_label('')
 
@@ -205,8 +212,8 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
         )
         def update_network(ready, selection_json, slider):
 
-            if not ready:
-                return None
+            if not ready or not slider:
+                raise PreventUpdate()
 
             # get network instance from selection
             selection = json.loads(selection_json)
@@ -215,22 +222,32 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
             print(' * [Info] Building the network....')
             time_start_calculations = time.perf_counter()
-
-            first_entry = data_controller.get_first_entry(wiki)
-            first_entry = int(datetime.strptime(str(first_entry),
-                "%Y-%m-%d %H:%M:%S").strftime('%s'))
-
-            upper_bound = first_entry + slider[1] * \
-                CoEditingNetwork.TIME_DIV
-            lower_bound = first_entry + slider[0] * \
-                CoEditingNetwork.TIME_DIV
-
-            upper_bound = datetime.fromtimestamp(upper_bound).strftime("%Y-%m-%d %H:%M:%S")
-            lower_bound = datetime.fromtimestamp(lower_bound).strftime("%Y-%m-%d %H:%M:%S")
-
+            (lower_bound, upper_bound) = data_controller\
+                    .get_network_time_bounds(wiki, slider[0], slider[1])
             network = data_controller.get_network(wiki, network_code, lower_bound, upper_bound)
 
             time_end_calculations = time.perf_counter() - time_start_calculations
             print(f' * [Timing] Network ready in {time_end_calculations} seconds')
 
             return network.to_cytoscape_dict()
+
+
+        @app.callback(
+            Output('metric-to-show', 'value'),
+            [Input('show-page-rank', 'n_clicks_timestamp'),
+            Input('show-edits', 'n_clicks_timestamp'),
+            Input('show-betweenness', 'n_clicks_timestamp')]
+        )
+        def select_metric(tm_pr, tm_edits, tm_bet):
+            tms = [int(tm_pr), int(tm_edits), int(tm_bet)]
+            # Let's clean the same values
+            # It's quite dirty but works
+            i = 0
+            for tm in tms:
+                if tm == 0:
+                    tm = i
+                    i += 1
+
+            tm_metrics = dict(zip(tms, CoEditingNetwork.AVALIABLE_METRICS))
+            max_key = max(tm_metrics, key=int)
+            return tm_metrics[max_key]
