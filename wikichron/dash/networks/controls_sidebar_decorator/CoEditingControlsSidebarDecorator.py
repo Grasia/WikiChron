@@ -61,16 +61,16 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
                         n_clicks_timestamp='0'),
                     html.Button('Show Edits', id='show-edits',
                         className='control-button action-button',
-                        n_clicks_timestamp='0'),
+                        n_clicks_timestamp='1'),
                     html.Button('Show PageRank', id='show-page-rank',
                         className='control-button action-button',
-                        n_clicks_timestamp='0'),
+                        n_clicks_timestamp='2'),
                     html.Button('Show Betweenness', id='show-betweenness',
                         className='control-button action-button',
-                        n_clicks_timestamp='0'),
+                        n_clicks_timestamp='3'),
                     html.Button('Color by Cluster', id='color-cluster',
                         className='control-button action-button',
-                        n_clicks_timestamp='0'),
+                        n_clicks_timestamp='4'),
                 ]
 
 
@@ -179,7 +179,7 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             com_clicks, cy_network, stylesheet):
 
             if not cy_network:
-                return CoEditingStylesheet().cy_stylesheet
+                raise PreventUpdate()
 
             co_stylesheet = CoEditingStylesheet(stylesheet)
             co_stylesheet.all_transformations(cy_network)
@@ -223,7 +223,7 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             print(' * [Info] Building the network....')
             time_start_calculations = time.perf_counter()
             (lower_bound, upper_bound) = data_controller\
-                    .get_network_time_bounds(wiki, slider[0], slider[1])
+                    .get_time_bounds(wiki, slider[0], slider[1])
             network = data_controller.get_network(wiki, network_code, lower_bound, upper_bound)
 
             time_end_calculations = time.perf_counter() - time_start_calculations
@@ -236,18 +236,14 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             Output('metric-to-show', 'value'),
             [Input('show-page-rank', 'n_clicks_timestamp'),
             Input('show-edits', 'n_clicks_timestamp'),
-            Input('show-betweenness', 'n_clicks_timestamp')]
+            Input('show-betweenness', 'n_clicks_timestamp')],
+            [State('network-ready', 'value')]
         )
-        def select_metric(tm_pr, tm_edits, tm_bet):
-            tms = [int(tm_pr), int(tm_edits), int(tm_bet)]
-            # Let's clean the same values
-            # It's quite dirty but works
-            i = 0
-            for tm in tms:
-                if tm == 0:
-                    tm = i
-                    i += 1
+        def select_metric(tm_pr, tm_edits, tm_bet, ready):
+            if not ready:
+                raise PreventUpdate()
 
-            tm_metrics = dict(zip(tms, CoEditingNetwork.AVALIABLE_METRICS))
+            tms = [int(tm_pr), int(tm_edits), int(tm_bet)]
+            tm_metrics = {key:value for key, value in zip(tms, CoEditingNetwork.AVALIABLE_METRICS)}
             max_key = max(tm_metrics, key=int)
             return tm_metrics[max_key]

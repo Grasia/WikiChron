@@ -62,6 +62,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
     # Contructs the assets_url_path for image sources:
     assets_url_path = os.path.join('/app/', 'assets') #TOCHANGE: use a config var
 
+
     def main_header():
         """
         Generates the main header
@@ -112,12 +113,14 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
             ])
         );
 
+
     def selection_title(selected_wiki, selected_network):
         selection_text = (f'You are viewing the {selected_network} network for wiki: {selected_wiki}')
         return html.Div([
             html.H3(selection_text, id = 'selection-title')],
             className = 'container'
         )
+
 
     def share_modal(share_link, download_link):
         """
@@ -167,6 +170,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
             )
         ])
 
+
     def date_slider_control():
         return html.Div(id='date-slider-div', className='container',
                 children=[
@@ -187,6 +191,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
                 ],
                 style={'margin-top': '15px'}
                 )
+
 
     def cytoscape_component():
         cytoscape = dash_cytoscape.Cytoscape(
@@ -217,6 +222,22 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
                     stylesheet = BaseStylesheet().cy_stylesheet
         )
         return html.Div(style={'display': 'flex'}, children=[cytoscape])
+
+
+    def ranking_table():
+        return dash_table.DataTable(
+                    id='ranking-table',
+                    pagination_settings={
+                        'current_page': 0,
+                        'page_size': 10
+                    },
+                    pagination_mode='be',
+                    sorting='be',
+                    sorting_type='single',
+                    sorting_settings=[],
+                    style_cell={'textAlign': 'center'},
+                    style_header={'fontWeight': 'bold'}
+                )
 
     if debug:
         print ('Generating main...')
@@ -255,7 +276,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
                             children=args_selection),
 
                 cytoscape_component(),
-                html.Div(id='table-container', children=[]),
+                ranking_table(),
 
                 html.Div(id='network-ready', style={'display': 'none'}),
                 html.Div(id='signal-data', style={'display': 'none'}),
@@ -273,28 +294,59 @@ def bind_callbacks(app):
 
 
     @app.callback(
-        Output('table-container', 'children'),
+        Output('ranking-table', 'columns'),
         [Input('metric-to-show', 'value')],
         [State('network-ready', 'value'),
         State('initial-selection', 'children'),
         State('dates-slider', 'value')]
     )
-    def update_ranking(metric, ready, selection_json, slider):
-        if not ready or not metric:
+    def update_ranking_header(metric, ready, selection_json, slider):
+        if not ready or not metric or not slider:
+            print('not ready header')
             raise PreventUpdate()
         
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0]
         network_code = selection['network']
-        (lower, upper) = data_controller.get_network_time_bounds(wiki, slider[0], slider[1])
+        (lower, upper) = data_controller.get_time_bounds(wiki, slider[0], slider[1])
         network = data_controller.get_network(wiki, network_code, lower, upper)
+
+        df = network.get_metric_dataframe(metric)
+        return [{"name": i, "id": i} for i in df.columns]
+
+
+    @app.callback(
+        Output('ranking-table', 'data'),
+        [Input('ranking-table', 'pagination_settings'),
+        Input('ranking-table', 'sorting_settings'),
+        Input('metric-to-show', 'value')],
+        [State('network-ready', 'value'),
+        State('initial-selection', 'children'),
+        State('dates-slider', 'value')]
+    )
+    def update_ranking(pag_set, sort_set, metric, ready, selection_json, slider):
+        if not ready or not metric or not slider:
+            raise PreventUpdate()
+        
+        selection = json.loads(selection_json)
+        wiki = selection['wikis'][0]
+        network_code = selection['network']
+        (lower, upper) = data_controller.get_time_bounds(wiki, slider[0], slider[1])
+        network = data_controller.get_network(wiki, network_code, lower, upper)
+
         df = network.get_metric_dataframe(metric)
 
-        return dash_table.DataTable(
-            id='ranking-table',
-            columns=[{"name": i, "id": i} for i in df.columns],
-            data=df.to_dict("rows"),
-        )
+        if sort_set:
+            df = df.sort_values(sort_set[0]['column_id'], 
+                ascending=sort_set[0]['direction'] == 'asc',
+                inplace=False)
+        else:
+            df = df.sort_values(metric, ascending=False)
+
+        return df.iloc[
+                pag_set['current_page']*pag_set['page_size']:
+                (pag_set['current_page'] + 1)*pag_set['page_size']
+            ].to_dict('rows')
 
         
     @app.callback(

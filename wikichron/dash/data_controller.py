@@ -134,7 +134,7 @@ def clean_up_bot_activity(df, wiki):
     return df
 
 
-def get_network_time_bounds(wiki, lower, upper):
+def get_time_bounds(wiki, lower, upper):
     """
     Returns a timestamps from upper and lower values
     """
