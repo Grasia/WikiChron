@@ -257,9 +257,9 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
 
                 html.Div(id='network-ready', style={'display': 'none'}),
                 html.Div(id='signal-data', style={'display': 'none'}),
-                html.Div(id='ready', style={'display': 'none'}),
-                html.Div(id='bind_ctl_sidebar', style={'display': 'none'})
+                html.Div(id='ready', style={'display': 'none'})
         ]);
+
 
 def bind_callbacks(app):
 

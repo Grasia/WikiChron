@@ -39,11 +39,10 @@ class CoEditingNetwork(BaseNetwork):
     NAME = 'Co-Editing'
     CODE = 'co_editing_network'
 
-    def __init__(self, is_directed = False, num_communities = -1,
-            graph = {}, first_entry = None, last_entry = None):
+    def __init__(self, is_directed = False, graph = {}, 
+        first_entry = None, last_entry = None):
 
-        super().__init__(is_directed = is_directed,
-            num_communities = num_communities, first_entry = first_entry,
+        super().__init__(is_directed = is_directed, first_entry = first_entry,
             last_entry = last_entry, graph = graph)
 
 
@@ -150,8 +149,10 @@ class CoEditingNetwork(BaseNetwork):
                         if 'page_rank' in self.graph.vs.attributes() else '',
                     'betweenness': "{0:.5f}".format(node['betweenness'])
                         if 'betweenness' in self.graph.vs.attributes() else '',
+                    'cluster': node['cluster']
+                        if 'cluster' in self.graph.vs.attributes() else '',
                     'cluster_color': node['cluster_color']
-                        if self.num_communities is not -1 else ''
+                        if 'cluster_color' in self.graph.vs.attributes() else ''
                 }
             })
 
@@ -185,8 +186,8 @@ class CoEditingNetwork(BaseNetwork):
         di_net['num_nodes'] = self.graph.vcount()
         di_net['num_edges'] = self.graph.ecount()
         di_net['max_degree'] = self.graph.maxdegree()
-        di_net['n_communities'] = self.num_communities \
-            if self.num_communities is not -1 else '...'
+        di_net['n_communities'] = self.graph['n_communities'] \
+            if 'n_communities' in self.graph.attributes() else '...'
         di_net['assortativity'] = self.graph['assortativity_degree'] \
             if 'assortativity_degree' in self.graph.attributes() else '...'
         di_net['network'] = network

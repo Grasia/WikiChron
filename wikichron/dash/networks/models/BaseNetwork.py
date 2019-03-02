@@ -14,8 +14,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
     NAME = 'Base Network'
     CODE = 'base_network'
 
-    def __init__(self, is_directed = False, 
-            num_communities = -1, first_entry = None, 
+    def __init__(self, is_directed = False, first_entry = None, 
             last_entry = None, graph = {},):
 
         if not graph:
@@ -23,7 +22,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         else:
             self.graph = graph
 
-        self.num_communities = num_communities
         self.first_entry = first_entry
         self.last_entry = last_entry
 
@@ -97,10 +95,10 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         """
         Calculates communities and assigns a color per community
         """
-        if self.num_communities is -1:
+        if not 'n_communities' in self.graph.attributes():
             mod = self.graph.community_multilevel(weights='weight')
-            self.graph.vs['cluster'] = mod
-            self.num_communities = len(mod)
+            self.graph.vs['cluster'] = mod.membership
+            self.graph['n_communities'] = len(mod)
             pal = ClusterColoringPalette(len(mod))
             self.graph.vs['cluster_color'] = list(map(lambda x: rgb2hex(x[0],x[1],x[2], normalised=True),
                 pal.get_many(mod.membership)))
@@ -113,8 +111,9 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             Newman MEJ: Assortative mixing in networks, Phys Rev Lett89:208701, 
             2002.@see:assortativity_degree()when thetypes are the vertex degrees
         """
-        assortativity = self.graph.assortativity_degree(self.graph.is_directed())
-        if assortativity:
-            assortativity = "{0:.5f}".format(assortativity)
+        if not 'assortativity_degree' in self.graph.attributes():
+            assortativity = self.graph.assortativity_degree(self.graph.is_directed())
+            if assortativity:
+                assortativity = "{0:.5f}".format(assortativity)
 
-        self.graph['assortativity_degree'] = assortativity
+            self.graph['assortativity_degree'] = assortativity
