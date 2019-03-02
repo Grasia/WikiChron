@@ -10,8 +10,8 @@ data.
 
    Created on: 07-dec-2018
 
-   Copyright 2017-2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
    Copyright 2017-2019 Youssef El Faqir El Rhazoui
+   Copyright 2017-2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
 
 # Built-in imports

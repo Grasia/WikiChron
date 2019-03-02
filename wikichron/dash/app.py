@@ -64,7 +64,7 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', # dash sty
 meta_tags = [
     {
         'name': 'author',
-        'content': "Abel 'Akronix' Serrano Juste"
+        'content': "Youssef El Faqir El Rhazoui \nAbel 'Akronix' Serrano Juste"
     },
     {
         'name': 'description',
