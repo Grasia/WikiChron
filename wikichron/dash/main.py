@@ -264,32 +264,14 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
 def bind_callbacks(app):
 
     # Right sidebar callbacks
-    #########
+    ############################
     bind_controls_sidebar_callbacks('co_editing_network', app)
-    #########
-
-
-    @app.callback(
-        Output('signal-data', 'value'),
-        [Input('initial-selection', 'children')]
-    )
-    def start_main(selection_json):
-        # get wikis x network selection
-        selection = json.loads(selection_json)
-        wiki = selection['wikis'][0]
-        network_code = selection['network']
-        print('--> Retrieving and computing data')
-        print( '\t for the following wiki: {}'.format( wiki['url'] ))
-        print( '\trepresented as this network: {}'.format( network_code ))
-        network = data_controller.get_network(wiki, network_code)
-        print('<-- Done retrieving and computing data!')
-        return True
+    ############################
 
 
     @app.callback(
         Output('ready', 'value'),
-        [Input('signal-data', 'value'),
-        Input('dates-slider', 'value')]
+        [Input('dates-slider', 'value')]
     )
     def ready_to_plot_networks(*args):
         #print (args)
@@ -327,22 +309,18 @@ def bind_callbacks(app):
 
     @app.callback(
         Output('date-slider-container', 'children'),
-        [Input('signal-data', 'value')],
-        [State('initial-selection', 'children')]
+        [Input('initial-selection', 'children')]
     )
-    def update_slider(signal, selection_json):
-        if not signal:
-            return dcc.Slider(id='dates-slider')
-
+    def update_slider(selection_json):
          # get network instance from selection
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0]
-        network_code = selection['network']
-        network = data_controller.get_network(wiki, network_code)
+        origin = data_controller.get_first_entry(wiki)
+        end = data_controller.get_last_entry(wiki)
 
-        origin = int(datetime.strptime(str(network.first_entry),
+        origin = int(datetime.strptime(str(origin),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))
-        end = int(datetime.strptime(str(network.last_entry),
+        end = int(datetime.strptime(str(end),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))
 
         time_gap = end - origin
@@ -374,7 +352,7 @@ def bind_callbacks(app):
                     min=1,
                     max=max_time,
                     step=1,
-                    value=[1, max_time],
+                    value=[1, int(2 + max_time / 10)],
                     marks=range_slider_marks
                 )
 
