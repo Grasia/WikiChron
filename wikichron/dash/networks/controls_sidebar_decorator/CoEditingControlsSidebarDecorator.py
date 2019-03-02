@@ -125,36 +125,6 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
 
         @app.callback(
-            Output('show-page-rank', 'className'),
-            [Input('show-page-rank', 'n_clicks')]
-        )
-        def switch_show_page_rank(clicks):
-            if not clicks or clicks % 2 == 0:
-                return 'control-button action-button'
-            return 'control-button action-button-pressed'
-
-
-        @app.callback(
-            Output('show-betweenness', 'className'),
-            [Input('show-betweenness', 'n_clicks')]
-        )
-        def switch_show_betweenness(clicks):
-            if not clicks or clicks % 2 == 0:
-                return 'control-button action-button'
-            return 'control-button action-button-pressed'
-
-
-        @app.callback(
-            Output('show-edits', 'className'),
-            [Input('show-edits', 'n_clicks')]
-        )
-        def switch_show_edits(clicks):
-            if not clicks or clicks % 2 == 0:
-                return 'control-button action-button'
-            return 'control-button action-button-pressed'
-
-
-        @app.callback(
             Output('color-cluster', 'className'),
             [Input('color-cluster', 'n_clicks')]
         )
@@ -235,7 +205,5 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
             tms = [int(tm_pr), int(tm_edits), int(tm_bet)]
             tm_metrics = {key:value for key, value in zip(tms, CoEditingNetwork.AVALIABLE_METRICS.keys())}
-            print(tms)
-            print(tm_metrics)
             max_key = max(tm_metrics, key=int)
             return tm_metrics[max_key]
