@@ -5,11 +5,11 @@
  Distributed under the terms of the GPLv3 license.
 
 """
-
+import abc
 from igraph import Graph, ClusterColoringPalette
 from colormap.colors import rgb2hex
 
-class BaseNetwork():
+class BaseNetwork(metaclass=abc.ABCMeta):
 
     NAME = 'Base Network'
     CODE = 'base_network'
@@ -25,17 +25,10 @@ class BaseNetwork():
 
         self.num_communities = num_communities
         self.first_entry = first_entry
-        self.last_entry = last_entry 
+        self.last_entry = last_entry
 
 
-    def init_network(self):
-        """
-        Constructs an instance of this network type.
-        Use this instead of the default constructor
-        """
-        return __init_(self)
-
-
+    @abc.abstractmethod
     def generate_from_pandas(self, df, lower_bound, upper_bound):
         """
         Generates a graph from a pandas data
@@ -50,9 +43,10 @@ class BaseNetwork():
                     to filter by time the df 
         Return: A graph with the network representation.
         """
-        raise NotImplementedError('generate_from_pandas is not implemented')
+        pass
 
 
+    @abc.abstractmethod
     def to_cytoscape_dict(self):
         """
         Transform this network to cytoscape dict
@@ -60,7 +54,16 @@ class BaseNetwork():
         Return:
             A dict with the cytoscape structure
         """
-        raise NotImplementedError('to_cytoscape_dict is not implemented')
+        pass
+
+
+    @abc.abstractmethod
+    def calculate_metrics(self):
+        """
+        The network which implements this method should calculate
+        only the useful metrics not all of them
+        """
+        pass
 
 
     def write_gml(self, file):

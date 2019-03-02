@@ -44,7 +44,7 @@ def get_network(wiki, network_code, lower_bound = '', upper_bound = ''):
     """
     Parameters
         - wiki: Related info about the wiki selected.
-        - network_type: network selected. It is an instance of BaseNetwork.
+        - network_code: network selected. It is an instance of BaseNetwork.
         - lower_bound: a formated string "%Y-%m-%d %H:%M:%S", to filter the pandas obj
         - upper_bound: a formated string "%Y-%m-%d %H:%M:%S", to filter the pandas obj
     Return: Data representing the network.
@@ -56,14 +56,21 @@ def get_network(wiki, network_code, lower_bound = '', upper_bound = ''):
     print(' * [Timing] Loading csvs : {} seconds'.format(time_end_loading_csvs) )
 
     # generate network:
-    network_type = networks.interface.factory_network(network_code)
+    network = networks.interface.factory_network(network_code)
     print(' * [Info] Starting calculations....')
     time_start_calculations = time.perf_counter()
-    network_type.generate_from_pandas(df=df, lower_bound = lower_bound,
+    network.generate_from_pandas(df=df, lower_bound = lower_bound,
         upper_bound = upper_bound)
     time_end_calculations = time.perf_counter() - time_start_calculations
     print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
-    return network_type
+
+    # network metrics
+    time_start_calculations = time.perf_counter()
+    network.calculate_metrics()
+    time_end_calculations = time.perf_counter() - time_start_calculations
+    print(f'[Timing] Network metrics calculation in {time_end_calculations} seconds')
+
+    return network
 
 
 def get_first_entry(wiki):

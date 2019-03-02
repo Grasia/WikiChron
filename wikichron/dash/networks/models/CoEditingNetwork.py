@@ -193,6 +193,13 @@ class CoEditingNetwork(BaseNetwork):
         return di_net
 
 
+    def calculate_metrics(self):
+        self.calculate_page_rank()
+        self.calculate_betweenness()
+        self.calculate_assortativity_degree()
+        self.calculate_communities()
+
+
     def calculate_w_time(self, tsp1, tsp2):
         """
         Calculates the weight based on time between 2 editions

@@ -12,7 +12,6 @@
 """
 
 import time
-import abc
 import json
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
@@ -44,46 +43,13 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
                     html.P(st4, className='right-element')
                 ]),
                 html.Div([
-                    html.P(st5, className='left-element', id='n_communities'),
+                    html.P(st5, className='left-element'),
                     html.P(st6, className='right-element')
                 ]),
                 html.Div([
-                    html.P(st7, className='left-element', id='assort_degree')
+                    html.P(st7, className='left-element')
                 ])]
 
-
-    @staticmethod
-    def default_metrics():
-        return [
-                html.Div(children=[
-                    html.Span('PageRank', className='left-element'),
-                    html.Button('Run', id='calculate_page_rank',
-                                type='button',
-                                className='right-element action-button'),
-                    ],
-                    className='metrics-section'),
-                html.Div(children=[
-                    html.Span('Betweenness', className='left-element'),
-                    html.Button('Run', id='calculate_betweenness',
-                                type='button',
-                                className='right-element action-button'),
-                    ],
-                    className='metrics-section'),
-                html.Div([
-                    html.Span('Communities', className='left-element'),
-                    html.Button('Run', id='calculate_communities',
-                                type='button',
-                                className='right-element action-button')
-                ],
-                className='metrics-section'),
-                html.Div([
-                    html.Span('Assortativity', className='left-element'),
-                    html.Button('Run', id='calc_assort_degree',
-                                type='button',
-                                className='right-element action-button')
-                ],
-                className='metrics-section')
-            ]
 
     @staticmethod
     def default_options():
@@ -93,13 +59,10 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
                     html.Button('Show Edits', id='show_edits',
                         className='control-button action-button'),
                     html.Button('Show PageRank', id='show_page_rank',
-                        disabled=True,
                         className='control-button action-button'),
                     html.Button('Show Betweenness', id='show_betweenness',
-                        disabled=True,
                         className='control-button action-button'),
                     html.Button('Color by Cluster', id='color_cluster',
-                        disabled=True,
                         className='control-button action-button'),
                 ]
 
@@ -109,11 +72,6 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
         super().add_stats_section(stats)
 
 
-    def add_metrics_section(self):
-        metrics = self.default_metrics()
-        super().add_metrics_section(metrics)
-
-
     def add_options_section(self):
         options = self.default_options()
         super().add_options_section(options)
@@ -121,7 +79,6 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
     def add_all_sections(self):
         self.add_stats_section()
-        self.add_metrics_section()
         self.add_options_section()
 
 
@@ -201,124 +158,6 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
 
         @app.callback(
-            Output('calculate_page_rank', 'className'),
-            [Input('calculate_page_rank', 'n_clicks')]
-        )
-        def switch_run_page_rank(clicks):
-            if not clicks:
-                return 'right-element action-button'
-            return 'right-element action-button-pressed'
-
-
-        @app.callback(
-            Output('calculate_betweenness', 'className'),
-            [Input('calculate_betweenness', 'n_clicks')]
-        )
-        def switch_run_betweenness(clicks):
-            if not clicks:
-                return 'right-element action-button'
-            return 'right-element action-button-pressed'
-
-
-        @app.callback(
-            Output('calculate_communities', 'className'),
-            [Input('calculate_communities', 'n_clicks')]
-        )
-        def switch_run_communities(clicks):
-            if not clicks:
-                return 'right-element action-button'
-            return 'right-element action-button-pressed'
-
-
-        @app.callback(
-            Output('calc_assort_degree', 'className'),
-            [Input('calc_assort_degree', 'n_clicks')]
-        )
-        def switch_run_assortativity(clicks):
-            if not clicks:
-                return 'right-element action-button'
-            return 'right-element action-button-pressed'
-
-
-        @app.callback(
-            Output('calculate_page_rank', 'disabled'),
-            [Input('calculate_page_rank', 'n_clicks')]
-        )
-        def disable_button_run_page_rank(clicks):
-            if not clicks:
-                return False
-            return True
-
-
-        @app.callback(
-            Output('calculate_betweenness', 'disabled'),
-            [Input('calculate_betweenness', 'n_clicks')]
-        )
-        def disable_button_run_betweenness(clicks):
-            if not clicks:
-                return False
-            return True
-
-
-        @app.callback(
-            Output('calculate_communities', 'disabled'),
-            [Input('calculate_communities', 'n_clicks')]
-        )
-        def disable_button_run_communities(clicks):
-            if not clicks:
-                return False
-            return True
-
-
-        @app.callback(
-            Output('show_page_rank', 'disabled'),
-            [Input('calculate_page_rank', 'n_clicks')]
-        )
-        def disable_toggle_show_page_rank(clicks):
-            if not clicks:
-                return True
-            return False
-
-
-        @app.callback(
-            Output('color_cluster', 'disabled'),
-            [Input('calculate_communities', 'n_clicks')]
-        )
-        def disable_toggle_show_communities(clicks):
-            if not clicks:
-                return True
-            return False
-
-
-        @app.callback(
-            Output('show_betweenness', 'disabled'),
-            [Input('calculate_betweenness', 'n_clicks')]
-        )
-        def disable_toggle_show_betweenness(clicks):
-            if not clicks:
-                return True
-            return False
-
-
-        @app.callback(
-            Output('n_communities', 'content'),
-            [Input('calculate_communities', 'n_clicks')],
-            [State('network-ready', 'value')]
-        )
-        def update_num_communities(_, cy_network):
-            return f'Communities: {cy_network["n_communities"]}'
-
-
-        @app.callback(
-            Output('assort_degree', 'content'),
-            [Input('calc_assort_degree', 'n_clicks')],
-            [State('network-ready', 'value')]
-        )
-        def update_assortativity(_, cy_network):
-            return f'Assortativity Degree: {cy_network["assortativity"]}'
-
-
-        @app.callback(
             Output('cytoscape', 'stylesheet'),
             [Input('cytoscape', 'elements'),
             Input('show_labels', 'n_clicks'),
@@ -360,16 +199,11 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
         @app.callback(
             Output('network-ready', 'value'),
-            [Input('ready', 'value'),
-            Input('calculate_page_rank', 'n_clicks'),
-            Input('calculate_betweenness', 'n_clicks'),
-            Input('calculate_communities', 'n_clicks'),
-            Input('calc_assort_degree', 'n_clicks')],
+            [Input('ready', 'value')],
             [State('initial-selection', 'children'),
             State('dates-slider', 'value')]
         )
-        def update_network(ready, pr_clicks, bet_clicks, com_clicks, assor_clicks,
-            selection_json, slider):
+        def update_network(ready, selection_json, slider):
 
             if not ready:
                 return None
@@ -383,12 +217,13 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             time_start_calculations = time.perf_counter()
 
             first_entry = data_controller.get_first_entry(wiki)
-            first_entry = int(datetime.strptime(str(first_entry), "%Y-%m-%d %H:%M:%S").strftime('%s'))
+            first_entry = int(datetime.strptime(str(first_entry),
+                "%Y-%m-%d %H:%M:%S").strftime('%s'))
 
             upper_bound = first_entry + slider[1] * \
-            CoEditingNetwork.TIME_DIV
+                CoEditingNetwork.TIME_DIV
             lower_bound = first_entry + slider[0] * \
-            CoEditingNetwork.TIME_DIV
+                CoEditingNetwork.TIME_DIV
 
             upper_bound = datetime.fromtimestamp(upper_bound).strftime("%Y-%m-%d %H:%M:%S")
             lower_bound = datetime.fromtimestamp(lower_bound).strftime("%Y-%m-%d %H:%M:%S")
@@ -396,18 +231,6 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             network = data_controller.get_network(wiki, network_code, lower_bound, upper_bound)
 
             time_end_calculations = time.perf_counter() - time_start_calculations
-            print(f' * [Timing] Network builded in {time_end_calculations} seconds')
-
-            if pr_clicks and pr_clicks % 2:
-                network.calculate_page_rank()
-
-            if bet_clicks and bet_clicks % 2:
-                network.calculate_betweenness()
-
-            if com_clicks and com_clicks % 2:
-                network.calculate_communities()
-
-            if assor_clicks and assor_clicks % 2:
-                network.calculate_assortativity_degree()
+            print(f' * [Timing] Network ready in {time_end_calculations} seconds')
 
             return network.to_cytoscape_dict()

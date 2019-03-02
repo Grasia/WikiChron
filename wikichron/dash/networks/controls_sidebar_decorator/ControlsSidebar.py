@@ -19,7 +19,6 @@ class ControlsSidebar(metaclass=abc.ABCMeta):
     def __init__(self):
         self.html_sidebar = []
         self.stats_section = []
-        self.metrics_section = []
         self.options_section = []
 
 
@@ -48,14 +47,6 @@ class ControlsSidebar(metaclass=abc.ABCMeta):
         self.stats_section.children[1].children = html_stats
 
 
-    def add_metrics_section(self, html_metrics):
-        self.metrics_section = html.Div([
-                    html.H5('Network Metrics', className='control-title'),
-                    html.Div(children=[])
-                ], className='control-container')
-        self.metrics_section.children[1].children = html_metrics
-
-
     def add_options_section(self, html_options):
         self.options_section = html.Div([
                     html.H5('Network Options', className='control-title'),
@@ -64,9 +55,8 @@ class ControlsSidebar(metaclass=abc.ABCMeta):
         self.options_section.children[1].children = html_options
 
 
-    def add_all_sections(self, html_stats, html_metrics, html_options):
+    def add_all_sections(self, html_stats, html_options):
         self.add_stats_section(html_stats)
-        self.add_metrics_section(html_metrics)
         self.add_options_section(html_options)
 
 
@@ -80,7 +70,6 @@ class ControlsSidebar(metaclass=abc.ABCMeta):
                                         html.Div(id='controls-side-bar-content',
                                             children=[
                                                 self.stats_section,
-                                                self.metrics_section,
                                                 self.options_section
                                             ]),
                                         gdc.Import(src='/js/controls_side_bar.js')
