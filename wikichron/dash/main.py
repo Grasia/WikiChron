@@ -25,6 +25,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
+import dash_table
 import grasia_dash_components as gdc
 import sd_material_ui
 from flask import current_app

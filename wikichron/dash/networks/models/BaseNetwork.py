@@ -64,6 +64,19 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         pass
 
 
+    @abc.abstractmethod
+    def get_metric_dataframe(self, metric):
+        """
+        This function generates a dateframe with 2 cols, the node name
+        and a node metric value.
+        Prarameters:
+            - metric: an existing metric in the network
+        Return:
+            if metric exist a dataframe, if not None 
+        """
+        pass
+
+
     def write_gml(self, file):
         """
         Writes a gml file

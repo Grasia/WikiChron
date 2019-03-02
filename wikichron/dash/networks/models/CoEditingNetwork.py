@@ -6,6 +6,7 @@
 
 """
 
+import pandas as pd
 import numpy
 import math
 from datetime import datetime
@@ -38,6 +39,7 @@ class CoEditingNetwork(BaseNetwork):
     TIME_BOUND = 24 * 15
     NAME = 'Co-Editing'
     CODE = 'co_editing_network'
+    AVALIABLE_METRICS = {'num_edits', 'betweenness', 'page_rank'}
 
     def __init__(self, is_directed = False, graph = {}, 
         first_entry = None, last_entry = None):
@@ -237,3 +239,14 @@ class CoEditingNetwork(BaseNetwork):
        """
        # namespace 0 => wiki article
        return df[df['page_ns'] == 0]
+
+
+    def get_metric_dataframe(self, metric: str) -> pd.DataFrame:
+        if metric in self.graph.vs.attributes():   
+            df = pd.DataFrame({
+                    'User': self.graph.vs['label'], 
+                    metric: self.graph.vs[metric]
+                    })
+            return df
+
+        return None
