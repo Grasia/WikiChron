@@ -319,12 +319,12 @@ def bind_callbacks(app):
         Output('ranking-table', 'data'),
         [Input('ranking-table', 'pagination_settings'),
         Input('ranking-table', 'sorting_settings'),
-        Input('metric-to-show', 'value')],
+        Input('metric-to-show', 'value'),
+        Input('dates-slider', 'value')],
         [State('network-ready', 'value'),
-        State('initial-selection', 'children'),
-        State('dates-slider', 'value')]
+        State('initial-selection', 'children')]
     )
-    def update_ranking(pag_set, sort_set, metric, ready, selection_json, slider):
+    def update_ranking(pag_set, sort_set, metric, slider, ready, selection_json):
         if not ready or not metric or not slider:
             raise PreventUpdate()
         
@@ -336,7 +336,8 @@ def bind_callbacks(app):
 
         df = network.get_metric_dataframe(metric)
 
-        if sort_set:
+        # check the col to sort
+        if sort_set and sort_set[0]['column_id'] in list(df):
             df = df.sort_values(sort_set[0]['column_id'], 
                 ascending=sort_set[0]['direction'] == 'asc',
                 inplace=False)
