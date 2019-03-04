@@ -36,6 +36,8 @@ from networks.cytoscape_stylesheet.BaseStylesheet import BaseStylesheet
 from networks.controls_sidebar_decorator.ControlsSidebar import ControlsSidebar
 from networks.controls_sidebar_decorator.factory_sidebar_decorator import factory_sidebar_decorator
 from networks.controls_sidebar_decorator.factory_sidebar_decorator import bind_controls_sidebar_callbacks
+# example for strings: from resources.text import strings
+
 
 TIME_DIV = 60 * 60 * 24 * 30
 

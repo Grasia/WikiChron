@@ -52,7 +52,7 @@ data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 # global app config
 APP_HOSTNAME = 'http://wikichron.science'; # TOMOVE to a config var
 wikichron_base_pathname = '/app/'; # TOMOVE to a config var
-assets_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets');
+assets_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'resources', 'assets');
 assets_url_path = os.path.join(wikichron_base_pathname, 'assets')
 
 
