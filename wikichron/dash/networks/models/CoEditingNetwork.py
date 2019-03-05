@@ -39,9 +39,12 @@ class CoEditingNetwork(BaseNetwork):
     TIME_BOUND = 24 * 15
     NAME = 'Co-Editing'
     CODE = 'co_editing_network'
-    AVALIABLE_METRICS = {'Page Rank': 'page_rank',
-                         'Number of Edits': 'num_edits',
-                         'Betweenness': 'betweenness'}
+    AVAILABLE_GLOBAL_METRICS = {
+            'Page Rank': 'page_rank',
+            'Number of Edits': 'num_edits',
+            'Betweenness': 'betweenness'
+        }
+
 
     def __init__(self, is_directed = False, graph = {}, 
         first_entry = None, last_entry = None):
@@ -244,10 +247,10 @@ class CoEditingNetwork(BaseNetwork):
 
 
     def get_metric_dataframe(self, metric: str) -> pd.DataFrame:
-        if self.AVALIABLE_METRICS[metric] in self.graph.vs.attributes():   
+        if self.AVAILABLE_GLOBAL_METRICS[metric] in self.graph.vs.attributes():   
             df = pd.DataFrame({
                     'User': self.graph.vs['label'],
-                    metric: self.graph.vs[self.AVALIABLE_METRICS[metric]]
+                    metric: self.graph.vs[self.AVAILABLE_GLOBAL_METRICS[metric]]
                     })
             return df
 

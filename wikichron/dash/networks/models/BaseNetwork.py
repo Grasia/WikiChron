@@ -14,6 +14,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
     NAME = 'Base Network'
     CODE = 'base_network'
 
+
     def __init__(self, is_directed = False, first_entry = None, 
             last_entry = None, graph = {},):
 
