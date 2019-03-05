@@ -12,24 +12,26 @@
 
 import os
 from urllib.parse import urljoin
-from flask import Blueprint, render_template, redirect, send_from_directory
+import flask
+import flask
+from flask import Blueprint
+
 
 server_bp = Blueprint('main', __name__)
-
-wikichron_base_pathname = '/app/'; #TOCHANGE use config var
 
 
 # Redirects / to /app
 @server_bp.route('/')
 @server_bp.route('/index.html')
 def redirect_index_to_app():
+    wikichron_base_pathname = flask.current_app.config['DASH_BASE_PATHNAME']
     print('Redirecting user to {}...'.format(wikichron_base_pathname))
-    return redirect(wikichron_base_pathname, code=302)
+    return flask.redirect(wikichron_base_pathname, code=302)
 
 
 @server_bp.route('/welcome.html')
 def index():
-    return render_template("index.html", title='Home Page')
+    return flask.render_template("index.html", title='Home Page')
 
 
 #--------- BEGIN AUX SERVERS (non pure flask / jinja / html / http servers) ---#
@@ -59,5 +61,5 @@ def serve_local_js(js_path):
             )
         )
     print ('Returning: {}'.format(js_name))
-    return send_from_directory(js_directory, js_name)
+    return flask.send_from_directory(js_directory, js_name)
 

@@ -10,8 +10,8 @@ data.
 
    Created on: 07-dec-2018
 
-   Copyright 2017-2019 Youssef El Faqir El Rhazoui
    Copyright 2017-2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
+   Copyright 2017-2019 Youssef El Faqir El Rhazoui
 """
 
 # Built-in imports
@@ -36,8 +36,6 @@ from networks.cytoscape_stylesheet.BaseStylesheet import BaseStylesheet
 from networks.controls_sidebar_decorator.ControlsSidebar import ControlsSidebar
 from networks.controls_sidebar_decorator.factory_sidebar_decorator import factory_sidebar_decorator
 from networks.controls_sidebar_decorator.factory_sidebar_decorator import bind_controls_sidebar_callbacks
-# example for strings: from resources.text import strings
-
 
 TIME_DIV = 60 * 60 * 24 * 30
 
@@ -47,21 +45,22 @@ global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
 
-def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
+def generate_main_content(wikis_arg, network_type_arg, query_string):
     """
     It generates the main content
     Parameters:
         -wikis_arg: wikis to show, only used the first wiki
         -network_type_arg, type of network to generate
         -query_string: string to share/download
-        -url_host: url to share/download
-        -others: are not used
+        -APP_HOSTNAME: url to share/download
 
     Return: An HTML object with the main content
     """
 
+    # Load app config
+    config = current_app.config
     # Contructs the assets_url_path for image sources:
-    assets_url_path = os.path.join('/app/', 'assets') #TOCHANGE: use a config var
+    assets_url_path = os.path.join(config['DASH_BASE_PATHNAME'], 'assets')
 
     def main_header():
         """
@@ -232,6 +231,11 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
     sidebar_decorator = factory_sidebar_decorator(network_type_code, controls_sidebar)
     sidebar_decorator.add_all_sections()
 
+    share_url_path = config['APP_HOSTNAME'] + config['DASH_BASE_PATHNAME'] + \
+                        query_string
+    download_url_path = '{}/download/{}'.format(config['APP_HOSTNAME'],
+                                                    query_string)
+
     return html.Div(
             id='main',
             className='control-text',
@@ -249,8 +253,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
 
                 html.Hr(style={'margin-bottom': '0px'}),
 
-                share_modal('{}/app/{}'.format(url_host, query_string),
-                            '{}/download/{}'.format(url_host, query_string)),
+                share_modal(share_url_path, download_url_path),
 
                 html.Div(id='initial-selection', style={'display': 'none'},
                             children=args_selection),
@@ -259,21 +262,39 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
 
                 html.Div(id='network-ready', style={'display': 'none'}),
                 html.Div(id='signal-data', style={'display': 'none'}),
-                html.Div(id='ready', style={'display': 'none'})
+                html.Div(id='ready', style={'display': 'none'}),
+                html.Div(id='bind_ctl_sidebar', style={'display': 'none'})
         ]);
-
 
 def bind_callbacks(app):
 
     # Right sidebar callbacks
-    ############################
+    #########
     bind_controls_sidebar_callbacks('co_editing_network', app)
-    ############################
+    #########
+
+
+    @app.callback(
+        Output('signal-data', 'value'),
+        [Input('initial-selection', 'children')]
+    )
+    def start_main(selection_json):
+        # get wikis x network selection
+        selection = json.loads(selection_json)
+        wiki = selection['wikis'][0]
+        network_code = selection['network']
+        print('--> Retrieving and computing data')
+        print( '\t for the following wiki: {}'.format( wiki['url'] ))
+        print( '\trepresented as this network: {}'.format( network_code ))
+        network = data_controller.get_network(wiki, network_code)
+        print('<-- Done retrieving and computing data!')
+        return True
 
 
     @app.callback(
         Output('ready', 'value'),
-        [Input('dates-slider', 'value')]
+        [Input('signal-data', 'value'),
+        Input('dates-slider', 'value')]
     )
     def ready_to_plot_networks(*args):
         #print (args)
@@ -311,18 +332,22 @@ def bind_callbacks(app):
 
     @app.callback(
         Output('date-slider-container', 'children'),
-        [Input('initial-selection', 'children')]
+        [Input('signal-data', 'value')],
+        [State('initial-selection', 'children')]
     )
-    def update_slider(selection_json):
+    def update_slider(signal, selection_json):
+        if not signal:
+            return dcc.Slider(id='dates-slider')
+
          # get network instance from selection
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0]
-        origin = data_controller.get_first_entry(wiki)
-        end = data_controller.get_last_entry(wiki)
+        network_code = selection['network']
+        network = data_controller.get_network(wiki, network_code)
 
-        origin = int(datetime.strptime(str(origin),
+        origin = int(datetime.strptime(str(network.first_entry),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))
-        end = int(datetime.strptime(str(end),
+        end = int(datetime.strptime(str(network.last_entry),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))
 
         time_gap = end - origin
@@ -354,7 +379,7 @@ def bind_callbacks(app):
                     min=1,
                     max=max_time,
                     step=1,
-                    value=[1, int(2 + max_time / 10)],
+                    value=[1, max_time],
                     marks=range_slider_marks
                 )
 

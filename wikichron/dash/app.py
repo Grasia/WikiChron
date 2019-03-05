@@ -28,13 +28,13 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import plotly.graph_objs as go
 import sd_material_ui
+from flask import current_app
 
 # imports for download feature
 from fs.tempfs import TempFS
 from flask import send_file, request
 from urllib.parse import parse_qs
 from codecs import decode
-
 
 # Local imports:
 import networks.interface
@@ -45,55 +45,14 @@ import cache
 global debug;
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
+######### GLOBAL VARIABLES #########
+
 # get csv data location (data/ by default)
 global data_dir;
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 
-# global app config
-APP_HOSTNAME = 'http://wikichron.science'; # TOMOVE to a config var
-wikichron_base_pathname = '/app/'; # TOMOVE to a config var
-assets_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'resources', 'assets');
-assets_url_path = os.path.join(wikichron_base_pathname, 'assets')
-
-
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', # dash stylesheet
                         'https://use.fontawesome.com/releases/v5.0.9/css/all.css',  # fontawesome css
-]
-
-
-meta_tags = [
-    {
-        'name': 'author',
-        'content': "Youssef El Faqir El Rhazoui \nAbel 'Akronix' Serrano Juste"
-    },
-    {
-        'name': 'description',
-        'content': 'WikiChron Networks is a web tool for the analysis and visualization of different networks within wiki online communities'
-    },
-    {
-        'name': 'og:title',
-        'content': 'WikiChron - Networks'
-    },
-    {
-        'name': 'og:description',
-        'content': 'WikiChron Networks is a web tool for the visualization of networks within wikis'
-    },
-    {
-        'name': 'og:url',
-        'content': 'http://networks.wikichron.science/'
-    },
-    {
-        'name': 'og:image',
-        'content': '{}/wikichron_networks_logo.png'.format(assets_url_path)
-    },
-    {
-        'name': 'og:image:width',
-        'content': '600'
-    },
-    {
-        'name': 'twitter:title',
-        'content': 'WikiChron - Networks'
-    },
 ]
 
 # list of js files to import from the app (either local or remote)
@@ -118,6 +77,46 @@ available_networks = networks.interface.get_available_networks()
 available_wikis = get_available_wikis(data_dir)
 available_wikis_dict = {wiki['url']: wiki for wiki in available_wikis}
 selection_params = {'wikis', 'network', 'lower_bound', 'upper_bound'}
+
+######### AUX FUNCTION DEFINITIONS #########
+
+# meta tags definition
+def define_meta_tags(hostname, assets_url_path):
+    meta_tags = [
+        {
+            'name': 'author',
+            'content': "Abel 'Akronix' Serrano Juste"
+        },
+        {
+            'name': 'description',
+            'content': 'WikiChron Networks is a web tool for the analysis and visualization of different networks within wiki online communities'
+        },
+        {
+            'name': 'og:title',
+            'content': 'WikiChron - Networks'
+        },
+        {
+            'name': 'og:description',
+            'content': 'WikiChron Networks is a web tool for the visualization of networks within wikis'
+        },
+        {
+            'name': 'og:url',
+            'content': hostname
+        },
+        {
+            'name': 'og:image',
+            'content': '{}/wikichron_networks_logo.png'.format(assets_url_path)
+        },
+        {
+            'name': 'og:image:width',
+            'content': '600'
+        },
+        {
+            'name': 'twitter:title',
+            'content': 'WikiChron - Networks'
+        },
+    ]
+    return meta_tags
 
 
 ######### BEGIN CODE ###########################################################
@@ -168,6 +167,8 @@ def load_external_dash_libs_in_layout():
 
 
 def generate_welcome_page():
+    assets_url_path = os.path.join(current_app.config['DASH_BASE_PATHNAME'],
+                                    'assets')
     return html.Div(id='welcome-container',
             className='container',
             children=[
@@ -212,8 +213,7 @@ def app_bind_callbacks(app):
                 network['code'] = selection['network']
                 network['name'] = get_network_name_from_code(network['code'])
 
-                return main.generate_main_content(wikis, network,
-                                                query_string, APP_HOSTNAME)
+                return main.generate_main_content(wikis, network, query_string)
 
 
         print('There is not a valid wikis & metrics tuple selection yet for plotting any graph')
@@ -341,13 +341,20 @@ def start_download_data_server(app):
 #--------- APP CREATION FUNCS -------------------------------------------------#
 
 def create_dash_app(server):
+    # load config
+    wikichron_base_pathname = server.config['DASH_BASE_PATHNAME'];
+    assets_url_path = os.path.join(wikichron_base_pathname, 'assets')
+    assets_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                'resources', 'assets');
+    meta_tags = define_meta_tags(server.config['APP_HOSTNAME'], assets_url_path)
+
     print('Creating new Dash instance...')
-    app = dash.Dash('WikiChron - Networks', # TO CHANGE by __name__
+    app = dash.Dash(__name__,
                     server = server,
                     meta_tags = meta_tags,
-                    external_stylesheets=external_stylesheets,
-                    url_base_pathname=wikichron_base_pathname,
-                    assets_folder=assets_folder)
+                    external_stylesheets = external_stylesheets,
+                    url_base_pathname = wikichron_base_pathname,
+                    assets_folder = assets_folder)
     app.title = 'WikiChron - Networks'
     app.config['suppress_callback_exceptions'] = True
 
