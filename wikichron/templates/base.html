@@ -1,0 +1,42 @@
+<!--
+   layout.html
+
+   Descp:
+
+   Created on: 05-mar-2019
+
+   Copyright 2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+    <head>
+        <title>WikiChron Networks - selection</title>
+
+        <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta charset="UTF-8">
+        <meta name="author" content="Abel 'Akronix' Serrano Juste & ">
+        <meta name="description" content="WikiChron Networks is a web tool for the analysis and visualization of different networks within wiki online communities">
+        <meta name="og:title" content="WikiChron - Networks">
+        <meta name="og:description" content="WikiChron Networks is a web tool for the visualization of networks within wikis">
+    <!--
+        <meta name="og:url" content="http://localhost">
+    -->
+    <!--
+        <meta name="og:image" content="/app/assets/wikichron_networks_logo.png">
+    -->
+        <meta name="og:image:width" content="600">
+        <meta name="twitter:title" content="WikiChron - Networks">
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    </head>
+
+    <body>
+        {% block content %}{% endblock %}
+    </body>
+
+</html>

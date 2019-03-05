@@ -20,18 +20,15 @@ from flask import Blueprint
 server_bp = Blueprint('main', __name__)
 
 
-# Redirects / to /app
 @server_bp.route('/')
-@server_bp.route('/index.html')
+@server_bp.route('/selection')
 def redirect_index_to_app():
-    wikichron_base_pathname = flask.current_app.config['DASH_BASE_PATHNAME']
-    print('Redirecting user to {}...'.format(wikichron_base_pathname))
-    return flask.redirect(wikichron_base_pathname, code=302)
+    return flask.render_template("selection/selection.html")
 
 
 @server_bp.route('/welcome.html')
 def index():
-    return flask.render_template("index.html", title='Home Page')
+    return flask.render_template("welcome.html")
 
 
 #--------- BEGIN AUX SERVERS (non pure flask / jinja / html / http servers) ---#

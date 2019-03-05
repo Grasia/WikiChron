@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <header>
+        <div id='header-container'>
+            <div><img /></div>
+            <p id='selection-header-welcome'>Welcome to WikiChron</p>
+            <div>
+                <img />
+                <p id="selection-header-paragraph">Select one wiki, one network and press generate to start</p>
+            </div>
+        </div>
+    </header>
+
+    <main>{% block selection_content %}{% endblock %}</main>
+
+    <footer>
+        <div id="selection-footer-container-button" class="selection-container-button">
+            <button id="selection-footer-button" type="button" class="action-button" disabled>GENERATE</button>
+        </div>
+    </footer>
+{% endblock %}
