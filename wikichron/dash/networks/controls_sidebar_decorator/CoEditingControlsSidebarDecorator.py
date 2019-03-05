@@ -208,6 +208,6 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
                 raise PreventUpdate()
 
             tms = [int(tm_pr), int(tm_edits), int(tm_bet)]
-            tm_metrics = {key:value for key, value in zip(tms, CoEditingNetwork.AVAILABLE_GLOBAL_METRICS.keys())}
+            tm_metrics = {key:value for key, value in zip(tms, CoEditingNetwork.get_available_metrics().keys())}
             max_key = max(tm_metrics, key=int)
             return tm_metrics[max_key]

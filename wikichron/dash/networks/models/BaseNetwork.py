@@ -77,6 +77,22 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         """
         pass
 
+    
+    @abc.abstractmethod
+    def get_available_metrics(self) -> dict:
+        """
+        Return a dict with the metrics
+        """
+        pass
+
+
+    @abc.abstractmethod
+    def get_user_info(self) -> dict:
+        """
+        Return a dict with the user info
+        """
+        pass
+
 
     def write_gml(self, file):
         """
