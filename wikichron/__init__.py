@@ -1,6 +1,6 @@
 import sys
+import os
 from flask import Flask
-from config import Config
 
 # Comes back absolute imports like in python2.
 # This means that you can do local imports as if they were absolute from
@@ -13,11 +13,14 @@ from config import Config
 sys.path.append('wikichron/dash')
 
 from wikichron.dash.app import create_dash_app, set_up_app
+from wikichron.config import DevelopmentConfig
 
-def create_app(config_class = Config):
+def create_app(config_class = DevelopmentConfig):
     print('Creating Flask instance...')
     server = Flask(__name__)
+
     server.config.from_object(config_class)
+    server.config.from_envvar('FLASK_CONFIGURATION', silent=True)
 
     register_dashapp(server)
     register_blueprints(server)

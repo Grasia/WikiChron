@@ -9,11 +9,14 @@ import flask
 # local imports
 from app import create_dash_app, set_up_app
 
+# load config
+from dash_config import DevelopmentConfig
+wikichron_base_pathname = DevelopmentConfig.DASH_BASE_PATHNAME;
+port = DevelopmentConfig.PORT;
+
 global debug;
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
-wikichron_base_pathname = '/app/';
-port = 8890;
 
 # This part is only for launching of the dash app in standalone mode only #
 # When using the Flask app, this doesn't need to be run #
@@ -77,6 +80,9 @@ def run(app):
 
 
 server = flask.Flask(__name__)
+
+# load config for flask server
+server.config.from_object(DevelopmentConfig)
 
 # create and config Dash instance
 app = create_dash_app(server)
