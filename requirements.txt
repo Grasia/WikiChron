@@ -6,12 +6,12 @@ click==6.7
 colorama==0.4.1
 colorlog==4.0.2
 colormap==1.0.2
-dash==0.37.0
-dash-core-components==0.43.1
+dash==0.39.0
+dash-core-components==0.44.0
 dash-cytoscape==0.0.4
-dash-html-components==0.13.5
-dash-renderer==0.18.0
-dash-table==3.4.0
+dash-html-components==0.14.0
+dash-renderer==0.20.0
+dash-table==3.6.0
 decorator==4.3.0
 easydev==0.9.37
 Flask==1.0.2
