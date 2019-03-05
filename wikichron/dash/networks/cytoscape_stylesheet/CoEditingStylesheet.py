@@ -14,6 +14,18 @@ from .BaseStylesheet import BaseStylesheet
 
 class CoEditingStylesheet(BaseStylesheet, metaclass=abc.ABCMeta):
 
+	HIGHLIGHT_NODE = {
+			"background-color": "#B10DC9",
+            "border-color": "purple",
+            "border-width": 2,
+            "border-opacity": 1,
+			"opacity": 1,
+			"label": "data(label)",
+            "color": "#B10DC9",
+            "text-opacity": 1,
+			"z-index": 9999
+		}
+
 
 	def __init__(self, cy_stylesheet = []):
 		super().__init__(cy_stylesheet)
@@ -73,6 +85,26 @@ class CoEditingStylesheet(BaseStylesheet, metaclass=abc.ABCMeta):
 		self.cy_stylesheet[1]['style']['width'] = \
 			f"mapData(weight, {network['edge_min_weight']}, \
 			{network['edge_max_weight']}, 1, 10)"
+
+
+	def highlight_nodes(self, network, selc_nodes):
+		self.size_nodes(network)
+		self.color_edges(network)
+		self.set_edges_opacity(network)
+		self.size_edges(network)
+		
+		# the remaining nodes go backgroung
+		self.cy_stylesheet[0]['style']['opacity'] = 0.3
+
+		# selected nodes go foreground
+		for node in selc_nodes:
+			label = node['User']
+			selector = f'node[label = "{label}"]'
+			di_style = {
+				'selector': selector,
+				'style': self.HIGHLIGHT_NODE
+			}
+			self.cy_stylesheet.append(di_style)
 
 
 	def all_transformations(self, network):

@@ -236,7 +236,9 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
                     sorting_type='single',
                     sorting_settings=[],
                     style_cell={'textAlign': 'center'},
-                    style_header={'fontWeight': 'bold'}
+                    style_header={'fontWeight': 'bold'},
+                    row_selectable="multi",
+                    selected_rows=[],
                 )
 
     if debug:
@@ -281,7 +283,8 @@ def generate_main_content(wikis_arg, network_type_arg, query_string, url_host):
                 html.Div(id='network-ready', style={'display': 'none'}),
                 html.Div(id='signal-data', style={'display': 'none'}),
                 html.Div(id='ready', style={'display': 'none'}),
-                html.Div(id='metric-to-show', style={'display': 'none'})
+                html.Div(id='metric-to-show', style={'display': 'none'}),
+                html.Div(id='highlight-node', style={'display': 'none'})
         ])
 
 
@@ -349,7 +352,25 @@ def bind_callbacks(app):
                 (pag_set['current_page'] + 1)*pag_set['page_size']
             ].to_dict('rows')
 
+
+    @app.callback(
+        Output('highlight-node', 'value'),
+        [Input('ranking-table', 'derived_virtual_data'),
+        Input('ranking-table', 'derived_virtual_selected_rows')]
+    )
+    def highlight_node(data, selected):
+        if not data:
+            raise PreventUpdate()
+
+        # Reset the stylesheet
+        if not selected:
+            return None
+
+        # highlight nodes selected
+        selection = [data[s] for s in selected]
+        return selection
         
+
     @app.callback(
         Output('ready', 'value'),
         [Input('dates-slider', 'value')]

@@ -138,17 +138,21 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             Output('cytoscape', 'stylesheet'),
             [Input('cytoscape', 'elements'),
             Input('show-labels', 'n_clicks'),
-            Input('color-cluster', 'n_clicks')],
-            [State('network-ready', 'value'),
-            State('cytoscape', 'stylesheet')]
+            Input('color-cluster', 'n_clicks'),
+            Input('highlight-node', 'value')],
+            [State('network-ready', 'value')]
         )
-        def update_stylesheet(_, lb_clicks, com_clicks, cy_network, stylesheet):
+        def update_stylesheet(_, lb_clicks, com_clicks, nodes_selc, cy_network):
 
             if not cy_network:
                 raise PreventUpdate()
 
-            co_stylesheet = CoEditingStylesheet(stylesheet)
-            co_stylesheet.all_transformations(cy_network)
+            co_stylesheet = CoEditingStylesheet()
+
+            if not nodes_selc:
+                co_stylesheet.all_transformations(cy_network)
+            else:
+                co_stylesheet.highlight_nodes(cy_network, nodes_selc)
 
             if lb_clicks and lb_clicks % 2:
                 co_stylesheet.set_label('label')
