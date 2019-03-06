@@ -312,7 +312,7 @@ def bind_callbacks(app):
         if not ready or not metric or not slider:
             print('not ready header')
             raise PreventUpdate()
-        
+
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0]
         network_code = selection['network']
@@ -335,7 +335,7 @@ def bind_callbacks(app):
     def update_ranking(pag_set, sort_set, metric, slider, ready, selection_json):
         if not ready or not metric or not slider:
             raise PreventUpdate()
-        
+
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0]
         network_code = selection['network']
@@ -346,7 +346,7 @@ def bind_callbacks(app):
 
         # check the col to sort
         if sort_set and sort_set[0]['column_id'] in list(df):
-            df = df.sort_values(sort_set[0]['column_id'], 
+            df = df.sort_values(sort_set[0]['column_id'],
                 ascending=sort_set[0]['direction'] == 'asc',
                 inplace=False)
         else:
@@ -374,7 +374,7 @@ def bind_callbacks(app):
         # highlight nodes selected
         selection = [data[s] for s in selected]
         return selection
-        
+
 
     @app.callback(
         Output('ready', 'value'),
