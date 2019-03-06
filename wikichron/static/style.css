@@ -74,12 +74,53 @@ main {
     height: -webkit-fill-available;
     height: 100vh;
     color: white;
-    padding: 33px 60px 33px 60px;
 }
 
 main p {
     margin-top: 0.75rem;
     margin-bottom: 0.75rem;
+}
+
+#tabs {
+    border: none;
+}
+
+.nav-tabs .nav-link, .nav-tabs .nav-item, .nav-tabs .nav-link.active{
+    color: white;
+    border: none;
+}
+
+.nav-tabs .nav-item{
+    background-color: #183657;
+}
+
+.nav-tabs .nav-link:hover{
+    color: gray;
+}
+
+.nav-tabs .nav-link {
+    padding: 20px 50px 20px 50px;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #21446D;
+}
+
+.tabs-bar-container {
+    background-color: #0D233C;
+    color: white;
+}
+
+.nav-item {
+    color: #FFFFFF;
+    font-family: Roboto;
+    font-size: 35px;
+    font-weight: 900;
+    line-height: 41px;
+}
+
+.tab-content {
+    padding: 33px 60px 33px 60px;
 }
 
 .line {
