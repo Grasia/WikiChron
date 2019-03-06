@@ -29,26 +29,26 @@
     <div class="tabs-bar-container">
         <ul class="nav nav-tabs" id="tabs" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" id="wikis-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Wikis</a>
+                <a class="nav-link active" id="wikis-tab" data-toggle="tab" href="#wikis" role="tab" aria-controls="home" aria-selected="true">Wikis</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="networks-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Networks</a>
+                <a class="nav-link" id="networks-tab" data-toggle="tab" href="#networks" role="tab" aria-controls="networks" aria-selected="false">Networks</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="time-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Time selection</a>
+                <a class="nav-link" id="time-tab" data-toggle="tab" href="#time" role="tab" aria-controls="time" aria-selected="false">Time selection</a>
             </li>
         </ul>
     </div>
 
-    <main>
+    <main >
 
 
         <div class="tab-content">
-            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            <div class="tab-pane fade show active" id="wikis" role="tabpanel" aria-labelledby="wikis-tab">
                 {% include 'selection/selection_wikis.html' %}
             </div>
-            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
-            <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+            <div class="tab-pane fade" id="networks" role="tabpanel" aria-labelledby="networks-tab">...</div>
+            <div class="tab-pane fade" id="time" role="tabpanel" aria-labelledby="time-tab">...</div>
         </div>
 
 

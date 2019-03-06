@@ -6,6 +6,8 @@
 body {
   margin: 0px;
   font-family: Roboto, sans-serif;
+  height: 100%;
+  background-color: #21446D;
 }
 
 p {
@@ -70,9 +72,6 @@ header {
 /* Main */
 
 main {
-    background-color: #21446D;
-    height: -webkit-fill-available;
-    height: 100vh;
     color: white;
 }
 
@@ -95,7 +94,7 @@ main p {
 }
 
 .nav-tabs .nav-link:hover{
-    color: gray;
+    background-color: gray;
 }
 
 .nav-tabs .nav-link {
