@@ -257,8 +257,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
 
     share_url_path = config['APP_HOSTNAME'] + config['DASH_BASE_PATHNAME'] + \
                         query_string
-    download_url_path = '{}/download/{}'.format(config['APP_HOSTNAME'],
-    query_string)
+    download_url_path = 'f{config["APP_HOSTNAME"]}/download/{query_string}'
 
     return html.Div(
             id='main',
