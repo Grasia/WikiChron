@@ -82,6 +82,25 @@ main p {
     margin-bottom: 0.75rem;
 }
 
+.card-title {
+    color: #193250;
+}
+
+.card-body {
+    color: #4A4A4A;
+}
+
+.card-image-container {
+    width: 100%;
+    height: 139px;
+    background-color: #DDBF62;
+    display: flex;
+}
+
+.card-image-wrapper {
+    margin: auto;
+}
+
 /* Footer */
 
 /* footer - button */
