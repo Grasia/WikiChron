@@ -18,6 +18,14 @@ class BaseStylesheet(metaclass=abc.ABCMeta):
 		else:
 			self.cy_stylesheet = cy_stylesheet
 
+
+	def highlight_nodes(self, network, selc_nodes):
+		"""
+		This tries to highlight selected nodes
+		"""
+		pass
+
+
 	def color_nodes(self, _):
 		self.cy_stylesheet[0]['style']['background-color'] = '#0D47A1'
 
@@ -49,7 +57,8 @@ class BaseStylesheet(metaclass=abc.ABCMeta):
 
 
 	def set_label(self, text):
-		self.cy_stylesheet[0]['style']['content'] = text
+		content = f'data({text})' if text else ''
+		self.cy_stylesheet[0]['style']['content'] = content
 
 	
 	def make_basic_stylesheet(self):

@@ -16,6 +16,7 @@ import pandas as pd
 import os
 import numpy as np
 import time
+from datetime import datetime
 from warnings import warn
 
 from cache import cache
@@ -29,7 +30,7 @@ global data_dir;
 global precooked_net_dir;
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 precooked_net_dir = os.getenv('PRECOOKED_NETWORK_DIR', 'precooked_data/networks')
-
+TIME_DIV = 60 * 60 * 24 * 30
 
 @cache.memoize()
 def read_data(wiki):
@@ -132,3 +133,18 @@ def clean_up_bot_activity(df, wiki):
         warn("Warning: Missing information of bots ids. Note that graphs can be polluted of non-human activity.")
     return df
 
+
+def get_time_bounds(wiki, lower, upper):
+    """
+    Returns a timestamps from upper and lower values
+    """
+    first_entry = get_first_entry(wiki)
+    first_entry = int(datetime.strptime(str(first_entry),
+        "%Y-%m-%d %H:%M:%S").strftime('%s'))
+
+    upper_bound = first_entry + upper * TIME_DIV
+    lower_bound = first_entry + lower * TIME_DIV
+
+    upper_bound = datetime.fromtimestamp(upper_bound).strftime("%Y-%m-%d %H:%M:%S")
+    lower_bound = datetime.fromtimestamp(lower_bound).strftime("%Y-%m-%d %H:%M:%S")
+    return (lower_bound, upper_bound)

@@ -6,6 +6,7 @@
 
 """
 
+import pandas as pd
 import numpy
 import math
 from datetime import datetime
@@ -38,8 +39,22 @@ class CoEditingNetwork(BaseNetwork):
     TIME_BOUND = 24 * 15
     NAME = 'Co-Editing'
     CODE = 'co_editing_network'
+    AVAILABLE_METRICS = {
+            'Page Rank': 'page_rank',
+            'Number of Edits': 'num_edits',
+            'Betweenness': 'betweenness'
+        }
 
-    def __init__(self, is_directed = False, graph = {}, 
+    USER_INFO = {
+        'Wiki ID': 'contributor_id',
+        'User Name': 'label',
+        'Edits Number': 'num_edits',
+        'First Edit': 'first_edit',
+        'Last Edit': 'last_edit'
+    }
+
+
+    def __init__(self, is_directed = False, graph = {},
         first_entry = None, last_entry = None):
 
         super().__init__(is_directed = is_directed, first_entry = first_entry,
@@ -237,3 +252,24 @@ class CoEditingNetwork(BaseNetwork):
        """
        # namespace 0 => wiki article
        return df[df['page_ns'] == 0]
+
+
+    def get_metric_dataframe(self, metric: str) -> pd.DataFrame:
+        if self.AVAILABLE_METRICS[metric] in self.graph.vs.attributes():
+            df = pd.DataFrame({
+                    'User': self.graph.vs['label'],
+                    metric: self.graph.vs[self.AVAILABLE_METRICS[metric]]
+                    })
+            return df
+
+        return None
+
+
+    @classmethod
+    def get_available_metrics(cls) -> dict:
+        return cls.AVAILABLE_METRICS
+
+
+    @classmethod
+    def get_user_info(cls) -> dict:
+        return cls.USER_INFO

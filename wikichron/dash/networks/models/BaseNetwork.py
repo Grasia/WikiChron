@@ -14,6 +14,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
     NAME = 'Base Network'
     CODE = 'base_network'
 
+
     def __init__(self, is_directed = False, first_entry = None, 
             last_entry = None, graph = {},):
 
@@ -60,6 +61,35 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         """
         The network which implements this method should calculate
         only the useful metrics not all of them
+        """
+        pass
+
+
+    @abc.abstractmethod
+    def get_metric_dataframe(self, metric):
+        """
+        This function generates a dateframe with 2 cols, the node name
+        and a node metric value.
+        Prarameters:
+            - metric: an existing metric in the network
+        Return:
+            if metric exist a dataframe, if not None 
+        """
+        pass
+
+    
+    @abc.abstractmethod
+    def get_available_metrics(self) -> dict:
+        """
+        Return a dict with the metrics
+        """
+        pass
+
+
+    @abc.abstractmethod
+    def get_user_info(self) -> dict:
+        """
+        Return a dict with the user info
         """
         pass
 

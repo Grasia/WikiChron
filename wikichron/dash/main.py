@@ -25,6 +25,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
+import dash_table
 import grasia_dash_components as gdc
 import sd_material_ui
 from flask import current_app
@@ -61,6 +62,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     config = current_app.config
     # Contructs the assets_url_path for image sources:
     assets_url_path = os.path.join(config['DASH_BASE_PATHNAME'], 'assets')
+
 
     def main_header():
         """
@@ -112,12 +114,14 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
             ])
         );
 
+
     def selection_title(selected_wiki, selected_network):
         selection_text = (f'You are viewing the {selected_network} network for wiki: {selected_wiki}')
         return html.Div([
             html.H3(selection_text, id = 'selection-title')],
             className = 'container'
         )
+
 
     def share_modal(share_link, download_link):
         """
@@ -167,6 +171,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
             )
         ])
 
+
     def date_slider_control():
         return html.Div(id='date-slider-div', className='container',
                 children=[
@@ -187,6 +192,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                 ],
                 style={'margin-top': '15px'}
                 )
+
 
     def cytoscape_component():
         cytoscape = dash_cytoscape.Cytoscape(
@@ -218,6 +224,24 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
         )
         return html.Div(style={'display': 'flex'}, children=[cytoscape])
 
+
+    def ranking_table():
+        return dash_table.DataTable(
+                    id='ranking-table',
+                    pagination_settings={
+                        'current_page': 0,
+                        'page_size': 10
+                    },
+                    pagination_mode='be',
+                    sorting='be',
+                    sorting_type='single',
+                    sorting_settings=[],
+                    style_cell={'textAlign': 'center'},
+                    style_header={'fontWeight': 'bold'},
+                    row_selectable="multi",
+                    selected_rows=[],
+                )
+
     if debug:
         print ('Generating main...')
 
@@ -233,8 +257,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
 
     share_url_path = config['APP_HOSTNAME'] + config['DASH_BASE_PATHNAME'] + \
                         query_string
-    download_url_path = '{}/download/{}'.format(config['APP_HOSTNAME'],
-                                                    query_string)
+    download_url_path = 'f{config["APP_HOSTNAME"]}/download/{query_string}'
 
     return html.Div(
             id='main',
@@ -259,42 +282,102 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                             children=args_selection),
 
                 cytoscape_component(),
+                ranking_table(),
 
                 html.Div(id='network-ready', style={'display': 'none'}),
                 html.Div(id='signal-data', style={'display': 'none'}),
                 html.Div(id='ready', style={'display': 'none'}),
-                html.Div(id='bind_ctl_sidebar', style={'display': 'none'})
-        ]);
+                html.Div(id='metric-to-show', style={'display': 'none'}),
+                html.Div(id='highlight-node', style={'display': 'none'})
+        ])
+
 
 def bind_callbacks(app):
 
     # Right sidebar callbacks
-    #########
+    ############################
     bind_controls_sidebar_callbacks('co_editing_network', app)
-    #########
+    ############################
 
 
     @app.callback(
-        Output('signal-data', 'value'),
-        [Input('initial-selection', 'children')]
+        Output('ranking-table', 'columns'),
+        [Input('metric-to-show', 'value')],
+        [State('network-ready', 'value'),
+        State('initial-selection', 'children'),
+        State('dates-slider', 'value')]
     )
-    def start_main(selection_json):
-        # get wikis x network selection
+    def update_ranking_header(metric, ready, selection_json, slider):
+        if not ready or not metric or not slider:
+            print('not ready header')
+            raise PreventUpdate()
+
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0]
         network_code = selection['network']
-        print('--> Retrieving and computing data')
-        print( '\t for the following wiki: {}'.format( wiki['url'] ))
-        print( '\trepresented as this network: {}'.format( network_code ))
-        network = data_controller.get_network(wiki, network_code)
-        print('<-- Done retrieving and computing data!')
-        return True
+        (lower, upper) = data_controller.get_time_bounds(wiki, slider[0], slider[1])
+        network = data_controller.get_network(wiki, network_code, lower, upper)
+
+        df = network.get_metric_dataframe(metric)
+        return [{"name": i, "id": i} for i in df.columns]
+
+
+    @app.callback(
+        Output('ranking-table', 'data'),
+        [Input('ranking-table', 'pagination_settings'),
+        Input('ranking-table', 'sorting_settings'),
+        Input('metric-to-show', 'value'),
+        Input('dates-slider', 'value')],
+        [State('network-ready', 'value'),
+        State('initial-selection', 'children')]
+    )
+    def update_ranking(pag_set, sort_set, metric, slider, ready, selection_json):
+        if not ready or not metric or not slider:
+            raise PreventUpdate()
+
+        selection = json.loads(selection_json)
+        wiki = selection['wikis'][0]
+        network_code = selection['network']
+        (lower, upper) = data_controller.get_time_bounds(wiki, slider[0], slider[1])
+        network = data_controller.get_network(wiki, network_code, lower, upper)
+
+        df = network.get_metric_dataframe(metric)
+
+        # check the col to sort
+        if sort_set and sort_set[0]['column_id'] in list(df):
+            df = df.sort_values(sort_set[0]['column_id'],
+                ascending=sort_set[0]['direction'] == 'asc',
+                inplace=False)
+        else:
+            df = df.sort_values(metric, ascending=False)
+
+        return df.iloc[
+                pag_set['current_page']*pag_set['page_size']:
+                (pag_set['current_page'] + 1)*pag_set['page_size']
+            ].to_dict('rows')
+
+
+    @app.callback(
+        Output('highlight-node', 'value'),
+        [Input('ranking-table', 'derived_virtual_data'),
+        Input('ranking-table', 'derived_virtual_selected_rows')]
+    )
+    def highlight_node(data, selected):
+        if not data:
+            raise PreventUpdate()
+
+        # Reset the stylesheet
+        if not selected:
+            return None
+
+        # highlight nodes selected
+        selection = [data[s] for s in selected]
+        return selection
 
 
     @app.callback(
         Output('ready', 'value'),
-        [Input('signal-data', 'value'),
-        Input('dates-slider', 'value')]
+        [Input('dates-slider', 'value')]
     )
     def ready_to_plot_networks(*args):
         #print (args)
@@ -332,22 +415,18 @@ def bind_callbacks(app):
 
     @app.callback(
         Output('date-slider-container', 'children'),
-        [Input('signal-data', 'value')],
-        [State('initial-selection', 'children')]
+        [Input('initial-selection', 'children')]
     )
-    def update_slider(signal, selection_json):
-        if not signal:
-            return dcc.Slider(id='dates-slider')
-
+    def update_slider(selection_json):
          # get network instance from selection
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0]
-        network_code = selection['network']
-        network = data_controller.get_network(wiki, network_code)
+        origin = data_controller.get_first_entry(wiki)
+        end = data_controller.get_last_entry(wiki)
 
-        origin = int(datetime.strptime(str(network.first_entry),
+        origin = int(datetime.strptime(str(origin),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))
-        end = int(datetime.strptime(str(network.last_entry),
+        end = int(datetime.strptime(str(end),
             "%Y-%m-%d %H:%M:%S").strftime('%s'))
 
         time_gap = end - origin
@@ -379,7 +458,7 @@ def bind_callbacks(app):
                     min=1,
                     max=max_time,
                     step=1,
-                    value=[1, max_time],
+                    value=[1, int(2 + max_time / 10)],
                     marks=range_slider_marks
                 )
 
