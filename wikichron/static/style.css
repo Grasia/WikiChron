@@ -66,6 +66,22 @@ header {
     width: 300px;
 }
 
+
+/* Main */
+
+main {
+    background-color: #21446D;
+    height: -webkit-fill-available;
+    height: 100vh;
+    color: white;
+    padding: 33px 60px 33px 60px;
+}
+
+main p {
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
 /* Footer */
 
 /* footer - button */
