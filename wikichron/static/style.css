@@ -9,8 +9,8 @@ body {
 }
 
 p {
-    margin-top: 0.75rem;
-    margin-bottom: 0.75rem;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .action-button {
@@ -38,14 +38,18 @@ p {
 /* Header */
 
 header {
-    height: 300px;
+    height: 250px;
     width: 100%;
-    background-color: #BAD8EC;
 }
 
 #header-container {
-    padding-left: 60px;
-    padding-top: 33px;
+    background-color: #BAD8EC;
+    padding: 33px 60px 33px 60px;
+
+}
+
+#header-logo-container {
+    margin-left: -25px;
 }
 
 #selection-header-welcome {
@@ -59,6 +63,7 @@ header {
     color: #232C48;
     font-size: 20px;
     line-height: 27px;
+    width: 300px;
 }
 
 /* Footer */
