@@ -82,6 +82,15 @@ main p {
     margin-bottom: 0.75rem;
 }
 
+.line {
+    box-sizing: border-box;
+    height: 3px;
+    border: 1px solid #BAD8EC;
+    opacity: 0.22;
+    margin-left: 0;
+    margin-right: 0;
+}
+
 .card-title {
     color: #193250;
 }
