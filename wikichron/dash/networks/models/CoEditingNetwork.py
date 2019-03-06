@@ -54,7 +54,7 @@ class CoEditingNetwork(BaseNetwork):
     }
 
 
-    def __init__(self, is_directed = False, graph = {}, 
+    def __init__(self, is_directed = False, graph = {},
         first_entry = None, last_entry = None):
 
         super().__init__(is_directed = is_directed, first_entry = first_entry,
@@ -255,7 +255,7 @@ class CoEditingNetwork(BaseNetwork):
 
 
     def get_metric_dataframe(self, metric: str) -> pd.DataFrame:
-        if self.AVAILABLE_METRICS[metric] in self.graph.vs.attributes():   
+        if self.AVAILABLE_METRICS[metric] in self.graph.vs.attributes():
             df = pd.DataFrame({
                     'User': self.graph.vs['label'],
                     metric: self.graph.vs[self.AVAILABLE_METRICS[metric]]
@@ -269,7 +269,7 @@ class CoEditingNetwork(BaseNetwork):
     def get_available_metrics(cls) -> dict:
         return cls.AVAILABLE_METRICS
 
-    
+
     @classmethod
     def get_user_info(cls) -> dict:
         return cls.USER_INFO
