@@ -14,3 +14,5 @@ def set_up_cache(app, debug):
         })
     else:
         cache = Cache(app.server, config={'CACHE_TYPE': 'simple'})
+
+    return cache

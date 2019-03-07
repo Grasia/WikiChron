@@ -40,6 +40,7 @@ from codecs import decode
 import networks.interface
 from version import __version__
 import cache
+import data_controller
 
 # production or development (DEBUG) flag:
 global debug;
@@ -64,8 +65,7 @@ else: # load piwik only in production:
 global selection_params;
 selection_params = {'wikis', 'network', 'lower_bound', 'upper_bound'};
 
-# The ones folowing will be set when the data_controller is available
-global data_controller;
+# The folowing ones will be set later on
 global available_networks;
 global available_wikis;
 global available_wikis_dict;
@@ -360,9 +360,8 @@ def create_dash_app(server):
     # skeleton.css: (Already included in dash stylesheet)
     #~ app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
 
-    cache.set_up_cache(app, debug)
-    global data_controller
-    import data_controller
+    app_cache = cache.set_up_cache(app, debug)
+    data_controller.set_cache(app_cache)
 
     return app
 
