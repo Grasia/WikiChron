@@ -41,6 +41,11 @@ $('#selection-footer-button').on ("click", function() {
     console.log(chosenNetwork);
     console.log(chosenWiki);
 
+    if (!chosenNetwork || !chosenWiki) { // In case user tries to bypass
+                                         // the selection of the form inputs
+        return
+    }
+
     window.location.href = "/app/?" + "wikis=" + chosenWiki + "&network=" + chosenNetwork
 
 });
