@@ -3,10 +3,14 @@
     <div id="tab-header" class="d-flex justify-content-between mx-2">
         <p class="tab-intro-paragraph" >Select the wiki you want to analyze</p>
 
+<!--
         <form class="form-inline">
+-->
             <label class="sr-only" for="search-wiki-input">Wiki keywords</label>
             <input id="search-wiki-input" class="form-control h-100" type="text" placeholder="Search wiki"/>
+<!--
         </form>
+-->
     </div>
 
     <hr class="ml-2 line"/>
@@ -19,7 +23,7 @@
                   <div class="card-body">
                     <h4 class="card-title">
                         <div class="custom-control custom-checkbox">
-                            <input class="custom-control-input wiki-checkbox" type="checkbox" id="checkbox-{{wiki.url}}" value="{{wiki.url}}">
+                            <input class="custom-control-input wiki-checkbox" type="checkbox" id="checkbox-{{wiki.url}}" value="{{wiki.url}}" name="wikis">
                             <label class="custom-control-label wiki-name" for="checkbox-{{wiki.url}}">{{wiki.name}}</label>
                         </div>
                     </h4>
