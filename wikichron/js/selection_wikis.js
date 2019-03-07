@@ -13,40 +13,34 @@ $('#search-wiki-input').on('keyup', function() {
 });
 
 /* enable action button */
-$('.wiki-checkbox').on( "click", function() {
+$('.wiki-checkbox').on( "click", enable_action_button)
+
+var chosenWiki;
+function enable_action_button() {
     var checkedBoxes = $('.wiki-checkbox').
                         filter( function(index, element){
                             return element.checked
                         })
     if (checkedBoxes.length === 1) {
-        enable_action_button();
+        chosenWiki = checkedBoxes[0].value;
+        $('#selection-footer-button')[0].disabled = false;
     } else {
-        disable_action_button();
+        $('#selection-footer-button')[0].disabled = true;
     }
-});
+};
 
-function enable_action_button() {
-    $('#selection-footer-button')[0].disabled = false;
-}
-
-function disable_action_button() {
-    $('#selection-footer-button')[0].disabled = true;
-}
+// init action button enable/disable
+enable_action_button()
 
 /* press action button */
-//~ $('#selection-footer-button').on ("click", function() {
-    //~ var chosenWiki = $('.wiki-checkbox').
-                        //~ filter( function(index, element){
-                            //~ return element.checked
-                        //~ })[0].value
-    //~ console.log(chosenWiki);
+$('#selection-footer-button').on ("click", function() {
+    var chosenNetwork = $('.networks-radiobutton').
+                        filter( function(index, element){
+                            return element.checked
+                        })[0].value
+    console.log(chosenNetwork);
+    console.log(chosenWiki);
 
-    //~ var chosenNetwork = $('.networks-radiobutton').
-                        //~ filter( function(index, element){
-                            //~ return element.checked
-                        //~ })[0].value
-    //~ console.log(chosenNetwork);
+    window.location.href = "/app/?" + "wikis=" + chosenWiki + "&network=" + chosenNetwork
 
-    //~ $('#selection-footer-button')[0].formaction = "wikis=" + chosenWiki + "&networks=" + chosenNetwork
-
-//~ });
+});
