@@ -46,6 +46,6 @@ $('#selection-footer-button').on ("click", function() {
         return
     }
 
-    window.location.href = "/app/?" + "wikis=" + chosenWiki + "&network=" + chosenNetwork
+    window.location.href = `/app/?wikis=${chosenWiki}&network=${chosenNetwork}`
 
 });
