@@ -53,7 +53,8 @@ local_available_js = [
     'side_bar.js',
     'controls_side_bar.js',
     'main.share_modal.js',
-    'piwik.js'
+    'piwik.js',
+    'selection_wikis.js'
 ]
 
 # Serve js/ folder
