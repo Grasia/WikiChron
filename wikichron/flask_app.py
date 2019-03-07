@@ -16,7 +16,9 @@ import flask
 import flask
 from flask import Blueprint
 
-from wikichron.dash.networks import interface
+# Imports from dash app
+import wikichron.dash.networks.interface as interface
+import wikichron.dash.data_controller as data_controller
 
 server_bp = Blueprint('main', __name__)
 
@@ -24,6 +26,8 @@ server_bp = Blueprint('main', __name__)
 @server_bp.route('/')
 @server_bp.route('/selection')
 def redirect_index_to_app():
+    wikis = data_controller.get_available_wikis()
+    print(wikis)
 
     network_backend_objects = interface.get_available_networks()
     networks_frontend = []
@@ -31,6 +35,7 @@ def redirect_index_to_app():
         networks_frontend.append({ 'name': nw.NAME, 'code': nw.CODE})
 
     return flask.render_template("selection/selection.html",
+                                wikis = wikis,
                                 networks = networks_frontend)
 
 

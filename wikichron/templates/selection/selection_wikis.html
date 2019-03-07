@@ -1,21 +1,29 @@
 <div>
-    <p>Select the wiki you want to analyze</p>
-    <hr class="line"/>
-    <div class="card" style="width: 18rem;">
-      <div class="card-body">
-        <h4 class="card-title">
-            <div class="custom-control custom-checkbox">
-                <input class="custom-control-input" type="checkbox" id="wiki1" value="recipes.wikia.com">
-                <label class="custom-control-label" for="wiki1">Recipes</label>
+    <p class="ml-2 wikis-paragraph font-weight-light" >Select the wiki you want to analyze</p>
+    <hr class="line card ml-2"/>
+
+    <div id="card-container" class="d-flex flex-row flex-wrap">
+        {% for wiki in wikis %}
+            <div class="card m-2" style="width: 18rem;">
+              <div class="card-body">
+                <h4 class="card-title">
+                    <div class="custom-control custom-checkbox">
+                        <input class="custom-control-input" type="checkbox" id="checkbox-{{wiki.url}}" value="{{wiki.url}}">
+                        <label class="custom-control-label" for="checkbox-{{wiki.url}}">{{wiki.name}}</label>
+                    </div>
+                </h4>
+                <div class="card-image-container">
+                    <div class="card-image-wrapper">
+                        <img src="https://images.wikia.nocookie.net/__cb29/recipes/images/8/89/Wiki-wordmark.png"/>
+                    </div>
+                </div>
+        <!--
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        -->
+                <a href="https://{{wiki.url}}" class="card-link">{{wiki.url}}</a>
+              </div>
             </div>
-        </h4>
-        <div class="card-image-container">
-            <div class="card-image-wrapper">
-                <img src="https://images.wikia.nocookie.net/__cb29/recipes/images/8/89/Wiki-wordmark.png"/>
-            </div>
-        </div>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <a href="#" class="card-link">Wiki url</a>
-      </div>
+        {% endfor %}
     </div>
+
 </div>

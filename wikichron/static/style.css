@@ -1,5 +1,4 @@
-@import 'https://fonts.googleapis.com/css?family=Roboto';
-@import 'https://fonts.googleapis.com/css?family=Roboto+Mono';
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400');
 
 
 /* General */
@@ -148,6 +147,11 @@ main p {
 
 .card-image-wrapper {
     margin: auto;
+}
+
+.wikis-paragraph {
+    font-size: 1.5rem;
+    font-weight: 300;
 }
 
 /* Footer */
