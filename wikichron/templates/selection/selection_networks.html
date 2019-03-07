@@ -2,8 +2,10 @@
     <p>Select the network you want to see for this wiki</p>
     <hr class="line"/>
 
-    <div class="custom-control custom-radio">
-        <input class="custom-control-input" type="radio" id="co-editing" value="co-editing">
-        <label class="custom-control-label" for="co-editing">Co-editing</label>
-    </div>
+    {% for network in networks %}
+        <div class="custom-control custom-radio">
+            <input class="custom-control-input" type="radio" id="radio-{{network['code']}}" value="{{network['code']}}">
+            <label class="custom-control-label" for="radio-{{network['code']}}">{{network['name']}}</label>
+        </div>
+    {% endfor %}
 </div>

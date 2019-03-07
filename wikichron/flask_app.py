@@ -16,6 +16,7 @@ import flask
 import flask
 from flask import Blueprint
 
+from wikichron.dash.networks import interface
 
 server_bp = Blueprint('main', __name__)
 
@@ -23,7 +24,14 @@ server_bp = Blueprint('main', __name__)
 @server_bp.route('/')
 @server_bp.route('/selection')
 def redirect_index_to_app():
-    return flask.render_template("selection/selection.html")
+
+    network_backend_objects = interface.get_available_networks()
+    networks_frontend = []
+    for nw in network_backend_objects:
+        networks_frontend.append({ 'name': nw.NAME, 'code': nw.CODE})
+
+    return flask.render_template("selection/selection.html",
+                                networks = networks_frontend)
 
 
 @server_bp.route('/welcome.html')
