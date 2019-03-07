@@ -4,8 +4,8 @@
 
     {% for network in networks %}
         <div class="custom-control custom-radio m-4">
-            <input class="custom-control-input" type="radio" id="radio-{{network['code']}}" value="{{network['code']}}">
-            <label class="custom-control-label" for="radio-{{network['code']}}">{{network['name']}}</label>
+            <input class="custom-control-input networks-radiobutton" type="radio" id="radio-{{network['code']}}" value="{{network['code']}}" checked>
+            <label class="custom-control-label network-name" for="radio-{{network['code']}}">{{network['name']}}</label>
         </div>
     {% endfor %}
 </div>
