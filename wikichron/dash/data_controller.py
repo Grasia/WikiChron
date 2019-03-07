@@ -18,6 +18,7 @@ import numpy as np
 import time
 from datetime import datetime
 from warnings import warn
+import json
 
 from cache import cache
 
@@ -38,6 +39,12 @@ def read_data(wiki):
     prepare_data(df)
     df = clean_up_bot_activity(df, wiki)
     return df
+
+
+def get_available_wikis():
+    wikis_json_file = open(os.path.join(data_dir, 'wikis.json'))
+    wikis = json.load(wikis_json_file)
+    return wikis
 
 
 @cache.memoize(timeout=3600)
