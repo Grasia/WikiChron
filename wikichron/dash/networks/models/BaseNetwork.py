@@ -147,3 +147,20 @@ class BaseNetwork(metaclass=abc.ABCMeta):
                 assortativity = "{0:.5f}".format(assortativity)
 
             self.graph['assortativity_degree'] = assortativity
+
+
+    def get_degree_distribution(self):
+        """
+        It returns the degree distribution
+        """
+        ##########
+        # TODO Check if it s directed
+        ##########
+        # Let's count the number of each degree
+        p_k = [0 for i in range(0, self.graph.maxdegree()+1)]
+        for x in self.graph.degree(): p_k[x] += 1
+        # Now, we are gonna clean the 0's
+        k = [i for i in range(0, self.graph.maxdegree()+1) if p_k[i] > 0]
+        p_k = list(filter(lambda x: x > 0, p_k))
+
+        return (k, p_k)
