@@ -40,7 +40,7 @@ header {
     width: 100%;
 }
 
-#header-container {
+.header-container {
     background-color: #BAD8EC;
     padding: 33px 60px 33px 60px;
 
@@ -67,11 +67,11 @@ header {
 
 /* Main */
 
-main {
+section.selection-content {
     color: white;
 }
 
-main p {
+section.selection-content p {
     margin-top: 0.75rem;
     margin-bottom: 0.75rem;
 }
@@ -155,7 +155,7 @@ main p {
 
 /* footer - button */
 
-footer {
+footer.action-button-container{
     width: 100%;
     height: 100px;
 }
