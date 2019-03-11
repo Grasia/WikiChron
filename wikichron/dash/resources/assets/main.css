@@ -111,3 +111,14 @@
     margin-left: 5px;
 }
 
+.slider-controls{
+    margin-left: 20%;
+}
+
+#in-step-slider{
+    width: 8rem;
+}
+
+.step-button{
+    width: 8rem;
+}

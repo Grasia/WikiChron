@@ -100,8 +100,12 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             if not cy_network:
                 return CoEditingControlsSidebarDecorator.default_stats()
 
-            date1 = datetime.fromtimestamp(cy_network["first_entry"]).strftime("%Y-%m-%d")
-            date2 = datetime.fromtimestamp(cy_network["last_entry"]).strftime("%Y-%m-%d")
+            date1 = 'Not entries'
+            date2 = 'Not entries'
+            if not cy_network["first_entry"] == 'Not entries':
+                date1 = datetime.fromtimestamp(cy_network["first_entry"]).strftime("%Y-%m-%d")
+            if not cy_network["last_entry"] == 'Not entries':
+                date2 = datetime.fromtimestamp(cy_network["last_entry"]).strftime("%Y-%m-%d")
 
             return CoEditingControlsSidebarDecorator.default_stats(
                 st1 = f'Nodes: {cy_network["num_nodes"]}',

@@ -175,12 +175,22 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     def date_slider_control():
         return html.Div(id='date-slider-div', className='container',
                 children=[
-                    html.Span(id='slider-header',
-                    children=[
-                        html.Strong(
-                            'Time interval (months):'),
-                        html.Span(id='display-slider-selection')
-                    ]),
+
+                    html.Div(children=[
+                        html.Span(id='slider-header',
+                        children=[
+                            html.Strong(
+                                'Time interval (months):'),
+                            html.Span(id='display-slider-selection')
+                        ]),
+
+                        html.Div(children=[
+                            html.Button("<<", id="bt-back", n_clicks_timestamp='0', className='step-button'),
+                            dcc.Input(id="in-step-slider" , type='number', value='1', min='0'),
+                            html.Button(">>", id="bt-forward", n_clicks_timestamp='0', className='step-button'),
+                        ], className='slider-controls'),
+                    ], 
+                    style={'display': 'flex'}),
 
                     html.Div(id='date-slider-container',
                         style={'height': '35px'},
@@ -190,7 +200,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                         )],
                     )
                 ],
-                style={'margin-top': '15px'}
+                style={'margin-top': '15px', 'display': 'grid'}
                 )
 
 
@@ -461,6 +471,51 @@ def bind_callbacks(app):
                     value=[1, int(2 + max_time / 10)],
                     marks=range_slider_marks
                 )
+
+
+    @app.callback(
+        Output('dates-slider', 'value'),
+        [Input('bt-back', 'n_clicks_timestamp'),
+        Input('bt-forward', 'n_clicks_timestamp')],
+        [State('in-step-slider', 'value'),
+        State('date-slider-container', 'children')]
+    )
+    def move_slider_range(bt_back, bt_forward, step, di_slider):
+        step = int(step)
+        
+        if bt_back and int(bt_back) > int(bt_forward):
+            step = -step
+        elif not (bt_forward and int(bt_forward) > int(bt_back)):
+            raise PreventUpdate()
+
+        # step value is in [0, n] | n € N
+        # so step value must be a positive value if bt_forward was press
+
+        old_upper = di_slider['props']['value'][0]
+        old_lower = di_slider['props']['value'][1]
+        upper = di_slider['props']['value'][0]
+        lower = di_slider['props']['value'][1]
+        max_val = di_slider['props']['max']
+        min_val = di_slider['props']['min']
+
+        if upper + step > max_val:
+            upper = max_val
+        elif upper + step < min_val:
+            upper = min_val
+        else:
+            upper = upper + step
+
+        if lower + step < min_val:
+            lower = min_val
+        elif lower + step > max_val:
+            lower = max_val
+        else:
+            lower = lower + step
+        # Let's check if the input will change the slider
+        if lower == old_lower and upper == old_upper:
+             raise PreventUpdate('Slider will not change')
+    
+        return [upper, lower]
 
 
     @app.callback(

@@ -191,11 +191,18 @@ class CoEditingNetwork(BaseNetwork):
                     'w_time': edge['w_time']
                 }
             })
+        f_e = 'Not entries'
+        l_e = 'Not entries'
 
-        di_net['first_entry'] = int(datetime.strptime(str(self.first_entry),
-                            "%Y-%m-%d %H:%M:%S").strftime('%s'))
-        di_net['last_entry'] = int(datetime.strptime(str(self.last_entry),
-                            "%Y-%m-%d %H:%M:%S").strftime('%s'))
+        if self.first_entry:
+            f_e = int(datetime.strptime(str(self.first_entry),
+                "%Y-%m-%d %H:%M:%S").strftime('%s'))
+        if self.last_entry:
+            l_e = int(datetime.strptime(str(self.last_entry),
+                "%Y-%m-%d %H:%M:%S").strftime('%s'))
+
+        di_net['first_entry'] = f_e
+        di_net['last_entry'] = l_e
         di_net['edge_max_weight'] = max_v
         di_net['edge_min_weight'] = min_v
         di_net['num_nodes'] = self.graph.vcount()
