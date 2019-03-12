@@ -34,6 +34,48 @@ $('.wiki-checkbox').on( "click", function({target}) {
 
 });
 
+function init_current_selection() {
+
+    /* init wikis current selection */
+    var checkedBoxes = $('.wiki-checkbox').
+                        filter( function(index, element){
+                            return element.checked
+                        })
+    if (checkedBoxes.length > 0) {
+        var badgesContainer = $('#wiki-badges-container');
+        var wikiCode = checkedBoxes[0].value;
+        var wikiName = checkedBoxes[0].dataset.wikiName;
+        var badgeSelectedWiki = `
+        <span id="current-selected-wiki" class="badge badge-secondary p-2 align-middle" data-code="${wikiCode}">
+            ${wikiName}
+        </span>`
+        badgesContainer.html(badgeSelectedWiki);
+
+        //~ $('#selection-footer-button')[0].disabled = false;
+    } else {
+        //~ $('#selection-footer-button')[0].disabled = true;
+    }
+
+    /* init networks current selection */
+    var radioButtons = $('.networks-radiobutton').
+                        filter( function(index, element){
+                            return element.checked
+                        })
+    if (radioButtons.length > 0) {
+        badgesContainer = $('#network-badges-container');
+        var networkCode = radioButtons[0].value;
+        var networkName = radioButtons[0].dataset.networkName;
+        var badgeSelectedNetwork = `
+            <span id="current-selected-network" class="badge badge-secondary p-2 align-middle" data-network-code="${networkCode}">
+                ${networkName}
+            </span>
+        `
+        badgesContainer.html(badgeSelectedNetwork);
+    }
+}
+
+init_current_selection()
+
 
 /* enable action button */
 $('.wiki-checkbox').on( "click", enable_action_button)
