@@ -89,7 +89,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
 
         Return: An HTML object with the header content
         """
-        href_download_button = '/download/{}'.format(query_string)
+        href_download_button = f'{config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
         return (html.Div(id='header',
                 className='container',
                 style={'display': 'flex', 'align-items': 'center', \
@@ -144,11 +144,9 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
 
     def share_modal(share_link, download_link):
         """
-        Generates a window to share a link
-        Parameters:
-                -share_link: a link to share
-                -download_link: a link to download
-
+        Generates a window to share a link.
+        Values for the share link and download link will be set at runtime in a
+        dash callback.
         Return: An HTML object with the window to share and download
         """
         return html.Div([
@@ -300,7 +298,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     sidebar_decorator.add_all_sections()
 
     share_url_path = f'{config["APP_HOSTNAME"]}{config["DASH_BASE_PATHNAME"]}{query_string}'
-    download_url_path = f'{config["APP_HOSTNAME"]}/download/{query_string}'
+    download_url_path = f'{config["APP_HOSTNAME"]}{config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
 
     return html.Div(
             id='main',
@@ -484,7 +482,7 @@ def bind_callbacks(app):
         time_gap = end - origin
         max_time = time_gap // TIME_DIV
 
-        if 'lower_bound' and 'upper_bound' in selection:
+        if all(k in selection for k in ('lower_bound', 'upper_bound')):
             low_val = (int(selection['lower_bound'][0]) - origin) // TIME_DIV
             upper_val = (int(selection['upper_bound'][0]) - origin) // TIME_DIV
         else:

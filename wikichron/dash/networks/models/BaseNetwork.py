@@ -108,8 +108,12 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         Calculates the network pageRank
         """
         if not 'page_rank' in self.graph.vs.attributes():
-            self.graph.vs['page_rank'] = self.graph.pagerank(
-                directed=self.graph.is_directed(), weights = 'weight')
+            if not 'weight' in self.graph.es.attributes():
+                self.graph.vs['page_rank'] = self.graph.pagerank(
+                    directed=self.graph.is_directed())    
+            else:
+                self.graph.vs['page_rank'] = self.graph.pagerank(
+                    directed=self.graph.is_directed(), weights = 'weight')
 
 
     def calculate_betweenness(self):
@@ -117,8 +121,12 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         Calculates the network betweenness
         """
         if not 'betweenness' in self.graph.vs.attributes():
-            self.graph.vs['betweenness'] = self.graph.betweenness(
-                directed=self.graph.is_directed(), weights = 'weight')
+            if not 'weight' in self.graph.es.attributes():
+                self.graph.vs['betweenness'] = self.graph.betweenness(
+                    directed=self.graph.is_directed())    
+            else:
+                self.graph.vs['betweenness'] = self.graph.betweenness(
+                    directed=self.graph.is_directed(), weights = 'weight')
 
 
     def calculate_communities(self):
@@ -126,7 +134,11 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         Calculates communities and assigns a color per community
         """
         if not 'n_communities' in self.graph.attributes():
-            mod = self.graph.community_multilevel(weights='weight')
+            if not 'weight' in self.graph.es.attributes():
+                mod = self.graph.community_multilevel()
+            else:
+                mod = self.graph.community_multilevel(weights='weight')
+                
             self.graph.vs['cluster'] = mod.membership
             self.graph['n_communities'] = len(mod)
             pal = ClusterColoringPalette(len(mod))
