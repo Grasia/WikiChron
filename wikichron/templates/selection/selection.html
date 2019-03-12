@@ -95,7 +95,12 @@
     </div>
     <main>
         <section class="selection-content">
+
+
             <div class="tab-content">
+                <div class="current-selection-container">
+                    {% include 'selection/current_selection.html' %}
+                </div>
                 <div class="tab-pane fade show active" id="wikis" role="tabpanel" aria-labelledby="wikis-tab">
                     {% include 'selection/selection_wikis.html' %}
                 </div>

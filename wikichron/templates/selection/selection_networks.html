@@ -2,8 +2,6 @@
     <p class="ml-2 tab-intro-paragraph">Select the network you want to see for this wiki</p>
     <hr class="ml-2 line"/>
 
-    {% include 'selection/current_selection.html' %}
-
     {% for network in networks %}
         <div class="custom-control custom-radio m-4">
             <input class="custom-control-input networks-radiobutton" type="radio" id="radio-{{network['code']}}" value="{{network['code']}}" data-network-name="{{network.name}}" name="network" checked >

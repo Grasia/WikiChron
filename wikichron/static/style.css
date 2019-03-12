@@ -122,6 +122,10 @@ section.selection-content p {
     padding: 33px 60px 33px 60px;
 }
 
+.current-selection-container {
+    margin: 0px 0px 15px 0px;
+}
+
 .line {
     box-sizing: border-box;
     height: 3px;
