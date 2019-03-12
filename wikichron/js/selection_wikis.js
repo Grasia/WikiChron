@@ -12,6 +12,29 @@ $('#search-wiki-input').on('keyup', function() {
     wikisList.search(searchString);
 });
 
+/* checkboxes logic */
+$('.wiki-checkbox').on( "click", function({target}) {
+    var wikiCode = target.value;
+    var badgesContainer = $('#wiki-badges-container');
+    if (badgesContainer[0].children.length) { // If there is already a selection
+        var currentBadge = badgesContainer[0].children[0];
+        var currentWikiCode = currentBadge.dataset.code;
+        if (currentWikiCode === target.value) { // if same as previous selected, clean and finish
+           badgesContainer.html('');
+           return;
+        } else { // if different, unselect previous wiki
+            $(`input[id="checkbox-${currentWikiCode}"]`)[0].checked = false;
+        }
+    }
+
+    // Add badge of last selected wiki
+    var wikiName = target.dataset.wikiName;
+    var badgeSelectedWiki = `<span id="current-selected-wiki" class="badge badge-secondary p-2 align-middle" data-code="${wikiCode}">${wikiName}</span>`
+    badgesContainer.html(badgeSelectedWiki);
+
+});
+
+
 /* enable action button */
 $('.wiki-checkbox').on( "click", enable_action_button)
 
