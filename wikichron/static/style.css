@@ -32,6 +32,10 @@ p {
     color: #9B9B9B;
 }
 
+.badge-secondary {
+    background-color: #3D71AE;
+}
+
 
 /* Header */
 
@@ -149,6 +153,12 @@ section.selection-content p {
 .tab-intro-paragraph {
     font-size: 1.5rem;
     font-weight: 300;
+}
+
+.current-selection-paragraph {
+    font-weight: 500;
+    font-size: 1.2rem;
+    line-height: 18px;
 }
 
 /* Footer */
