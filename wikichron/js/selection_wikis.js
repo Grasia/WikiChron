@@ -1,5 +1,6 @@
 'use strict';
 
+
 /* List.js */
 var options = {
     valueNames: [ 'wiki-name', 'wiki-url' ]
@@ -12,27 +13,47 @@ $('#search-wiki-input').on('keyup', function() {
     wikisList.search(searchString);
 });
 
+
+/* enable action button */
+function check_enable_action_button() {
+    var selectedWikisNo = $('#wiki-badges-container')[0].children.length
+    var selectedNetworksNo = $('#network-badges-container')[0].children.length
+    if (selectedWikisNo > 0 && selectedNetworksNo > 0) {
+        $('#selection-footer-button')[0].disabled = false;
+    } else {
+        $('#selection-footer-button')[0].disabled = true;
+    }
+};
+
+
 /* checkboxes logic */
 $('.wiki-checkbox').on( "click", function({target}) {
     var wikiCode = target.value;
     var badgesContainer = $('#wiki-badges-container');
+    var sameWiki = false;
+
     if (badgesContainer[0].children.length) { // If there is already a selection
         var currentBadge = badgesContainer[0].children[0];
         var currentWikiCode = currentBadge.dataset.code;
-        if (currentWikiCode === target.value) { // if same as previous selected, clean and finish
+        sameWiki = currentWikiCode === target.value;
+        if (sameWiki) { // if same as previous selected, clean current selection
            badgesContainer.html('');
-           return;
         } else { // if different, unselect previous wiki
             $(`input[id="checkbox-${currentWikiCode}"]`)[0].checked = false;
         }
     }
 
-    // Add badge of last selected wiki
-    var wikiName = target.dataset.wikiName;
-    var badgeSelectedWiki = `<span id="current-selected-wiki" class="badge badge-secondary p-2 align-middle" data-code="${wikiCode}">${wikiName}</span>`
-    badgesContainer.html(badgeSelectedWiki);
+    if (!sameWiki) {
+        // Add badge of last selected wiki
+        var wikiName = target.dataset.wikiName;
+        var badgeSelectedWiki = `<span id="current-selected-wiki" class="badge badge-secondary p-2 align-middle" data-code="${wikiCode}">${wikiName}</span>`
+        badgesContainer.html(badgeSelectedWiki);
+    }
+
+    check_enable_action_button();
 
 });
+
 
 function init_current_selection() {
 
@@ -66,51 +87,30 @@ function init_current_selection() {
         var networkCode = radioButtons[0].value;
         var networkName = radioButtons[0].dataset.networkName;
         var badgeSelectedNetwork = `
-            <span id="current-selected-network" class="badge badge-secondary p-2 align-middle" data-network-code="${networkCode}">
+            <span id="current-selected-network" class="badge badge-secondary p-2 align-middle" data-code="${networkCode}">
                 ${networkName}
             </span>
         `
         badgesContainer.html(badgeSelectedNetwork);
     }
+
+    check_enable_action_button();
 }
+
 
 init_current_selection()
 
 
-/* enable action button */
-$('.wiki-checkbox').on( "click", enable_action_button)
-
-var chosenWiki;
-function enable_action_button() {
-    var checkedBoxes = $('.wiki-checkbox').
-                        filter( function(index, element){
-                            return element.checked
-                        })
-    if (checkedBoxes.length === 1) {
-        chosenWiki = checkedBoxes[0].value;
-        $('#selection-footer-button')[0].disabled = false;
-    } else {
-        $('#selection-footer-button')[0].disabled = true;
-    }
-};
-
-// init action button enable/disable
-enable_action_button()
-
 /* press action button */
 $('#selection-footer-button').on ("click", function() {
-    var chosenNetwork = $('.networks-radiobutton').
-                        filter( function(index, element){
-                            return element.checked
-                        })[0].value
-    console.log(chosenNetwork);
-    console.log(chosenWiki);
+    var selectedWiki = $('#current-selected-wiki')[0];
+    var selectedNetwork = $('#current-selected-network')[0];
 
-    if (!chosenNetwork || !chosenWiki) { // In case user tries to bypass
-                                         // the selection of the form inputs
+    if (!selectedWiki || !selectedNetwork) { // In case user tries to bypass
+                                            // the selection of the form inputs
         return
     }
 
-    window.location.href = `/app/?wikis=${chosenWiki}&network=${chosenNetwork}`
+    window.location.href = `/app/?wikis=${selectedWiki.dataset.code}&network=${selectedNetwork.dataset.code}`
 
 });
