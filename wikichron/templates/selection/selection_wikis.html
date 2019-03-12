@@ -13,16 +13,15 @@
 
     {% include 'selection/current_selection.html' %}
 
+    <div id="cards-container" class="w-100 mx-auto d-flex">
 
-    <div id="cards-container">
-
-        <div id="cards-list" class="d-flex flex-row flex-wrap list">
+        <div id="cards-list" class="d-flex flex-row flex-wrap justify-content-center list">
             {% for wiki in wikis %}
-                <div class="card m-2" style="width: 18rem;">
+                <div class="card m-2 mb-5" style="width: 18rem;">
                   <div class="card-body">
                     <h4 class="card-title">
                         <div class="custom-control custom-checkbox">
-                            <input class="custom-control-input wiki-checkbox" type="checkbox" id="checkbox-{{wiki.url}}" value="{{wiki.url}}" name="wikis">
+                            <input class="custom-control-input wiki-checkbox" type="checkbox" id="checkbox-{{wiki.url}}" value="{{wiki.url}}" data-wiki-name="{{wiki.name}}" name="wikis">
                             <label class="custom-control-label wiki-name" for="checkbox-{{wiki.url}}">{{wiki.name}}</label>
                         </div>
                     </h4>
