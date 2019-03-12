@@ -14,7 +14,7 @@ import os
 from urllib.parse import urljoin
 import flask
 import flask
-from flask import Blueprint
+from flask import Blueprint, current_app
 
 # Imports from dash app
 import wikichron.dash.networks.interface as interface
@@ -26,6 +26,9 @@ server_bp = Blueprint('main', __name__)
 @server_bp.route('/')
 @server_bp.route('/selection')
 def redirect_index_to_app():
+
+    config = current_app.config;
+
     wikis = data_controller.get_available_wikis()
     print(wikis)
 
@@ -35,6 +38,7 @@ def redirect_index_to_app():
         networks_frontend.append({ 'name': nw.NAME, 'code': nw.CODE})
 
     return flask.render_template("selection/selection.html",
+                                development = config["DEBUG"],
                                 wikis = wikis,
                                 networks = networks_frontend)
 
@@ -73,4 +77,17 @@ def serve_local_js(js_path):
         )
     print ('Returning: {}'.format(js_name))
     return flask.send_from_directory(js_directory, js_name)
+
+
+# Serve lib/ folder only in development mode
+@server_bp.route('/lib/<dep>', defaults={'path': ''})
+@server_bp.route('/lib/<path:path>/<dep>')
+def serve_lib_in_dev(path, dep):
+    path = os.path.join('lib/', path)
+    dev = current_app.config["DEBUG"]
+    if dev:
+        return flask.send_from_directory(path, dep)
+    else:
+        print('Trying to retrieve a dependency from a local folder in production. Skipping.')
+
 

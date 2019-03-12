@@ -101,6 +101,10 @@ Look at the [FlaskCaching documentation](https://pythonhosted.org/Flask-Caching/
 
 # Third-party licenses
 
+## External libs
+This project use several external javascript libraries and fonts. Their source code is included under the lib/ folder for its usage in development, however each one of them is subjected to their corresponding license.
+The usage of those in producion is linked using a CDN service.
+
 ## Font Awesome
 We are using icons from the [font-awesome](https://fontawesome.com) repository. These icons are subjected to the Creative Commons Attribution 4.0 International license. [You can find to the terms of their license here](https://fontawesome.com/license).
 In particular, we are using the following icons: share-alt-solid, info-circle
