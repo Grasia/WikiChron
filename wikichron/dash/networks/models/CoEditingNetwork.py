@@ -42,13 +42,13 @@ class CoEditingNetwork(BaseNetwork):
     AVAILABLE_METRICS = {
             'Page Rank': 'page_rank',
             'Number of Edits': 'num_edits',
-            'Betweenness': 'betweenness'
+            'Betweenness': 'betweenness',
+            'Cluster': 'cluster'
         }
 
     USER_INFO = {
-        'Wiki ID': 'contributor_id',
+        'User ID': 'id',
         'User Name': 'label',
-        'Edits Number': 'num_edits',
         'First Edit': 'first_edit',
         'Last Edit': 'last_edit'
     }

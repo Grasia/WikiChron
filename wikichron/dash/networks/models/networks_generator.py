@@ -17,8 +17,21 @@ def create_available_networks():
     networks.append(CoEditingNetwork())
     return networks
 
-def factory_network(selected_network_code):
-        if selected_network_code:
-                return CoEditingNetwork()
-        else:
-                raise Exception("Something went bad. Missing network type selection.")
+def factory_network(network_code):
+    if network_code == CoEditingNetwork.CODE:
+        return CoEditingNetwork()
+    else:
+        raise Exception("Something went bad. Missing network type selection.")
+
+
+def get_user_info(network_code):
+    if network_code == CoEditingNetwork.CODE:
+            return CoEditingNetwork.get_user_info()
+    else:
+            raise Exception("Something went bad. Missing network type selection.")
+
+def get_available_metrics(network_code):
+    if network_code == CoEditingNetwork.CODE:
+            return CoEditingNetwork.get_available_metrics()
+    else:
+            raise Exception("Something went bad. Missing network type selection.")

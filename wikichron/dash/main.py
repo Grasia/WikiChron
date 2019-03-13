@@ -34,6 +34,7 @@ from urllib.parse import parse_qs, urlencode
 
 # Local imports:
 import data_controller
+import networks.models.networks_generator as net_factory
 from networks.cytoscape_stylesheet.BaseStylesheet import BaseStylesheet
 from networks.controls_sidebar_decorator.ControlsSidebar import ControlsSidebar
 from networks.controls_sidebar_decorator.factory_sidebar_decorator import factory_sidebar_decorator
@@ -206,7 +207,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                             dcc.Input(id="in-step-slider" , type='number', value='1', min='0'),
                             html.Button(">>", id="bt-forward", n_clicks_timestamp='0', className='step-button'),
                         ], className='slider-controls'),
-                    ], 
+                    ],
                     style={'display': 'flex'}),
 
                     html.Div(id='date-slider-container',
@@ -281,7 +282,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
             dcc.Graph(
                 id='distribution-graph'
             )
-        ]) 
+        ])
 
 
     if debug:
@@ -325,6 +326,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                 cytoscape_component(),
                 ranking_table(),
                 distribution_graph(),
+                html.Div(id='user-info'),
 
                 html.Div(id='network-ready', style={'display': 'none'}),
                 html.Div(id='signal-data', style={'display': 'none'}),
@@ -529,7 +531,7 @@ def bind_callbacks(app):
     )
     def move_slider_range(bt_back, bt_forward, step, di_slider):
         step = int(step)
-        
+
         if bt_back and int(bt_back) > int(bt_forward):
             step = -step
         elif not (bt_forward and int(bt_forward) > int(bt_back)):
@@ -561,7 +563,7 @@ def bind_callbacks(app):
         # Let's check if the input will change the slider
         if lower == old_lower and upper == old_upper:
              raise PreventUpdate('Slider will not change')
-    
+
         return [upper, lower]
 
 
@@ -606,6 +608,34 @@ def bind_callbacks(app):
             print(f'Share link updated to: {new_query}')
 
         return new_query
+
+
+    @app.callback(
+        Output('user-info', 'children'),
+        [Input('cytoscape', 'tapNodeData')],
+        [State('initial-selection', 'children')]
+    )
+    def update_node_info(user_info, selection_json):
+        if not user_info:
+            raise PreventUpdate()
+
+        selection = json.loads(selection_json)
+        network_code = selection['network']
+        dic_info = net_factory.get_user_info(network_code)
+        dic_metrics = net_factory.get_available_metrics(network_code)
+
+        info_stack = []
+        # Let's add the user info
+        for key in dic_info.keys():
+            if dic_info[key] in user_info:
+                info_stack.append(html.P(f'{key}: {user_info[dic_info[key]]}'))
+
+        # Let's add the metrics
+        for key in dic_metrics.keys():
+            if dic_metrics[key] in user_info:
+                info_stack.append(html.P(f'{key}: {user_info[dic_metrics[key]]}'))
+
+        return info_stack
 
 
     @app.callback(
