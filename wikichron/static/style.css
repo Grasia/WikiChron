@@ -42,7 +42,7 @@ p {
 header {
     width: 100%;
     background-color: #BAD8EC;
-    padding: 0px 60px 0px 60px;
+    padding: 10px 60px 20px 60px;
 }
 
 .sticky-header {
@@ -50,6 +50,8 @@ header {
     top: 0;
     left: 0;
     z-index: 10;
+    background-color: inherit;
+    height: fit-content;
 }
 
 #logo-container {
@@ -57,7 +59,6 @@ header {
 }
 
 .intro-container {
-    padding: 33px 60px 33px 60px;
     background-color: #BAD8EC;
 }
 
