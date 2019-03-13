@@ -153,14 +153,18 @@ section.selection-content p {
 }
 
 .card-image-container {
-    width: 100%;
-    height: 139px;
-    background-color: #DDBF62;
+    width: 250px;
+    height: 140px;
     display: flex;
 }
 
 .card-image-wrapper {
     margin: auto;
+}
+
+.card-image-wrapper > img {
+    max-height: 90px;
+    max-width: 240px;
 }
 
 .tab-intro-paragraph {
@@ -172,6 +176,15 @@ section.selection-content p {
     font-weight: 500;
     font-size: 1.2rem;
     line-height: 18px;
+}
+
+.wiki-item {
+    display: flex;
+    justify-content: space-between;
+}
+
+.wiki-url {
+    margin-bottom: 0 !important;
 }
 
 /* Footer */

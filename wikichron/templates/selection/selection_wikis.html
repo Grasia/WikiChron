@@ -23,15 +23,34 @@
                             <label class="custom-control-label wiki-name" for="checkbox-{{wiki.url}}">{{wiki.name}}</label>
                         </div>
                     </h4>
-                    <div class="card-image-container">
+                    <div class="card-image-container" style="background-color: {{wiki.color or 'white'}};">
                         <div class="card-image-wrapper">
-                            <img src="https://images.wikia.nocookie.net/__cb29/recipes/images/8/89/Wiki-wordmark.png"/>
+                            {% if wiki.imageb64 %}
+                            <img src="data:image/png;base64, {{wiki.imageb64}}" alt="Wiki image" />
+                            {% else %}
+                            <img src="/static/assets/wiki_img_fallback.png" alt="Wiki image" />
+                            {% endif %}
                         </div>
                     </div>
-            <!--
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            -->
-                    <a href="https://{{wiki.url}}" class="card-link wiki-url">{{wiki.url}}</a>
+                    <p class="card-text">
+                        <div class="wiki-item">
+                            <span>Users:</span>
+                            <span class="font-weight-bold">{{wiki.users}}</span>
+                        </div>
+                        <div class="wiki-item">
+                            <span>Articles:</span>
+                            <span class="font-weight-bold">{{wiki.articles}}</span>
+                        </div>
+                        <div class="wiki-item">
+                            <span>Pages:</span>
+                            <span class="font-weight-bold">{{wiki.pages}}</span>
+                        </div>
+                        <div class="wiki-item">
+                            <span>Edits:</span>
+                            <span class="font-weight-bold">{{wiki.edits}}</span>
+                        </div>
+                    </p>
+                    <p class="wiki-url font-weight-bold"><a href="https://{{wiki.url}}" class="card-link">{{wiki.url}}</a></p>
                   </div>
                 </div>
             {% endfor %}
