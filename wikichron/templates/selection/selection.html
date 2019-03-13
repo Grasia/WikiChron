@@ -67,18 +67,21 @@
 
 {% block content %}
 
-    <header>
-        <div class='header-container'>
-            <div id='header-logo-container'>
-                <img height="80px" src={{url_for('static', filename='assets/wikichron_networks_logo.svg')}} />
-            </div>
+    <header class="sticky-header">
+        <div id='logo-container'>
+            <img height="80px" src={{url_for('static', filename='assets/wikichron_networks_logo.svg')}} />
+        </div>
+    </header>
+
+    <section>
+        <div class='intro-container'>
             <p id='selection-header-welcome'>Welcome to WikiChron Networks</p>
             <div id='selection-header-paragraph-div'>
                 <img />
                 <p id="selection-header-paragraph">Select one wiki, one network and press generate to start</p>
             </div>
         </div>
-    </header>
+    </section>
 
     <div class="tabs-bar-container">
         <ul class="nav nav-tabs" id="tabs" role="tablist">

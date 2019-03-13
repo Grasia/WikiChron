@@ -40,19 +40,27 @@ p {
 /* Header */
 
 header {
-    height: 250px;
     width: 100%;
-}
-
-.header-container {
     background-color: #BAD8EC;
-    padding: 33px 60px 33px 60px;
-
+    padding: 0px 60px 0px 60px;
 }
 
-#header-logo-container {
+.sticky-header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+#logo-container {
     margin-left: -25px;
 }
+
+.intro-container {
+    padding: 33px 60px 33px 60px;
+    background-color: #BAD8EC;
+}
+
 
 #selection-header-welcome {
     font-weight: 300;
