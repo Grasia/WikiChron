@@ -25,8 +25,8 @@
                     </h4>
                     <div class="card-image-container" style="background-color: {{wiki.color or 'white'}};">
                         <div class="card-image-wrapper">
-                            {% if wiki.imageb64 %}
-                            <img src="data:image/png;base64, {{wiki.imageb64}}" alt="Wiki image" />
+                            {% if wiki.imageSrc %}
+                            <img src="{{wiki.imageSrc}}" alt="Wiki image" />
                             {% else %}
                             <img src="/static/assets/wiki_img_fallback.png" alt="Wiki image" />
                             {% endif %}

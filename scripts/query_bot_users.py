@@ -85,8 +85,12 @@ def write_outputfile(filename, bots):
    np.array(bots_ids).tofile(filename, sep=',')
 
 
+def is_wikia_wiki(url):
+   return (re.search('.*\.(fandom|wikia)\.com.*', url) != None)
+
+
 def get_bots_ids(url):
-   if re.search('/.*\.wikia\.com', url) != None: # detect Wikia wikis
+   if is_wikia_wiki(url): # detect Wikia wikis
       return wikia_get_bots_ids(url)
    else:
       return mediawiki_get_bots_ids(url)
