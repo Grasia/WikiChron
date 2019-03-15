@@ -1,8 +1,8 @@
 url, csvfile
-200movies.wikia.com, 200movies.wikia.com.csv
-cocktails.wikia.com, cocktails.csv
-es.lagunanegra.wikia.com, es.lagunanegra.wikia.com.csv
-es.shamanking.wikia.com, es.shamanking.wikia.com.csv
-proteins.wikia.com, proteins.csv
-zelda.wikia.com, zelda.csv
-de.undertale.wikia.com, de.undertale.wikia.com.csv
+cocktails.fandom.com, cocktails.csv
+200movies.fandom.com, 200movies.wikia.com.csv
+lagunanegra.fandom.com/es, es.lagunanegra.wikia.com.csv
+shamanking.fandom.com/es, es.shamanking.wikia.com.csv
+proteins.fandom.com, proteins.csv
+zelda.fandom.com, zelda.csv
+undertale.fandom.com/de, de.undertale.wikia.com.csv

@@ -10,7 +10,7 @@
 
    Created on: 09-mar-2018
 
-   Copyright 2018 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
+   Copyright 2018-2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
 
 import csv
@@ -18,8 +18,10 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import os
+import re
 
 from query_bot_users import get_bots_ids
+from get_wikia_images_base64 import get_wikia_wordmark_file
 
 if 'WIKICHRON_DATA_DIR' in os.environ:
    data_dir = os.environ['WIKICHRON_DATA_DIR']
@@ -114,56 +116,65 @@ def get_nonbot_users_no(url):
     return query_users(users_url, False) - query_users(users_url, True)
 
 
-wikisfile = open(input_wikis_fn, newline='')
-wikisreader = csv.DictReader(wikisfile, skipinitialspace=True)
+def is_wikia_wiki(url):
+    return (re.search('.*\.(fandom|wikia)\.com.*', url) != None)
 
-wikis = []
 
-for row in wikisreader:
-   print(row['url'], row['csvfile'])
-   wiki = {}
-   wiki['url'] = row['url']
-   wiki['data'] = row['csvfile']
+def main():
+    wikisfile = open(input_wikis_fn, newline='')
+    wikisreader = csv.DictReader(wikisfile, skipinitialspace=True)
 
-   url = 'http://' + wiki['url']
-   #~ wiki.name = get_name(url)
-   wiki['botsids'] = get_bots_ids(url)
+    wikis = []
 
-   result_stats = get_stats(url)
-   wiki.update(result_stats)
+    for row in wikisreader:
+        print(row['url'], row['csvfile'])
+        wiki = {}
+        wiki['url'] = row['url']
+        wiki['data'] = row['csvfile']
 
-   users_no = get_nonbot_users_no(url)
-   wiki['users'] = users_no
+        url = 'http://' + wiki['url']
+        #~ wiki.name = get_name(url)
+        wiki['botsids'] = get_bots_ids(url)
 
-   print(wiki)
+        result_stats = get_stats(url)
+        wiki.update(result_stats)
 
-   wikis.append(wiki)
+        users_no = get_nonbot_users_no(url)
+        wiki['users'] = users_no
 
-   #~ print(', '.join(row))
+        if (is_wikia_wiki(wiki['url'])):
+            b64 = get_wikia_wordmark_file(wiki['url'])
+            if b64:
+                wiki['imageSrc'] = b64
 
-wikisfile.close()
+        print(wiki)
 
-#~ result_json = json.dumps(wikis)
-#~ print(result_json)
+        wikis.append(wiki)
 
-try:
-   output_wikis = open(output_wikis_fn)
-   wikis_json = json.load(output_wikis)
-   print(wikis_json)
-   output_wikis.close()
-except:
-   wikis_json = []
+        #~ print(', '.join(row))
 
-for wiki in wikis:
-   if wiki not in wikis_json:
-      wikis_json.append(wiki)
-output_wikis = open(output_wikis_fn, 'w')
-json.dump(wikis_json, output_wikis, indent='\t')
-output_wikis.close()
+    wikisfile.close()
 
-#~ def main():
-   #~ return 0
+    #~ result_json = json.dumps(wikis)
+    #~ print(result_json)
 
-#~ if __name__ == '__main__':
-   #~ main()
+    try:
+        output_wikis = open(output_wikis_fn)
+        wikis_json = json.load(output_wikis)
+        print(wikis_json)
+        output_wikis.close()
+    except:
+        wikis_json = []
 
+    for wiki in wikis:
+        if wiki not in wikis_json:
+            wikis_json.append(wiki)
+    output_wikis = open(output_wikis_fn, 'w')
+    json.dump(wikis_json, output_wikis, indent='\t')
+    output_wikis.close()
+
+    return 0
+
+
+if __name__ == '__main__':
+   main()

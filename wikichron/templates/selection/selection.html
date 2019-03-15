@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+
+{% block dependencies %}
+    {% if development %}
+         <!-- list.js -->
+        <script src="/lib/list.js"></script>
+
+        <!-- JQuery -->
+        <script src="/lib/jquery-3.3.1.js"></script>
+        <!-- Popper.js -->
+        <script src="/lib/popper.js"></script>
+
+        <!-- bootstrap 4 -->
+        <link rel="stylesheet" href="/lib/bootstrap.css" />
+        <script src="/lib/bootstrap.js"></script>
+
+        <!-- Roboto font -->
+        {% set fonts = [
+            'Roboto-BlackItalic.ttf',
+            'Roboto-Black.ttf',
+            'Roboto-BoldItalic.ttf',
+            'Roboto-Bold.ttf',
+            'Roboto-Italic.ttf',
+            'Roboto-LightItalic.ttf',
+            'Roboto-Light.ttf',
+            'Roboto-MediumItalic.ttf',
+            'Roboto-Medium.ttf',
+            'Roboto-Regular.ttf',
+            'Roboto-ThinItalic.ttf',
+            'Roboto-Thin.ttf'
+        ]
+        %}
+
+        {% for font in fonts %}
+            <link href="/lib/Roboto/{{ font }}" rel="application/font-sfnt">
+        {% endfor %}
+
+
+    {% else %}
+        <!-- list.js -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+
+        <!-- JQuery -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <!-- Popper.js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+
+        <!-- bootstrap 4 -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+        <!-- Roboto font -->
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400" rel="stylesheet">
+
+        <!-- Own js files-->
+        <script src="js/piwik.js"></script>
+    {% endif %}
+
+    <!-- Common deps for prod and dev -->
+
+    <!-- Own js files-->
+    <script src="js/selection_wikis.js" defer="defer"></script>
+
+{% endblock %}
+
+
+{% block content %}
+
+    <header>
+        <div id='logo-container' class="sticky-header">
+            <img height="80px" src={{url_for('static', filename='assets/wikichron_networks_logo.svg')}} />
+        </div>
+
+            <div class='intro-container'>
+                <p id='selection-header-welcome'>Welcome to WikiChron Networks</p>
+                <div id='selection-header-paragraph-div'>
+                    <img />
+                    <p id="selection-header-paragraph">Select one wiki, one network and press generate to start</p>
+                </div>
+            </div>
+    </header>
+
+    <div class="tabs-bar-container">
+        <ul class="nav nav-tabs" id="tabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="wikis-tab" data-toggle="tab" href="#wikis" role="tab" aria-controls="home" aria-selected="true">Wikis</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="networks-tab" data-toggle="tab" href="#networks" role="tab" aria-controls="networks" aria-selected="false">Networks</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="time-tab" data-toggle="tab" href="#time" role="tab" aria-controls="time" aria-selected="false">Time selection</a>
+            </li>
+        </ul>
+    </div>
+    <main>
+        <section class="selection-content">
+
+
+            <div class="tab-content">
+                <div class="current-selection-container">
+                    {% include 'selection/current_selection.html' %}
+                </div>
+                <div class="tab-pane fade show active" id="wikis" role="tabpanel" aria-labelledby="wikis-tab">
+                    {% include 'selection/selection_wikis.html' %}
+                </div>
+                <div class="tab-pane fade" id="networks" role="tabpanel" aria-labelledby="networks-tab">
+                    {% include 'selection/selection_networks.html' %}
+                </div>
+                <div class="tab-pane fade" id="time" role="tabpanel" aria-labelledby="time-tab">...</div>
+            </div>
+        </section>
+
+        <footer class="action-button-container">
+            <div id="selection-footer-container-button" class="selection-container-button">
+                <button id="selection-footer-button" type="button" class="btn action-button" disabled>GENERATE</button>
+            </div>
+        </footer>
+
+    </main>
+{% endblock %}
