@@ -47,10 +47,11 @@ global debug;
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
 # get csv data location (data/ by default)
-global data_dir;
-if not 'WIKICHRON_DATA_DIR' in os.environ:
-    os.environ['WIKICHRON_DATA_DIR'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../data')
-data_dir = os.environ['WIKICHRON_DATA_DIR']
+#~ global data_dir;
+#~ if not 'WIKICHRON_DATA_DIR' in os.environ:
+    #~ os.environ['WIKICHRON_DATA_DIR'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+#~ data_dir = os.environ['WIKICHRON_DATA_DIR']
+data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 
 # global app config
 APP_HOSTNAME = 'http://wikichron.science';
@@ -331,7 +332,7 @@ def start_js_server():
     return
 
 
-def start_download_data_server():
+def start_download_data_server(app):
 
     def is_valid(selection):
         # check empty query string
@@ -399,16 +400,23 @@ def start_download_data_server():
 
 #--------- APP CREATION FUNCS -------------------------------------------------#
 
-def create_app():
+def create_dash_app(server):
+    # load config
+    wikichron_base_pathname = server.config['DASH_BASE_PATHNAME'];
+    assets_url_path = os.path.join(wikichron_base_pathname, 'assets')
+    assets_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                'resources', 'assets');
+    hostname = f'{server.config["APP_HOSTNAME"]}'
+    #~ meta_tags = define_meta_tags(hostname, assets_url_path)
+
     print('Creating new Dash instance...')
-    global app;
-    app = dash.Dash('WikiChron',
+    app = dash.Dash(__name__,
+                    server = server,
                     meta_tags = meta_tags,
-                    external_stylesheets=external_stylesheets,
-                    url_base_pathname=wikichron_base_pathname,
-                    assets_folder=assets_folder)
-    app.title = 'WikiChron'
-    server = app.server
+                    external_stylesheets = external_stylesheets,
+                    url_base_pathname = wikichron_base_pathname,
+                    assets_folder = assets_folder)
+    app.title = 'WikiChron - Networks'
     app.config['suppress_callback_exceptions'] = True
 
     # uncoment for offline serving of css:
@@ -420,13 +428,12 @@ def create_app():
     # skeleton.css: (Already included in dash stylesheet)
     #~ app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
 
-
     cache.set_up_cache(app, debug)
 
     return app
 
 
-def init_app_callbacks(app):
+def _init_app_callbacks(app):
     global side_bar
     import side_bar
     global main
@@ -439,9 +446,12 @@ def init_app_callbacks(app):
 
 
 def set_up_app(app):
+    # init global vars needed for building UI app components
+    #~ _init_global_vars()
+
     # bind callbacks
     print('Binding callbacks...')
-    init_app_callbacks(app)
+    _init_app_callbacks(app)
 
     # set app layout
     print('Setting up layout...')
@@ -450,17 +460,10 @@ def set_up_app(app):
         load_external_dash_libs_in_layout()
     ])
     app.layout.children += set_external_imports()
-    return
 
+    start_download_data_server(app)
 
-def init_app(app):
-
-    # start auxiliar servers:
-    start_js_server()
-    start_redirection_server()
-    start_download_data_server()
-
-    print('¡¡¡¡ Welcome to WikiChron ' + __version__ +' !!!!')
+    print('¡¡¡¡ Welcome to WikiChron-networks ' + __version__ +' !!!!')
     print('Using version ' + dash.__version__ + ' of Dash.')
     print('Using version ' + dash_renderer.__version__ + ' of Dash renderer.')
     print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
@@ -469,26 +472,3 @@ def init_app(app):
 
     return
 
-
-def run(app):
-    app.run_server(debug=debug, port=port)
-    return
-
-
-######### BEGIN MAIN ###########################################################
-
-# create and config Dash instance
-app = create_app()
-
-# set layout, import startup js and bind callbacks
-set_up_app(app)
-
-# init auxiliar servers & deps
-init_app(app)
-
-print ('This is __name__: {}'.format(__name__))
-if __name__ == '__main__':
-    run(app)
-
-else:
-    server = app.server
