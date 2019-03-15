@@ -14,6 +14,7 @@
 import time
 import json
 from datetime import datetime
+import os
 
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
@@ -23,6 +24,9 @@ from .BaseControlsSidebarDecorator import BaseControlsSidebarDecorator
 from networks.cytoscape_stylesheet.CoEditingStylesheet import CoEditingStylesheet
 from networks.models.CoEditingNetwork import CoEditingNetwork
 import data_controller
+
+global debug
+debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
 class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
@@ -187,6 +191,12 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             selection = json.loads(selection_json)
             wiki = selection['wikis'][0]
             network_code = selection['network']
+
+            if debug:
+                print(f'Updating network with values:\
+                \n\t- wiki: {wiki["url"]}\
+                \n\t- network: {network_code}\
+                \n\t- slider: ({slider[0]},{slider[1]})')
 
             print(' * [Info] Building the network....')
             time_start_calculations = time.perf_counter()
