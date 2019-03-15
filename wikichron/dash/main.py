@@ -306,7 +306,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
             className='control-text',
             children=[
 
-                controls_sidebar.build(),
+                html.A('Go back to selection', href="/"),
 
                 main_header(),
 
@@ -322,6 +322,8 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
 
                 html.Div(id='initial-selection', style={'display': 'none'},
                             children=args_selection),
+
+                controls_sidebar.build(),
 
                 cytoscape_component(),
                 ranking_table(),
