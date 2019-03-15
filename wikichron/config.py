@@ -3,4 +3,5 @@ from wikichron.dash.dash_config import DevelopmentConfig as DashDevelopmentConfi
 class DevelopmentConfig(DashDevelopmentConfig):
     PORT = '5000'
     APP_HOSTNAME = f'http://localhost:{PORT}'
+    DASH_STANDALONE = False
 

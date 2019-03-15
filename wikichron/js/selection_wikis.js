@@ -134,12 +134,15 @@ init_current_selection()
 $('#selection-footer-button').on ("click", function() {
     var selectedWiki = $('.current-selected-wiki')[0];
     var selectedNetwork = $('.current-selected-network')[0];
+    var target_app_url;
 
     if (!selectedWiki || !selectedNetwork) { // In case user tries to bypass
                                             // the selection of the form inputs
         return
     }
 
-    window.location.href = `/app/?wikis=${selectedWiki.dataset.code}&network=${selectedNetwork.dataset.code}`
+    target_app_url = `/app/?wikis=${selectedWiki.dataset.code}&network=${selectedNetwork.dataset.code}`
+
+    window.location.href = encodeURI(target_app_url)
 
 });

@@ -132,22 +132,25 @@ def set_external_imports():
     if not to_import_js:
         return [gdc.Import()]
     else:
-        return [gdc.Import(src=src) for src in to_import_js];
+        return [gdc.Import(src=src) for src in to_import_js]
 
 #--------- LAYOUT ----------------------------------------------------------#
 
-def set_layout():
+def set_layout(has_side_bar):
+    side_bar = [html.Div(id='side-bar-root', className='side-bar-cn')] if has_side_bar else []
+
+    app_layout_elements = ([
+        dcc.Location(id='url', refresh=False),
+        html.Div(id='on-load', style={'display': 'none'})
+        ] + side_bar + [
+        html.Div(id='main-root', style={'flex': 'auto'}),
+        html.Div(id='sidebar-selection', style={'display': 'none'})
+    ])
+
     return html.Div(id='app-layout',
         style={'display': 'flex'},
-        children=[
-            dcc.Location(id='url', refresh=False),
-            html.Div(id='on-load', style={'display': 'none'}),
-
-            html.Div(id='side-bar-root', className='side-bar-cn'),
-            html.Div(id='main-root', style={'flex': 'auto'}),
-            html.Div(id='sidebar-selection', style={'display': 'none'}),
-        ]
-    );
+        children=app_layout_elements
+    )
 
 
 def load_external_dash_libs_in_layout():
@@ -156,7 +159,7 @@ def load_external_dash_libs_in_layout():
         children=[
             sd_material_ui.Divider()
         ]
-    );
+    )
 
 
 def generate_welcome_page():
@@ -237,46 +240,48 @@ def app_bind_callbacks(app):
             print('selection to write in query string: {}'.format(selection))
         return (json.dumps(selection))
 
-
-    @app.callback(Output('side-bar-root', 'children'),
-        [Input('url', 'pathname')],
-        [State('side-bar-root', 'children'),
-        State('url', 'search')],
-    )
-    def generate_side_bar_onload(pathname, sidebar, query_string):
-
-        if pathname:
-            if debug:
-                print('--> Dash App Loaded!')
-                print('\tAnd this is current path: {}'.format(pathname))
-
-        if not sidebar:
+    # generate sidebar? #
+    has_side_bar = app.server.config['DASH_STANDALONE']
+    if has_side_bar:
+        @app.callback(Output('side-bar-root', 'children'),
+            [Input('url', 'pathname')],
+            [State('side-bar-root', 'children'),
+            State('url', 'search')],
+        )
+        def generate_side_bar_onload(pathname, sidebar, query_string):
 
             if pathname:
-
-                # Attention! query_string includes heading ? symbol
-                selection = parse_qs(query_string[1:])
-
                 if debug:
-                    print('generate_side_bar_onload: This is the selection: {}'.format(selection))
+                    print('--> Dash App Loaded!')
+                    print('\tAnd this is current path: {}'.format(pathname))
 
-                # we might have selection of wikis and metrics in the query string,
-                #  so sidebar should start with those selected.
-                pre_selected_wikis   = selection['wikis'] if 'wikis' in selection else []
+            if not sidebar:
 
-                # change value for network selection from a list to a single string
-                # (first network we got of the query string),
-                # since user can select only one network at a time
-                pre_selected_network = selection['network'][0] if 'network' in selection else None
+                if pathname:
 
-                return side_bar.generate_side_bar(available_wikis, available_networks,
-                                                    pre_selected_wikis, pre_selected_network)
+                    # Attention! query_string includes heading ? symbol
+                    selection = parse_qs(query_string[1:])
 
-            else: # if app hasn't loaded the path yet, wait to load sidebar later
-                return None;
+                    if debug:
+                        print('generate_side_bar_onload: This is the selection: {}'.format(selection))
 
-        else:
-            raise PreventUpdate("Sidebar already generated! sidebar must be generated only once");
+                    # we might have selection of wikis and metrics in the query string,
+                    #  so sidebar should start with those selected.
+                    pre_selected_wikis   = selection['wikis'] if 'wikis' in selection else []
+
+                    # change value for network selection from a list to a single string
+                    # (first network we got of the query string),
+                    # since user can select only one network at a time
+                    pre_selected_network = selection['network'][0] if 'network' in selection else None
+
+                    return side_bar.generate_side_bar(available_wikis, available_networks,
+                                                        pre_selected_wikis, pre_selected_network)
+
+                else: # if app hasn't loaded the path yet, wait to load sidebar later
+                    return None
+
+            else:
+                raise PreventUpdate("Sidebar already generated! sidebar must be generated only once")
 
     return
 
@@ -399,8 +404,9 @@ def set_up_app(app):
 
     # set app layout
     print('Setting up layout...')
+    has_side_bar = app.server.config['DASH_STANDALONE']
     app.layout = html.Div([
-        set_layout(),
+        set_layout(has_side_bar),
         load_external_dash_libs_in_layout()
     ])
     app.layout.children += set_external_imports()
