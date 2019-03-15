@@ -226,6 +226,8 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
         cytoscape = dash_cytoscape.Cytoscape(
                     id='cytoscape',
                     elements = [],
+                    maxZoom = 1.75,
+                    minZoom = 0.35,
                     layout = {
                         'name': 'cose',
                         'idealEdgeLength': 100,
@@ -438,7 +440,10 @@ def bind_callbacks(app):
         [Input('network-ready', 'value')]
     )
     def add_network_elements(cy_network):
-        return cy_network['network'] if cy_network else []
+        if not cy_network and 'network' not in cy_network:
+            raise PreventUpdate()
+
+        return cy_network['network']
 
 
     @app.callback(
