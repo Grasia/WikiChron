@@ -35,7 +35,7 @@ from urllib.parse import parse_qs, urlencode
 # Local imports:
 import data_controller
 import networks.models.networks_generator as net_factory
-from networks.cytoscape_stylesheet.BaseStylesheet import BaseStylesheet
+from networks.CytoscapeStylesheet import CytoscapeStylesheet
 from networks.controls_sidebar_decorator.ControlsSidebar import ControlsSidebar
 from networks.controls_sidebar_decorator.factory_sidebar_decorator import factory_sidebar_decorator
 from networks.controls_sidebar_decorator.factory_sidebar_decorator import bind_controls_sidebar_callbacks
@@ -250,7 +250,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                         'height': '65vh',
                         'width': 'calc(100% - 300px)'
                     },
-                    stylesheet = BaseStylesheet().cy_stylesheet
+                    stylesheet = CytoscapeStylesheet.make_basic_stylesheet()
         )
         return html.Div(style={'display': 'flex'}, children=[cytoscape])
 
@@ -297,7 +297,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     selected_network_name = network_type_arg['name']
 
     controls_sidebar = ControlsSidebar()
-    sidebar_decorator = factory_sidebar_decorator(network_type_code, controls_sidebar)
+    sidebar_decorator = factory_sidebar_decorator('co_editing_network', controls_sidebar)
     sidebar_decorator.add_all_sections()
 
     share_url_path = f'{config["APP_HOSTNAME"]}{config["DASH_BASE_PATHNAME"]}{query_string}'

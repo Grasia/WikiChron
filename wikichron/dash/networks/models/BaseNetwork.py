@@ -15,16 +15,11 @@ class BaseNetwork(metaclass=abc.ABCMeta):
     CODE = 'base_network'
 
 
-    def __init__(self, is_directed = False, first_entry = None, 
-            last_entry = None, graph = {},):
-
+    def __init__(self, is_directed = False, graph = {},):
         if not graph:
             self.graph = Graph(directed=is_directed)
         else:
             self.graph = graph
-
-        self.first_entry = first_entry
-        self.last_entry = last_entry
 
 
     @abc.abstractmethod
@@ -39,34 +34,13 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             -lower_bound: a formated string "%Y-%m-%d %H:%M:%S", 
                     to filter by time the df 
             -upper_bound: a formated string "%Y-%m-%d %H:%M:%S", 
-                    to filter by time the df 
-        Return: A graph with the network representation.
+                    to filter by time the df
         """
         pass
 
 
     @abc.abstractmethod
-    def to_cytoscape_dict(self):
-        """
-        Transform this network to cytoscape dict
-
-        Return:
-            A dict with the cytoscape structure
-        """
-        pass
-
-
-    @abc.abstractmethod
-    def calculate_metrics(self):
-        """
-        The network which implements this method should calculate
-        only the useful metrics not all of them
-        """
-        pass
-
-
-    @abc.abstractmethod
-    def get_metric_dataframe(self, metric):
+    def get_metric_dataframe(self, metric: str):
         """
         This function generates a dateframe with 2 cols, the node name
         and a node metric value.
@@ -94,6 +68,57 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         pass
 
 
+    @abc.abstractmethod
+    def add_graph_attrs(self):
+        """
+        Calculates and adds the graph attrs 
+        """
+        pass
+
+
+    def to_cytoscape_dict(self):
+        """
+        Transform a network to cytoscape dict
+
+        Return:
+            A dict with the cytoscape structure, graph attrs are keys, 
+            and the cyto. elements are in the key 'network'
+        """
+        di_net = {}
+        network = []
+
+        # node attrs
+        for node in self.graph.vs:
+            data = {'data': {}}
+            for attr in self.graph.vs.attributes():
+                data['data'][attr] = node[attr]
+            network.append(data)
+
+        # edge attrs
+        for edge in self.graph.es:
+            data = {'data': {}}
+            for attr in self.graph.es.attributes():
+                data['data'][attr] = edge[attr]
+            network.append(data)
+
+        # graph attrs
+        for attr in self.graph.attributes():
+            di_net[attr] = self.graph[attr]
+
+        di_net['network'] = network
+        return di_net
+
+
+    def calculate_metrics(self):
+        """
+        A method which calculate the available metrics 
+        """
+        self.calculate_page_rank()
+        self.calculate_betweenness()
+        self.calculate_assortativity_degree()
+        self.calculate_communities()
+
+
     def write_gml(self, file):
         """
         Writes a gml file
@@ -108,12 +133,14 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         Calculates the network pageRank
         """
         if not 'page_rank' in self.graph.vs.attributes():
+            p_r = 0.0
             if not 'weight' in self.graph.es.attributes():
-                self.graph.vs['page_rank'] = self.graph.pagerank(
-                    directed=self.graph.is_directed())    
+                p_r = self.graph.pagerank(directed=self.graph.is_directed())    
             else:
-                self.graph.vs['page_rank'] = self.graph.pagerank(
-                    directed=self.graph.is_directed(), weights = 'weight')
+                p_r = self.graph.pagerank(directed=self.graph.is_directed(), 
+                    weights = 'weight')
+
+            self.graph.vs['page_rank'] = list(map(lambda x: "{0:.5f}".format(x), p_r))
 
 
     def calculate_betweenness(self):
@@ -121,12 +148,14 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         Calculates the network betweenness
         """
         if not 'betweenness' in self.graph.vs.attributes():
+            bet = 0.0
             if not 'weight' in self.graph.es.attributes():
-                self.graph.vs['betweenness'] = self.graph.betweenness(
-                    directed=self.graph.is_directed())    
+                bet = self.graph.betweenness(directed=self.graph.is_directed())    
             else:
-                self.graph.vs['betweenness'] = self.graph.betweenness(
-                    directed=self.graph.is_directed(), weights = 'weight')
+                bet = self.graph.betweenness(directed=self.graph.is_directed(), 
+                    weights = 'weight')
+
+            self.graph.vs['betweenness'] = list(map(lambda x: "{0:.5f}".format(x), bet))
 
 
     def calculate_communities(self):
@@ -176,3 +205,12 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         p_k = list(filter(lambda x: x > 0, p_k))
 
         return (k, p_k)
+
+    
+    def build_network(self, df, lower_bound: str, upper_bound: str):
+        """
+        This method is used to generate the network and its metrics and attrs
+        """
+        self.generate_from_pandas(df, lower_bound, upper_bound)
+        self.add_graph_attrs()
+        self.calculate_metrics()

@@ -21,7 +21,7 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
 from .BaseControlsSidebarDecorator import BaseControlsSidebarDecorator
-from networks.cytoscape_stylesheet.CoEditingStylesheet import CoEditingStylesheet
+from networks.CytoscapeStylesheet import CytoscapeStylesheet
 from networks.models.CoEditingNetwork import CoEditingNetwork
 import data_controller
 
@@ -35,9 +35,8 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
 
     @staticmethod
-    def default_stats(st1 = 'Nodes: ...', st2 = 'First User: ...',
-            st3 = 'Edges: ...', st4 = 'Last User: ...', st5 = 'Communities: ...',
-            st6 = 'Max Hub Degree: ...', st7 = 'Assortativity Degree: ...'):
+    def default_stats(st1 = 'Nodes: ...', st2 = 'Edges: ...', 
+            st3 = 'Assortativity Degree: ...', st4 = 'Communities: ...',):
 
         return [
                 html.Div([
@@ -47,13 +46,6 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
                 html.Div([
                     html.P(st3, className='left-element'),
                     html.P(st4, className='right-element')
-                ]),
-                html.Div([
-                    html.P(st5, className='left-element'),
-                    html.P(st6, className='right-element')
-                ]),
-                html.Div([
-                    html.P(st7, className='left-element')
                 ])]
 
 
@@ -104,21 +96,11 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             if not cy_network:
                 return CoEditingControlsSidebarDecorator.default_stats()
 
-            date1 = 'Not entries'
-            date2 = 'Not entries'
-            if not cy_network["first_entry"] == 'Not entries':
-                date1 = datetime.fromtimestamp(cy_network["first_entry"]).strftime("%Y-%m-%d")
-            if not cy_network["last_entry"] == 'Not entries':
-                date2 = datetime.fromtimestamp(cy_network["last_entry"]).strftime("%Y-%m-%d")
-
             return CoEditingControlsSidebarDecorator.default_stats(
                 st1 = f'Nodes: {cy_network["num_nodes"]}',
-                st2 = f'First User: {date1}',
-                st3 = f'Edges: {cy_network["num_edges"]}',
-                st4 = f'Last User: {date2}',
-                st5 = f'Communities: {cy_network["n_communities"]}',
-                st6 = f'Max Hub Degree: {cy_network["max_degree"]}',
-                st7 = f'Assortativity Degree: {cy_network["assortativity"]}'
+                st2 = f'Edges: {cy_network["num_edges"]}',
+                st3 = f'Assortativity Degree: {cy_network["assortativity_degree"]}',
+                st4 = f'Communities: {cy_network["n_communities"]}'
                 )
 
 
@@ -155,7 +137,7 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             if not cy_network:
                 raise PreventUpdate()
 
-            co_stylesheet = CoEditingStylesheet()
+            co_stylesheet = CytoscapeStylesheet()
 
             if not nodes_selc:
                 co_stylesheet.all_transformations(cy_network)
@@ -167,8 +149,7 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             else:
                 co_stylesheet.set_label('')
 
-            if com_clicks and not cy_network["n_communities"] == '...' \
-            and com_clicks % 2 == 1:
+            if com_clicks and com_clicks % 2 == 1:
                 co_stylesheet.color_nodes_by_cluster()
             else:
                 co_stylesheet.color_nodes(cy_network)
