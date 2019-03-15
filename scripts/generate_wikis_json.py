@@ -10,7 +10,7 @@
 
    Created on: 09-mar-2018
 
-   Copyright 2018 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
+   Copyright 2018-2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
 
 import csv
@@ -18,8 +18,10 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import os
+import re
 
-from query_bot_users import get_bots_ids
+from query_bot_users import get_bots
+from get_wikia_images_base64 import get_wikia_wordmark_file
 
 if 'WIKICHRON_DATA_DIR' in os.environ:
    data_dir = os.environ['WIKICHRON_DATA_DIR']
@@ -50,19 +52,23 @@ def get_stats(base_url):
       print (req.status_code)
       return False
 
-   # Process HTML with bs4
-   html = BeautifulSoup(req.text,"lxml")
-   name = html.select_one('div.wds-community-header__sitename a').text
+   try:
+      # Process HTML with bs4
+      html = BeautifulSoup(req.text,"lxml")
+      name = html.select_one('div.wds-community-header__sitename a').text
 
-   result = {}
-   result['name'] = name
-   for stat in stats:
-      row = html.select_one(row_selector+stat+" td.mw-statistics-numbers")
-      text = row.text.replace(',','')
-      text = text.replace('.','')
-      text = text.replace('\xa0', '')
-      value = int(text)
-      result[stat] = value
+      result = {}
+      result['name'] = name
+      for stat in stats:
+         row = html.select_one(row_selector+stat+" td.mw-statistics-numbers")
+         text = row.text.replace(',','')
+         text = text.replace('.','')
+         text = text.replace('\xa0', '')
+         value = int(text)
+         result[stat] = value
+   except AttributeError:
+      print('One stat could not be retrieved.')
+      return False
 
    return result
 
@@ -114,56 +120,80 @@ def get_nonbot_users_no(url):
     return query_users(users_url, False) - query_users(users_url, True)
 
 
-wikisfile = open(input_wikis_fn, newline='')
-wikisreader = csv.DictReader(wikisfile, skipinitialspace=True)
+def is_wikia_wiki(url):
+    return (re.search('.*\.(fandom|wikia)\.com.*', url) != None)
 
-wikis = []
 
-for row in wikisreader:
-   print(row['url'], row['csvfile'])
-   wiki = {}
-   wiki['url'] = row['url']
-   wiki['data'] = row['csvfile']
+def main():
+    wikisfile = open(input_wikis_fn, newline='')
+    wikisreader = csv.DictReader(wikisfile, skipinitialspace=True)
 
-   url = 'http://' + wiki['url']
-   #~ wiki.name = get_name(url)
-   wiki['botsids'] = get_bots_ids(url)
+    wikis = []
 
-   result_stats = get_stats(url)
-   wiki.update(result_stats)
+    for row in wikisreader:
+        print(row['url'], row['csvfile'])
+        wiki = {}
+        wiki['url'] = row['url']
+        wiki['data'] = row['csvfile']
 
-   users_no = get_nonbot_users_no(url)
-   wiki['users'] = users_no
+        url = 'http://' + wiki['url']
+        result_stats = get_stats(url)
+        if result_stats:
+            wiki.update(result_stats)
+        else:
+            raise Exception(f'Wiki {wiki["url"]} is not reacheable. Possibly moved or deleted. Check, whether its url is correct.')
 
-   print(wiki)
+        #~ wiki.name = get_name(url)
+        wiki['bots'] = get_bots(url)
 
-   wikis.append(wiki)
 
-   #~ print(', '.join(row))
+        users_no = get_nonbot_users_no(url)
+        wiki['users'] = users_no
 
-wikisfile.close()
+        if (is_wikia_wiki(wiki['url'])):
+            b64 = get_wikia_wordmark_file(wiki['url'])
+            if b64:
+                wiki['imageSrc'] = b64
+            else:
+                print(f'\n-->Failed to find image for wiki: {wiki["url"]}<--\n')
 
-#~ result_json = json.dumps(wikis)
-#~ print(result_json)
+        wiki['verified'] = True # Our own provided wikis are "verified"
 
-try:
-   output_wikis = open(output_wikis_fn)
-   wikis_json = json.load(output_wikis)
-   print(wikis_json)
-   output_wikis.close()
-except:
-   wikis_json = []
+        print(wiki)
 
-for wiki in wikis:
-   if wiki not in wikis_json:
-      wikis_json.append(wiki)
-output_wikis = open(output_wikis_fn, 'w')
-json.dump(wikis_json, output_wikis, indent='\t')
-output_wikis.close()
+        wikis.append(wiki)
 
-#~ def main():
-   #~ return 0
+        #~ print(', '.join(row))
 
-#~ if __name__ == '__main__':
-   #~ main()
+    wikisfile.close()
 
+    #~ result_json = json.dumps(wikis)
+    #~ print(result_json)
+
+    try:
+        output_wikis = open(output_wikis_fn)
+        wikis_json = json.load(output_wikis)
+        current_wikis_positions = { wiki['url']:pos for (pos, wiki) in enumerate(wikis_json) }
+        print(f'\nWe already had these wikis: {list(current_wikis_positions.keys())}')
+        output_wikis.close()
+    except FileNotFoundError:
+        current_wikis_positions = {}
+        wikis_json = []
+
+    for wiki in wikis:
+        if wiki['url'] in current_wikis_positions:
+            position = current_wikis_positions[wiki['url']]
+            wikis_json[position].update(wiki)
+        else:
+            wikis_json.append(wiki)
+    output_wikis = open(output_wikis_fn, 'w')
+    json.dump(wikis_json, output_wikis, indent='\t')
+    output_wikis.close()
+
+    print(f'\nWikis updated: {[wiki["url"] for wiki in wikis]}')
+
+    return 0
+
+
+if __name__ == '__main__':
+   main()

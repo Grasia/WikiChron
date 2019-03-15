@@ -20,10 +20,11 @@ import re
 wikia_api_endpoint = 'api.php?action=query&list=groupmembers&gmgroups=bot|bot-global&gmlimit=500&format=json'
 mediawiki_api_endpoint = 'api.php?action=query&list=allusers&augroup=bot&aulimit=500&auprop=groups&format=json'
 
-def mediawiki_get_bots_ids(base_url):
+def mediawiki_get_bots(base_url):
    """
    Query the mediwiki api enpoint for standard mediawiki wikis
-    and returns a list of bot userids
+    and returns a list of bot dictionaries, where each one of them
+    has this structure: {botid: botname}
    """
    def api_probing(base_url):
 
@@ -50,20 +51,23 @@ def mediawiki_get_bots_ids(base_url):
       raise Exception('Not wiki endpoint found in this url: {}'.format(base_url))
    print('Making request to: {}'.format(url))
    continue_query = True
-   bots_ids = []
+   bots = []
    while (continue_query):
       r = requests.get(url)
       res = r.json()
       print(res)
-      bots_ids += [ str(bot['userid']) for bot in res['query']['allusers'] ]
+      for bot in res['query']['allusers']:
+         botid = str(bot['userid'])
+         botname = str(bot['name'])
+         bots.append( {"id": botid, "name": botname} )
       continue_query = 'continue' in res
       if (continue_query):
          url += '&aufrom=' + res['continue']['aufrom']
 
-   return bots_ids
+   return bots
 
 
-def wikia_get_bots_ids(base_url, offset=0):
+def wikia_get_bots(base_url, offset=0):
    """
    Query the mediawiki enpoint for Wikia wikis and returns a list of bot userids
    """
@@ -73,23 +77,31 @@ def wikia_get_bots_ids(base_url, offset=0):
    #~ print(url)
    r = requests.get(url)
    res = r.json()
-   bots_ids = [ str(bot['userid']) for bot in res['users'] ]
+   bots = []
+   for bot in res['users']:
+      botid = str(bot['userid'])
+      botname = str(bot['name'])
+      bots.append( {"id": botid, "name": botname} )
    if 'query-continue' in res:
-      return bots_ids + get_bots_ids(base_url, offset=res['query-continue']['groupmembers']['gmoffset'])
+      return bots + get_bots_ids(base_url, offset=res['query-continue']['groupmembers']['gmoffset'])
    else:
-      return bots_ids
+      return bots
 
 
 def write_outputfile(filename, bots):
    import numpy as np
-   np.array(bots_ids).tofile(filename, sep=',')
+   np.array(bots).tofile(filename, sep=',')
 
 
-def get_bots_ids(url):
-   if re.search('/.*\.wikia\.com', url) != None: # detect Wikia wikis
-      return wikia_get_bots_ids(url)
+def is_wikia_wiki(url):
+   return (re.search('.*\.(fandom|wikia)\.com.*', url) != None)
+
+
+def get_bots(url):
+   if is_wikia_wiki(url): # detect Wikia wikis
+      return wikia_get_bots(url)
    else:
-      return mediawiki_get_bots_ids(url)
+      return mediawiki_get_bots(url)
 
 
 def main():
@@ -105,10 +117,10 @@ def main():
          if not (re.search('^http', url)):
             url = 'http://' + url
          print("Retrieving data for: " + url)
-         bots_ids = get_bots_ids(url)
+         bots = get_bots(url)
 
          print("These are the bots ids:")
-         print(json.dumps(bots_ids))
+         print(json.dumps(bots))
          print("<" + "="*50 + ">")
    else:
       print("Error: Invalid number of arguments. Please specify one or more wiki urls to get the bots from.", file=sys.stderr)
