@@ -32,8 +32,23 @@ p {
     color: #9B9B9B;
 }
 
+/* Current selection display */
+
 .badge-secondary {
     background-color: #3D71AE;
+}
+
+.close-wiki-badge {
+    color: inherit;
+    font-size: 1.2rem;
+    float: none;
+}
+
+.close-wiki-badge:hover {
+    color: inherit;
+    opacity: 1;
+    border: 0;
+    font-size: 1.3rem;
 }
 
 
