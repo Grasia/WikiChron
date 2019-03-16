@@ -287,6 +287,21 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
         ])
 
 
+    def dropdown_color_metric_selector(network_code):
+        dict_metrics = net_factory.get_secondary_metrics(network_code)
+        options = []
+        for k in dict_metrics.keys():
+            options.append({
+                'label': k,
+                'value': k
+            })
+
+        return dcc.Dropdown(
+            id='dd-color-metric',
+            options=options
+        )
+
+
     if debug:
         print ('Generating main...')
 
@@ -328,6 +343,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                 cytoscape_component(),
                 ranking_table(),
                 distribution_graph(),
+                dropdown_color_metric_selector(network_type_code),
                 html.Div(id='user-info'),
 
                 html.Div(id='network-ready', style={'display': 'none'}),
@@ -394,8 +410,10 @@ def bind_callbacks(app):
             df = df.sort_values(sort_set[0]['column_id'],
                 ascending=sort_set[0]['direction'] == 'asc',
                 inplace=False)
-        else:
+        elif not df.empty:
             df = df.sort_values(metric, ascending=False)
+        else:
+            return []
 
         return df.iloc[
                 pag_set['current_page']*pag_set['page_size']:
@@ -496,7 +514,6 @@ def bind_callbacks(app):
             low_val = 1
             upper_val = int(2 + max_time / 10)
 
-        #~ max_number_of_marks = 11
         if max_time < 12:
             step_for_marks = 1
         elif max_time < 33:
@@ -543,7 +560,7 @@ def bind_callbacks(app):
             raise PreventUpdate()
 
         # step value is in [0, n] | n € N
-        # so step value must be a positive value if bt_forward was press
+        # if bt_forward is pressed, the step value will be a positive value
 
         old_upper = di_slider['props']['value'][0]
         old_lower = di_slider['props']['value'][1]
