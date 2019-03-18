@@ -7,4 +7,4 @@ mv venv/ venv.old/ &&
 virtualenv -p python3 venv/ &&
 source venv/bin/activate &&
 pip install -r requirements.txt &&
-gunicorn wikichron:server -c gunicorn_config.py
+gunicorn wikichron_networks:server -c gunicorn_config.py
