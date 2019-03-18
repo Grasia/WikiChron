@@ -62,6 +62,19 @@ function generate_network_badge(networkCode, networkName) {
 
 
 // onclick for checkbox
+$('.networks-radiobutton').on( "click", function({target}) {
+    var networkCode = target.value;
+    var networkName = target.dataset.networkName;
+    var badgeSelectedNetwork = generate_network_badge(networkCode, networkName);
+    var badgesContainer = $('#network-badges-container');
+    badgesContainer.html(badgeSelectedNetwork);
+
+    check_enable_action_button();
+
+});
+
+
+// onclick for radiobutton
 $('.wiki-checkbox').on( "click", function({target}) {
     var wikiCode = target.value;
     var badgesContainer = $('#wiki-badges-container');
