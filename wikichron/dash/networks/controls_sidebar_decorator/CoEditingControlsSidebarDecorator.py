@@ -21,9 +21,10 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
 from .BaseControlsSidebarDecorator import BaseControlsSidebarDecorator
-from networks.cytoscape_stylesheet.CoEditingStylesheet import CoEditingStylesheet
+from networks.CytoscapeStylesheet import CytoscapeStylesheet
 from networks.models.CoEditingNetwork import CoEditingNetwork
 import data_controller
+import networks.models.networks_generator as net_factory
 
 global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
@@ -35,9 +36,8 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
 
     @staticmethod
-    def default_stats(st1 = 'Nodes: ...', st2 = 'First User: ...',
-            st3 = 'Edges: ...', st4 = 'Last User: ...', st5 = 'Communities: ...',
-            st6 = 'Max Hub Degree: ...', st7 = 'Assortativity Degree: ...'):
+    def default_stats(st1 = 'Nodes: ...', st2 = 'Edges: ...', 
+            st3 = 'Assortativity Degree: ...', st4 = 'Communities: ...',):
 
         return [
                 html.Div([
@@ -47,13 +47,6 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
                 html.Div([
                     html.P(st3, className='left-element'),
                     html.P(st4, className='right-element')
-                ]),
-                html.Div([
-                    html.P(st5, className='left-element'),
-                    html.P(st6, className='right-element')
-                ]),
-                html.Div([
-                    html.P(st7, className='left-element')
                 ])]
 
 
@@ -104,21 +97,11 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             if not cy_network:
                 return CoEditingControlsSidebarDecorator.default_stats()
 
-            date1 = 'Not entries'
-            date2 = 'Not entries'
-            if not cy_network["first_entry"] == 'Not entries':
-                date1 = datetime.fromtimestamp(cy_network["first_entry"]).strftime("%Y-%m-%d")
-            if not cy_network["last_entry"] == 'Not entries':
-                date2 = datetime.fromtimestamp(cy_network["last_entry"]).strftime("%Y-%m-%d")
-
             return CoEditingControlsSidebarDecorator.default_stats(
                 st1 = f'Nodes: {cy_network["num_nodes"]}',
-                st2 = f'First User: {date1}',
-                st3 = f'Edges: {cy_network["num_edges"]}',
-                st4 = f'Last User: {date2}',
-                st5 = f'Communities: {cy_network["n_communities"]}',
-                st6 = f'Max Hub Degree: {cy_network["max_degree"]}',
-                st7 = f'Assortativity Degree: {cy_network["assortativity"]}'
+                st2 = f'Edges: {cy_network["num_edges"]}',
+                st3 = f'Assortativity Degree: {cy_network["assortativity_degree"]}',
+                st4 = f'Communities: {cy_network["n_communities"]}'
                 )
 
 
@@ -147,33 +130,43 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             [Input('cytoscape', 'elements'),
             Input('show-labels', 'n_clicks'),
             Input('color-cluster', 'n_clicks'),
-            Input('highlight-node', 'value')],
-            [State('network-ready', 'value')]
+            Input('highlight-node', 'value'),
+            Input('dd-color-metric', 'value')],
+            [State('network-ready', 'value'),
+            State('initial-selection', 'children')]
         )
-        def update_stylesheet(_, lb_clicks, com_clicks, nodes_selc, cy_network):
+        def update_stylesheet(_, lb_clicks, com_clicks, nodes_selc, dd_val, 
+            cy_network, selection_json):
 
             if not cy_network:
                 raise PreventUpdate()
 
-            co_stylesheet = CoEditingStylesheet()
+            selection = json.loads(selection_json)
+            network_code = selection['network']
+
+            directed = net_factory.is_directed(network_code)
+            stylesheet = CytoscapeStylesheet(directed=directed)
+            metric = {}
+
+            if dd_val:
+                metric = net_factory.get_secondary_metrics(network_code)[dd_val]
 
             if not nodes_selc:
-                co_stylesheet.all_transformations(cy_network)
+                stylesheet.all_transformations(cy_network, metric)
             else:
-                co_stylesheet.highlight_nodes(cy_network, nodes_selc)
+                stylesheet.highlight_nodes(cy_network, nodes_selc)
 
             if lb_clicks and lb_clicks % 2:
-                co_stylesheet.set_label('label')
+                stylesheet.set_label('label')
             else:
-                co_stylesheet.set_label('')
+                stylesheet.set_label('')
 
-            if com_clicks and not cy_network["n_communities"] == '...' \
-            and com_clicks % 2 == 1:
-                co_stylesheet.color_nodes_by_cluster()
+            if com_clicks and com_clicks % 2 == 1:
+                stylesheet.color_nodes_by_cluster()
             else:
-                co_stylesheet.color_nodes(cy_network)
+                stylesheet.color_nodes(cy_network, metric)
 
-            return co_stylesheet.cy_stylesheet
+            return stylesheet.cy_stylesheet
 
 
         @app.callback(
@@ -215,13 +208,18 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             [Input('show-page-rank', 'n_clicks_timestamp'),
             Input('show-edits', 'n_clicks_timestamp'),
             Input('show-betweenness', 'n_clicks_timestamp')],
-            [State('network-ready', 'value')]
+            [State('network-ready', 'value'),
+            State('initial-selection', 'children')]
         )
-        def select_metric(tm_pr, tm_edits, tm_bet, ready):
+        def select_metric(tm_pr, tm_edits, tm_bet, ready, selection_json):
             if not ready:
                 raise PreventUpdate()
 
-            tms = [int(tm_pr), int(tm_edits), int(tm_bet)]
-            tm_metrics = {key:value for key, value in zip(tms, CoEditingNetwork.get_available_metrics().keys())}
+            selection = json.loads(selection_json)
+            network_code = selection['network']
+
+            tms = [int(tm_edits), int(tm_bet), int(tm_pr)]
+            metrics = net_factory.get_available_metrics(network_code).keys()
+            tm_metrics = {key:value for key, value in zip(tms, metrics)}
             max_key = max(tm_metrics, key=int)
             return tm_metrics[max_key]

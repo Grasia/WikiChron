@@ -61,21 +61,12 @@ def set_cache(cache):
         time_end_loading_csvs = time.perf_counter() - time_start_loading_csvs
         print(' * [Timing] Loading csvs : {} seconds'.format(time_end_loading_csvs) )
 
-        # generate network:
         network = networks.interface.factory_network(network_code)
         print(' * [Info] Starting calculations....')
         time_start_calculations = time.perf_counter()
-        network.generate_from_pandas(df=df, lower_bound = lower_bound,
-            upper_bound = upper_bound)
+        network.build_network(df=df, lower_bound = lower_bound, upper_bound = upper_bound)
         time_end_calculations = time.perf_counter() - time_start_calculations
         print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
-
-        # network metrics
-        time_start_calculations = time.perf_counter()
-        network.calculate_metrics()
-        time_end_calculations = time.perf_counter() - time_start_calculations
-        print(f'[Timing] Network metrics calculation in {time_end_calculations} seconds')
-
         return network
 
 
