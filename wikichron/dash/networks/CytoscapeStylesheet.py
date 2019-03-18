@@ -20,6 +20,7 @@ class CytoscapeStylesheet():
 	N_MIN_FONT = '7'
 	N_MAX_FONT = '18'
 	E_DEFAULT_COLOR = '#000000'
+	E_ARROW_COLOR = '#3E2723'
 	E_MIN_COLOR = ''
 	E_MAX_COLOR = ''
 	E_DEFAULT_SIZE = '1'
@@ -37,11 +38,19 @@ class CytoscapeStylesheet():
 		"z-index": 9999
 	}
 
-	def __init__(self, cy_stylesheet = []):
+	def __init__(self, directed = False, cy_stylesheet = []):
 		if not cy_stylesheet:
 			self.cy_stylesheet = self.make_basic_stylesheet()
 		else:
 			self.cy_stylesheet = cy_stylesheet
+		if directed:
+			self.add_directed_edges()
+	
+
+	def add_directed_edges(self):
+		self.cy_stylesheet[1]['style']['curve-style'] = 'bezier'
+		self.cy_stylesheet[1]['style']['target-arrow-shape'] = 'triangle'
+		self.cy_stylesheet[1]['style']['target-arrow-color'] = self.E_ARROW_COLOR
 
 
 	def color_nodes_default(self, color):
@@ -196,6 +205,6 @@ class CytoscapeStylesheet():
                 'style': {
                     'width': cls.E_DEFAULT_SIZE,
                     'opacity': cls.E_DEFAULT_OPACITY,
-                    'line-color': cls.E_DEFAULT_COLOR,
+                    'line-color': cls.E_DEFAULT_COLOR
                 }
             }]

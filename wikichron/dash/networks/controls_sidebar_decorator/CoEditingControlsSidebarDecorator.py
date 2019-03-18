@@ -144,7 +144,8 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             selection = json.loads(selection_json)
             network_code = selection['network']
 
-            stylesheet = CytoscapeStylesheet()
+            directed = net_factory.is_directed(network_code)
+            stylesheet = CytoscapeStylesheet(directed=directed)
             metric = {}
 
             if dd_val:

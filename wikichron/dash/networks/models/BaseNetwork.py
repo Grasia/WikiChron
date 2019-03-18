@@ -6,8 +6,11 @@
 
 import abc
 import pandas as pd
-from igraph import Graph, ClusterColoringPalette
+from igraph import Graph, ClusterColoringPalette, VertexClustering
 from colormap.colors import rgb2hex
+from datetime import datetime
+
+from .fix_dendrogram import fix_dendrogram
 
 class BaseNetwork(metaclass=abc.ABCMeta):
 
@@ -25,11 +28,11 @@ class BaseNetwork(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def generate_from_pandas(self, df: pd.DataFrame):
         """
-        Generates a graph from a pandas data
+        Fill the igraph attribute from pandas data
 
         Parameters:
-            -df: A pandas object with the wiki info (read from csv),
-                   must be order by timestamp
+            -df: A pandas object with the wiki info (coming from the csv file),
+                   must be ordered by timestamp
         """
         pass
 
@@ -63,14 +66,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         pass
 
 
-    @abc.abstractmethod
-    def add_graph_attrs(self):
-        """
-        Calculates and adds the graph attrs 
-        """
-        pass
-
-
     @abc.abstractclassmethod
     def get_secondary_metrics(cls) -> dict:
         """
@@ -84,6 +79,25 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             }
         """
         pass
+
+
+    @abc.abstractclassmethod
+    def is_directed(cls) -> bool:
+        pass
+
+
+    def add_graph_attrs(self):
+        """
+        Calculates and adds the graph attrs 
+        """
+        self.graph['num_nodes'] = self.graph.vcount()
+        self.graph['num_edges'] = self.graph.ecount()
+        if 'num_edits' in self.graph.vs.attributes():
+            self.graph['max_node_size'] = max(self.graph.vs['num_edits'])
+            self.graph['min_node_size'] = min(self.graph.vs['num_edits'])
+        if 'weight' in self.graph.es.attributes():
+            self.graph['max_edge_size'] = max(self.graph.es['weight'])
+            self.graph['min_edge_size'] = min(self.graph.es['weight'])
 
 
     def to_cytoscape_dict(self) -> dict:
@@ -143,12 +157,9 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         Calculates the network pageRank
         """
         if not 'page_rank' in self.graph.vs.attributes():
-            p_r = 0.0
-            if not 'weight' in self.graph.es.attributes():
-                p_r = self.graph.pagerank(directed=self.graph.is_directed())    
-            else:
-                p_r = self.graph.pagerank(directed=self.graph.is_directed(), 
-                    weights = 'weight')
+            weight = 'weight' if 'weight' in self.graph.es.attributes() else None
+            p_r = self.graph.pagerank(directed=self.graph.is_directed(), 
+                    weights = weight)
 
             self.graph.vs['page_rank'] = list(map(lambda x: "{0:.5f}".format(x), p_r))
 
@@ -158,14 +169,11 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         Calculates the network betweenness
         """
         if not 'betweenness' in self.graph.vs.attributes():
-            bet = 0.0
-            if not 'weight' in self.graph.es.attributes():
-                bet = self.graph.betweenness(directed=self.graph.is_directed())    
-            else:
-                bet = self.graph.betweenness(directed=self.graph.is_directed(), 
-                    weights = 'weight')
+            weight = 'weight' if 'weight' in self.graph.es.attributes() else None
+            bet = self.graph.betweenness(directed=self.graph.is_directed(), 
+                weights = weight)
 
-            self.graph.vs['betweenness'] = list(map(lambda x: "{0:.5f}".format(x), bet))
+            self.graph.vs['betweenness'] = list(map(lambda x: float("{0:.5f}".format(x)), bet))
 
 
     def calculate_communities(self):
@@ -173,16 +181,20 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         Calculates communities and assigns a color per community
         """
         if not 'n_communities' in self.graph.attributes():
-            if not 'weight' in self.graph.es.attributes():
-                mod = self.graph.community_multilevel()
-            else:
-                mod = self.graph.community_multilevel(weights='weight')
-                
+            weight = 'weight' if 'weight' in self.graph.es.attributes() else None
+            # igraph bug: https://github.com/igraph/python-igraph/issues/17
+            try:
+                v_d = self.graph.community_walktrap(weights=weight, steps=6)
+                mod = v_d.as_clustering()
+            except:
+                fix_dendrogram(self.graph, v_d)
+                mod = v_d.as_clustering()
+
             self.graph.vs['cluster'] = mod.membership
             self.graph['n_communities'] = len(mod)
             pal = ClusterColoringPalette(len(mod))
-            self.graph.vs['cluster_color'] = list(map(lambda x: rgb2hex(x[0],x[1],x[2], normalised=True),
-                pal.get_many(mod.membership)))
+            self.graph.vs['cluster_color'] = list(map(lambda x: rgb2hex(x[0],x[1],x[2],\
+                normalised=True), pal.get_many(mod.membership)))
 
 
     def calculate_assortativity_degree(self):
@@ -204,9 +216,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         """
         It returns the degree distribution
         """
-        ##########
-        # TODO Check if it s directed
-        ##########
         # Let's count the number of each degree
         p_k = [0 for i in range(0, self.graph.maxdegree()+1)]
         for x in self.graph.degree(): p_k[x] += 1
@@ -229,8 +238,10 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         This method is used to generate the network and its metrics and attrs
         """
         dff = self.filter_by_time(df, lower_bound, upper_bound)
+        dff = self.filter_anonymous(dff)
         self.generate_from_pandas(dff)
         self.calculate_metrics()
+        self.calculate_abs_longevity(df)
         self.add_others(dff)
         self.add_graph_attrs()
 
@@ -240,8 +251,16 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         
         dff = df
         if lower_bound and upper_bound:
-            dff = df[lower_bound <= df['timestamp']]
+            dff = dff[lower_bound <= dff['timestamp']]
             dff = dff[dff['timestamp'] <= upper_bound]
+
+        return dff
+
+
+    def filter_anonymous(self, df: pd.DataFrame) -> pd.DataFrame:
+        dff = df
+        if not dff.empty:
+            dff = dff['Anonymous' != dff['contributor_name']]
 
         return dff
 
@@ -282,31 +301,53 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         return df[df['page_ns'] == 3]
 
     
-    def calculate_edits(self, df: pd.DataFrame, type: str):
+    def calculate_edits(self, df: pd.DataFrame, type_e: str):
         """
         This function adds as a vertex attr the edits from other namespace
-        type parameter only accept {talk, article, user_talk}
+        type_e parameter only accept {talk, article, user_talk}
         """
-        if 'id' not in self.graph.vs.attributes():
+        if 'label' not in self.graph.vs.attributes():
             return
 
         key = 'edits'
-        if type == 'talk':
+        if type_e == 'talk':
             dff = self.remove_non_talk_data(df)
-            key = f'{type}_{key}'
-        elif type == 'article':
+            key = f'{type_e}_{key}'
+        elif type_e == 'article':
             dff = self.remove_non_article_data(df)
-            key = f'{type}_{key}'
-        elif type == 'user_talk':
-            dff = self.remove_non_user_talk_data(df)
-            key = f'{type}_{key}'
+            key = f'{type_e}_{key}'
+        elif type_e == 'user_talk':
+            raise Exception(f'type: {type_e} is not implemented yet')
+            # dff = self.remove_non_user_talk_data(df)
+            # key = f'{type_e}_{key}'
         else:
-            raise Exception(f'type: {type} is not defined')
+            raise Exception(f'type: {type_e} is not defined')
 
-        mapper = {self.graph.vs[i]['id']: i for i in range(len(self.graph.vs['id']))}
-        edits = [0 for i in range(len(self.graph.vs['id']))]
+        mapper = {self.graph.vs[i]['label']: i for i in range(self.graph.vcount())}
+        edits = [0 for i in range(self.graph.vcount())]
         for _, row in dff.iterrows():
-            if row['contributor_id'] in mapper.keys():
-                edits[mapper[row['contributor_id']]] += 1
+            if row['contributor_name'] in mapper.keys():
+                edits[mapper[row['contributor_name']]] += 1
 
         self.graph.vs[key] = edits
+
+    
+    def calculate_abs_longevity(self, df: pd.DataFrame):
+        """
+        Calculates the birth of all the vertex without filter_by_time 
+        """
+        max_date = 0
+        for node in self.graph.vs:
+            dff = df[node['label'] == df['contributor_name']]
+            if not dff.empty:
+                row = dff.iloc[0]
+                node['abs_birth'] = row['timestamp']
+                node['abs_birth_int'] = int(datetime.strptime(
+                    str(row['timestamp']), "%Y-%m-%d %H:%M:%S").strftime('%s'))
+                
+                # this is a weak solution to avoid bots or users with no activity
+                if max_date < node['abs_birth_int']:
+                    max_date = node['abs_birth_int']
+            else:
+                node['abs_birth'] = 'NAN'
+                node['abs_birth_int'] = max_date
