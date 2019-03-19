@@ -315,8 +315,8 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     sidebar_decorator = factory_sidebar_decorator('co_editing_network', controls_sidebar)
     sidebar_decorator.add_all_sections()
 
-    share_url_path = f'{config["APP_HOSTNAME"]}{config["DASH_BASE_PATHNAME"]}{query_string}'
-    download_url_path = f'{config["APP_HOSTNAME"]}{config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
+    share_url_path = f'{config["PREFERRED_URL_SCHEME"]}://{config["APP_HOSTNAME"]}{config["DASH_BASE_PATHNAME"]}{query_string}'
+    download_url_path = f'{config["PREFERRED_URL_SCHEME"]}://{config["APP_HOSTNAME"]}{config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
 
     return html.Div(
             id='main',
