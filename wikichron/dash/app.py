@@ -129,23 +129,26 @@ def set_external_imports():
     if not to_import_js:
         return [gdc.Import()]
     else:
-        return [gdc.Import(src=src) for src in to_import_js];
+        return [gdc.Import(src=src) for src in to_import_js]
 
 
 #--------- LAYOUT ----------------------------------------------------------#
 
-def set_layout():
+def set_layout(has_side_bar):
+
+    side_bar = [html.Div(id='side-bar-root', className='side-bar-cn')] if has_side_bar else []
+
     return html.Div(id='app-layout',
         style={'display': 'flex'},
         children=[
             dcc.Location(id='url', refresh=False),
-            html.Div(id='on-load', style={'display': 'none'}),
-            html.Div(id='side-bar-root', className='side-bar-cn'),
+            html.Div(id='on-load', style={'display': 'none'})
+            ] + side_bar + [
             html.Div(id='main-root', style={'flex': 'auto'}),
             html.Div(id='sidebar-selection', style={'display': 'none'}),
             html.Div(id='test', style={'display': 'none'})
         ]
-    );
+    )
 
 
 def load_external_dash_libs_in_layout():
@@ -414,9 +417,9 @@ def set_up_app(app):
 
     # set app layout
     print('Setting up layout...')
-    #~ has_side_bar = app.server.config['DASH_STANDALONE'] #TODO
+    has_side_bar = app.server.config['DASH_STANDALONE']
     app.layout = html.Div([
-        set_layout(), #TODO set_layout(has_side_bar),
+        set_layout(has_side_bar),
         load_external_dash_libs_in_layout()
     ])
     app.layout.children += set_external_imports()
