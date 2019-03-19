@@ -297,6 +297,8 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
         style={'width': '100%'},
         children=[
 
+            html.A('Go back to selection', href="/"),
+
             main_header(),
 
             html.Hr(),
