@@ -44,15 +44,9 @@ import cache
 import data_controller
 
 # production or development (DEBUG) flag:
-global debug;
+global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
-# get csv data location (data/ by default)
-#~ global data_dir;
-#~ if not 'WIKICHRON_DATA_DIR' in os.environ:
-    #~ os.environ['WIKICHRON_DATA_DIR'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
-#~ data_dir = os.environ['WIKICHRON_DATA_DIR']
-data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 
 ######### GLOBAL VARIABLES #########
 
@@ -70,7 +64,7 @@ else: # load piwik only in production:
     to_import_js.append('/js/piwik.js')
 
 # other global variables:
-global selection_params;
+global selection_params
 selection_params = {'wikis', 'metrics', 'lower_bound', 'upper_bound'};
 
 # The folowing ones will be set later on
@@ -160,7 +154,7 @@ def load_external_dash_libs_in_layout():
         children=[
             sd_material_ui.Divider()
         ]
-    );
+    )
 
 
 def generate_welcome_page():
@@ -272,10 +266,10 @@ def app_bind_callbacks(app):
                                                     pre_selected_wikis, pre_selected_metrics)
 
             else: # if app hasn't loaded the path yet, wait to load sidebar later
-                return None;
+                return None
 
         else:
-            raise PreventUpdate("Sidebar already generated! sidebar must be generated only once");
+            raise PreventUpdate("Sidebar already generated! sidebar must be generated only once")
 
     return
 
@@ -353,10 +347,10 @@ def start_download_data_server(app):
 
 def create_dash_app(server):
     # load config
-    wikichron_base_pathname = server.config['DASH_BASE_PATHNAME'];
+    wikichron_base_pathname = server.config['DASH_BASE_PATHNAME']
     assets_url_path = os.path.join(wikichron_base_pathname, 'assets')
     assets_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                'resources', 'assets');
+                                'resources', 'assets')
 
     schema_and_hostname = f'{server.config["PREFERRED_URL_SCHEME"]}://{server.config["APP_HOSTNAME"]}'
     meta_tags = define_meta_tags(schema_and_hostname, assets_url_path)
@@ -387,10 +381,10 @@ def create_dash_app(server):
 
 
 def _init_global_vars():
-    global available_wikis;
-    global available_wikis_dict;
-    global available_metrics;
-    global available_metrics_dict;
+    global available_wikis
+    global available_wikis_dict
+    global available_metrics
+    global available_metrics_dict
 
     available_metrics = utils.get_available_metrics()
     available_metrics_dict = utils.metrics_dict
