@@ -1,0 +1,11 @@
+<div>
+    <p class="ml-2 tab-intro-paragraph">Select the metrics you want to see for this wiki</p>
+    <hr class="ml-2 line"/>
+
+    {% for metric in metrics %}
+        <div class="custom-control custom-radio m-4">
+            <input class="custom-control-input metrics-checkboxes" type="radio" id="radio-{{metric['code']}}" value="{{metric['code']}}" data-metric-name="{{metric.name}}" name="metric">
+            <label class="custom-control-label metric-name" for="radio-{{metric['code']}}">{{metric['name']}}</label>
+        </div>
+    {% endfor %}
+</div>
