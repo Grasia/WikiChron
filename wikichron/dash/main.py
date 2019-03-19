@@ -618,25 +618,3 @@ def bind_callbacks(app):
         #return href
 
     return # bind_callbacks
-
-if __name__ == '__main__':
-
-    data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
-
-    wikis = ['eslagunanegra_pages_full', 'cocktails', 'es.shamanking.wikia.com']
-
-    available_metrics = lib.get_available_metrics()
-    metrics = []
-    metrics.append(available_metrics[0])
-    metrics.append(available_metrics[1])
-
-    app = dash.Dash()
-    app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
-    app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
-
-    relative_time = False
-    app.layout = generate_main_content(wikis, metrics, relative_time)
-
-    bind_callbacks(app)
-
-    app.run_server(debug=debug, port=8053)
