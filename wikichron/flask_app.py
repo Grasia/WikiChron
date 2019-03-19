@@ -30,7 +30,6 @@ def redirect_index_to_app():
     config = current_app.config;
 
     wikis = data_controller.get_available_wikis()
-    print(wikis)
 
     network_backend_objects = interface.get_available_networks()
     networks_frontend = []

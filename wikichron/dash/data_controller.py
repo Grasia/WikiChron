@@ -34,6 +34,8 @@ TIME_DIV = 60 * 60 * 24 * 30
 
 def set_cache(cache):
 
+    # we need to declare as *global* all the cached functions we want to be
+    #  available to be used from outside of this file.
     global read_data
     global get_network
 

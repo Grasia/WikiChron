@@ -59,7 +59,7 @@ if debug:
     print('=> You are in DEBUG MODE <=')
 
 else: # load piwik only in production:
-    to_import_js.append('js/piwik.js')
+    to_import_js.append('/js/piwik.js')
 
 # other global variables:
 global selection_params;
@@ -71,7 +71,10 @@ global available_wikis;
 global available_wikis_dict;
 
 
-######### AUX FUNCTION DEFINITIONS #########
+######### BEGIN CODE ###########################################################
+
+
+#--------- AUX FUNCS ----------------------------------------------------------#
 
 # meta tags definition
 def define_meta_tags(hostname, assets_url_path):
@@ -112,10 +115,6 @@ def define_meta_tags(hostname, assets_url_path):
     return meta_tags
 
 
-######### BEGIN CODE ###########################################################
-
-
-#--------- AUX FUNCS ----------------------------------------------------------#
 def get_network_name_from_code(network_code):
     for nw in available_networks:
         if nw.CODE == network_code:

@@ -71,9 +71,8 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     It generates the main content
     Parameters:
         -wikis_arg: wikis to show, only used the first wiki
-        -network_type_arg, type of network to generate
-        -query_string: string to share/download
-        -APP_HOSTNAME: url to share/download
+        -network_type_arg: type of network to generate
+        -query_string: string for the download button
 
     Return: An HTML object with the main content
     """

@@ -61,7 +61,7 @@ function generate_network_badge(networkCode, networkName) {
 }
 
 
-// onclick for checkbox
+// onclick for network radiobuttons inputs
 $('.networks-radiobutton').on( "click", function({target}) {
     var networkCode = target.value;
     var networkName = target.dataset.networkName;
@@ -74,7 +74,7 @@ $('.networks-radiobutton').on( "click", function({target}) {
 });
 
 
-// onclick for radiobutton
+// onclick for wikis checkboxes input
 $('.wiki-checkbox').on( "click", function({target}) {
     var wikiCode = target.value;
     var badgesContainer = $('#wiki-badges-container');

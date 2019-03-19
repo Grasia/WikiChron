@@ -20,10 +20,10 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
+import data_controller
 from .BaseControlsSidebarDecorator import BaseControlsSidebarDecorator
 from networks.CytoscapeStylesheet import CytoscapeStylesheet
 from networks.models.CoEditingNetwork import CoEditingNetwork
-import data_controller
 import networks.models.networks_generator as net_factory
 
 global debug
@@ -36,7 +36,7 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
 
 
     @staticmethod
-    def default_stats(st1 = 'Nodes: ...', st2 = 'Edges: ...', 
+    def default_stats(st1 = 'Nodes: ...', st2 = 'Edges: ...',
             st3 = 'Assortativity Degree: ...', st4 = 'Communities: ...',):
 
         return [
@@ -135,7 +135,7 @@ class CoEditingControlsSidebarDecorator(BaseControlsSidebarDecorator):
             [State('network-ready', 'value'),
             State('initial-selection', 'children')]
         )
-        def update_stylesheet(_, lb_clicks, com_clicks, nodes_selc, dd_val, 
+        def update_stylesheet(_, lb_clicks, com_clicks, nodes_selc, dd_val,
             cy_network, selection_json):
 
             if not cy_network:
