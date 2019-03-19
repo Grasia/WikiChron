@@ -21,7 +21,7 @@ from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import grasia_dash_components as gdc
 import dash_html_components as html
-from lib.metrics.metric import MetricCategory
+from utils.metrics.metric import MetricCategory
 
 # GLOBAL VARIABLES
 
