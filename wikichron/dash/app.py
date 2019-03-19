@@ -65,13 +65,13 @@ else: # load piwik only in production:
 
 # other global variables:
 global selection_params
-selection_params = {'wikis', 'metrics', 'lower_bound', 'upper_bound'};
+selection_params = {'wikis', 'metrics', 'lower_bound', 'upper_bound'}
 
 # The folowing ones will be set later on
-global available_metrics;
-global available_metrics_dict;
-global available_wikis;
-global available_wikis_dict;
+global available_metrics
+global available_metrics_dict
+global available_wikis
+global available_wikis_dict
 
 
 ######### BEGIN CODE ###########################################################
