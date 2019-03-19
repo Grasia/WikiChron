@@ -89,15 +89,15 @@ def define_meta_tags(hostname, assets_url_path):
         },
         {
             'name': 'description',
-            'content': 'WikiChron Networks is a web tool for the analysis and visualization of different networks within wiki online communities'
+            'content': 'WikiChron is a web tool for the analysis and visualization of the evolution of wiki online communities'
         },
         {
             'name': 'og:title',
-            'content': 'WikiChron - Networks'
+            'content': 'WikiChron - Classic'
         },
         {
             'name': 'og:description',
-            'content': 'WikiChron Networks is a web tool for the visualization of networks within wikis'
+            'content': 'WikiChron is a web tool for the visualization of wikis evolution'
         },
         {
             'name': 'og:url',
@@ -105,7 +105,7 @@ def define_meta_tags(hostname, assets_url_path):
         },
         {
             'name': 'og:image',
-            'content': '{}/wikichron_networks_logo.png'.format(assets_url_path)
+            'content': '{}/logo_wikichron.png'.format(assets_url_path)
         },
         {
             'name': 'og:image:width',
@@ -113,7 +113,7 @@ def define_meta_tags(hostname, assets_url_path):
         },
         {
             'name': 'twitter:title',
-            'content': 'WikiChron - Networks'
+            'content': 'WikiChron - Classic'
         },
     ]
     return meta_tags
