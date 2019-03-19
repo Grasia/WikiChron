@@ -41,6 +41,7 @@ import pandas as pd
 import lib.interface as lib
 from version import __version__
 import cache
+import data_controller
 
 # production or development (DEBUG) flag:
 global debug;
@@ -83,12 +84,6 @@ global available_wikis_dict;
 
 
 #--------- AUX FUNCS ----------------------------------------------------------#
-
-# TOMOVE to data_controller
-def get_available_wikis(data_dir):
-    wikis_json_file = open(os.path.join(data_dir, 'wikis.json'))
-    wikis = json.load(wikis_json_file)
-    return wikis
 
 
 # meta tags definition
@@ -312,7 +307,7 @@ def start_download_data_server(app):
 
         (wikis, metrics) = extract_wikis_and_metrics_from_selection_dict(selection)
 
-        data = main.load_and_compute_data(wikis, metrics)
+        data = data_controller.load_and_compute_data(wikis, metrics)
 
         # output in-memory zip file
         in_memory_zip = BytesIO()
@@ -385,7 +380,8 @@ def create_dash_app(server):
     # skeleton.css: (Already included in dash stylesheet)
     #~ app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
 
-    cache.set_up_cache(app, debug)
+    app_cache = cache.set_up_cache(app, debug)
+    data_controller.set_cache(app_cache)
 
     return app
 
@@ -398,7 +394,7 @@ def _init_global_vars():
 
     available_metrics = lib.get_available_metrics()
     available_metrics_dict = lib.metrics_dict
-    available_wikis = get_available_wikis(data_dir) #TODO data_controller.get_available_wikis()
+    available_wikis = data_controller.get_available_wikis()
     available_wikis_dict = {wiki['url']: wiki for wiki in available_wikis}
 
 

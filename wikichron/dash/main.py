@@ -15,7 +15,6 @@ import os
 import time
 from warnings import warn
 import json
-import functools
 from urllib.parse import urlencode
 
 import dash
@@ -30,7 +29,7 @@ from flask import current_app
 
 # Local imports:
 import lib.interface as lib
-from cache import cache
+import data_controller
 
 global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
@@ -39,81 +38,6 @@ debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 def extract_metrics_objs_from_metrics_codes(metric_codes):
     metrics = [ lib.metrics_dict[metric] for metric in metric_codes ]
     return metrics
-
-
-@cache.memoize(timeout=3600)
-def load_data(wiki):
-    df = lib.get_dataframe_from_csv(wiki['data'])
-    lib.prepare_data(df)
-    df = clean_up_bot_activity(df, wiki)
-    return df
-
-
-def clean_up_bot_activity(df, wiki):
-    if 'botsids' in wiki:
-        return lib.remove_bots_activity(df, wiki['botsids'])
-    else:
-        warn("Warning: Missing information of bots ids. Note that graphs can be polluted of non-human activity.")
-        return df
-
-
-def compute_data(dataframes, metrics):
-    """ Load analyzed data by every metric for every dataframe and store it in data[] """
-
-    #~ if not relative_time: # natural time index
-        #~ return [ lib.compute_metric_on_dataframes(metric, dataframes) for metric in metrics]
-    #~ else: # relative time index
-    metrics_by_wiki = []
-    for df in dataframes:
-        metrics_by_wiki.append(lib.compute_metrics_on_dataframe(metrics, df))
-
-    # transposing matrix row=>wikis, column=>metrics to row=>metrics, column=>wikis
-    wiki_by_metrics = []
-    for metric_idx in range(len(metrics)):
-        metric_row = [metrics_by_wiki[wiki_idx].pop(0) for wiki_idx in range(len(metrics_by_wiki))]
-        wiki_by_metrics.append(metric_row)
-
-    return wiki_by_metrics
-
-
-# returns data[metric][wiki]
-@cache.memoize()
-def load_and_compute_data(wikis, metrics):
-
-    # load data from csvs:
-    time_start_loading_csvs = time.perf_counter()
-    wikis_df = []
-    for wiki in wikis:
-        df = load_data(wiki)
-        wikis_df.append(df)
-    time_end_loading_csvs = time.perf_counter() - time_start_loading_csvs
-    print(' * [Timing] Loading csvs : {} seconds'.format(time_end_loading_csvs) )
-
-    # compute metric data:
-    print(' * [Info] Starting calculations....')
-    time_start_calculations = time.perf_counter()
-    data = compute_data(wikis_df, metrics)
-    time_end_calculations = time.perf_counter() - time_start_calculations
-    print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
-    return data
-
-@cache.memoize()
-def generate_longest_time_axis(list_of_selected_wikis, relative_time):
-    """ Generate time axis index of the oldest wiki """
-
-    # Make the union of the Datetime indices of every wiki.
-    # In this way, we get the date range corresponding of the smallest set that
-    #  covers all the lifespan of all wikis.
-    # Otherwise, wikis lifespan for different dates which are not
-    #  contained in the lifespan of the oldest wiki would be lost
-    unified_datetime_index = functools.reduce(
-                            lambda index_1, index_2: index_1.union(index_2),
-                            map(lambda wiki: wiki.index, list_of_selected_wikis))
-    if relative_time:
-        time_axis = list(range(0, len(unified_datetime_index)))
-    else:
-        time_axis = unified_datetime_index
-    return time_axis
 
 
 def generate_graphs(data, metrics, wikis, relative_time):
@@ -417,7 +341,7 @@ def bind_callbacks(app):
         print('--> Retrieving and computing data')
         print( '\t for the following wikis: {}'.format( wikis_names ))
         print( '\tof the following metrics: {}'.format( metric_names ))
-        data = load_and_compute_data(wikis, metrics)
+        data = data_controller.load_and_compute_data(wikis, metrics)
         print('<-- Done retrieving and computing data!')
         return True
 
@@ -440,10 +364,10 @@ def bind_callbacks(app):
         wikis = selection['wikis']
         metrics = extract_metrics_objs_from_metrics_codes(selection['metrics'])
 
-        data = load_and_compute_data(wikis, metrics)
+        data = data_controller.load_and_compute_data(wikis, metrics)
 
         # get time axis of the oldest one and use it as base numbers for the slider:
-        time_axis_index = generate_longest_time_axis([ wiki for wiki in data[0] ],
+        time_axis_index = data_controller.generate_longest_time_axis([ wiki for wiki in data[0] ],
                                                     relative_time)
 
         if relative_time:
@@ -494,7 +418,7 @@ def bind_callbacks(app):
         wikis = selection['wikis']
         metrics = extract_metrics_objs_from_metrics_codes(selection['metrics'])
 
-        data = load_and_compute_data(wikis, metrics)
+        data = data_controller.load_and_compute_data(wikis, metrics)
 
         if debug:
             print('Updating graphs. Selection: [{}, {}, {}, {}]'.format(selected_wikis, selected_metrics, selected_timerange, selected_timeaxis))
