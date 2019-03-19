@@ -34,7 +34,7 @@ import plotly.graph_objs as go
 import sd_material_ui
 
 # Other external imports:
-from flask import request
+from flask import request, current_app
 import pandas as pd
 
 # Local imports:
@@ -53,91 +53,82 @@ debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 #~ data_dir = os.environ['WIKICHRON_DATA_DIR']
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 
-# global app config
-APP_HOSTNAME = 'http://wikichron.science';
-port = 8880;
-wikichron_base_pathname = '/app/';
-#~ assets_url_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets');
-assets_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets');
-
+######### GLOBAL VARIABLES #########
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', # dash stylesheet
                         'https://use.fontawesome.com/releases/v5.0.9/css/all.css',  # fontawesome css
 ]
 
-
-meta_tags = [
-    {
-        'name': 'author',
-        'content': "Abel 'Akronix' Serrano Juste"
-    },
-    {
-        'name': 'description',
-        'content': 'WikiChron is a web tool for the analysis and visualization of the evolution of wiki online communities'
-    },
-    {
-        'name': 'og:title',
-        'content': 'WikiChron'
-    },
-    {
-        'name': 'og:description',
-        'content': 'WikiChron is a web tool for the visualization of wikis evolution'
-    },
-    {
-        'name': 'og:url',
-        'content': 'http://wikichron.science/'
-    },
-    {
-        'name': 'og:image',
-        'content': '/assets/logo_wikichron.png'
-    },
-    {
-        'name': 'twitter:title',
-        'content': 'WikiChron'
-    },
-]
-
-# js files being serve by this server:
-local_available_js = ['side_bar.js', 'main.share_modal.js', 'piwik.js']
-
 # list of js files to import from the app (either local or remote)
 to_import_js = []
-
-global app;
 
 if debug:
     print('=> You are in DEBUG MODE <=')
 
 else: # load piwik only in production:
-    to_import_js.append('js/piwik.js')
-
-
-#~ tabs = [
-    #~ {'value': 1, 'icon': '/assets/white_graphic.svg'},
-    #~ {'value': 2, 'icon': '/assets/white_graphic.svg'},
-    #~ {'value': 3, 'icon': '/assets/white_graphic.svg'},
-    #~ {'value': 4, 'icon': '/assets/white_graphic.svg'},
-#~ ]
-
-
-def get_available_wikis(data_dir):
-    wikis_json_file = open(os.path.join(data_dir, 'wikis.json'))
-    wikis = json.load(wikis_json_file)
-    return wikis
+    to_import_js.append('/js/piwik.js')
 
 # other global variables:
+global selection_params;
+selection_params = {'wikis', 'metrics', 'lower_bound', 'upper_bound'};
 
-available_metrics = lib.get_available_metrics()
-available_metrics_dict = lib.metrics_dict
-available_wikis = get_available_wikis(data_dir)
-available_wikis_dict = {wiki['url']: wiki for wiki in available_wikis}
-selection_params = {'wikis', 'metrics'}
+# The folowing ones will be set later on
+global available_metrics;
+global available_metrics_dict;
+global available_wikis;
+global available_wikis_dict;
 
 
 ######### BEGIN CODE ###########################################################
 
 
 #--------- AUX FUNCS ----------------------------------------------------------#
+
+# TOMOVE to data_controller
+def get_available_wikis(data_dir):
+    wikis_json_file = open(os.path.join(data_dir, 'wikis.json'))
+    wikis = json.load(wikis_json_file)
+    return wikis
+
+
+# meta tags definition
+def define_meta_tags(hostname, assets_url_path):
+    meta_tags = [
+        {
+            'name': 'author',
+            'content': "Abel 'Akronix' Serrano Juste"
+        },
+        {
+            'name': 'description',
+            'content': 'WikiChron Networks is a web tool for the analysis and visualization of different networks within wiki online communities'
+        },
+        {
+            'name': 'og:title',
+            'content': 'WikiChron - Networks'
+        },
+        {
+            'name': 'og:description',
+            'content': 'WikiChron Networks is a web tool for the visualization of networks within wikis'
+        },
+        {
+            'name': 'og:url',
+            'content': hostname
+        },
+        {
+            'name': 'og:image',
+            'content': '{}/wikichron_networks_logo.png'.format(assets_url_path)
+        },
+        {
+            'name': 'og:image:width',
+            'content': '600'
+        },
+        {
+            'name': 'twitter:title',
+            'content': 'WikiChron - Networks'
+        },
+    ]
+    return meta_tags
+
 
 def extract_wikis_and_metrics_from_selection_dict(selection):
     wikis = [ available_wikis_dict[wiki_url] for wiki_url in selection['wikis'] ]
@@ -160,9 +151,6 @@ def set_layout():
         children=[
             dcc.Location(id='url', refresh=False),
             html.Div(id='on-load', style={'display': 'none'}),
-
-            #~ generate_tabs_bar(tabs),
-            #~ side_bar.generate_side_bar(available_wikis, available_metrics),
             html.Div(id='side-bar-root', className='side-bar-cn'),
             html.Div(id='main-root', style={'flex': 'auto'}),
             html.Div(id='sidebar-selection', style={'display': 'none'}),
@@ -181,13 +169,15 @@ def load_external_dash_libs_in_layout():
 
 
 def generate_welcome_page():
+    assets_url_path = os.path.join(current_app.config['DASH_BASE_PATHNAME'],
+                                    'assets')
     return html.Div(id='welcome-container',
             className='container',
             children=[
-                html.Div(html.Img(src='/assets/line-graph.svg')),
+                html.Div(html.Img(src='{}/line-graph.svg'.format(assets_url_path))),
                 html.H2([
                     'Welcome to ',
-                    html.Span(html.Img(src='/assets/tipo-logo.svg'),
+                    html.Span(html.Img(src='{}/tipo-logo.svg'.format(assets_url_path)),
                         style={'vertical-align': 'text-bottom'}
                     )]
                 ),
@@ -229,7 +219,7 @@ def app_bind_callbacks(app):
                 relative_time = len(wikis) > 1
 
                 return main.generate_main_content(wikis, metrics,
-                                                relative_time, query_string, APP_HOSTNAME)
+                                                relative_time, query_string)
 
 
         print('There is not a valid wikis & metrics tuple selection yet for plotting any graph')
@@ -296,40 +286,6 @@ def app_bind_callbacks(app):
 
 
 #--------- BEGIN AUX SERVERS --------------------------------------------------#
-
-def start_redirection_server():
-    # Redirects index to /app
-    @app.server.route('/')
-    def redirect_index_to_app():
-        print('Redirecting user to {}...'.format(wikichron_base_pathname))
-        return flask.redirect(wikichron_base_pathname, code=302)
-
-
-# we want to load some js dnymically:
-# from the side_bar generation (generated by a dash callback) using gdc.Import()
-# So that's why we still need this function to serve the js files but don't load them
-# automatically when the app is loaded, but when we want to do it.
-# It might have a better solution, but let it _just work_
-def start_js_server():
-    static_js_route = 'js/'
-    js_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                 static_js_route)
-
-    server_js_route = urljoin(wikichron_base_pathname, static_js_route)
-
-    @app.server.route(urljoin(server_js_route, '<js_path>.js'))
-    def serve_local_js(js_path):
-        js_name = '{}.js'.format(js_path)
-        if js_name not in local_available_js:
-            raise Exception(
-                '"{}" is excluded from the allowed static files'.format(
-                    js_path
-                )
-            )
-        print ('Returning: {}'.format(js_name))
-        return flask.send_from_directory(js_directory, js_name)
-
-    return
 
 
 def start_download_data_server(app):
@@ -406,8 +362,9 @@ def create_dash_app(server):
     assets_url_path = os.path.join(wikichron_base_pathname, 'assets')
     assets_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                 'resources', 'assets');
-    hostname = f'{server.config["APP_HOSTNAME"]}'
-    #~ meta_tags = define_meta_tags(hostname, assets_url_path)
+
+    schema_and_hostname = f'{server.config["PREFERRED_URL_SCHEME"]}://{server.config["APP_HOSTNAME"]}'
+    meta_tags = define_meta_tags(schema_and_hostname, assets_url_path)
 
     print('Creating new Dash instance...')
     app = dash.Dash(__name__,
@@ -416,7 +373,7 @@ def create_dash_app(server):
                     external_stylesheets = external_stylesheets,
                     url_base_pathname = wikichron_base_pathname,
                     assets_folder = assets_folder)
-    app.title = 'WikiChron - Networks'
+    app.title = 'WikiChron'
     app.config['suppress_callback_exceptions'] = True
 
     # uncoment for offline serving of css:
@@ -433,6 +390,18 @@ def create_dash_app(server):
     return app
 
 
+def _init_global_vars():
+    global available_wikis;
+    global available_wikis_dict;
+    global available_metrics;
+    global available_metrics_dict;
+
+    available_metrics = lib.get_available_metrics()
+    available_metrics_dict = lib.metrics_dict
+    available_wikis = get_available_wikis(data_dir) #TODO data_controller.get_available_wikis()
+    available_wikis_dict = {wiki['url']: wiki for wiki in available_wikis}
+
+
 def _init_app_callbacks(app):
     global side_bar
     import side_bar
@@ -447,7 +416,7 @@ def _init_app_callbacks(app):
 
 def set_up_app(app):
     # init global vars needed for building UI app components
-    #~ _init_global_vars()
+    _init_global_vars()
 
     # bind callbacks
     print('Binding callbacks...')
@@ -455,8 +424,9 @@ def set_up_app(app):
 
     # set app layout
     print('Setting up layout...')
+    #~ has_side_bar = app.server.config['DASH_STANDALONE'] #TODO
     app.layout = html.Div([
-        set_layout(),
+        set_layout(), #TODO set_layout(has_side_bar),
         load_external_dash_libs_in_layout()
     ])
     app.layout.children += set_external_imports()

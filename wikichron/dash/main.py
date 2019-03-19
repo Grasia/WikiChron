@@ -26,6 +26,7 @@ import pandas as pd
 from dash.dependencies import Input, Output, State
 import grasia_dash_components as gdc
 import sd_material_ui
+from flask import current_app
 
 # Local imports:
 import lib.interface as lib
@@ -139,26 +140,48 @@ def generate_graphs(data, metrics, wikis, relative_time):
 
 
 def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
-                            query_string, url_host):
+                            query_string):
+    """
+    It generates the main content
+    Parameters:
+        -wikis_arg: wikis to use
+        -metrics_arg: metrics to apply to those wikis
+        -relative_time_arg: Use relative or absolute time axis?
+        -query_string: string for the download button
+
+    Return: An HTML object with the main content
+    """
+
+    # Load app config
+    config = current_app.config
+    # Contructs the assets_url_path for image sources:
+    assets_url_path = os.path.join(config['DASH_BASE_PATHNAME'], 'assets')
+
 
     def main_header():
-        href_download_button = '/download/{}'.format(query_string)
+        """
+        Generates the main header
+
+        Return: An HTML object with the header content
+        """
+        href_download_button = f'{config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
         return (html.Div(id='header',
                 className='container',
-                style={'display': 'flex', 'align-items': 'center', 'justify-content': 'space-between'},
+                style={'display': 'flex', 'align-items': 'center', \
+                        'justify-content': 'space-between'},
                 children=[
                     html.Span(
-                        html.Img(src='/assets/logo_wikichron.svg'),
+                        html.Img(src='{}/logo_wikichron.svg'.format(assets_url_path)),
                         id='tool-title'),
                     html.Div([
                         html.A(
-                            html.Img(src='/assets/share.svg'),
+                            html.Img(src='{}/share.svg'.format(assets_url_path)),
                             id='share-button',
                             className='icon',
                             title='Share current selection'
                         ),
                         html.A(
-                            html.Img(src='/assets/cloud_download.svg'),
+                            html.Img(src='{}/cloud_download.svg'.format(assets_url_path)),
                             href=href_download_button,
                             id='download-button',
                             target='_blank',
@@ -166,14 +189,14 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
                             title='Download data'
                         ),
                         html.A(
-                            html.Img(src='/assets/documentation.svg'),
+                            html.Img(src='{}/documentation.svg'.format(assets_url_path)),
                             href='https://github.com/Grasia/WikiChron/wiki/',
                             target='_blank',
                             className='icon',
                             title='Documentation'
                         ),
                         html.A(
-                            html.Img(src='/assets/ico-github.svg'),
+                            html.Img(src='{}/ico-github.svg'.format(assets_url_path)),
                             href='https://github.com/Grasia/WikiChron',
                             target='_blank',
                             className='icon',
@@ -215,7 +238,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
                         className='share-modal-paragraph-info-cn'
                       )
                     ]),
-                    gdc.Import(src='js/main.share_modal.js')
+                    gdc.Import(src='/js/main.share_modal.js')
                     ],
                     id='share-dialog-inner-div'
                 ),
@@ -342,6 +365,9 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
     metrics_code = [metric.code for metric in metrics]
     args_selection = json.dumps({"wikis": wikis, "metrics": metrics_code, "relative_time": relative_time})
 
+    share_url_path = f'{config["PREFERRED_URL_SCHEME"]}://{config["APP_HOSTNAME"]}{config["DASH_BASE_PATHNAME"]}{query_string}'
+    download_url_path = f'{config["PREFERRED_URL_SCHEME"]}://{config["APP_HOSTNAME"]}{config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
+
     return html.Div(id='main',
         className='control-text',
         style={'width': '100%'},
@@ -365,8 +391,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
 
             html.Div(id='graphs'),
 
-            share_modal('{}/app/{}'.format(url_host, query_string),
-                        '{}/download/{}'.format(url_host, query_string)),
+            share_modal(share_url_path, download_url_path),
 
             html.Div(id='initial-selection', style={'display': 'none'}, children=args_selection),
             html.Div(id='signal-data', style={'display': 'none'}),
