@@ -20,7 +20,7 @@ import json
 import os
 import re
 
-from query_bot_users import get_bots_ids
+from query_bot_users import get_bots
 from get_wikia_images_base64 import get_wikia_wordmark_file
 
 if 'WIKICHRON_DATA_DIR' in os.environ:
@@ -134,7 +134,7 @@ def main():
 
         url = 'http://' + wiki['url']
         #~ wiki.name = get_name(url)
-        wiki['botsids'] = get_bots_ids(url)
+        wiki['bots'] = get_bots(url)
 
         result_stats = get_stats(url)
         wiki.update(result_stats)
