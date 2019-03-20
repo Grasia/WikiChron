@@ -20,6 +20,5 @@ def get_available_networks():
     return _available_networks
 
 
-def factory_network(selected_network_code):
-    return _factory_network(selected_network_code)
-
+def factory_network(selected_network_code, wiki):
+    return _factory_network(selected_network_code, wiki)

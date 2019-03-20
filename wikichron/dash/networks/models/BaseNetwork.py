@@ -18,11 +18,13 @@ class BaseNetwork(metaclass=abc.ABCMeta):
     CODE = 'base_network'
 
 
-    def __init__(self, is_directed = False, graph = {},):
+    def __init__(self, is_directed = False, graph = {}, alias = ''):
         if not graph:
             self.graph = Graph(directed=is_directed)
         else:
             self.graph = graph
+            
+        self.alias = alias
 
 
     @abc.abstractmethod
@@ -345,9 +347,9 @@ class BaseNetwork(metaclass=abc.ABCMeta):
                 node['abs_birth_int'] = int(datetime.strptime(
                     str(row['timestamp']), "%Y-%m-%d %H:%M:%S").strftime('%s'))
                 
-                # this is a weak solution to avoid bots or users with no activity
+                # this is a weak solution to avoid users with no activity
                 if max_date < node['abs_birth_int']:
                     max_date = node['abs_birth_int']
             else:
-                node['abs_birth'] = 'NAN'
+                node['abs_birth'] = 'Not available'
                 node['abs_birth_int'] = max_date

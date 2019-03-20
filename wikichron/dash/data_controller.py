@@ -63,7 +63,7 @@ def set_cache(cache):
         time_end_loading_csvs = time.perf_counter() - time_start_loading_csvs
         print(' * [Timing] Loading csvs : {} seconds'.format(time_end_loading_csvs) )
 
-        network = networks.interface.factory_network(network_code)
+        network = networks.interface.factory_network(network_code, wiki['name'])
         print(' * [Info] Starting calculations....')
         time_start_calculations = time.perf_counter()
         network.build_network(df=df, lower_bound = lower_bound, upper_bound = upper_bound)
@@ -142,7 +142,15 @@ def clean_up_bot_activity(df, wiki):
 
 
 def get_bot_names(wiki: dict) -> set:
-    return set()
+    wikis_json_file = open(os.path.join(data_dir, 'wikis.json'))
+    wikis = json.load(wikis_json_file)
+
+    for i in range(len(wikis)):
+        if wikis[i]['name'] == wiki:
+            di_wiki = wikis[i] 
+            break
+
+    return {bot['name'] for bot in di_wiki['bots']}
 
 
 def get_time_bounds(wiki, lower, upper):

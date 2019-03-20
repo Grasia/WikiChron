@@ -12,6 +12,7 @@ import pandas as pd
 import re
 
 from .BaseNetwork import BaseNetwork
+from data_controller import get_bot_names
 
 class UserTalkNetwork(BaseNetwork):
     """
@@ -72,8 +73,8 @@ class UserTalkNetwork(BaseNetwork):
         'Talk Page Edits': 'talk_edits'
     }
 
-    def __init__(self, is_directed = True, graph = {}):
-        super().__init__(is_directed = is_directed, graph = graph)
+    def __init__(self, is_directed = True, graph = {}, alias = ''):
+        super().__init__(is_directed, graph, alias)
 
 
     def generate_from_pandas(self, df):
@@ -82,8 +83,23 @@ class UserTalkNetwork(BaseNetwork):
         count_v = 0
         count_e = 0
 
+        bots_name = get_bot_names(self.alias)
         dff = self.remove_non_user_talk_data(df)
+
         for _, r in dff.iterrows():
+            ################ Filter ################
+            # remove "User Page:"
+            page_t = re.sub('^.+:', '', r['page_title'])
+            # remove everyhing after slash
+            page_t = re.sub('[\/].*', '', page_t)
+            # filter anonymous user talk page for ipv4 or ipv6 (i.e it contains "." or ":")
+            if re.search('\.|\:', page_t):
+                continue
+            # filter bots pages
+            if page_t in bots_name:
+                continue
+            ########################################
+
             # Nodes
             if not r['contributor_name'] in mapper_v:
                 self.graph.add_vertex(count_v)
@@ -93,12 +109,6 @@ class UserTalkNetwork(BaseNetwork):
                 self.graph.vs[count_v]['num_edits'] = 0
                 count_v += 1
 
-            page_t = re.sub('^.+:', '', r['page_title'])
-            # remove everyhing after slash
-            page_t = re.sub('[\/].*', '', page_t)
-            # filter anonymous user talk page for ipv4 or ipv6 (i.e it contains "." or ":")
-            if re.search('\.|\:', page_t):
-                continue # We skip anonymous
 
             if page_t == r['contributor_name']:
                 self.graph.vs[mapper_v[page_t]]['num_edits'] += 1

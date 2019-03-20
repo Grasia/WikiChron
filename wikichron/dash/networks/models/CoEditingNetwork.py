@@ -10,7 +10,7 @@ import pandas as pd
 from datetime import datetime
 
 from .BaseNetwork import BaseNetwork
-
+from data_controller import get_bot_names
 class CoEditingNetwork(BaseNetwork):
     """
     This network is based on the editors cooperation, this means, the nodes
@@ -67,8 +67,8 @@ class CoEditingNetwork(BaseNetwork):
     }
 
 
-    def __init__(self, is_directed = False, graph = {}):
-        super().__init__(is_directed = is_directed, graph = graph)
+    def __init__(self, is_directed = False, graph = {}, alias = ''):
+        super().__init__(is_directed, graph, alias)
 
 
     def generate_from_pandas(self, df):
@@ -76,10 +76,12 @@ class CoEditingNetwork(BaseNetwork):
         mapper_v = {}
         mapper_e = {}
         count = 0
-
+        bots_name = get_bot_names(self.alias)
         dff = self.remove_non_article_data(df)
 
         for _, r in dff.iterrows():
+            if r['contributor_name'] in bots_name:
+                print(r['contributor_name'])
             # Nodes
             if not int(r['contributor_id']) in mapper_v:
                 self.graph.add_vertex(count)

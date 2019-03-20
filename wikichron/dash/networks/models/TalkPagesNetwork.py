@@ -66,8 +66,8 @@ class TalkPagesNetwork(BaseNetwork):
     }
 
 
-    def __init__(self, is_directed = False, graph = {}):
-        super().__init__(is_directed = is_directed, graph = graph)
+    def __init__(self, is_directed = False, graph = {}, alias = ''):
+        super().__init__(is_directed, graph, alias)
 
     
     def generate_from_pandas(self, df):

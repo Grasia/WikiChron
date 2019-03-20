@@ -20,13 +20,13 @@ def create_available_networks():
     return networks
 
 
-def factory_network(network_code):
+def factory_network(network_code, alias):
     if network_code == CoEditingNetwork.CODE:
-        return CoEditingNetwork()
+        return CoEditingNetwork(alias=alias)
     elif network_code == TalkPagesNetwork.CODE:
-        return TalkPagesNetwork()
+        return TalkPagesNetwork(alias=alias)
     elif network_code == UserTalkNetwork.CODE:
-        return UserTalkNetwork()
+        return UserTalkNetwork(alias=alias)
     else:
         raise Exception("Something went bad. Missing network type selection.")
 
