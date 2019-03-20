@@ -31,7 +31,7 @@ else:
 input_wikis_fn = os.path.join(data_dir, 'wikis.csv')
 
 
-def get_wikia_wordmark_api(domain):
+def get_wikia_wordmark_api(domain): # doesn't work properly :(
     wikia_api_endpoint = 'http://www.wikia.com/api/v1/Wikis/ByString?expand=1&limit=25&batch=1&includeDomain=true&string='
 
     res = requests.get(wikia_api_endpoint + domain)
@@ -68,7 +68,11 @@ def get_wikia_wordmark_file(domain):
 
         # Process HTML with bs4 to find img src="" value
         html = BeautifulSoup(res.text,"lxml")
-        img_url = html.select_one('#file img').attrs['data-src']
+        img = html.select_one('#file img')
+        if not img:
+            return None
+
+        img_url = img.attrs['data-src']
 
         img_res = requests.get(img_url, stream=True)
         status_code = img_res.status_code

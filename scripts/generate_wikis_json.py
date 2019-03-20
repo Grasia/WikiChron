@@ -52,19 +52,23 @@ def get_stats(base_url):
       print (req.status_code)
       return False
 
-   # Process HTML with bs4
-   html = BeautifulSoup(req.text,"lxml")
-   name = html.select_one('div.wds-community-header__sitename a').text
+   try:
+      # Process HTML with bs4
+      html = BeautifulSoup(req.text,"lxml")
+      name = html.select_one('div.wds-community-header__sitename a').text
 
-   result = {}
-   result['name'] = name
-   for stat in stats:
-      row = html.select_one(row_selector+stat+" td.mw-statistics-numbers")
-      text = row.text.replace(',','')
-      text = text.replace('.','')
-      text = text.replace('\xa0', '')
-      value = int(text)
-      result[stat] = value
+      result = {}
+      result['name'] = name
+      for stat in stats:
+         row = html.select_one(row_selector+stat+" td.mw-statistics-numbers")
+         text = row.text.replace(',','')
+         text = text.replace('.','')
+         text = text.replace('\xa0', '')
+         value = int(text)
+         result[stat] = value
+   except AttributeError:
+      print('One stat could not be retrieved.')
+      return False
 
    return result
 
@@ -133,11 +137,15 @@ def main():
         wiki['data'] = row['csvfile']
 
         url = 'http://' + wiki['url']
+        result_stats = get_stats(url)
+        if result_stats:
+            wiki.update(result_stats)
+        else:
+            raise Exception(f'Wiki {wiki["url"]} is not reacheable. Possibly moved or deleted. Check, whether its url is correct.')
+
         #~ wiki.name = get_name(url)
         wiki['bots'] = get_bots(url)
 
-        result_stats = get_stats(url)
-        wiki.update(result_stats)
 
         users_no = get_nonbot_users_no(url)
         wiki['users'] = users_no
@@ -146,6 +154,8 @@ def main():
             b64 = get_wikia_wordmark_file(wiki['url'])
             if b64:
                 wiki['imageSrc'] = b64
+            else:
+                print(f'\n-->Failed to find image for wiki: {wiki["url"]}<--\n')
 
         print(wiki)
 
@@ -161,17 +171,24 @@ def main():
     try:
         output_wikis = open(output_wikis_fn)
         wikis_json = json.load(output_wikis)
-        print(wikis_json)
+        current_wikis_positions = { wiki['url']:pos for (pos, wiki) in enumerate(wikis_json) }
+        print(f'\nWe already had these wikis: {list(current_wikis_positions.keys())}')
         output_wikis.close()
-    except:
+    except FileNotFoundError:
+        current_wikis_positions = {}
         wikis_json = []
 
     for wiki in wikis:
-        if wiki not in wikis_json:
+        if wiki['url'] in current_wikis_positions:
+            position = current_wikis_positions[wiki['url']]
+            wikis_json[position].update(wiki)
+        else:
             wikis_json.append(wiki)
     output_wikis = open(output_wikis_fn, 'w')
     json.dump(wikis_json, output_wikis, indent='\t')
     output_wikis.close()
+
+    print(f'\nWikis updated: {[wiki["url"] for wiki in wikis]}')
 
     return 0
 
