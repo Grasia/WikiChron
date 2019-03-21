@@ -14,10 +14,14 @@ import numpy as np
 import time
 import os
 
-from .metrics import available_metrics as _available_metrics
-from .metrics import metrics_dict_by_code as _metrics_dict_by_code
-from .metrics import metrics_by_category as _metrics_by_category
 from .metrics import stats
+from .metrics import metrics_generator
+
+print('Generating available metrics...')
+_available_metrics = metrics_generator.generate_metrics()
+_metrics_dict_by_code = metrics_generator.generate_dict_metrics(_available_metrics)
+_metrics_by_category = metrics_generator.generate_dict_metrics_by_category(_available_metrics)
+
 
 def get_available_metrics():
     """ Return a list of the currently available metrics. """
