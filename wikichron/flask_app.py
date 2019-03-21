@@ -27,19 +27,27 @@ server_bp = Blueprint('main', __name__)
 @server_bp.route('/selection')
 def redirect_index_to_app():
 
+    def transform_metric_obj_in_metric_frontend(metric):
+        return {'name': metric.text,
+                'code': metric.code,
+                'category': metric.category}
+
     config = current_app.config;
 
     wikis = data_controller.get_available_wikis()
 
-    metrics_backend_objects = interface.get_available_metrics()
-    metrics_frontend = []
-    for metric in metrics_backend_objects:
-        metrics_frontend.append({ 'name': metric.text, 'code': metric.code})
+    metrics_by_category_backend = interface.get_available_metrics_by_category()
+    # transform metric objects to a dict with the info we need for metrics:
+    categories_frontend = {}
+    for (cat_obj, cat_metrics) in metrics_by_category_backend.items():
+        cat_name = cat_obj.value
+        categories_frontend[cat_name] = [transform_metric_obj_in_metric_frontend(metric) for metric in cat_metrics]
 
+    print(categories_frontend)
     return flask.render_template("selection/selection.html",
                                 development = config["DEBUG"],
                                 wikis = wikis,
-                                metrics = metrics_frontend)
+                                categories = categories_frontend)
 
 
 @server_bp.route('/welcome.html')
