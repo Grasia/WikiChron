@@ -39,9 +39,9 @@ function unselect_badge(target) {
 
 
 // aux function
-function generate_badge({code, name}) {
+function generate_badge({code, name, type}) {
     return `
-        <div id="current-selected-${code}" class="badge badge-secondary p-2 current-selected" data-code="${code}">
+        <div id="badge-${type}-${code}" class="badge badge-secondary p-2 current-selected" data-code="${code}">
             <span class="mr-2 align-middle">${name}</span>
             <button type="button" class="close close-wiki-badge align-middle" aria-label="Close" onclick="unselect_badge(this)">
                 <span aria-hidden="true">&times;</span>
@@ -51,54 +51,42 @@ function generate_badge({code, name}) {
 }
 
 
-// onclick for metrics checkboxes inputs
-$('.metric-checkbox').click(function(event) {
-    console.log(event);
-    var metricCode = event.target.value;
-    var metricName = event.target.dataset.metricName;
-    var checked = $(this).is(':checked')
+function check_input({input, checked, type}) {
+    var code = input.value;
+    var name = input.dataset.name;
+    var targetBadge;
+    var newBadge;
+    var badgesContainer;
+    var is_wiki = type === 'wiki';
 
     if (checked) {
-        var badgeSelectedMetric = generate_badge({"code": metricCode, "name": metricName});
-        var badgesContainer = $('#metrics-badges-container');
-        badgesContainer.append(badgeSelectedMetric);
+        newBadge = generate_badge({"code": code, "name": name, "type": type});
+
+        if (is_wiki)
+            badgesContainer = $('#wikis-badges-container');
+        else
+            badgesContainer = $('#metrics-badges-container');
+        badgesContainer.append(newBadge);
     } else {
-        var target_badge = $(`#current-selected-${metricCode}`)[0];
-        target_badge.remove();
+        targetBadge = document.getElementById(`badge-${type}-${code}`);
+        targetBadge.remove();
     }
 
     check_enable_action_button();
+}
 
+
+// onclick for metrics checkboxes inputs
+$('.metric-input').click(function(event) {
+    var checked = $(this).is(':checked');
+    check_input({"input": event.target, "checked": checked, "type": 'metric'});
 });
 
 
-// onclick for wikis checkboxes input
-$('.wiki-checkbox').on( "click", function({target}) { //TOMERGE with previous one
-    var wikiCode = target.value;
-    var badgesContainer = $('#wikis-badges-container');
-    var sameWiki = false;
-
-    if (badgesContainer[0].children.length) { // If there is already a selection
-        var currentBadge = badgesContainer[0].children[0];
-        var currentWikiCode = currentBadge.dataset.code;
-        sameWiki = currentWikiCode === target.value;
-        if (sameWiki) { // if same as previous selected, clean current selection
-           badgesContainer.html('');
-        } else { // if different, unselect previous wiki
-            $(`input[id="checkbox-${currentWikiCode}"]`)[0].checked = false;
-        }
-    }
-
-    if (!sameWiki) {
-        // Add badge of last selected wiki
-        var wikiName = target.dataset.wikiName;
-        var badgeSelectedWiki = generate_badge({"code": wikiCode, "name": wikiName});
-
-        badgesContainer.html(badgeSelectedWiki);
-    }
-
-    check_enable_action_button();
-
+// onclick for wikis checkboxes inputs
+$('.wiki-input').click(function(event) {
+    var checked = $(this).is(':checked');
+    check_input({"input": event.target, "checked": checked, "type": 'wiki'});
 });
 
 
