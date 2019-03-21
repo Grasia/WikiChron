@@ -2,16 +2,18 @@
 
 
 /* List.js */
-var options = {
+function init_list_js() {
+    var options = {
     valueNames: [ 'wiki-name', 'wiki-url' ]
-};
+    };
 
-var wikisList = new List('cards-container', options);
+    var wikisList = new List('cards-container', options);
 
-$('#search-wiki-input').on('keyup', function() {
-    var searchString = $(this).val();
-    wikisList.search(searchString);
-});
+    $('#search-wiki-input').on('keyup', function() {
+        let searchString = $(this).val();
+        wikisList.search(searchString);
+    });
+}
 
 
 /* enable action button */
@@ -159,5 +161,6 @@ $('#selection-footer-button').on ("click", function() {
 
 // functions to run when DOM is ready
 $(function()  {
+    init_list_js();
     init_current_selection();
 });
