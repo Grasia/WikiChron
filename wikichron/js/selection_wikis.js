@@ -41,7 +41,7 @@ function unselect_badge(target) {
 // aux function
 function generate_badge({code, name, type}) {
     return `
-        <div id="badge-${type}-${code}" class="badge badge-secondary p-2 current-selected" data-code="${code}">
+        <div id="badge-${type}-${code}" class="badge badge-secondary p-2 current-selected-${type}" data-code="${code}">
             <span class="mr-2 align-middle">${name}</span>
             <button type="button" class="close close-wiki-badge align-middle" aria-label="Close" onclick="unselect_badge(this)">
                 <span aria-hidden="true">&times;</span>
@@ -50,7 +50,7 @@ function generate_badge({code, name, type}) {
     `;
 }
 
-
+// create badge or remove it
 function check_input({input, checked, type}) {
     var code = input.value;
     var name = input.dataset.name;
@@ -130,17 +130,28 @@ init_current_selection()
 
 
 /* press action button */
-$('#selection-footer-button').on ("click", function() { //TOFIX
-    var selectedWiki = $('.current-selected-wiki')[0];
-    var selectedNetwork = $('.current-selected-metric')[0];
+$('#selection-footer-button').on ("click", function() {
+    var selectedWikis = $('.current-selected-wiki');
+    var selectedMetrics = $('.current-selected-metric');
     var target_app_url;
+    var selection = '?';
 
-    if (!selectedWiki || !selectedNetwork) { // In case user tries to bypass
+    if (!selectedWikis || !selectedMetrics) { // In case user tries to bypass
                                             // the selection of the form inputs
-        return
+        return;
     }
 
-    target_app_url = `/app/?wikis=${selectedWiki.dataset.code}&metrics=${selectedNetwork.dataset.code}`
+    for (let wiki of selectedWikis) {
+        selection += `wikis=${wiki.dataset.code}&`
+    }
+
+    for (let metric of selectedMetrics) {
+        selection += `metrics=${metric.dataset.code}&`
+    }
+
+    selection = selection.slice(0, -1);  // remove trailing '&'
+
+    target_app_url = `/app/${selection}`
 
     window.location.href = encodeURI(target_app_url)
 
