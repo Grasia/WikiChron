@@ -3,9 +3,9 @@
     <hr class="ml-2 line"/>
 
     {% for metric in metrics %}
-        <div class="custom-control custom-radio m-4">
-            <input class="custom-control-input metrics-checkboxes" type="radio" id="radio-{{metric['code']}}" value="{{metric['code']}}" data-metric-name="{{metric.name}}" name="metric">
-            <label class="custom-control-label metric-name" for="radio-{{metric['code']}}">{{metric['name']}}</label>
+        <div class="custom-control custom-checkbox m-4">
+            <input class="custom-control-input metric-checkbox" type="checkbox" id="checkbox-{{metric['code']}}" value="{{metric['code']}}" data-metric-name="{{metric.name}}" name="metric">
+            <label class="custom-control-label metric-name" for="checkbox-{{metric['code']}}">{{metric['name']}}</label>
         </div>
     {% endfor %}
 </div>

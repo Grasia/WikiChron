@@ -16,9 +16,9 @@ $('#search-wiki-input').on('keyup', function() {
 
 /* enable action button */
 function check_enable_action_button() {
-    var selectedWikisNo = $('#wiki-badges-container')[0].children.length
-    var selectedNetworksNo = $('#metrics-badges-container')[0].children.length
-    if (selectedWikisNo > 0 && selectedNetworksNo > 0) {
+    var selectedWikisNo = $('#wikis-badges-container')[0].children.length
+    var selectedMetricsNo = $('#metrics-badges-container')[0].children.length
+    if (selectedWikisNo > 0 && selectedMetricsNo > 0) {
         $('#selection-footer-button')[0].disabled = false;
     } else {
         $('#selection-footer-button')[0].disabled = true;
@@ -28,22 +28,22 @@ function check_enable_action_button() {
 
 /* checkboxes logic */
 
-// to bind to onclick of remove_badge
-function remove_badge(target) {
+// to bind to onclick of unselect_badge
+function unselect_badge(target) {
     var target_badge = target.parentNode;
-    var wikiCode = target_badge.dataset.code;
-    $(`input[id="checkbox-${wikiCode}"]`)[0].checked = false;
+    var code = target_badge.dataset.code;
+    $(`input[id="checkbox-${code}"]`)[0].checked = false;
     target_badge.remove();
     check_enable_action_button();
 }
 
 
 // aux function
-function generate_wiki_badge(wikiCode, wikiName) {
+function generate_badge({code, name}) {
     return `
-        <div id="current-selected-${wikiCode}" class="badge badge-secondary p-2 current-selected-wiki" data-code="${wikiCode}">
-            <span class="mr-2 align-middle">${wikiName}</span>
-            <button type="button" class="close close-wiki-badge align-middle" aria-label="Close" onclick="remove_badge(this)">
+        <div id="current-selected-${code}" class="badge badge-secondary p-2 current-selected" data-code="${code}">
+            <span class="mr-2 align-middle">${name}</span>
+            <button type="button" class="close close-wiki-badge align-middle" aria-label="Close" onclick="unselect_badge(this)">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -51,23 +51,21 @@ function generate_wiki_badge(wikiCode, wikiName) {
 }
 
 
-// aux function
-function generate_network_badge(networkCode, networkName) {
-    return `
-        <span id="" class="badge badge-secondary p-2 align-middle current-selected-metric" data-code="${networkCode}">
-            ${networkName}
-        </span>
-    `;
-}
-
-
 // onclick for metrics checkboxes inputs
-$('.metrics-checkboxes').on( "click", function({target}) {
-    var networkCode = target.value;
-    var networkName = target.dataset.metricName;
-    var badgeSelectedNetwork = generate_network_badge(networkCode, networkName);
-    var badgesContainer = $('#metrics-badges-container');
-    badgesContainer.html(badgeSelectedNetwork);
+$('.metric-checkbox').click(function(event) {
+    console.log(event);
+    var metricCode = event.target.value;
+    var metricName = event.target.dataset.metricName;
+    var checked = $(this).is(':checked')
+
+    if (checked) {
+        var badgeSelectedMetric = generate_badge({"code": metricCode, "name": metricName});
+        var badgesContainer = $('#metrics-badges-container');
+        badgesContainer.append(badgeSelectedMetric);
+    } else {
+        var target_badge = $(`#current-selected-${metricCode}`)[0];
+        target_badge.remove();
+    }
 
     check_enable_action_button();
 
@@ -75,9 +73,9 @@ $('.metrics-checkboxes').on( "click", function({target}) {
 
 
 // onclick for wikis checkboxes input
-$('.wiki-checkbox').on( "click", function({target}) {
+$('.wiki-checkbox').on( "click", function({target}) { //TOMERGE with previous one
     var wikiCode = target.value;
-    var badgesContainer = $('#wiki-badges-container');
+    var badgesContainer = $('#wikis-badges-container');
     var sameWiki = false;
 
     if (badgesContainer[0].children.length) { // If there is already a selection
@@ -94,7 +92,7 @@ $('.wiki-checkbox').on( "click", function({target}) {
     if (!sameWiki) {
         // Add badge of last selected wiki
         var wikiName = target.dataset.wikiName;
-        var badgeSelectedWiki = generate_wiki_badge(wikiCode, wikiName);
+        var badgeSelectedWiki = generate_badge({"code": wikiCode, "name": wikiName});
 
         badgesContainer.html(badgeSelectedWiki);
     }
@@ -112,7 +110,7 @@ function init_current_selection() {
                             return element.checked
                         })
     if (checkedBoxes.length > 0) {
-        var badgesContainer = $('#wiki-badges-container');
+        var badgesContainer = $('#wikis-badges-container');
         var wikiCode = checkedBoxes[0].value;
         var wikiName = checkedBoxes[0].dataset.wikiName;
         var badgeSelectedWiki = generate_wiki_badge(wikiCode, wikiName);
@@ -144,7 +142,7 @@ init_current_selection()
 
 
 /* press action button */
-$('#selection-footer-button').on ("click", function() {
+$('#selection-footer-button').on ("click", function() { //TOFIX
     var selectedWiki = $('.current-selected-wiki')[0];
     var selectedNetwork = $('.current-selected-metric')[0];
     var target_app_url;
