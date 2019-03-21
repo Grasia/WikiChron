@@ -206,9 +206,18 @@ section.selection-content p {
 
 /* Main - Metrics */
 
+/* Metrics - info icon */
 .aside-checklist-option {
     padding: 4px 4px 4px 0;
     margin-left': 'auto';
+}
+
+.checklist-info {
+    opacity: 0.2;
+}
+
+.checklist-info:hover {
+    opacity: 1;
 }
 
 /* Footer */

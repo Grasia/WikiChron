@@ -3,9 +3,9 @@
 
     <hr class="ml-2 line"/>
 
-    <div id="cards-container" class="w-100 mx-auto d-flex">
+    <div id="metrics-cards-container" class="w-100 mx-auto d-flex">
 
-        <div id="cards-list" class="d-flex flex-row flex-wrap justify-content-center list">
+        <div id="metrics-cards-list" class="d-flex flex-row flex-wrap justify-content-center list">
 
             {% for (cat_name, cat_metrics) in categories.items() %}
 
@@ -14,7 +14,7 @@
                         <div class="card-header">
                           <h5 class="mb-0">
                             <button class="btn btn-link" data-toggle="collapse" data-target="#{{cat_name}}" aria-expanded="true" aria-controls="{{cat_name}}">
-                                {{cat_name}}
+                                <strong>{{cat_name}}</strong>
                             </button>
                           </h5>
                         </div>
@@ -22,9 +22,14 @@
                         <div id="{{cat_name}}" class="collapse" data-parent="{{cat_name}}-parent">
                             <div class="card-body">
                                 {% for metric in cat_metrics %}
-                                    <div class="custom-control custom-checkbox m-4">
-                                        <input class="custom-control-input metric-input" type="checkbox" id="checkbox-{{metric['code']}}" value="{{metric['code']}}" data-name="{{metric.name}}" name="metric">
-                                        <label class="custom-control-label metric-name" for="checkbox-{{metric['code']}}">{{metric['name']}}</label>
+                                    <div class="metric-item row">
+                                        <div class="custom-control custom-checkbox m-4 col-6">
+                                            <input class="custom-control-input metric-input" type="checkbox" id="checkbox-{{metric['code']}}" value="{{metric['code']}}" data-name="{{metric.name}}" name="metric" />
+                                            <label class="custom-control-label metric-name" for="checkbox-{{metric['code']}}">{{metric['name']}}</label>
+                                        </div>
+                                        <div class="aside-checklist-option col" title="{{metric.descp}}">
+                                            <span class="checklist-info"><i class="fa fa-info-circle"></i></span>
+                                        </div>
                                     </div>
                                 {% endfor %}
                             </div>

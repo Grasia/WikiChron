@@ -30,6 +30,7 @@ def redirect_index_to_app():
     def transform_metric_obj_in_metric_frontend(metric):
         return {'name': metric.text,
                 'code': metric.code,
+                'descp': metric.descp,
                 'category': metric.category}
 
     config = current_app.config;
