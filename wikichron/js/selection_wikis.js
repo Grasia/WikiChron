@@ -90,43 +90,42 @@ $('.wiki-input').click(function(event) {
 });
 
 
-function init_current_selection() {
-
-    /* init wikis current selection */
-    var checkedBoxes = $('.wiki-checkbox').
-                        filter( function(index, element){
-                            return element.checked
-                        })
-    if (checkedBoxes.length > 0) {
-        var badgesContainer = $('#wikis-badges-container');
-        var wikiCode = checkedBoxes[0].value;
-        var wikiName = checkedBoxes[0].dataset.wikiName;
-        var badgeSelectedWiki = generate_wiki_badge(wikiCode, wikiName);
-        badgesContainer.html(badgeSelectedWiki);
-
-        //~ $('#selection-footer-button')[0].disabled = false;
-    } else {
-        //~ $('#selection-footer-button')[0].disabled = true;
+function create_badges_in_container(inputs, container, type) {
+    for (let input of inputs) {
+        let code = input.value;
+        let name = input.dataset.name;
+        var newBadge = generate_badge({code, name, type});
+        container.append(newBadge);
     }
 
-    /* init networks current selection */
-    var radioButtons = $('.networks-radiobutton').
-                        filter( function(index, element){
-                            return element.checked
-                        })
-    if (radioButtons.length > 0) {
-        badgesContainer = $('#network-badges-container');
-        var networkCode = radioButtons[0].value;
-        var networkName = radioButtons[0].dataset.networkName;
-        var badgeSelectedNetwork = generate_network_badge(networkCode, networkName);
-        badgesContainer.html(badgeSelectedNetwork);
-    }
-
-    check_enable_action_button();
 }
 
 
-init_current_selection()
+function init_current_selection() {
+    var checkedBoxes;
+    var badgesContainer;
+
+    /* init wikis current selection */
+    checkedBoxes = $('.wiki-input').
+                        filter( function(index, element){
+                            return element.checked
+                        })
+    badgesContainer = $('#wikis-badges-container');
+    create_badges_in_container(checkedBoxes, badgesContainer, 'wiki');
+
+
+    /* init metrics current selection */
+    checkedBoxes = $('.metric-input').
+                        filter( function(index, element){
+                            return element.checked
+                        })
+
+    badgesContainer = $('#metrics-badges-container');
+    create_badges_in_container(checkedBoxes, badgesContainer, 'metric');
+
+    check_enable_action_button();
+
+}
 
 
 /* press action button */
@@ -155,4 +154,10 @@ $('#selection-footer-button').on ("click", function() {
 
     window.location.href = encodeURI(target_app_url)
 
+});
+
+
+// functions to run when DOM is ready
+$(function()  {
+    init_current_selection();
 });
