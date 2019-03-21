@@ -6,14 +6,13 @@
    Descp: This script generates a network per wiki csv. It get them from ../data
     and creates a bin|gml network in precooked_data/networks
 
-    Parameters: 
+    Parameters:
         -bin or nothing: to write a bin network
         -gml: to write a gml network
 
    Created on: 17-dic-2018
 
    Copyright 2018 Youssef El Faqir El Rhazoui <f.r.youssef@hotmail.com>
-   Copyright 2018 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 
    Distributed under the terms of the AGPLv3 license.
 """
@@ -65,7 +64,7 @@ def main(*args):
         df = lib.get_dataframe_from_csv(os.path.join(data_dir, wiki['data']))
         lib.prepare_data(df)
         df = lib.clean_up_bot_activity(df, wiki)
- 
+
         net = CoEditingNetwork()
         print(f"Generating network data for {wiki['name']}")
         time_start_generating_network = time.perf_counter()

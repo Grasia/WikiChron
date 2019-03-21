@@ -7,8 +7,7 @@
 
    Created on: 14-nov-2017
 
-   Copyright 2017-2019 Youssef 'FRYoussef' El Faqir El Rhazoui <f.r.youssef@hotmail.com>
-   Copyright 2017-2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
+   Copyright 2018-2019 Youssef 'FRYoussef' El Faqir El Rhazoui <f.r.youssef@hotmail.com>
 """
 
 from .models import available_networks as _available_networks

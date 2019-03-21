@@ -8,7 +8,7 @@ WikiChron code.
 
    Created on: 15-feb-2019
 
-   Copyright 2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
+   Copyright 2018-2019 Youssef 'FRYoussef' El Faqir El Rhazoui <f.r.youssef@hotmail.com>
 """
 
 # Built-in imports

@@ -7,7 +7,7 @@
 
    Created on: 04-mar-2019
 
-   Copyright 2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
+   Copyright 2018-2019 Youssef 'FRYoussef' El Faqir El Rhazoui <f.r.youssef@hotmail.com>
 """
 
 strings = {
