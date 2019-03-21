@@ -159,6 +159,8 @@ section.selection-content p {
     margin-right: 0;
 }
 
+/* Main - Wikis */
+
 .card-title {
     color: #193250;
 }
@@ -200,6 +202,13 @@ section.selection-content p {
 
 .wiki-url {
     margin-bottom: 0 !important;
+}
+
+/* Main - Metrics */
+
+.aside-checklist-option {
+    padding: 4px 4px 4px 0;
+    margin-left': 'auto';
 }
 
 /* Footer */
