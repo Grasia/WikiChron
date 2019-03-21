@@ -57,7 +57,7 @@ def mediawiki_get_bots(base_url):
       res = r.json()
       print(res)
       for bot in res['query']['allusers']:
-         botid = int(bot['userid'])
+         botid = str(bot['userid'])
          botname = str(bot['name'])
          bots.append( {"id": botid, "name": botname} )
       continue_query = 'continue' in res
@@ -79,7 +79,7 @@ def wikia_get_bots(base_url, offset=0):
    res = r.json()
    bots = []
    for bot in res['users']:
-      botid = int(bot['userid'])
+      botid = str(bot['userid'])
       botname = str(bot['name'])
       bots.append( {"id": botid, "name": botname} )
    if 'query-continue' in res:

@@ -134,7 +134,7 @@ def get_dataframe_from_csv(csv):
 
 def clean_up_bot_activity(df, wiki):
     if 'bots' in wiki:
-        botsids = [id for bot in wiki['bots']]
+        botsids = [bot['id'] for bot in wiki['bots']]
         return remove_bots_activity(df, botsids)
     else:
         warn("Warning: Missing information of bots ids. Note that graphs can be polluted of non-human activity.")
@@ -147,7 +147,7 @@ def get_bot_names(wiki: dict) -> set:
 
     for i in range(len(wikis)):
         if wikis[i]['name'] == wiki:
-            di_wiki = wikis[i] 
+            di_wiki = wikis[i]
             break
 
     return {bot['name'] for bot in di_wiki['bots']}
