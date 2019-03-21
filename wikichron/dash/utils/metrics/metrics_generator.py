@@ -81,10 +81,14 @@ def generate_dict_metrics(list_of_metrics):
     return metrics
 
 
-def main():
-    print (generate_metrics())
-    return
+def generate_dict_metrics_by_category(list_of_metrics):
+    # group metrics in a dict w/ key: category, value: [metrics]
+    metrics_by_category = {}
+    for metric in list_of_metrics:
+        if metric.category not in metrics_by_category:
+            metrics_by_category[metric.category] = [metric]
+        else:
+            metrics_by_category[metric.category].append(metric)
 
-if __name__ == '__main__':
-    main()
+    return metrics_by_category
 

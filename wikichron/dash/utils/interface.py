@@ -15,12 +15,29 @@ import time
 import os
 
 from .metrics import available_metrics as _available_metrics
-from .metrics import metrics_dict
+from .metrics import metrics_dict_by_code as _metrics_dict_by_code
+from .metrics import metrics_by_category as _metrics_by_category
 from .metrics import stats
 
 def get_available_metrics():
     """ Return a list of the currently available metrics. """
     return _available_metrics
+
+
+def get_available_metrics_dict():
+    """
+Return a dictionary of the currently available metrics where the metric
+ codes are the keys and the values are the corresponding metric object.
+    """
+    return _metrics_dict_by_code
+
+
+def get_available_metrics_by_category():
+    """
+Return a dictionary where every key is a MetricCategory object and every value
+ is a list of all the available wikis which belong to that category
+    """
+    return _metrics_by_category
 
 
 def compute_metrics_on_dataframe(metrics, df):

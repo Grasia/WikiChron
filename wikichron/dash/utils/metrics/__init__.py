@@ -11,7 +11,9 @@
 """
 
 from .metrics_generator import generate_metrics, generate_dict_metrics
+from .metrics_generator import generate_dict_metrics_by_category
 
 print('Generating available metrics...')
 available_metrics = generate_metrics()
-metrics_dict = generate_dict_metrics(available_metrics)
+metrics_dict_by_code = generate_dict_metrics(available_metrics)
+metrics_by_category = generate_dict_metrics_by_category(available_metrics)

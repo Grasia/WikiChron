@@ -22,6 +22,7 @@ import dash_core_components as dcc
 import grasia_dash_components as gdc
 import dash_html_components as html
 from utils.metrics.metric import MetricCategory
+import utils.interface as interface
 
 # GLOBAL VARIABLES
 
@@ -191,13 +192,7 @@ def metrics_tab(metrics, selected_metrics):
                 )
 
 
-    # group metrics in a dict w/ key: category, value: [metrics]
-    metrics_by_category = {}
-    for metric in metrics:
-        if metric.category not in metrics_by_category:
-            metrics_by_category[metric.category] = [metric]
-        else:
-            metrics_by_category[metric.category].append(metric)
+    metrics_by_category = interface.get_available_metrics_by_category()
 
     # Generate accordions containing a checklist following the order
     #   defined by metric_categories_order list.

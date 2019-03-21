@@ -390,7 +390,7 @@ def _init_global_vars():
     global available_metrics_dict
 
     available_metrics = utils.get_available_metrics()
-    available_metrics_dict = utils.metrics_dict
+    available_metrics_dict = utils.get_available_metrics_dict()
     available_wikis = data_controller.get_available_wikis()
     available_wikis_dict = {wiki['url']: wiki for wiki in available_wikis}
 
