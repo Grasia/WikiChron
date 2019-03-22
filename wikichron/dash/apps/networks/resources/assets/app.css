@@ -1,0 +1,78 @@
+@import 'https://fonts.googleapis.com/css?family=Roboto';
+@import 'https://fonts.googleapis.com/css?family=Roboto+Mono';
+
+
+/* General */
+
+body {
+  margin: 0px;
+  font-family: 'Roboto', sans-serif;
+}
+
+p {
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+#tool-title {
+    margin-top: 22px;
+}
+
+input[type=checkbox] {
+  transform: scale(1.5);
+  margin-right: 12px;
+}
+
+input[type=radio] {
+  transform: scale(1.5);
+  margin-right: 12px;
+}
+
+.action-button {
+    border: none;
+    border-radius: 4px;
+    background-color: #49A5E6;
+    color: white;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    line-height: 28px;
+}
+
+.action-button:hover {
+    color: white;
+    background-color: #2DCCCD;
+}
+
+.action-button:disabled {
+    background-color: #D1D1D1;
+    cursor: default;
+    color: #9B9B9B;
+}
+
+.action-button-pressed {
+    border: none;
+    border-radius: 4px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    line-height: 28px;
+    background-color: lightblue;
+    color: black;
+}
+
+.action-button-pressed:disabled {
+    cursor: default;
+}
+
+/* Dash */
+
+._dash-undo-redo {
+    display: none;
+}
+
+#welcome-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 15%;
+}
