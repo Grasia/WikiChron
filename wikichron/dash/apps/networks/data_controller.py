@@ -21,7 +21,7 @@ from warnings import warn
 import json
 
 # Local imports:
-import networks.interface
+from .networks import interface
 
 # get csv data location (data/ by default)
 global data_dir;
@@ -63,7 +63,7 @@ def set_cache(cache):
         time_end_loading_csvs = time.perf_counter() - time_start_loading_csvs
         print(' * [Timing] Loading csvs : {} seconds'.format(time_end_loading_csvs) )
 
-        network = networks.interface.factory_network(network_code, wiki['name'])
+        network = interface.factory_network(network_code, wiki['name'])
         print(' * [Info] Starting calculations....')
         time_start_calculations = time.perf_counter()
         network.build_network(df=df, lower_bound = lower_bound, upper_bound = upper_bound)

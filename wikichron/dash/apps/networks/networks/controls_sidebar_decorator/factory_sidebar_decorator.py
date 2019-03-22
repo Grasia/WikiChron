@@ -8,7 +8,7 @@
    Copyright 2019 Youssef 'FRYoussef' El Faqir el Rhazoui <f.r.youssef@hotmail.com>
 """
 
-from networks.models.CoEditingNetwork import CoEditingNetwork
+from ..models.CoEditingNetwork import CoEditingNetwork
 from .CoEditingControlsSidebarDecorator import CoEditingControlsSidebarDecorator
 
 

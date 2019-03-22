@@ -32,12 +32,13 @@ from flask import current_app
 from urllib.parse import parse_qs, urlencode
 
 # Local imports:
-import data_controller
-import networks.models.networks_generator as net_factory
-from networks.CytoscapeStylesheet import CytoscapeStylesheet
-from networks.controls_sidebar_decorator.ControlsSidebar import ControlsSidebar
-from networks.controls_sidebar_decorator.factory_sidebar_decorator import factory_sidebar_decorator
-from networks.controls_sidebar_decorator.factory_sidebar_decorator import bind_controls_sidebar_callbacks
+from . import data_controller
+from .utils import get_mode_config
+from .networks.models import networks_generator as net_factory
+from .networks.CytoscapeStylesheet import CytoscapeStylesheet
+from .networks.controls_sidebar_decorator.ControlsSidebar import ControlsSidebar
+from .networks.controls_sidebar_decorator.factory_sidebar_decorator import factory_sidebar_decorator
+from .networks.controls_sidebar_decorator.factory_sidebar_decorator import bind_controls_sidebar_callbacks
 
 TIME_DIV = 60 * 60 * 24 * 30
 
@@ -77,9 +78,11 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     """
 
     # Load app config
-    config = current_app.config
+    server_config = current_app.config
+    mode_config = get_mode_config(current_app)
+
     # Contructs the assets_url_path for image sources:
-    assets_url_path = os.path.join(config['DASH_BASE_PATHNAME'], 'assets')
+    assets_url_path = os.path.join(mode_config['DASH_BASE_PATHNAME'], 'assets')
 
 
     def main_header():
@@ -88,7 +91,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
 
         Return: An HTML object with the header content
         """
-        href_download_button = f'{config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
+        href_download_button = f'{mode_config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
         return (html.Div(id='header',
                 className='container',
                 style={'display': 'flex', 'align-items': 'center', \
@@ -313,8 +316,8 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     sidebar_decorator = factory_sidebar_decorator('co_editing_network', controls_sidebar)
     sidebar_decorator.add_all_sections()
 
-    share_url_path = f'{config["PREFERRED_URL_SCHEME"]}://{config["APP_HOSTNAME"]}{config["DASH_BASE_PATHNAME"]}{query_string}'
-    download_url_path = f'{config["PREFERRED_URL_SCHEME"]}://{config["APP_HOSTNAME"]}{config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
+    share_url_path = f'{server_config["PREFERRED_URL_SCHEME"]}://{server_config["APP_HOSTNAME"]}{mode_config["DASH_BASE_PATHNAME"]}{query_string}'
+    download_url_path = f'{server_config["PREFERRED_URL_SCHEME"]}://{server_config["APP_HOSTNAME"]}{mode_config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
 
     return html.Div(
             id='main',

@@ -36,10 +36,10 @@ from urllib.parse import parse_qs
 from codecs import decode
 
 # Local imports:
-import networks.interface
-from version import __version__
-import cache
-import data_controller
+from .utils import get_mode_config
+from .networks import interface
+from . import cache
+from . import data_controller
 
 # production or development (DEBUG) flag:
 global debug;
@@ -68,6 +68,8 @@ selection_params = {'wikis', 'network', 'lower_bound', 'upper_bound'};
 global available_networks;
 global available_wikis;
 global available_wikis_dict;
+global side_bar
+global main
 
 
 ######### BEGIN CODE ###########################################################
@@ -238,9 +240,7 @@ def app_bind_callbacks(app):
             print('selection to write in query string: {}'.format(selection))
         return (json.dumps(selection))
 
-    # generate sidebar? #
-    has_side_bar = app.server.config['DASH_STANDALONE']
-    if has_side_bar:
+
         @app.callback(Output('side-bar-root', 'children'),
             [Input('url', 'pathname')],
             [State('side-bar-root', 'children'),
@@ -287,7 +287,7 @@ def app_bind_callbacks(app):
 #--------- /download/ endpoint ------------------------------------------------#
 
 
-def start_download_data_server(app):
+def start_download_data_server(app, download_pathname):
 
     def is_valid(selection):
         # check empty query string
@@ -302,8 +302,8 @@ def start_download_data_server(app):
             return True
 
 
-    @app.server.route('/download/')
-    def download_data_server():
+    @app.server.route(download_pathname) #TOMOVEUP
+    def download_data_networks():
 
         selection = parse_qs(decode(request.query_string))
         print ('Received this selection to download: {}'.format(selection))
@@ -338,7 +338,8 @@ def start_download_data_server(app):
 
 def create_dash_app(server):
     # load config
-    wikichron_base_pathname = server.config['DASH_BASE_PATHNAME'];
+    mode_config = get_mode_config(server)
+    wikichron_base_pathname = mode_config['DASH_BASE_PATHNAME'];
     assets_url_path = os.path.join(wikichron_base_pathname, 'assets')
     assets_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                 'resources', 'assets');
@@ -375,16 +376,16 @@ def _init_global_vars():
     global available_wikis;
     global available_wikis_dict;
 
-    available_networks = networks.interface.get_available_networks()
+    available_networks = interface.get_available_networks()
     available_wikis = data_controller.get_available_wikis()
     available_wikis_dict = {wiki['url']: wiki for wiki in available_wikis}
 
 
 def _init_app_callbacks(app):
     global side_bar
-    import side_bar
+    from . import side_bar #TOREMOVE (Probably)
     global main
-    import main
+    from . import main
 
     app_bind_callbacks(app)
     side_bar.bind_callbacks(app)
@@ -400,18 +401,23 @@ def set_up_app(app):
     print('Binding callbacks...')
     _init_app_callbacks(app)
 
+    # load Flask config
+    server_config = app.server.config
+    # load Dash config
+    mode_config = get_mode_config(app.server)
+
     # set app layout
     print('Setting up layout...')
-    has_side_bar = app.server.config['DASH_STANDALONE']
+    has_side_bar = mode_config['DASH_STANDALONE']
     app.layout = html.Div([
         set_layout(has_side_bar),
         load_external_dash_libs_in_layout()
     ])
     app.layout.children += set_external_imports()
 
-    start_download_data_server(app)
+    start_download_data_server(app, mode_config['DASH_DOWNLOAD_PATHNAME'])
 
-    print('¡¡¡¡ Welcome to WikiChron-networks ' + __version__ +' !!!!')
+    print('¡¡¡¡ Welcome to WikiChron-networks ' + server_config['VERSION'] +' !!!!')
     print('Using version ' + dash.__version__ + ' of Dash.')
     print('Using version ' + dash_renderer.__version__ + ' of Dash renderer.')
     print('Using version ' + dcc.__version__ + ' of Dash Core Components.')

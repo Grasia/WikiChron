@@ -10,7 +10,7 @@ import pandas as pd
 from datetime import datetime
 
 from .BaseNetwork import BaseNetwork
-from data_controller import get_bot_names
+from ...data_controller import get_bot_names
 class CoEditingNetwork(BaseNetwork):
     """
     This network is based on the editors cooperation, this means, the nodes
@@ -140,7 +140,7 @@ class CoEditingNetwork(BaseNetwork):
     def get_user_info(cls) -> dict:
         return cls.USER_INFO
 
-    
+
     @classmethod
     def get_secondary_metrics(cls) -> dict:
         return cls.SECONDARY_METRICS

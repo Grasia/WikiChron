@@ -12,7 +12,7 @@ import pandas as pd
 import re
 
 from .BaseNetwork import BaseNetwork
-from data_controller import get_bot_names
+from ...data_controller import get_bot_names
 
 class UserTalkNetwork(BaseNetwork):
     """

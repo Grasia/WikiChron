@@ -20,11 +20,11 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
-import data_controller
+from ... import data_controller
 from .BaseControlsSidebarDecorator import BaseControlsSidebarDecorator
-from networks.CytoscapeStylesheet import CytoscapeStylesheet
-from networks.models.CoEditingNetwork import CoEditingNetwork
-import networks.models.networks_generator as net_factory
+from ..CytoscapeStylesheet import CytoscapeStylesheet
+from ..models.CoEditingNetwork import CoEditingNetwork
+from ..models import networks_generator as net_factory
 
 global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
