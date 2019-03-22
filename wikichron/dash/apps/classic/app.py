@@ -40,7 +40,6 @@ import pandas as pd
 # Local imports:
 from .utils import get_app_config
 from .metrics import interface as metrics
-from .version import __version__
 from . import cache
 from . import data_controller
 
@@ -420,20 +419,22 @@ def set_up_app(app):
     _init_app_callbacks(app)
 
     # load Flask config
-    config = get_app_config(app.server)
+    server_config = app.server.config
+    # load Dash config
+    app_config = get_app_config(app.server)
 
     # set app layout
     print('Setting up layout...')
-    has_side_bar = config['DASH_STANDALONE']
+    has_side_bar = app_config['DASH_STANDALONE']
     app.layout = html.Div([
         set_layout(has_side_bar),
         load_external_dash_libs_in_layout()
     ])
     app.layout.children += set_external_imports()
 
-    start_download_data_server(app, config['DASH_DOWNLOAD_PATHNAME'])
+    start_download_data_server(app, app_config['DASH_DOWNLOAD_PATHNAME'])
 
-    print('¡¡¡¡ Welcome to WikiChron ' + __version__ +' !!!!')
+    print('¡¡¡¡ Welcome to WikiChron ' + server_config['VERSION'] +' !!!!')
     print('Using version ' + dash.__version__ + ' of Dash.')
     print('Using version ' + dash_renderer.__version__ + ' of Dash renderer.')
     print('Using version ' + dcc.__version__ + ' of Dash Core Components.')
