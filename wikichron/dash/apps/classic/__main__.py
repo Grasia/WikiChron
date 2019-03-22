@@ -3,16 +3,21 @@ import os
 from urllib.parse import urljoin, parse_qs
 import pandas as pd
 
+import sys
+print(f'This is the sys.path:{sys.path}')
+
 # flask imports
 import flask
 
 # local imports
-from app import create_dash_app, set_up_app
+from .app import create_dash_app, set_up_app # ¡WITH SECOND LAUNCH, IT FAILS HERE!
 
 # load config
-from dash_config import DevelopmentConfig
+from .dash_config import DevelopmentConfig
 wikichron_base_pathname = DevelopmentConfig.DASH_BASE_PATHNAME;
 port = DevelopmentConfig.PORT;
+
+print(f'Starting execution of __main__')
 
 global debug;
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
@@ -74,6 +79,7 @@ def start_aux_servers(app):
 
 
 def run(app):
+    print('Start running the app standalone...')
     app.run_server(debug=debug, port=port)
     return
 
