@@ -16,12 +16,18 @@ function hideSideBar() {
 
     // hide side bar
     document.getElementById('side-bar-content').style.display = 'none';
-    document.getElementById('side-bar-root').style.flex = 'unset';
+    sbRoot = document.getElementById('side-bar-root')
+    sbRoot.style.flex = 'unset';
 
     // set show bar in arrow
     fold_container = document.getElementById('fold-img-container');
     fold_container.onclick = showSideBar;
     fold_container.style.margin = '5px 5px 0px 5px';
+
+    // correct offset to dash-cytoscape events (Workaround #22):
+    cytoscape = document.getElementById('cytoscape')
+    if (cytoscape) { cytoscape.style.paddingLeft = (300 - sbRoot.offsetWidth) + 'px'; }
+
 }
 
 function showSideBar() {
@@ -42,6 +48,10 @@ function showSideBar() {
     fold_container = document.getElementById('fold-img-container');
     fold_container.onclick = hideSideBar;
     fold_container.style.margin = '';
+
+    // unmake offset given to dash-cytoscape events (Workaround #22):
+    cytoscape = document.getElementById('cytoscape')
+    if (cytoscape) { cytoscape.style.paddingLeft = ''; }
 }
 
 

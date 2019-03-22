@@ -1,2 +1,5 @@
 #!/bin/sh
-FLASK_ENV=development python3 -m wikichron
+export FLASK_ENV=development
+export FLASK_APP=wikichron.py
+export FLASK_RUN_PORT=5002
+flask run
