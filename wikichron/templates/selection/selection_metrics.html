@@ -12,23 +12,21 @@
                 <div id="{{cat_name}}-parent">
                     <div class="card m-2 mb-5" style="width: 22rem;">
                         <div class="card-header">
-                          <h5 class="mb-0">
-                            <button class="btn btn-link" data-toggle="collapse" data-target="#{{cat_name}}" aria-expanded="true" aria-controls="{{cat_name}}">
-                                <strong>{{cat_name}}</strong>
+                            <button class="btn btn-link cat-title" data-toggle="collapse" data-target="#{{cat_name}}" aria-expanded="true" aria-controls="{{cat_name}}">
+                                <h5 class="mb-0">{{cat_name}}</h5>
                             </button>
-                          </h5>
                         </div>
 
                         <div id="{{cat_name}}" class="collapse" data-parent="{{cat_name}}-parent">
                             <div class="card-body">
                                 {% for metric in cat_metrics %}
-                                    <div class="metric-item row">
-                                        <div class="custom-control custom-checkbox m-4 col-6">
+                                    <div class="metric-item d-flex">
+                                        <div class="custom-control custom-checkbox m-2">
                                             <input class="custom-control-input metric-input" type="checkbox" id="checkbox-{{metric['code']}}" value="{{metric['code']}}" data-name="{{metric.name}}" name="metric" />
                                             <label class="custom-control-label metric-name" for="checkbox-{{metric['code']}}">{{metric['name']}}</label>
-                                        </div>
-                                        <div class="aside-checklist-option col" title="{{metric.descp}}">
-                                            <span class="checklist-info"><i class="fa fa-info-circle"></i></span>
+                                            <span class="aside-checklist-option ml-1" title="{{metric.descp}}">
+                                                <span class="checklist-info"><i class="fa fa-info-circle"></i></span>
+                                            </span>
                                         </div>
                                     </div>
                                 {% endfor %}

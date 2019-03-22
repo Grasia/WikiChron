@@ -206,10 +206,25 @@ section.selection-content p {
 
 /* Main - Metrics */
 
+/* Bold checked inputs */
+input:checked+label{ font-weight: bold; }
+
+/* Collapsable card */
+.cat-title:hover {
+    text-decoration: none;
+}
+
+.cat-title:focus {
+    text-decoration: none;
+}
+
+.cat-title {
+    text-decoration: none;
+}
+
 /* Metrics - info icon */
 .aside-checklist-option {
     padding: 4px 4px 4px 0;
-    margin-left': 'auto';
 }
 
 .checklist-info {
@@ -219,6 +234,7 @@ section.selection-content p {
 .checklist-info:hover {
     opacity: 1;
 }
+
 
 /* Footer */
 
