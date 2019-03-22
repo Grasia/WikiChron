@@ -28,8 +28,8 @@ import sd_material_ui
 from flask import current_app
 
 # Local imports:
-import utils.interface as utils
-import data_controller
+from .utils import interface as utils
+from . import data_controller
 
 global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False

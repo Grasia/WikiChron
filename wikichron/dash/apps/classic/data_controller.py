@@ -28,7 +28,7 @@ data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 TIME_DIV = 60 * 60 * 24 * 30
 
 # Local imports:
-from utils.interface import compute_data
+from .utils.interface import compute_data
 
 ### CACHED FUNCTIONS ###
 

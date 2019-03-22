@@ -9,7 +9,7 @@
 
    Copyright 2017-2018 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
-# built-in imports
+# Python built-in imports
 import flask
 import glob
 import os
@@ -38,10 +38,10 @@ from flask import request, current_app
 import pandas as pd
 
 # Local imports:
-import utils.interface as utils
-from version import __version__
-import cache
-import data_controller
+from .utils import interface as utils
+from .version import __version__
+from . import cache
+from . import data_controller
 
 # production or development (DEBUG) flag:
 global debug
@@ -72,6 +72,8 @@ global available_metrics
 global available_metrics_dict
 global available_wikis
 global available_wikis_dict
+global side_bar
+global main
 
 
 ######### BEGIN CODE ###########################################################
@@ -397,9 +399,9 @@ def _init_global_vars():
 
 def _init_app_callbacks(app):
     global side_bar
-    import side_bar
+    from . import side_bar #TOREMOVE (Probably)
     global main
-    import main
+    from . import main
 
     app_bind_callbacks(app)
     side_bar.bind_callbacks(app)

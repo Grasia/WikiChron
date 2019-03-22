@@ -9,20 +9,23 @@
 
    Copyright 2017-2018 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
-
+# Python built-in imports
 import json
 import os
 import itertools
 from warnings import warn
 from urllib.parse import urlencode
 
+# Dash framework imports
 import dash
 from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import grasia_dash_components as gdc
 import dash_html_components as html
-from utils.metrics.metric import MetricCategory
-import utils.interface as interface
+
+# local imports
+from .utils.metrics.metric import MetricCategory
+from .utils import interface as interface
 
 # GLOBAL VARIABLES
 
