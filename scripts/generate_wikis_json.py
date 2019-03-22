@@ -157,6 +157,8 @@ def main():
             else:
                 print(f'\n-->Failed to find image for wiki: {wiki["url"]}<--\n')
 
+        wiki['verified'] = True # Our own provided wikis are "verified"
+
         print(wiki)
 
         wikis.append(wiki)
