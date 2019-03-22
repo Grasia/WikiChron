@@ -24,8 +24,8 @@ import grasia_dash_components as gdc
 import dash_html_components as html
 
 # local imports
-from .utils.metrics.metric import MetricCategory
-from .utils import interface as interface
+from .metrics.metric import MetricCategory
+from .metrics import interface as interface
 
 # GLOBAL VARIABLES
 

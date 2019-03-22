@@ -17,7 +17,7 @@ import flask
 from flask import Blueprint, current_app
 
 # Imports from dash app
-import wikichron.dash.apps.classic.utils.interface as interface
+import wikichron.dash.apps.classic.metrics.interface as interface
 import wikichron.dash.apps.classic.data_controller as data_controller
 
 server_bp = Blueprint('main', __name__)

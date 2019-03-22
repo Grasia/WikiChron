@@ -14,8 +14,8 @@ import numpy as np
 import time
 import os
 
-from .metrics import stats
-from .metrics import metrics_generator
+from . import stats
+from . import metrics_generator
 
 print('Generating available metrics...')
 _available_metrics = metrics_generator.generate_metrics()

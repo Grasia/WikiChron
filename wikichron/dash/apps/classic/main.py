@@ -28,7 +28,7 @@ import sd_material_ui
 from flask import current_app
 
 # Local imports:
-from .utils import interface as utils
+from .metrics import interface as metrics
 from .flask_utils import get_app_config
 from . import data_controller
 
@@ -37,7 +37,7 @@ debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
 
 def extract_metrics_objs_from_metrics_codes(metric_codes):
-    metrics_dict = utils.get_available_metrics_dict()
+    metrics_dict = metrics.get_available_metrics_dict()
     metrics = [ metrics_dict[metric] for metric in metric_codes ]
     return metrics
 
