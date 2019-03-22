@@ -59,30 +59,14 @@ def index():
 
 #--- JS server ----#
 
-# js files being serve by this server:
-local_available_js = [
-    'side_bar.js',
-    'main.share_modal.js',
-    'piwik.js',
-    'selection.js'
-]
-
 # Serve js/ folder
 local_js_directory = 'js/'
-#~ js_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                            #~ local_js_directory)
 
 @server_bp.route('/js/<js_file>', defaults={'path': ''})
 @server_bp.route('/js/<path:path>/<js_file>')
 def serve_local_js(path, js_file):
     js_directory = os.path.join(local_js_directory, path)
-    if js_file not in local_available_js:
-        raise Exception(
-            '"{}" is excluded from the allowed static files'.format(
-                js_file
-            )
-        )
-    print ('Returning: {}'.format(js_file))
+    print ('Returning javascript file: {}'.format(js_file))
     return flask.send_from_directory(js_directory, js_file)
 
 
