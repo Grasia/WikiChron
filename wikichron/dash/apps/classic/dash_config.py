@@ -1,9 +1,26 @@
-class DashConfig(object):
-    DASH_BASE_PATHNAME = '/classic/'
-    DASH_DOWNLOAD_PATHNAME = f'{DASH_BASE_PATHNAME}download/'
+from flask import Config
 
-class DevelopmentConfig(DashConfig):
+from . import WIKICHRON_APP_NAME
+
+classic_config = {
+    'DASH_BASE_PATHNAME': '/classic/',
+    'DASH_DOWNLOAD_PATHNAME': '/classic/download/',
+    'DASH_STANDALONE': False
+}
+
+
+def register_config(config: Config):
+    config[WIKICHRON_APP_NAME] = classic_config
+
+
+# DEPRECATED
+# Meant to be used in run_standalone_dashapp.sh
+class DevelopmentConfig(object):
     PORT = '8880'
     APP_HOSTNAME = f'localhost:{PORT}'
     DEBUG = True
-    DASH_STANDALONE = True
+    CLASSIC = {
+        'DASH_BASE_PATHNAME': '/classic/',
+        'DASH_DOWNLOAD_PATHNAME': '/classic/download/',
+        'DASH_STANDALONE': True
+    }

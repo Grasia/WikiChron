@@ -8,7 +8,7 @@ from wikichron.config import DevelopmentConfig
 
 # classic app
 from wikichron.dash.apps.classic.app import create_dash_app as create_classic, set_up_app as set_up_classic
-from wikichron.dash.apps.classic.dash_config import DashConfig as ClassicConfig
+from wikichron.dash.apps.classic.dash_config import register_config as register_classic_config
 
 def create_app(config_class = DevelopmentConfig):
     print('Creating Flask instance...')
@@ -24,7 +24,7 @@ def create_app(config_class = DevelopmentConfig):
 
 
 def register_dashapp(server):
-    server.config.from_object(ClassicConfig)
+    register_classic_config(server.config)
     classic_dashapp = create_classic(server)
     set_up_classic(classic_dashapp)
 

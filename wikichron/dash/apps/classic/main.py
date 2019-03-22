@@ -29,6 +29,7 @@ from flask import current_app
 
 # Local imports:
 from .utils import interface as utils
+from .flask_utils import get_app_config
 from . import data_controller
 
 global debug
@@ -78,9 +79,10 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
     """
 
     # Load app config
-    config = current_app.config
+    server_config = current_app.config
+    app_config = get_app_config(current_app)
     # Contructs the assets_url_path for image sources:
-    assets_url_path = os.path.join(config['DASH_BASE_PATHNAME'], 'assets')
+    assets_url_path = os.path.join(app_config['DASH_BASE_PATHNAME'], 'assets')
 
 
     def main_header():
@@ -89,7 +91,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
 
         Return: An HTML object with the header content
         """
-        href_download_button = f'{config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
+        href_download_button = f'{app_config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
         return (html.Div(id='header',
                 className='container',
                 style={'display': 'flex', 'align-items': 'center', \
@@ -290,8 +292,8 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
     metrics_code = [metric.code for metric in metrics]
     args_selection = json.dumps({"wikis": wikis, "metrics": metrics_code, "relative_time": relative_time})
 
-    share_url_path = f'{config["PREFERRED_URL_SCHEME"]}://{config["APP_HOSTNAME"]}{config["DASH_BASE_PATHNAME"]}{query_string}'
-    download_url_path = f'{config["PREFERRED_URL_SCHEME"]}://{config["APP_HOSTNAME"]}{config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
+    share_url_path = f'{server_config["PREFERRED_URL_SCHEME"]}://{server_config["APP_HOSTNAME"]}{app_config["DASH_BASE_PATHNAME"]}{query_string}'
+    download_url_path = f'{server_config["PREFERRED_URL_SCHEME"]}://{server_config["APP_HOSTNAME"]}{app_config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
 
     return html.Div(id='main',
         className='control-text',

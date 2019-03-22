@@ -38,6 +38,7 @@ from flask import request, current_app
 import pandas as pd
 
 # Local imports:
+from .flask_utils import get_app_config
 from .utils import interface as utils
 from .version import __version__
 from . import cache
@@ -352,7 +353,8 @@ def start_download_data_server(app, download_pathname):
 
 def create_dash_app(server):
     # load config
-    wikichron_base_pathname = server.config['DASH_BASE_PATHNAME']
+    config = get_app_config(server)
+    wikichron_base_pathname = config['DASH_BASE_PATHNAME']
     assets_url_path = os.path.join(wikichron_base_pathname, 'assets')
     assets_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                 'resources', 'assets')
@@ -418,7 +420,7 @@ def set_up_app(app):
     _init_app_callbacks(app)
 
     # load Flask config
-    config = app.server.config
+    config = get_app_config(app.server)
 
     # set app layout
     print('Setting up layout...')
