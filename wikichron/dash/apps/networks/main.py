@@ -319,12 +319,14 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     share_url_path = f'{server_config["PREFERRED_URL_SCHEME"]}://{server_config["APP_HOSTNAME"]}{mode_config["DASH_BASE_PATHNAME"]}{query_string}'
     download_url_path = f'{server_config["PREFERRED_URL_SCHEME"]}://{server_config["APP_HOSTNAME"]}{mode_config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
 
+    selection_url = f'{mode_config["HOME_MODE_PATHNAME"]}'
+
     return html.Div(
             id='main',
             className='control-text',
             children=[
 
-                html.A('Go back to selection', href="/"),
+                html.A('Go back to selection', href=selection_url),
 
                 main_header(),
 

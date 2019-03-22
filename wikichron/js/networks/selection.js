@@ -2,16 +2,18 @@
 
 
 /* List.js */
-var options = {
+function init_list_js() {
+    var options = {
     valueNames: [ 'wiki-name', 'wiki-url' ]
-};
+    };
 
-var wikisList = new List('cards-container', options);
+    var wikisList = new List('wiki-cards-container', options);
 
-$('#search-wiki-input').on('keyup', function() {
-    var searchString = $(this).val();
-    wikisList.search(searchString);
-});
+    $('#search-wiki-input').on('keyup', function() {
+        let searchString = $(this).val();
+        wikisList.search(searchString);
+    });
+}
 
 
 /* enable action button */
@@ -75,7 +77,7 @@ $('.networks-radiobutton').on( "click", function({target}) {
 
 
 // onclick for wikis checkboxes input
-$('.wiki-checkbox').on( "click", function({target}) {
+$('.wiki-input').on( "click", function({target}) {
     var wikiCode = target.value;
     var badgesContainer = $('#wiki-badges-container');
     var sameWiki = false;
@@ -93,7 +95,7 @@ $('.wiki-checkbox').on( "click", function({target}) {
 
     if (!sameWiki) {
         // Add badge of last selected wiki
-        var wikiName = target.dataset.wikiName;
+        var wikiName = target.dataset.name;
         var badgeSelectedWiki = generate_wiki_badge(wikiCode, wikiName);
 
         badgesContainer.html(badgeSelectedWiki);
@@ -140,22 +142,29 @@ function init_current_selection() {
 }
 
 
-init_current_selection()
-
-
 /* press action button */
 $('#selection-footer-button').on ("click", function() {
     var selectedWiki = $('.current-selected-wiki')[0];
     var selectedNetwork = $('.current-selected-network')[0];
     var target_app_url;
+    var selection;
 
     if (!selectedWiki || !selectedNetwork) { // In case user tries to bypass
                                             // the selection of the form inputs
-        return
+        return;
     }
 
-    target_app_url = `/app/?wikis=${selectedWiki.dataset.code}&network=${selectedNetwork.dataset.code}`
+    selection = `?wikis=${selectedWiki.dataset.code}&network=${selectedNetwork.dataset.code}`
+
+    target_app_url = `/networks/app/${selection}`
 
     window.location.href = encodeURI(target_app_url)
 
+});
+
+
+// functions to run when DOM is ready
+$(function()  {
+    init_list_js();
+    init_current_selection();
 });
