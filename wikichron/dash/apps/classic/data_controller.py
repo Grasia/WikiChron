@@ -141,8 +141,9 @@ def get_dataframe_from_csv(csv):
 
 
 def clean_up_bot_activity(df, wiki):
-    if 'botsids' in wiki:
-        return remove_bots_activity(df, wiki['botsids'])
+    if 'bots' in wiki:
+        botsids = [bot['id'] for bot in wiki['bots']]
+        return remove_bots_activity(df, botsids)
     else:
         warn("Warning: Missing information of bots ids. Note that graphs can be polluted of non-human activity.")
     return df
