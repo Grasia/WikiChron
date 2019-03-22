@@ -39,7 +39,7 @@ import pandas as pd
 
 # Local imports:
 from .utils import get_app_config
-from .metrics import interface as metrics
+from .metrics import interface as interface
 from . import cache
 from . import data_controller
 
@@ -392,8 +392,8 @@ def _init_global_vars():
     global available_metrics
     global available_metrics_dict
 
-    available_metrics = metrics.get_available_metrics()
-    available_metrics_dict = metrics.get_available_metrics_dict()
+    available_metrics = interface.get_available_metrics()
+    available_metrics_dict = interface.get_available_metrics_dict()
     available_wikis = data_controller.get_available_wikis()
     available_wikis_dict = {wiki['url']: wiki for wiki in available_wikis}
 
