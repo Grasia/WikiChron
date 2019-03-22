@@ -7,7 +7,7 @@ function init_list_js() {
     valueNames: [ 'wiki-name', 'wiki-url' ]
     };
 
-    var wikisList = new List('cards-container', options);
+    var wikisList = new List('wiki-cards-container', options);
 
     $('#search-wiki-input').on('keyup', function() {
         let searchString = $(this).val();
