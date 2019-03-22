@@ -23,7 +23,8 @@ class DevelopmentConfig(object):
     APP_HOSTNAME = f'localhost:{PORT}'
     DEBUG = True
     CLASSIC = {
-        'DASH_BASE_PATHNAME': '/classic/app/',
-        'DASH_DOWNLOAD_PATHNAME': '/classic/download/',
+        'HOME_MODE_PATHNAME': HOME_MODE_PATHNAME,
+        'DASH_BASE_PATHNAME': f'{HOME_MODE_PATHNAME}app/',
+        'DASH_DOWNLOAD_PATHNAME': f'{HOME_MODE_PATHNAME}download/',
         'DASH_STANDALONE': True
     }
