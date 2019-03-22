@@ -38,7 +38,7 @@ from flask import request, current_app
 import pandas as pd
 
 # Local imports:
-from .flask_utils import get_app_config
+from .utils import get_app_config
 from .metrics import interface as metrics
 from .version import __version__
 from . import cache

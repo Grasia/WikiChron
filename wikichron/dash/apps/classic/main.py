@@ -29,7 +29,7 @@ from flask import current_app
 
 # Local imports:
 from .metrics import interface as metrics
-from .flask_utils import get_app_config
+from .utils import get_app_config
 from . import data_controller
 
 global debug
