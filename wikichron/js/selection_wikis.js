@@ -152,7 +152,7 @@ $('#selection-footer-button').on ("click", function() {
 
     selection = selection.slice(0, -1);  // remove trailing '&'
 
-    target_app_url = `/classic/${selection}`
+    target_app_url = `/classic/app/${selection}`
 
     window.location.href = encodeURI(target_app_url)
 

@@ -3,7 +3,7 @@ from flask import Config
 from . import WIKICHRON_APP_NAME
 
 classic_config = {
-    'DASH_BASE_PATHNAME': '/classic/',
+    'DASH_BASE_PATHNAME': '/classic/app/',
     'DASH_DOWNLOAD_PATHNAME': '/classic/download/',
     'DASH_STANDALONE': False
 }
@@ -20,7 +20,7 @@ class DevelopmentConfig(object):
     APP_HOSTNAME = f'localhost:{PORT}'
     DEBUG = True
     CLASSIC = {
-        'DASH_BASE_PATHNAME': '/classic/',
+        'DASH_BASE_PATHNAME': '/classic/app/',
         'DASH_DOWNLOAD_PATHNAME': '/classic/download/',
         'DASH_STANDALONE': True
     }
