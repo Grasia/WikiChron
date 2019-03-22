@@ -16,17 +16,21 @@ import flask
 import flask
 from flask import Blueprint, current_app
 
-# Imports from dash app
-import wikichron.dash.apps.classic.metrics.interface as interface
-import wikichron.dash.apps.classic.data_controller as data_controller
+# Imports from dash apps
+# classic
+import wikichron.dash.apps.classic.metrics.interface as classic_interface
+import wikichron.dash.apps.classic.data_controller as classic_data_controller
+# networks
+import wikichron.dash.apps.networks.networks.interface as networks_interface
+import wikichron.dash.apps.networks.data_controller as networks_data_controller
+
 
 server_bp = Blueprint('main', __name__)
 
 
-@server_bp.route('/')
 @server_bp.route('/classic/') #TOMOVE to BP
 @server_bp.route('/classic/selection') #TOMOVE to BP
-def redirect_index_to_app():
+def classic_app():
 
     def transform_metric_obj_in_metric_frontend(metric):
         return {'name': metric.text,
@@ -36,9 +40,9 @@ def redirect_index_to_app():
 
     config = current_app.config;
 
-    wikis = data_controller.get_available_wikis()
+    wikis = classic_data_controller.get_available_wikis()
 
-    metrics_by_category_backend = interface.get_available_metrics_by_category()
+    metrics_by_category_backend = classic_interface.get_available_metrics_by_category()
     # transform metric objects to a dict with the info we need for metrics:
     categories_frontend = {}
     for (cat_obj, cat_metrics) in metrics_by_category_backend.items():
@@ -49,6 +53,27 @@ def redirect_index_to_app():
                                 development = config["DEBUG"],
                                 wikis = wikis,
                                 categories = categories_frontend)
+
+
+@server_bp.route('/')
+@server_bp.route('/networks/') #TOMOVE to BP
+@server_bp.route('/networks/selection') #TOMOVE to BP
+def networks_app():
+
+    config = current_app.config;
+
+    wikis = networks_data_controller.get_available_wikis()
+
+    network_backend_objects = networks_interface.get_available_networks()
+    networks_frontend = []
+    for nw in network_backend_objects:
+        networks_frontend.append({ 'name': nw.NAME, 'code': nw.CODE})
+
+    return flask.render_template("networks/selection/selection.html",
+                                development = config["DEBUG"],
+                                wikis = wikis,
+                                networks = networks_frontend)
+
 
 
 @server_bp.route('/welcome.html')

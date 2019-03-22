@@ -1,4 +1,4 @@
-{% extends "classic/base.html" %}
+{% extends "networks/base.html" %}
 
 
 {% block dependencies %}
@@ -36,9 +36,6 @@
             <link href="/lib/Roboto/{{ font }}" rel="application/font-sfnt">
         {% endfor %}
 
-        <!-- FontAwesome -->
-        <link href="/lib/fontawesome/css/all.css" rel="stylesheet">
-
 
     {% else %}
         <!-- list.js -->
@@ -56,9 +53,6 @@
         <!-- Roboto font -->
         <link href="https://fonts.googleapis.com/css?family=Roboto:300,400" rel="stylesheet">
 
-        <!-- FontAwesome -->
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.0/css/all.css" integrity="sha384-Mmxa0mLqhmOeaE8vgOSbKacftZcsNYDjQzuCOm6D02luYSzBG8vpaOykv9lFQ51Y" crossorigin="anonymous">
-
         <!-- Own js files-->
         <script src="js/piwik.js"></script>
     {% endif %}
@@ -66,7 +60,7 @@
     <!-- Common deps for prod and dev -->
 
     <!-- Own js files-->
-    <script src="/js/classic/selection.js" defer="defer"></script>
+    <script src="/js/networks/selection.js" defer="defer"></script>
 
 {% endblock %}
 
@@ -75,14 +69,14 @@
 
     <header>
         <div id='logo-container' class="sticky-header">
-            <img height="40px" src={{url_for('static', filename='classic/assets/logo_wikichron.svg')}} />
+            <img height="80px" src={{url_for('static', filename='networks/assets/wikichron_networks_logo.svg')}} />
         </div>
 
             <div class='intro-container'>
-                <p id='selection-header-welcome'>Welcome to WikiChron <em>Classic</em></p>
+                <p id='selection-header-welcome'>Welcome to WikiChron <em>Networks</em></p>
                 <div id='selection-header-paragraph-div'>
                     <img />
-                    <p id="selection-header-paragraph">Select some wikis, some metrics and press compare to start</p>
+                    <p id="selection-header-paragraph">Select one wiki, one network and press generate to start</p>
                 </div>
             </div>
     </header>
@@ -93,7 +87,10 @@
                 <a class="nav-link active" id="wikis-tab" data-toggle="tab" href="#wikis" role="tab" aria-controls="home" aria-selected="true">Wikis</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="metrics-tab" data-toggle="tab" href="#metrics" role="tab" aria-controls="metrics" aria-selected="false">Metrics</a>
+                <a class="nav-link" id="networks-tab" data-toggle="tab" href="#networks" role="tab" aria-controls="networks" aria-selected="false">Networks</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="time-tab" data-toggle="tab" href="#time" role="tab" aria-controls="time" aria-selected="false">Time</a>
             </li>
         </ul>
     </div>
@@ -103,20 +100,21 @@
 
             <div class="tab-content">
                 <div class="current-selection-container">
-                    {% include 'classic/selection/current_selection.html' %}
+                    {% include 'networks/selection/current_selection.html' %}
                 </div>
                 <div class="tab-pane fade show active" id="wikis" role="tabpanel" aria-labelledby="wikis-tab">
                     {% include 'common/selection/selection_wikis.html' %}
                 </div>
-                <div class="tab-pane fade" id="metrics" role="tabpanel" aria-labelledby="metrics-tab">
-                    {% include 'classic/selection/selection_metrics.html' %}
+                <div class="tab-pane fade" id="networks" role="tabpanel" aria-labelledby="networks-tab">
+                    {% include 'networks/selection/selection_networks.html' %}
                 </div>
+                <div class="tab-pane fade" id="time" role="tabpanel" aria-labelledby="time-tab">...</div>
             </div>
         </section>
 
         <footer class="action-button-container">
             <div id="selection-footer-container-button" class="selection-container-button">
-                <button id="selection-footer-button" type="button" class="btn action-button" disabled>COMPARE</button>
+                <button id="selection-footer-button" type="button" class="btn action-button" disabled>GENERATE</button>
             </div>
         </footer>
 

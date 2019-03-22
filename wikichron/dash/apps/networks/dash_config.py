@@ -2,7 +2,7 @@ from flask import Config
 
 from . import WIKICHRON_APP_NAME
 
-HOME_MODE_PATHNAME = '/classic/'
+HOME_MODE_PATHNAME = '/networks/'
 
 classic_config = {
     'HOME_MODE_PATHNAME': HOME_MODE_PATHNAME,
@@ -19,7 +19,7 @@ def register_config(config: Config):
 # DEPRECATED
 # Meant to be used in run_standalone_dashapp.sh
 class DevelopmentConfig(object):
-    PORT = '8880'
+    PORT = '8890'
     APP_HOSTNAME = f'localhost:{PORT}'
     DEBUG = True
     CLASSIC = {
