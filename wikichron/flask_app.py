@@ -24,6 +24,7 @@ server_bp = Blueprint('main', __name__)
 
 
 @server_bp.route('/')
+@server_bp.route('/classic/') #TOMOVE to BP
 @server_bp.route('/classic/selection') #TOMOVE to BP
 def redirect_index_to_app():
 

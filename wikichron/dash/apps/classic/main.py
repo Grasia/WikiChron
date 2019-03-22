@@ -295,12 +295,14 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
     share_url_path = f'{server_config["PREFERRED_URL_SCHEME"]}://{server_config["APP_HOSTNAME"]}{app_config["DASH_BASE_PATHNAME"]}{query_string}'
     download_url_path = f'{server_config["PREFERRED_URL_SCHEME"]}://{server_config["APP_HOSTNAME"]}{app_config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
 
+    selection_url = f'{app_config["HOME_MODE_PATHNAME"]}'
+
     return html.Div(id='main',
         className='control-text',
         style={'width': '100%'},
         children=[
 
-            html.A('Go back to selection', href="/"),
+            html.A('Go back to selection', href=selection_url),
 
             main_header(),
 
