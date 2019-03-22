@@ -17,14 +17,14 @@ import flask
 from flask import Blueprint, current_app
 
 # Imports from dash app
-import wikichron.dash.utils.interface as interface
-import wikichron.dash.data_controller as data_controller
+import wikichron.dash.apps.classic.utils.interface as interface
+import wikichron.dash.apps.classic.data_controller as data_controller
 
 server_bp = Blueprint('main', __name__)
 
 
 @server_bp.route('/')
-@server_bp.route('/selection')
+@server_bp.route('/selection') #TOMOVE to BP
 def redirect_index_to_app():
 
     def transform_metric_obj_in_metric_frontend(metric):

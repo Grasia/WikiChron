@@ -10,9 +10,9 @@ from flask import Flask
 # Note that, if we had to do `import wikichron.dash.main` we could not run
 #  the dash app as an standalone app for developing and testing, but we had to
 # run the full Flask + Dash altogether.
-sys.path.append('wikichron/dash')
+sys.path.append('wikichron/dash/apps/classic') #TOLOOKAT
 
-from wikichron.dash.app import create_dash_app, set_up_app
+from wikichron.dash.apps.classic.app import create_dash_app, set_up_app
 from wikichron.config import DevelopmentConfig
 
 def create_app(config_class = DevelopmentConfig):
