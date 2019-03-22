@@ -1,5 +1,5 @@
 class BaseConfig(object):
-    DASH_BASE_PATHNAME = '/app/'
+    DASH_BASE_PATHNAME = '/classic/'
     DASH_DOWNLOAD_PATHNAME = '/download/'
     DASH_STANDALONE = True
 
