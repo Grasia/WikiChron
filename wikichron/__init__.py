@@ -1,9 +1,14 @@
+# Python built-in imports
 import sys
 import os
 from flask import Flask
 
-from wikichron.dash.apps.classic.app import create_dash_app, set_up_app
+# local imports
 from wikichron.config import DevelopmentConfig
+
+# classic app
+from wikichron.dash.apps.classic.app import create_dash_app as create_classic, set_up_app as set_up_classic
+from wikichron.dash.apps.classic.dash_config import DashConfig as ClassicConfig
 
 def create_app(config_class = DevelopmentConfig):
     print('Creating Flask instance...')
@@ -19,8 +24,9 @@ def create_app(config_class = DevelopmentConfig):
 
 
 def register_dashapp(server):
-    dashapp = create_dash_app(server)
-    set_up_app(dashapp)
+    server.config.from_object(ClassicConfig)
+    classic_dashapp = create_classic(server)
+    set_up_classic(classic_dashapp)
 
 
 def register_blueprints(server):

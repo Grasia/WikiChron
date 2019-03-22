@@ -282,7 +282,7 @@ def app_bind_callbacks(app):
 #--------- BEGIN AUX SERVERS --------------------------------------------------#
 
 
-def start_download_data_server(app):
+def start_download_data_server(app, download_pathname):
 
     def is_valid(selection):
         # check empty query string
@@ -296,7 +296,7 @@ def start_download_data_server(app):
         else:
             return True
 
-    @app.server.route('/download/')
+    @app.server.route(download_pathname)
     def download_data_server():
 
         selection = parse_qs(decode(request.query_string))
@@ -417,16 +417,19 @@ def set_up_app(app):
     print('Binding callbacks...')
     _init_app_callbacks(app)
 
+    # load Flask config
+    config = app.server.config
+
     # set app layout
     print('Setting up layout...')
-    has_side_bar = app.server.config['DASH_STANDALONE']
+    has_side_bar = config['DASH_STANDALONE']
     app.layout = html.Div([
         set_layout(has_side_bar),
         load_external_dash_libs_in_layout()
     ])
     app.layout.children += set_external_imports()
 
-    start_download_data_server(app)
+    start_download_data_server(app, config['DASH_DOWNLOAD_PATHNAME'])
 
     print('¡¡¡¡ Welcome to WikiChron ' + __version__ +' !!!!')
     print('Using version ' + dash.__version__ + ' of Dash.')
