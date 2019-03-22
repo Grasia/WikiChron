@@ -1,0 +1,34 @@
+.control-title {
+    text-align: center;
+    background-color: #02396f;
+}
+
+.control-container {
+    margin-bottom: 1.5rem;
+}
+
+.control-container > div {
+    display: grid;
+}
+
+.metrics-section{
+    margin: 1rem 0rem 0.5rem 0rem;
+}
+
+.stats-container {
+    font-size: 13px;
+}
+
+.left-element {
+    margin-left: 1.5rem;
+    float: left;
+}
+
+.right-element {
+    margin-right: 1.5rem;
+    float: right;
+}
+
+.control-button {
+    margin: 10px 20px 10px 20px;
+}

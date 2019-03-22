@@ -1,19 +1,18 @@
+# Python built-in imports
 import sys
 import os
 from flask import Flask
 
-# Comes back absolute imports like in python2.
-# This means that you can do local imports as if they were absolute from
-#   source files as long as they are within the dash/ directory.
-# For instance, you can do `import main` inside wikichron/dash/app.py
-#   instead of `import wikichron.dash.main`
-# Note that, if we had to do `import wikichron.dash.main` we could not run
-#  the dash app as an standalone app for developing and testing, but we had to
-# run the full Flask + Dash altogether.
-sys.path.append('wikichron/dash')
-
-from wikichron.dash.app import create_dash_app, set_up_app
+# local imports
 from wikichron.config import DevelopmentConfig
+
+# classic app
+from wikichron.dash.apps.classic.app import create_dash_app as create_classic, set_up_app as set_up_classic
+from wikichron.dash.apps.classic.dash_config import register_config as register_classic_config
+
+# networks app
+from wikichron.dash.apps.networks.app import create_dash_app as create_networks, set_up_app as set_up_networks
+from wikichron.dash.apps.networks.dash_config import register_config as register_networks_config
 
 def create_app(config_class = DevelopmentConfig):
     print('Creating Flask instance...')
@@ -29,8 +28,13 @@ def create_app(config_class = DevelopmentConfig):
 
 
 def register_dashapp(server):
-    dashapp = create_dash_app(server)
-    set_up_app(dashapp)
+    register_classic_config(server.config)
+    classic_dashapp = create_classic(server)
+    set_up_classic(classic_dashapp)
+
+    register_networks_config(server.config)
+    networks_dashapp = create_networks(server)
+    set_up_networks(networks_dashapp)
 
 
 def register_blueprints(server):

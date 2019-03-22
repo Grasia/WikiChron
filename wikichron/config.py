@@ -1,7 +1,8 @@
-from wikichron.dash.dash_config import DevelopmentConfig as DashDevelopmentConfig
+from .version import __version__
 
-class DevelopmentConfig(DashDevelopmentConfig):
+class DevelopmentConfig(object):
     PORT = '5002'
     APP_HOSTNAME = f'localhost:{PORT}'
-    DASH_STANDALONE = False
+    DEBUG = True
+    VERSION = __version__
 
