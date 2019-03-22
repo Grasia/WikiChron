@@ -12,6 +12,6 @@
 from . import WIKICHRON_APP_NAME
 from flask import Flask
 
-def get_app_config(server: Flask):
+def get_mode_config(server: Flask):
    return server.config[WIKICHRON_APP_NAME]
 

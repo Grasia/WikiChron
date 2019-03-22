@@ -38,7 +38,7 @@ from flask import request, current_app
 import pandas as pd
 
 # Local imports:
-from .utils import get_app_config
+from .utils import get_mode_config
 from .metrics import interface as interface
 from . import cache
 from . import data_controller
@@ -296,8 +296,8 @@ def start_download_data_server(app, download_pathname):
         else:
             return True
 
-    @app.server.route(download_pathname)
-    def download_data_server():
+    @app.server.route(download_pathname) #TOMOVEUP
+    def download_data_classic():
 
         selection = parse_qs(decode(request.query_string))
         print ('Received this selection to download: {}'.format(selection))
@@ -352,7 +352,7 @@ def start_download_data_server(app, download_pathname):
 
 def create_dash_app(server):
     # load config
-    config = get_app_config(server)
+    config = get_mode_config(server)
     wikichron_base_pathname = config['DASH_BASE_PATHNAME']
     assets_url_path = os.path.join(wikichron_base_pathname, 'assets')
     assets_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -421,18 +421,18 @@ def set_up_app(app):
     # load Flask config
     server_config = app.server.config
     # load Dash config
-    app_config = get_app_config(app.server)
+    mode_config = get_mode_config(app.server)
 
     # set app layout
     print('Setting up layout...')
-    has_side_bar = app_config['DASH_STANDALONE']
+    has_side_bar = mode_config['DASH_STANDALONE']
     app.layout = html.Div([
         set_layout(has_side_bar),
         load_external_dash_libs_in_layout()
     ])
     app.layout.children += set_external_imports()
 
-    start_download_data_server(app, app_config['DASH_DOWNLOAD_PATHNAME'])
+    start_download_data_server(app, mode_config['DASH_DOWNLOAD_PATHNAME'])
 
     print('¡¡¡¡ Welcome to WikiChron ' + server_config['VERSION'] +' !!!!')
     print('Using version ' + dash.__version__ + ' of Dash.')
