@@ -24,7 +24,7 @@ server_bp = Blueprint('main', __name__)
 
 
 @server_bp.route('/')
-@server_bp.route('/selection') #TOMOVE to BP
+@server_bp.route('/classic/selection') #TOMOVE to BP
 def redirect_index_to_app():
 
     def transform_metric_obj_in_metric_frontend(metric):
@@ -44,7 +44,7 @@ def redirect_index_to_app():
         cat_name = cat_obj.value
         categories_frontend[cat_name] = [transform_metric_obj_in_metric_frontend(metric) for metric in cat_metrics]
 
-    return flask.render_template("selection/selection.html",
+    return flask.render_template("classic/selection/selection.html",
                                 development = config["DEBUG"],
                                 wikis = wikis,
                                 categories = categories_frontend)
@@ -64,25 +64,26 @@ local_available_js = [
     'side_bar.js',
     'main.share_modal.js',
     'piwik.js',
-    'selection_wikis.js'
+    'selection.js'
 ]
 
 # Serve js/ folder
 local_js_directory = 'js/'
-js_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                            local_js_directory)
+#~ js_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                            #~ local_js_directory)
 
-@server_bp.route('/js/<js_path>.js')
-def serve_local_js(js_path):
-    js_name = f'{js_path}.js'
-    if js_name not in local_available_js:
+@server_bp.route('/js/<js_file>', defaults={'path': ''})
+@server_bp.route('/js/<path:path>/<js_file>')
+def serve_local_js(path, js_file):
+    js_directory = os.path.join(local_js_directory, path)
+    if js_file not in local_available_js:
         raise Exception(
             '"{}" is excluded from the allowed static files'.format(
-                js_path
+                js_file
             )
         )
-    print ('Returning: {}'.format(js_name))
-    return flask.send_from_directory(js_directory, js_name)
+    print ('Returning: {}'.format(js_file))
+    return flask.send_from_directory(js_directory, js_file)
 
 
 # Serve lib/ folder only in development mode

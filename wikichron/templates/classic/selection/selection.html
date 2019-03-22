@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "classic/base.html" %}
 
 
 {% block dependencies %}
@@ -66,7 +66,7 @@
     <!-- Common deps for prod and dev -->
 
     <!-- Own js files-->
-    <script src="js/selection_wikis.js" defer="defer"></script>
+    <script src="js/classic/selection.js" defer="defer"></script>
 
 {% endblock %}
 
@@ -103,13 +103,13 @@
 
             <div class="tab-content">
                 <div class="current-selection-container">
-                    {% include 'selection/current_selection.html' %}
+                    {% include 'classic/selection/current_selection.html' %}
                 </div>
                 <div class="tab-pane fade show active" id="wikis" role="tabpanel" aria-labelledby="wikis-tab">
-                    {% include 'selection/selection_wikis.html' %}
+                    {% include 'common/selection/selection_wikis.html' %}
                 </div>
                 <div class="tab-pane fade" id="metrics" role="tabpanel" aria-labelledby="metrics-tab">
-                    {% include 'selection/selection_metrics.html' %}
+                    {% include 'classic/selection/selection_metrics.html' %}
                 </div>
             </div>
         </section>
