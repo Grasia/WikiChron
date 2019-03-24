@@ -119,7 +119,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             for attr in self.graph.vs.attributes():
                 val = node[attr]
                 if attr == 'id':
-                    val = f'{val}'
+                    val = str(val)
                 data['data'][attr] = val
             network.append(data)
 
@@ -129,7 +129,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             for attr in self.graph.es.attributes():
                 val = edge[attr]
                 if attr == 'id' or attr == 'source' or attr == 'target':
-                    val = f'{val}'
+                    val = str(val)
                 data['data'][attr] = val
             network.append(data)
 
