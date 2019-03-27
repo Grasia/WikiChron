@@ -1,0 +1,73 @@
+/* General */
+body {
+    color: white;
+    background-color: white;
+}
+
+h1 {
+    margin-bottom: 2.5rem;
+}
+
+section {
+    margin-bottom: 100px;
+}
+
+#welcome-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    background-image: url("/static/assets/header_background.png");
+    background-color: #21446D;
+}
+
+.card {
+    color: black;
+    width: 350px;
+}
+
+#mode-options {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.mode-image {
+    height: 100px;
+    margin: auto;
+    margin-bottom: 20px;
+}
+
+.card-img-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: auto;
+    padding: 20px;
+}
+
+.to-app-link {
+    font-size: 1.5rem;
+    padding-left: 20px;
+}
+
+
+#comming-soon {
+    display: flex;
+    flex-direction: column;
+    justify-content: middle;
+    align-items: center;
+}
+
+
+#comming-soon p {
+    color: orange;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.comming-soon-img-container {
+    opacity: 0.4;
+    margin-bottom: 17px;
+}

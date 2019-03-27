@@ -28,6 +28,16 @@ import wikichron.dash.apps.networks.data_controller as networks_data_controller
 server_bp = Blueprint('main', __name__)
 
 
+@server_bp.route('/')
+@server_bp.route('/welcome.html')
+def index():
+    config = current_app.config;
+
+    return flask.render_template("welcome.html",
+                                development = config["DEBUG"],
+                                title = 'WikiChron - Welcome')
+
+
 @server_bp.route('/classic/') #TOMOVE to BP
 @server_bp.route('/classic/selection') #TOMOVE to BP
 def classic_app():
@@ -55,7 +65,6 @@ def classic_app():
                                 categories = categories_frontend)
 
 
-@server_bp.route('/')
 @server_bp.route('/networks/') #TOMOVE to BP
 @server_bp.route('/networks/selection') #TOMOVE to BP
 def networks_app():
@@ -73,12 +82,6 @@ def networks_app():
                                 development = config["DEBUG"],
                                 wikis = wikis,
                                 networks = networks_frontend)
-
-
-
-@server_bp.route('/welcome.html')
-def index():
-    return flask.render_template("welcome.html")
 
 
 #--------- BEGIN AUX SERVERS (non pure flask / jinja / html / http servers) ---#

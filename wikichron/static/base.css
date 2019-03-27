@@ -1,0 +1,12 @@
+/* General */
+body {
+  margin: 0px;
+  font-family: Roboto, sans-serif;
+  height: 100%;
+  background-color: #21446D;
+}
+
+p {
+    margin-top: 0;
+    margin-bottom: 0;
+}

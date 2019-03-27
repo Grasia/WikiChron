@@ -1,0 +1,116 @@
+<!--
+   base.html
+
+   Descp:
+
+   Created on: 05-mar-2019
+
+   Copyright 2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+    <head>
+        <title>{{ title }}</title>
+
+        <!-- Meta tags -->
+        <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta charset="UTF-8">
+        <meta name="author" content="Abel 'Akronix' Serrano Juste">
+        <meta name="description" content="WikiChron is a web tool for the analysis and visualization of the evolution of wiki online communities">
+        <meta name="og:title" content="{{ title }}">
+        <meta name="og:description" content="WikiChron is a web tool for the analysis and visualization of the evolution of wiki online communities">
+    <!--
+        <meta name="og:url" content="{{ hostname }}">
+    -->
+    <!--
+        <meta name="og:image" content='{}/logo_wikichron.png'.format(assets_url_path)>
+    -->
+        <meta name="og:image:width" content="600">
+        <meta name="twitter:title" content="{{ title }}">
+
+
+        <!-- Favicon -->
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+
+        <!-- Dependencies for development (local and unminified) -->
+        {% if development %}
+             <!-- list.js -->
+            <script src="/lib/list.js"></script>
+
+            <!-- JQuery -->
+            <script src="/lib/jquery-3.3.1.js"></script>
+            <!-- Popper.js -->
+            <script src="/lib/popper.js"></script>
+
+            <!-- bootstrap 4 -->
+            <link rel="stylesheet" href="/lib/bootstrap.css" />
+            <script src="/lib/bootstrap.js"></script>
+
+            <!-- Roboto font -->
+            {% set fonts = [
+                'Roboto-BlackItalic.ttf',
+                'Roboto-Black.ttf',
+                'Roboto-BoldItalic.ttf',
+                'Roboto-Bold.ttf',
+                'Roboto-Italic.ttf',
+                'Roboto-LightItalic.ttf',
+                'Roboto-Light.ttf',
+                'Roboto-MediumItalic.ttf',
+                'Roboto-Medium.ttf',
+                'Roboto-Regular.ttf',
+                'Roboto-ThinItalic.ttf',
+                'Roboto-Thin.ttf'
+            ]
+            %}
+
+            {% for font in fonts %}
+                <link href="/lib/Roboto/{{ font }}" rel="application/font-sfnt">
+            {% endfor %}
+
+            <!-- FontAwesome -->
+            <link href="/lib/fontawesome/css/all.css" rel="stylesheet">
+
+        <!-- Dependencies for production (cdn) -->
+        {% else %}
+            <!-- list.js -->
+            <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+
+            <!-- JQuery -->
+            <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+                <!-- Popper.js -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+
+                <!-- bootstrap 4 -->
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+            <!-- Roboto font -->
+            <link href="https://fonts.googleapis.com/css?family=Roboto:300,400" rel="stylesheet">
+
+            <!-- FontAwesome -->
+            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.0/css/all.css" integrity="sha384-Mmxa0mLqhmOeaE8vgOSbKacftZcsNYDjQzuCOm6D02luYSzBG8vpaOykv9lFQ51Y" crossorigin="anonymous">
+
+            <!-- Own js files-->
+            <script src="js/piwik.js"></script>
+        {% endif %}
+
+
+        <!-- Common deps for both prod and dev -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+
+
+        <!-- Additional per-page dependencies will be inserted here -->
+        {% block dependencies %}{% endblock %}
+
+    </head>
+
+    <body>
+        {% block content %}{% endblock %}
+    </body>
+
+</html>
