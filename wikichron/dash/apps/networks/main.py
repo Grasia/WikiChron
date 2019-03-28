@@ -500,7 +500,7 @@ def bind_callbacks(app):
             no_data_children = [
                 html.P('Nothing to show,'),
                 html.P(f'no data available between {lower_bound} and {upper_bound}.'),
-                html.P('Please, Try to change the date selection.')
+                html.P('Please, try changing the date selection.')
             ]
 
         return cyto_class, no_data_class, no_data_children
