@@ -50,7 +50,7 @@ def build_network_stats(stats: list()) -> html.Div:
                 html.P(f'{stats[3]}: ...')
             ])], className='body-pane')
 
-    return html.Div(children=[header, body], className='side-pane')
+    return html.Div(children=[header, body], className='pane side-pane')
 
 
 def build_table() -> html.Div:
@@ -71,13 +71,13 @@ def build_table() -> html.Div:
                 row_selectable="multi",
                 selected_rows=[],
             )], className='body-pane')
-    return html.Div(children=[header, body], className='side-pane')
+    return html.Div(children=[header, body], className='pane side-pane')
 
 
 def build_user_stats() -> html.Div:
     header = html.Div(children='User Stats', className='header-pane')
     body = html.Div(id='user-stats', children='Click a node', className='body-pane')
-    return html.Div(children=[header, body], className='side-pane')
+    return html.Div(children=[header, body], className='pane side-pane')
 
 
 def bind_sidebar_callbacks(app):

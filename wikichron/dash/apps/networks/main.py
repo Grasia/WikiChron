@@ -39,7 +39,7 @@ from .networks.CytoscapeStylesheet import CytoscapeStylesheet
 from .right_side_bar import build_sidebar, bind_sidebar_callbacks
 
 TIME_DIV = 60 * 60 * 24 * 30
-
+IMAGE_HEADER = 'url(../../../static/assets/header_background.png)'
 selection_params = {'wikis', 'network', 'lower_bound', 'upper_bound'}
 
 global debug
@@ -83,63 +83,58 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     assets_url_path = os.path.join(mode_config['DASH_BASE_PATHNAME'], 'assets')
 
 
-    def main_header():
+    def main_header(selection_url):
         """
         Generates the main header
 
         Return: An HTML object with the header content
         """
         href_download_button = f'{mode_config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
-        return (html.Div(id='header',
-                className='container',
-                style={'display': 'flex', 'align-items': 'center',
-                       'justify-content': 'space-between'},
+        return (html.Div(
                 children=[
-                    html.Span([
-                            html.Img(src='{}/wikichron_networks_logo.svg'.format(assets_url_path))
-                        ],
-                        id='tool-title'),
-                    html.Div([
-                        html.A(
-                            html.Img(src='{}/share.svg'.format(assets_url_path)),
-                            id='share-button',
-                            className='icon',
-                            title='Share current selection'
-                        ),
-                        html.A(
-                            html.Img(src='{}/cloud_download.svg'.format(assets_url_path)),
-                            href=href_download_button,
-                            id='download-button',
-                            target='_blank',
-                            className='icon',
-                            title='Download data'
-                        ),
-                        html.A(
-                            html.Img(src='{}/documentation.svg'.format(assets_url_path)),
-                            href='https://github.com/Grasia/WikiChron/wiki/',
-                            target='_blank',
-                            className='icon',
-                            title='Documentation'
-                        ),
-                        html.A(
-                            html.Img(src='{}/ico-github.svg'.format(assets_url_path)),
-                            href='https://github.com/Grasia/WikiChron-networks',
-                            target='_blank',
-                            className='icon',
-                            title='Github repo'
-                        ),
-                    ],
-                    id='icons-bar')
-            ])
+                    html.Img(src='{}/wikichron_networks_logo2.svg'.format(assets_url_path), 
+                        className='title-img'),
+                    html.Div(children=[
+                        html.A('< Go back to selection', href=selection_url, style={'font-weight': 'bold'}),
+                        html.Div([
+                            html.A(
+                                html.Img(src='{}/share.svg'.format(assets_url_path)),
+                                id='share-button',
+                                className='icon',
+                                title='Share current selection'
+                            ),
+                            html.A(
+                                html.Img(src='{}/cloud_download.svg'.format(assets_url_path)),
+                                href=href_download_button,
+                                id='download-button',
+                                target='_blank',
+                                className='icon',
+                                title='Download data'
+                            ),
+                            html.A(
+                                html.Img(src='{}/documentation.svg'.format(assets_url_path)),
+                                href='https://github.com/Grasia/WikiChron/wiki/',
+                                target='_blank',
+                                className='icon',
+                                title='Documentation'
+                            ),
+                            html.A(
+                                html.Img(src='{}/ico-github.svg'.format(assets_url_path)),
+                                href='https://github.com/Grasia/WikiChron-networks',
+                                target='_blank',
+                                className='icon',
+                                title='Github repo'
+                            ),
+                        ], 
+                        className='icons-bar')
+                    ])
+            ], className='main-root-header', style={'background-image': IMAGE_HEADER})
         )
 
 
     def selection_title(selected_wiki, selected_network):
-        selection_text = (f'You are viewing the {selected_network} network for wiki: {selected_wiki}')
-        return html.Div([
-            html.H3(selection_text, id = 'selection-title')],
-            className = 'container'
-        )
+        selection_text = (f'{selected_network} network for: {selected_wiki}')
+        return html.P([selection_text])
 
 
     def share_modal(share_link, download_link):
@@ -192,33 +187,41 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     def date_slider_control():
         return html.Div(id='date-slider-div', className='container',
                 children=[
-
-                    html.Div(children=[
-                        html.Span(id='slider-header',
-                        children=[
-                            html.Strong(
-                                'Time interval (months):'),
-                            html.Span(id='display-slider-selection')
-                        ]),
-
-                        html.Div(children=[
-                            html.Button("<<", id="bt-back", n_clicks_timestamp='0', className='step-button'),
-                            dcc.Input(id="in-step-slider" , type='number', value='1', min='0'),
-                            html.Button(">>", id="bt-forward", n_clicks_timestamp='0', className='step-button'),
-                        ], className='slider-controls'),
-                    ],
-                    style={'display': 'flex'}),
-
                     html.Div(id='date-slider-container',
                         style={'height': '35px'},
                         children=[
                             dcc.RangeSlider(
                                 id='dates-slider'
                         )],
-                    )
+                    ),
+
+                    html.Div(children=[
+                        html.Span(id='slider-desc',
+                        children=[
+                            html.Strong('Time interval (months):')
+                        ]),
+
+                        html.Div(children=[
+                            html.Button("<<", id="bt-back", n_clicks_timestamp='0'),
+                            dcc.Input(id="in-step-slider" , type='number', 
+                                placeholder='MM', min='1', max='999'),
+                            html.Button(">>", id="bt-forward", n_clicks_timestamp='0'),
+                        ]),
+                    ], className='slider-add-on'),
                 ],
                 style={'margin-top': '15px', 'display': 'grid'}
                 )
+
+
+    def build_slider_pane(selected_wiki_name, selected_network_name):
+        header = html.Div(children=[
+            selection_title(selected_wiki_name, selected_network_name)
+            ], className='header-pane main-header-pane')
+        body = html.Div(children=[
+            date_slider_control()
+        ], className='body-pane')
+
+        return html.Div(children=[header, body], className='pane main-pane')
 
 
     def cytoscape_component():
@@ -303,9 +306,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
             id='main',
             className='control-text',
             children=[
-                selection_title(selected_wiki_name, selected_network_name),
-                date_slider_control(),
-                html.Hr(style={'margin-bottom': '0px'}),
+                build_slider_pane(selected_wiki_name, selected_network_name),
                 share_modal(share_url_path, download_url_path),
                 html.Div(id='initial-selection', style={'display': 'none'},
                             children=args_selection),
@@ -322,11 +323,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                 html.Div(id='highlight-node', style={'display': 'none'})
             ])
 
-    header = html.Div([
-        html.A('Go back to selection', href=selection_url),
-        main_header(),
-        html.Hr(style={'margin-top': '0px'})
-    ])
+    header = main_header(selection_url)
 
     body = html.Div(children = [
         main,
@@ -453,6 +450,9 @@ def bind_callbacks(app):
         State('dates-slider', 'value')]
     )
     def check_available_data(cyto, selection_json, slider):
+        if not slider:
+            raise PreventUpdate()
+
         cyto_class = 'show'
         no_data_class = 'non-show cyto-dim'
         no_data_children = []
