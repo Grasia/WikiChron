@@ -21,6 +21,7 @@ from datetime import datetime
 import dash
 import dash_cytoscape
 import dash_core_components as dcc
+import dash_daq as daq
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
@@ -253,7 +254,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                     },
                     style = {
                         'height': '65vh',
-                        'width': 'calc(100% - 300px)'
+                        'width': '100%'
                     },
                     stylesheet = CytoscapeStylesheet.make_basic_stylesheet()
         )
@@ -285,8 +286,23 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
 
         return dcc.Dropdown(
             id='dd-color-metric',
-            options=options
+            options=options,
+            placeholder='Select a metric to color'
         )
+
+
+    def build_network_controls(network_code):
+        togg1 = html.Div([
+            daq.BooleanSwitch(id='tg-show-labels', on=False),
+            html.P('Show labels')
+        ])
+        togg2 = html.Div([
+            daq.BooleanSwitch(id='tg-show-clusters', on=False),
+            html.P('Show clusters')
+        ])
+        left = html.Div([togg1, togg2])
+        right = dropdown_color_metric_selector(network_code)
+        return html.Div(children=[left, right])
 
 
     if debug:
@@ -310,10 +326,9 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                 share_modal(share_url_path, download_url_path),
                 html.Div(id='initial-selection', style={'display': 'none'},
                             children=args_selection),
-
+                build_network_controls(network_type_code),
                 cytoscape_component(),
                 build_distribution_graph(),
-                dropdown_color_metric_selector(network_type_code),
 
                 # Signal data
                 html.Div(id='network-ready', style={'display': 'none'}),
@@ -340,65 +355,6 @@ def bind_callbacks(app):
 
 
     @app.callback(
-        Output('ranking-table', 'columns'),
-        [Input('metric-to-show', 'value')],
-        [State('network-ready', 'value'),
-        State('initial-selection', 'children'),
-        State('dates-slider', 'value')]
-    )
-    def update_ranking_header(metric, ready, selection_json, slider):
-        if not ready or not metric or not slider:
-            print('not ready header')
-            raise PreventUpdate()
-
-        selection = json.loads(selection_json)
-        wiki = selection['wikis'][0]
-        network_code = selection['network']
-        (lower, upper) = data_controller.get_time_bounds(wiki, slider[0], slider[1])
-        network = data_controller.get_network(wiki, network_code, lower, upper)
-
-        df = network.get_metric_dataframe(metric)
-        return [{"name": i, "id": i} for i in df.columns]
-
-
-    @app.callback(
-        Output('ranking-table', 'data'),
-        [Input('ranking-table', 'pagination_settings'),
-        Input('ranking-table', 'sorting_settings'),
-        Input('metric-to-show', 'value'),
-        Input('dates-slider', 'value')],
-        [State('network-ready', 'value'),
-        State('initial-selection', 'children')]
-    )
-    def update_ranking(pag_set, sort_set, metric, slider, ready, selection_json):
-        if not ready or not metric or not slider:
-            raise PreventUpdate()
-
-        selection = json.loads(selection_json)
-        wiki = selection['wikis'][0]
-        network_code = selection['network']
-        (lower, upper) = data_controller.get_time_bounds(wiki, slider[0], slider[1])
-        network = data_controller.get_network(wiki, network_code, lower, upper)
-
-        df = network.get_metric_dataframe(metric)
-
-        # check the col to sort
-        if sort_set and sort_set[0]['column_id'] in list(df):
-            df = df.sort_values(sort_set[0]['column_id'],
-                ascending=sort_set[0]['direction'] == 'asc',
-                inplace=False)
-        elif not df.empty:
-            df = df.sort_values(metric, ascending=False)
-        else:
-            return []
-
-        return df.iloc[
-                pag_set['current_page']*pag_set['page_size']:
-                (pag_set['current_page'] + 1)*pag_set['page_size']
-            ].to_dict('rows')
-
-
-    @app.callback(
         Output('highlight-node', 'value'),
         [Input('ranking-table', 'derived_virtual_data'),
         Input('ranking-table', 'derived_virtual_selected_rows')]
@@ -416,6 +372,86 @@ def bind_callbacks(app):
         return selection
 
 
+    @app.callback(
+        Output('network-ready', 'value'),
+        [Input('ready', 'value')],
+        [State('initial-selection', 'children'),
+        State('dates-slider', 'value')]
+    )
+    def update_network(ready, selection_json, slider):
+        if not ready or not slider:
+            raise PreventUpdate()
+
+        # get network instance from selection
+        selection = json.loads(selection_json)
+        wiki = selection['wikis'][0]
+        network_code = selection['network']
+
+        if debug:
+            print(f'Updating network with values:\
+            \n\t- wiki: {wiki["url"]}\
+            \n\t- network: {network_code}\
+            \n\t- slider: ({slider[0]},{slider[1]})')
+
+        print(' * [Info] Building the network....')
+        time_start_calculations = time.perf_counter()
+        (lower_bound, upper_bound) = data_controller\
+                .get_time_bounds(wiki, slider[0], slider[1])
+        network = data_controller.get_network(wiki, network_code, lower_bound, upper_bound)
+
+        time_end_calculations = time.perf_counter() - time_start_calculations
+        print(f' * [Timing] Network ready in {time_end_calculations} seconds')
+
+        return network.to_cytoscape_dict()
+
+
+    @app.callback(
+        Output('cytoscape', 'stylesheet'),
+        [Input('cytoscape', 'elements'),
+        Input('tg-show-labels', 'on'),
+        Input('tg-show-clusters', 'on'),
+        Input('highlight-node', 'value'),
+        Input('dd-color-metric', 'value')],
+        [State('network-ready', 'value'),
+        State('initial-selection', 'children')]
+    )
+    def update_stylesheet(_, lb_switch, clus_switch, nodes_selc, dd_val,
+        cy_network, selection_json):
+
+        if not cy_network:
+            raise PreventUpdate()
+
+        selection = json.loads(selection_json)
+        network_code = selection['network']
+
+        directed = net_factory.is_directed(network_code)
+        stylesheet = CytoscapeStylesheet(directed=directed)
+        metric = {}
+
+        if dd_val:
+            metric = net_factory.get_secondary_metrics(network_code)[dd_val]
+
+        if not nodes_selc:
+            stylesheet.all_transformations(cy_network, metric)
+        else:
+            stylesheet.highlight_nodes(cy_network, nodes_selc)
+
+        if lb_switch:
+            stylesheet.set_label('label')
+        else:
+            stylesheet.set_label('')
+
+        if clus_switch:
+            stylesheet.color_nodes_by_cluster()
+        else:
+            stylesheet.color_nodes(cy_network, metric)
+
+        return stylesheet.cy_stylesheet
+
+
+    ####################################
+    # TODO Remove this function is useless
+    ####################################
     @app.callback(
         Output('ready', 'value'),
         [Input('dates-slider', 'value')]
@@ -450,6 +486,9 @@ def bind_callbacks(app):
         State('dates-slider', 'value')]
     )
     def check_available_data(cyto, selection_json, slider):
+        """
+        Checks if there's a network to plot
+        """
         if not slider:
             raise PreventUpdate()
 
@@ -472,7 +511,7 @@ def bind_callbacks(app):
             no_data_children = [
                 html.P('Nothing to show,'),
                 html.P(f'no data available between {lower_bound} and {upper_bound}.'),
-                html.P('Please, Try to change the date selection.')
+                html.P('Please, try changing the date selection.')
             ]
 
         return cyto_class, no_data_class, no_data_children
@@ -566,6 +605,12 @@ def bind_callbacks(app):
         State('date-slider-container', 'children')]
     )
     def move_slider_range(bt_back, bt_forward, step, di_slider):
+        """
+        Controls to move the slider selection
+        """
+        if not step:
+            raise PreventUpdate()
+
         step = int(step)
 
         if bt_back and int(bt_back) > int(bt_forward):
@@ -644,34 +689,6 @@ def bind_callbacks(app):
             print(f'Share link updated to: {new_query}')
 
         return new_query
-
-
-    @app.callback(
-        Output('user-info', 'children'),
-        [Input('cytoscape', 'tapNodeData')],
-        [State('initial-selection', 'children')]
-    )
-    def update_node_info(user_info, selection_json):
-        if not user_info:
-            raise PreventUpdate()
-
-        selection = json.loads(selection_json)
-        network_code = selection['network']
-        dic_info = net_factory.get_user_info(network_code)
-        dic_metrics = net_factory.get_available_metrics(network_code)
-
-        info_stack = []
-        # Let's add the user info
-        for key in dic_info.keys():
-            if dic_info[key] in user_info:
-                info_stack.append(html.P(f'{key}: {user_info[dic_info[key]]}'))
-
-        # Let's add the metrics
-        for key in dic_metrics.keys():
-            if dic_metrics[key] in user_info:
-                info_stack.append(html.P(f'{key}: {user_info[dic_metrics[key]]}'))
-
-        return info_stack
 
 
     @app.callback(
