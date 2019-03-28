@@ -1,10 +1,41 @@
 /* Main */
 
-#main {
-    width: '100%';
-    position: relative;
+#main-root{
+    background-color: #BDBDBD;
 }
 
+.body{
+    display: flex;
+}
+
+#main {
+    width: 75%;
+}
+
+.body > div:nth-child(2) {
+    width: 25%;
+    display: grid;
+}
+
+.side-pane {
+    background-color: white;
+    border-radius: 0.3rem;
+    margin-bottom: 2rem;
+}
+
+.header-pane {
+    width: 100%;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 1rem;
+    text-align: center;
+}
+
+div.side-pane:nth-child(1) > div:nth-child(2){
+    display: flex;
+    padding: 2rem;
+    justify-content: space-between;
+}
 
 #icons-bar {
     display: flex;

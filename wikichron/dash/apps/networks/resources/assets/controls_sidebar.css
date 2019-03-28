@@ -19,16 +19,6 @@
     font-size: 13px;
 }
 
-.left-element {
-    margin-left: 1.5rem;
-    float: left;
-}
-
-.right-element {
-    margin-right: 1.5rem;
-    float: right;
-}
-
 .control-button {
     margin: 10px 20px 10px 20px;
 }

@@ -5,17 +5,24 @@
 """
 
 import abc
+from datetime import datetime
 import pandas as pd
 from igraph import Graph, ClusterColoringPalette, VertexClustering
 from colormap.colors import rgb2hex
-from datetime import datetime
 
 from .fix_dendrogram import fix_dendrogram
+
 
 class BaseNetwork(metaclass=abc.ABCMeta):
 
     NAME = 'Base Network'
     CODE = 'base_network'
+    NETWORK_STATS = {
+        'Nodes': 'num_nodes',
+        'Edges': 'num_edges',
+        'Assortativity Degree': 'assortativity_degree',
+        'Communities': 'n_communities'
+    }
 
 
     def __init__(self, is_directed = False, graph = {}, alias = ''):
@@ -23,7 +30,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             self.graph = Graph(directed=is_directed)
         else:
             self.graph = graph
-            
+
         self.alias = alias
 
 
@@ -88,9 +95,14 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         pass
 
 
+    @classmethod
+    def get_network_stats(cls) -> dict:
+        return cls.NETWORK_STATS
+
+
     def add_graph_attrs(self):
         """
-        Calculates and adds the graph attrs 
+        Calculates and adds the graph attrs
         """
         self.graph['num_nodes'] = self.graph.vcount()
         self.graph['num_edges'] = self.graph.ecount()
@@ -256,7 +268,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
     def filter_by_time(self, df: pd.DataFrame, lower_bound = '',
         upper_bound = '') -> pd.DataFrame:
-        
+
         dff = df
         if lower_bound and upper_bound:
             dff = dff[lower_bound <= dff['timestamp']]
@@ -339,7 +351,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
         self.graph.vs[key] = edits
 
-    
+
     def calculate_abs_longevity(self, df: pd.DataFrame):
         """
         Calculates the birth of all the vertex without filter_by_time 
@@ -352,7 +364,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
                 node['abs_birth'] = row['timestamp']
                 node['abs_birth_int'] = int(datetime.strptime(
                     str(row['timestamp']), "%Y-%m-%d %H:%M:%S").strftime('%s'))
-                
+
                 # this is a weak solution to avoid users with no activity
                 if max_date < node['abs_birth_int']:
                     max_date = node['abs_birth_int']

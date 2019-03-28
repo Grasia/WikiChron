@@ -36,9 +36,7 @@ from . import data_controller
 from .utils import get_mode_config
 from .networks.models import networks_generator as net_factory
 from .networks.CytoscapeStylesheet import CytoscapeStylesheet
-from .networks.controls_sidebar_decorator.ControlsSidebar import ControlsSidebar
-from .networks.controls_sidebar_decorator.factory_sidebar_decorator import factory_sidebar_decorator
-from .networks.controls_sidebar_decorator.factory_sidebar_decorator import bind_controls_sidebar_callbacks
+from .right_side_bar import build_sidebar, bind_sidebar_callbacks
 
 TIME_DIV = 60 * 60 * 24 * 30
 
@@ -94,8 +92,8 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
         href_download_button = f'{mode_config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
         return (html.Div(id='header',
                 className='container',
-                style={'display': 'flex', 'align-items': 'center', \
-                        'justify-content': 'space-between'},
+                style={'display': 'flex', 'align-items': 'center',
+                       'justify-content': 'space-between'},
                 children=[
                     html.Span([
                             html.Img(src='{}/wikichron_networks_logo.svg'.format(assets_url_path))
@@ -133,7 +131,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                     ],
                     id='icons-bar')
             ])
-        );
+        )
 
 
     def selection_title(selected_wiki, selected_network):
@@ -256,26 +254,8 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
         return html.Div(style={'display': 'flex'}, children=[cytoscape])
 
 
-    def ranking_table():
-        return dash_table.DataTable(
-                    id='ranking-table',
-                    pagination_settings={
-                        'current_page': 0,
-                        'page_size': 10
-                    },
-                    pagination_mode='be',
-                    sorting='be',
-                    sorting_type='single',
-                    sorting_settings=[],
-                    style_cell={'textAlign': 'center'},
-                    style_header={'fontWeight': 'bold'},
-                    row_selectable="multi",
-                    selected_rows=[],
-                )
-
-
-    def distribution_graph():
-       return html.Div([
+    def build_distribution_graph() -> html.Div:
+        return html.Div([
             dcc.RadioItems(
                 id='scale',
                 options=[{'label': i, 'value': i} for i in ['Linear', 'Log']],
@@ -312,59 +292,51 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     selected_wiki_name = wikis_arg[0]['name']
     selected_network_name = network_type_arg['name']
 
-    controls_sidebar = ControlsSidebar()
-    sidebar_decorator = factory_sidebar_decorator('co_editing_network', controls_sidebar)
-    sidebar_decorator.add_all_sections()
-
     share_url_path = f'{server_config["PREFERRED_URL_SCHEME"]}://{server_config["APP_HOSTNAME"]}{mode_config["DASH_BASE_PATHNAME"]}{query_string}'
     download_url_path = f'{server_config["PREFERRED_URL_SCHEME"]}://{server_config["APP_HOSTNAME"]}{mode_config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
-
     selection_url = f'{mode_config["HOME_MODE_PATHNAME"]}'
 
-    return html.Div(
+    main = html.Div(
             id='main',
             className='control-text',
             children=[
-
-                html.A('Go back to selection', href=selection_url),
-
-                main_header(),
-
-                html.Hr(style={'margin-top': '0px'}),
-
                 selection_title(selected_wiki_name, selected_network_name),
-
                 date_slider_control(),
-
                 html.Hr(style={'margin-bottom': '0px'}),
-
                 share_modal(share_url_path, download_url_path),
-
                 html.Div(id='initial-selection', style={'display': 'none'},
                             children=args_selection),
 
-                controls_sidebar.build(),
-
                 cytoscape_component(),
-                ranking_table(),
-                distribution_graph(),
+                build_distribution_graph(),
                 dropdown_color_metric_selector(network_type_code),
-                html.Div(id='user-info'),
 
+                # Signal data
                 html.Div(id='network-ready', style={'display': 'none'}),
                 html.Div(id='signal-data', style={'display': 'none'}),
                 html.Div(id='ready', style={'display': 'none'}),
                 html.Div(id='metric-to-show', style={'display': 'none'}),
                 html.Div(id='highlight-node', style={'display': 'none'})
-        ])
+            ])
+
+    header = html.Div([
+        html.A('Go back to selection', href=selection_url),
+        main_header(),
+        html.Hr(style={'margin-top': '0px'})
+    ])
+
+    body = html.Div(children = [
+        main,
+        build_sidebar()
+    ], className='body')
+
+    return html.Div(children = [header, body])
 
 
 def bind_callbacks(app):
 
     # Right sidebar callbacks
-    ############################
-    bind_controls_sidebar_callbacks('co_editing_network', app)
-    ############################
+    bind_sidebar_callbacks(app)
 
 
     @app.callback(
