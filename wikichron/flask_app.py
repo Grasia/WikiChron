@@ -60,6 +60,7 @@ def classic_app():
         categories_frontend[cat_name] = [transform_metric_obj_in_metric_frontend(metric) for metric in cat_metrics]
 
     return flask.render_template("classic/selection/selection.html",
+                                title = 'WikiChron Classic - selection',
                                 development = config["DEBUG"],
                                 wikis = wikis,
                                 categories = categories_frontend)
@@ -79,6 +80,7 @@ def networks_app():
         networks_frontend.append({ 'name': nw.NAME, 'code': nw.CODE})
 
     return flask.render_template("networks/selection/selection.html",
+                                title = 'WikiChron Networks - selection',
                                 development = config["DEBUG"],
                                 wikis = wikis,
                                 networks = networks_frontend)
