@@ -228,7 +228,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
             id='no-data', className='non-show cyto-dim')
         cytoscape = dash_cytoscape.Cytoscape(
                     id='cytoscape',
-                    className='show cyto-dim',
+                    className='show',
                     elements = [],
                     maxZoom = 1.75,
                     minZoom = 0.35,
@@ -249,6 +249,10 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                         'initialTemp': 200,
                         'coolingFactor': 0.95,
                         'minTemp': 1.0
+                    },
+                    style = {
+                        'height': '65vh',
+                        'width': 'calc(100% - 300px)'
                     },
                     stylesheet = CytoscapeStylesheet.make_basic_stylesheet()
         )
@@ -477,11 +481,11 @@ def bind_callbacks(app):
         State('dates-slider', 'value')]
     )
     def check_available_data(cyto, selection_json, slider):
-        cyto_class = 'show cyto-dim'
+        cyto_class = 'show'
         no_data_class = 'non-show cyto-dim'
         no_data_children = []
         if not cyto:
-            cyto_class = 'non-show cyto-dim'
+            cyto_class = 'non-show'
             no_data_class = 'show cyto-dim'
 
             selection = json.loads(selection_json)
@@ -490,13 +494,13 @@ def bind_callbacks(app):
             first_entry = int(datetime.strptime(str(first_entry), "%Y-%m-%d %H:%M:%S").strftime('%s'))
             upper_bound = first_entry + slider[1] * TIME_DIV
             lower_bound = first_entry + slider[0] * TIME_DIV
-            upper_bound = datetime.fromtimestamp(upper_bound).strftime('%Y/%m/%d')
-            lower_bound = datetime.fromtimestamp(lower_bound).strftime('%Y/%m/%d')
+            upper_bound = datetime.fromtimestamp(upper_bound).strftime('%B/%Y')
+            lower_bound = datetime.fromtimestamp(lower_bound).strftime('%B/%Y')
 
             no_data_children = [
                 html.P('Nothing to show,'),
                 html.P(f'no data available between {lower_bound} and {upper_bound}.'),
-                html.P('Try to change date selection.')
+                html.P('Please, Try to change the date selection.')
             ]
 
         return cyto_class, no_data_class, no_data_children
