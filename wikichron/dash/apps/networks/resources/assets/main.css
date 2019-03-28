@@ -122,3 +122,23 @@
 .step-button{
     width: 8rem;
 }
+
+.show{
+    display: initial;
+}
+
+.non-show{
+    display: none;
+}
+
+.cyto-dim {
+    height: 65vh;
+    width: calc(100% - 300px);
+}
+
+#no-data {
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    padding: 5rem;
+}
