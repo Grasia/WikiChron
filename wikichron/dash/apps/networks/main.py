@@ -222,8 +222,11 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
 
 
     def cytoscape_component():
+        no_data = html.Div(children=[html.P('Nothing to show')], 
+            id='no-data', className='non-show cyto-dim')
         cytoscape = dash_cytoscape.Cytoscape(
                     id='cytoscape',
+                    className='show',
                     elements = [],
                     maxZoom = 1.75,
                     minZoom = 0.35,
@@ -251,7 +254,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                     },
                     stylesheet = CytoscapeStylesheet.make_basic_stylesheet()
         )
-        return html.Div(style={'display': 'flex'}, children=[cytoscape])
+        return html.Div(style={'display': 'flex'}, children=[cytoscape, no_data])
 
 
     def build_distribution_graph() -> html.Div:
@@ -439,6 +442,40 @@ def bind_callbacks(app):
             raise PreventUpdate()
 
         return cy_network['network']
+
+
+    @app.callback(
+        [Output('cytoscape', 'className'),
+        Output('no-data', 'className'),
+        Output('no-data', 'children')],
+        [Input('cytoscape', 'elements')],
+        [State('initial-selection', 'children'),
+        State('dates-slider', 'value')]
+    )
+    def check_available_data(cyto, selection_json, slider):
+        cyto_class = 'show'
+        no_data_class = 'non-show cyto-dim'
+        no_data_children = []
+        if not cyto:
+            cyto_class = 'non-show'
+            no_data_class = 'show cyto-dim'
+
+            selection = json.loads(selection_json)
+            wiki = selection['wikis'][0]
+            first_entry = data_controller.get_first_entry(wiki)
+            first_entry = int(datetime.strptime(str(first_entry), "%Y-%m-%d %H:%M:%S").strftime('%s'))
+            upper_bound = first_entry + slider[1] * TIME_DIV
+            lower_bound = first_entry + slider[0] * TIME_DIV
+            upper_bound = datetime.fromtimestamp(upper_bound).strftime('%B/%Y')
+            lower_bound = datetime.fromtimestamp(lower_bound).strftime('%B/%Y')
+
+            no_data_children = [
+                html.P('Nothing to show,'),
+                html.P(f'no data available between {lower_bound} and {upper_bound}.'),
+                html.P('Please, Try to change the date selection.')
+            ]
+
+        return cyto_class, no_data_class, no_data_children
 
 
     @app.callback(

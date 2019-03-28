@@ -1,0 +1,91 @@
+/* General */
+body {
+    color: white;
+    background-color: white;
+}
+
+h1 {
+    margin-bottom: 2.5rem;
+    font-weight: 900;
+}
+
+section {
+    margin-bottom: 100px;
+}
+
+#welcome-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    background-image: url("/static/assets/header_background.png");
+    background-color: #21446D;
+}
+
+#welcome-title p {
+	font-family: Roboto;
+	font-size: 18px;
+	font-weight: 300;
+	text-align: center;
+}
+
+.card {
+    width: 350px;
+    border: 2px solid #DAE4ED;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 3px 0 rgba(0,0,0,0.5), 2px 2px 4px 0 rgba(0,0,0,0.1);
+}
+
+.card-text {
+    color: #4A4A4A;
+}
+
+.card-text:hover {
+    color: black;
+}
+
+#mode-options {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.mode-image {
+    height: 100px;
+    margin: auto;
+    margin-bottom: 20px;
+}
+
+.card-img-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: auto;
+    padding: 20px;
+}
+
+.to-app-link {
+    font-size: 1.5rem;
+    padding-left: 20px;
+}
+
+
+#comming-soon {
+    display: flex;
+    flex-direction: column;
+    justify-content: middle;
+    align-items: center;
+}
+
+
+#comming-soon p {
+    color: orange;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.comming-soon-img-container {
+    opacity: 0.4;
+    margin-bottom: 17px;
+}
