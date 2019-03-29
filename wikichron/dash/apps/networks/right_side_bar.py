@@ -43,7 +43,7 @@ def build_sidebar() -> html.Div:
 def build_network_stats(stats: list()) -> html.Div:
     header = html.Div(children=[
         'Network Stats',
-        html.Hr(className='side-hr')
+        html.Hr(className='pane-hr')
         ], className='header-pane sidebar-header-pane')
 
     body = html.Div(children=[
@@ -62,7 +62,7 @@ def build_network_stats(stats: list()) -> html.Div:
 def build_table() -> html.Div:
     header = html.Div(children=[
         'Ranking',
-        html.Hr(className='side-hr')
+        html.Hr(className='pane-hr')
     ],
     className='header-pane sidebar-header-pane')
 
@@ -88,7 +88,7 @@ def build_table() -> html.Div:
 def build_user_stats() -> html.Div:
     header = html.Div(children=[
         'User Stats',
-        html.Hr(className='side-hr')
+        html.Hr(className='pane-hr')
     ], 
     className='header-pane sidebar-header-pane')
 

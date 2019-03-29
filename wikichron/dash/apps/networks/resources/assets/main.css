@@ -71,7 +71,7 @@
     font-size: 24px;
 }
 
-.side-hr{
+.pane-hr{
     margin: 0;
     border: 0;
     border-top: 3.5px solid #E1E1E1;
@@ -310,3 +310,29 @@ div.user-container-stat > p:nth-child(2){
     width: 20%;
 }
 /*****************************************************************/
+
+/*****************************************************************
+ * Degree distribution pane conf
+ *****************************************************************/
+.distribution-pane{
+    height: 34%;
+    width: 100%;
+}
+
+.plot-container{
+    height: 30rem;
+}
+
+div.pane:nth-child(6) > div:nth-child(1){
+    font-size: 20px;
+}
+
+div.pane:nth-child(6) > div:nth-child(2) > div:nth-child(1){
+    display: flex;
+    align-items: center;
+}
+
+div.pane:nth-child(6) > div:nth-child(2) > div:nth-child(1) > p:nth-child(1){
+    margin-right: 0.5rem;
+}
+ /*****************************************************************/

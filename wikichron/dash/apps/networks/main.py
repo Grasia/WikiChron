@@ -263,19 +263,26 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
 
     def build_distribution_pane() -> html.Div:
         header = html.Div(children=[
-            html.P('Degree Distribution')
-            ], className='header-pane main-header-pane')
-        return html.Div([
-            dcc.RadioItems(
-                id='scale',
-                options=[{'label': i, 'value': i} for i in ['Linear', 'Log']],
-                value='Linear',
-                labelStyle={'display': 'inline-block'}
-            ),
+            html.P('Degree Distribution'),
+            html.Hr(className='pane-hr')
+            ], className='header-pane')
+
+        body = html.Div([
+            html.Div(children=[
+                html.P('Scale:'),
+                dcc.RadioItems(
+                    id='scale',
+                    options=[{'label': i, 'value': i} for i in ['Linear', 'Log']],
+                    value='Linear',
+                    labelStyle={'display': 'inline-block'}
+                )
+            ]),
             dcc.Graph(
                 id='distribution-graph'
             )
         ])
+
+        return html.Div(children=[header, body], className='pane main-pane distribution-pane')
 
 
     def dropdown_color_metric_selector(network_code):
@@ -724,7 +731,6 @@ def bind_callbacks(app):
                 }
             )],
             'layout': go.Layout(
-                title='Degree Distribution',
                 xaxis={
                     'title': 'K',
                     'type': 'linear' if scale_type == 'Linear' else 'log'
@@ -734,7 +740,6 @@ def bind_callbacks(app):
                     'type': 'linear' if scale_type == 'Linear' else 'log'
                 },
                 margin={'l': 40, 'b': 30, 't': 10, 'r': 0},
-                height=450,
                 hovermode='closest'
             )
         }
