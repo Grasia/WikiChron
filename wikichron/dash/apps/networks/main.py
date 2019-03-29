@@ -261,7 +261,10 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
         return html.Div(style={'display': 'flex'}, children=[cytoscape, no_data])
 
 
-    def build_distribution_graph() -> html.Div:
+    def build_distribution_pane() -> html.Div:
+        header = html.Div(children=[
+            html.P('Degree Distribution')
+            ], className='header-pane main-header-pane')
         return html.Div([
             dcc.RadioItems(
                 id='scale',
@@ -328,7 +331,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                             children=args_selection),
                 build_network_controls(network_type_code),
                 cytoscape_component(),
-                build_distribution_graph(),
+                build_distribution_pane(),
 
                 # Signal data
                 html.Div(id='network-ready', style={'display': 'none'}),

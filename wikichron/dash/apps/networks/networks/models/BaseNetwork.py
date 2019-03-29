@@ -19,8 +19,8 @@ class BaseNetwork(metaclass=abc.ABCMeta):
     CODE = 'base_network'
     NETWORK_STATS = {
         'Nodes': 'num_nodes',
-        'Edges': 'num_edges',
         'Assortativity Degree': 'assortativity_degree',
+        'Edges': 'num_edges',
         'Communities': 'n_communities'
     }
 

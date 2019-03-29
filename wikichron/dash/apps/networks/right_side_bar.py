@@ -41,7 +41,11 @@ def build_sidebar() -> html.Div:
 
 
 def build_network_stats(stats: list()) -> html.Div:
-    header = html.Div(children='Network Stats', className='header-pane')
+    header = html.Div(children=[
+        'Network Stats',
+        html.Hr(className='side-hr')
+        ], className='header-pane sidebar-header-pane')
+
     body = html.Div(children=[
             html.Div([
                 html.P(f'{stats[0]}: ...'),
@@ -56,7 +60,12 @@ def build_network_stats(stats: list()) -> html.Div:
 
 
 def build_table() -> html.Div:
-    header = html.Div(children='Ranking', className='header-pane')
+    header = html.Div(children=[
+        'Ranking',
+        html.Hr(className='side-hr')
+    ],
+    className='header-pane sidebar-header-pane')
+
     body = html.Div(children=[
             dash_table.DataTable(
                 id='ranking-table',
@@ -77,7 +86,12 @@ def build_table() -> html.Div:
 
 
 def build_user_stats() -> html.Div:
-    header = html.Div(children='User Stats', className='header-pane')
+    header = html.Div(children=[
+        'User Stats',
+        html.Hr(className='side-hr')
+    ], 
+    className='header-pane sidebar-header-pane')
+
     body = html.Div(id='user-stats', children=['Please, click on a node to show it\'s info'], 
         className='body-pane')
     return html.Div(children=[header, body], className='pane side-pane')
@@ -89,21 +103,26 @@ def bind_sidebar_callbacks(app):
             Output('net-stats', 'children'),
             [Input('network-ready', 'value')]
         )
-        def update_stats(cy_network):
+        def update_network_stats(cy_network):
             if not cy_network:
                 raise PreventUpdate()
 
             stats = BaseNetwork.get_network_stats()
-            stats_key = list(stats.keys())
+            child = []
+            i = 0
+            group = []
+            for k, val in stats.items():
+                group.append(html.Div(children=[
+                    html.P(f'{k}:'),
+                    html.P(cy_network[val])
+                ]))
 
-            return [html.Div([
-                        html.P(f'{stats_key[0]}: {cy_network[stats[stats_key[0]]]}'),
-                        html.P(f'{stats_key[1]}: {cy_network[stats[stats_key[1]]]}')
-                    ]),
-                    html.Div([
-                        html.P(f'{stats_key[2]}: {cy_network[stats[stats_key[2]]]}'),
-                        html.P(f'{stats_key[3]}: {cy_network[stats[stats_key[3]]]}')
-                    ])]
+                i += 1
+                if i % 2 == 0:
+                    child.append(html.Div(children=group))
+                    group = []
+
+            return child
 
 
         @app.callback(
@@ -183,12 +202,18 @@ def bind_sidebar_callbacks(app):
             # Let's add the user info
             for key in dic_info.keys():
                 if dic_info[key] in user_info:
-                    info_stack.append(html.P(f'{key}: {user_info[dic_info[key]]}'))
+                    info_stack.append(html.Div(children=[
+                        html.P(f'{key}:'),
+                        html.P(user_info[dic_info[key]])
+                    ], className='user-container-stat'))
 
             # Let's add the metrics
             for key in dic_metrics.keys():
                 if dic_metrics[key] in user_info:
-                    info_stack.append(html.P(f'{key}: {user_info[dic_metrics[key]]}'))
+                    info_stack.append(html.Div(children=[
+                        html.P(f'{key}:'),
+                        html.P(user_info[dic_metrics[key]])
+                    ], className='user-container-stat'))
 
             return info_stack
 
