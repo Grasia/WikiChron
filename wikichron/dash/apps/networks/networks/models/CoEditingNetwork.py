@@ -7,10 +7,9 @@
 """
 
 import pandas as pd
-from datetime import datetime
-
 from .BaseNetwork import BaseNetwork
-from ...data_controller import get_bot_names
+
+
 class CoEditingNetwork(BaseNetwork):
     """
     This network is based on the editors cooperation, this means, the nodes
@@ -31,14 +30,14 @@ class CoEditingNetwork(BaseNetwork):
 
     """
 
-    #aprox 1 month = 30 days
+    # aprox 1 month = 30 days
     TIME_DIV = 60 * 60 * 24 * 30
     TIME_BOUND = 24 * 15
     NAME = 'Co-Editing'
     CODE = 'co_editing_network'
     DIRECTED = False
 
-    #only metrics for the ranking
+    # only metrics for the ranking
     AVAILABLE_METRICS = {
         'Article Edits': 'num_edits',
         'Betweenness': 'betweenness',

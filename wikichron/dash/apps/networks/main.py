@@ -21,6 +21,7 @@ from datetime import datetime
 import dash
 import dash_cytoscape
 import dash_core_components as dcc
+import dash_daq as daq
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
@@ -36,12 +37,10 @@ from . import data_controller
 from .utils import get_mode_config
 from .networks.models import networks_generator as net_factory
 from .networks.CytoscapeStylesheet import CytoscapeStylesheet
-from .networks.controls_sidebar_decorator.ControlsSidebar import ControlsSidebar
-from .networks.controls_sidebar_decorator.factory_sidebar_decorator import factory_sidebar_decorator
-from .networks.controls_sidebar_decorator.factory_sidebar_decorator import bind_controls_sidebar_callbacks
+from .right_side_bar import build_sidebar, bind_sidebar_callbacks
 
 TIME_DIV = 60 * 60 * 24 * 30
-
+IMAGE_HEADER = 'url(../../../static/assets/header_background.png)'
 selection_params = {'wikis', 'network', 'lower_bound', 'upper_bound'}
 
 global debug
@@ -85,63 +84,58 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     assets_url_path = os.path.join(mode_config['DASH_BASE_PATHNAME'], 'assets')
 
 
-    def main_header():
+    def main_header(selection_url):
         """
         Generates the main header
 
         Return: An HTML object with the header content
         """
         href_download_button = f'{mode_config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
-        return (html.Div(id='header',
-                className='container',
-                style={'display': 'flex', 'align-items': 'center', \
-                        'justify-content': 'space-between'},
+        return (html.Div(
                 children=[
-                    html.Span([
-                            html.Img(src='{}/wikichron_networks_logo.svg'.format(assets_url_path))
-                        ],
-                        id='tool-title'),
-                    html.Div([
-                        html.A(
-                            html.Img(src='{}/share.svg'.format(assets_url_path)),
-                            id='share-button',
-                            className='icon',
-                            title='Share current selection'
-                        ),
-                        html.A(
-                            html.Img(src='{}/cloud_download.svg'.format(assets_url_path)),
-                            href=href_download_button,
-                            id='download-button',
-                            target='_blank',
-                            className='icon',
-                            title='Download data'
-                        ),
-                        html.A(
-                            html.Img(src='{}/documentation.svg'.format(assets_url_path)),
-                            href='https://github.com/Grasia/WikiChron/wiki/',
-                            target='_blank',
-                            className='icon',
-                            title='Documentation'
-                        ),
-                        html.A(
-                            html.Img(src='{}/ico-github.svg'.format(assets_url_path)),
-                            href='https://github.com/Grasia/WikiChron-networks',
-                            target='_blank',
-                            className='icon',
-                            title='Github repo'
-                        ),
-                    ],
-                    id='icons-bar')
-            ])
-        );
+                    html.Img(src='{}/wikichron_networks_logo2.svg'.format(assets_url_path), 
+                        className='title-img'),
+                    html.Div(children=[
+                        html.A('< Go back to selection', href=selection_url, style={'font-weight': 'bold'}),
+                        html.Div([
+                            html.A(
+                                html.Img(src='{}/share.svg'.format(assets_url_path)),
+                                id='share-button',
+                                className='icon',
+                                title='Share current selection'
+                            ),
+                            html.A(
+                                html.Img(src='{}/cloud_download.svg'.format(assets_url_path)),
+                                href=href_download_button,
+                                id='download-button',
+                                target='_blank',
+                                className='icon',
+                                title='Download data'
+                            ),
+                            html.A(
+                                html.Img(src='{}/documentation.svg'.format(assets_url_path)),
+                                href='https://github.com/Grasia/WikiChron/wiki/',
+                                target='_blank',
+                                className='icon',
+                                title='Documentation'
+                            ),
+                            html.A(
+                                html.Img(src='{}/ico-github.svg'.format(assets_url_path)),
+                                href='https://github.com/Grasia/WikiChron-networks',
+                                target='_blank',
+                                className='icon',
+                                title='Github repo'
+                            ),
+                        ], 
+                        className='icons-bar')
+                    ])
+            ], className='main-root-header', style={'background-image': IMAGE_HEADER})
+        )
 
 
     def selection_title(selected_wiki, selected_network):
-        selection_text = (f'You are viewing the {selected_network} network for wiki: {selected_wiki}')
-        return html.Div([
-            html.H3(selection_text, id = 'selection-title')],
-            className = 'container'
-        )
+        selection_text = (f'{selected_network} network for: {selected_wiki}')
+        return html.P([selection_text])
 
 
     def share_modal(share_link, download_link):
@@ -194,33 +188,41 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     def date_slider_control():
         return html.Div(id='date-slider-div', className='container',
                 children=[
-
-                    html.Div(children=[
-                        html.Span(id='slider-header',
-                        children=[
-                            html.Strong(
-                                'Time interval (months):'),
-                            html.Span(id='display-slider-selection')
-                        ]),
-
-                        html.Div(children=[
-                            html.Button("<<", id="bt-back", n_clicks_timestamp='0', className='step-button'),
-                            dcc.Input(id="in-step-slider" , type='number', value='1', min='0'),
-                            html.Button(">>", id="bt-forward", n_clicks_timestamp='0', className='step-button'),
-                        ], className='slider-controls'),
-                    ],
-                    style={'display': 'flex'}),
-
                     html.Div(id='date-slider-container',
                         style={'height': '35px'},
                         children=[
                             dcc.RangeSlider(
                                 id='dates-slider'
                         )],
-                    )
+                    ),
+
+                    html.Div(children=[
+                        html.Span(id='slider-desc',
+                        children=[
+                            html.Strong('Time interval (months):')
+                        ]),
+
+                        html.Div(children=[
+                            html.Button("<<", id="bt-back", n_clicks_timestamp='0'),
+                            dcc.Input(id="in-step-slider" , type='number', 
+                                placeholder='MM', min='1', max='999'),
+                            html.Button(">>", id="bt-forward", n_clicks_timestamp='0'),
+                        ]),
+                    ], className='slider-add-on'),
                 ],
                 style={'margin-top': '15px', 'display': 'grid'}
                 )
+
+
+    def build_slider_pane(selected_wiki_name, selected_network_name):
+        header = html.Div(children=[
+            selection_title(selected_wiki_name, selected_network_name)
+            ], className='header-pane main-header-pane')
+        body = html.Div(children=[
+            date_slider_control()
+        ], className='body-pane')
+
+        return html.Div(children=[header, body], className='pane main-pane')
 
 
     def cytoscape_component():
@@ -252,43 +254,35 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                     },
                     style = {
                         'height': '65vh',
-                        'width': 'calc(100% - 300px)'
+                        'width': '100%'
                     },
                     stylesheet = CytoscapeStylesheet.make_basic_stylesheet()
         )
         return html.Div(style={'display': 'flex'}, children=[cytoscape, no_data])
 
 
-    def ranking_table():
-        return dash_table.DataTable(
-                    id='ranking-table',
-                    pagination_settings={
-                        'current_page': 0,
-                        'page_size': 10
-                    },
-                    pagination_mode='be',
-                    sorting='be',
-                    sorting_type='single',
-                    sorting_settings=[],
-                    style_cell={'textAlign': 'center'},
-                    style_header={'fontWeight': 'bold'},
-                    row_selectable="multi",
-                    selected_rows=[],
+    def build_distribution_pane() -> html.Div:
+        header = html.Div(children=[
+            html.P('Degree Distribution'),
+            html.Hr(className='pane-hr')
+            ], className='header-pane')
+
+        body = html.Div([
+            html.Div(children=[
+                html.P('Scale:'),
+                dcc.RadioItems(
+                    id='scale',
+                    options=[{'label': i, 'value': i} for i in ['Linear', 'Log']],
+                    value='Linear',
+                    labelStyle={'display': 'inline-block'}
                 )
-
-
-    def distribution_graph():
-       return html.Div([
-            dcc.RadioItems(
-                id='scale',
-                options=[{'label': i, 'value': i} for i in ['Linear', 'Log']],
-                value='Linear',
-                labelStyle={'display': 'inline-block'}
-            ),
+            ]),
             dcc.Graph(
                 id='distribution-graph'
             )
         ])
+
+        return html.Div(children=[header, body], className='pane main-pane distribution-pane')
 
 
     def dropdown_color_metric_selector(network_code):
@@ -302,8 +296,23 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
 
         return dcc.Dropdown(
             id='dd-color-metric',
-            options=options
+            options=options,
+            placeholder='Select a metric to color'
         )
+
+
+    def build_network_controls(network_code):
+        togg1 = html.Div([
+            daq.BooleanSwitch(id='tg-show-labels', on=False),
+            html.P('Show labels')
+        ])
+        togg2 = html.Div([
+            daq.BooleanSwitch(id='tg-show-clusters', on=False),
+            html.P('Show clusters')
+        ])
+        left = html.Div([togg1, togg2])
+        right = dropdown_color_metric_selector(network_code)
+        return html.Div(children=[left, right])
 
 
     if debug:
@@ -315,118 +324,44 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     selected_wiki_name = wikis_arg[0]['name']
     selected_network_name = network_type_arg['name']
 
-    controls_sidebar = ControlsSidebar()
-    sidebar_decorator = factory_sidebar_decorator('co_editing_network', controls_sidebar)
-    sidebar_decorator.add_all_sections()
-
     share_url_path = f'{server_config["PREFERRED_URL_SCHEME"]}://{server_config["APP_HOSTNAME"]}{mode_config["DASH_BASE_PATHNAME"]}{query_string}'
     download_url_path = f'{server_config["PREFERRED_URL_SCHEME"]}://{server_config["APP_HOSTNAME"]}{mode_config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
-
     selection_url = f'{mode_config["HOME_MODE_PATHNAME"]}'
 
-    return html.Div(
+    main = html.Div(
             id='main',
             className='control-text',
             children=[
-
-                html.A('Go back to selection', href=selection_url),
-
-                main_header(),
-
-                html.Hr(style={'margin-top': '0px'}),
-
-                selection_title(selected_wiki_name, selected_network_name),
-
-                date_slider_control(),
-
-                html.Hr(style={'margin-bottom': '0px'}),
-
+                build_slider_pane(selected_wiki_name, selected_network_name),
                 share_modal(share_url_path, download_url_path),
-
                 html.Div(id='initial-selection', style={'display': 'none'},
                             children=args_selection),
-
-                controls_sidebar.build(),
-
+                build_network_controls(network_type_code),
                 cytoscape_component(),
-                ranking_table(),
-                distribution_graph(),
-                dropdown_color_metric_selector(network_type_code),
-                html.Div(id='user-info'),
+                build_distribution_pane(),
 
+                # Signal data
                 html.Div(id='network-ready', style={'display': 'none'}),
                 html.Div(id='signal-data', style={'display': 'none'}),
                 html.Div(id='ready', style={'display': 'none'}),
                 html.Div(id='metric-to-show', style={'display': 'none'}),
                 html.Div(id='highlight-node', style={'display': 'none'})
-        ])
+            ])
+
+    header = main_header(selection_url)
+
+    body = html.Div(children = [
+        main,
+        build_sidebar(network_type_code)
+    ], className='body')
+
+    return html.Div(children = [header, body])
 
 
 def bind_callbacks(app):
 
     # Right sidebar callbacks
-    ############################
-    bind_controls_sidebar_callbacks('co_editing_network', app)
-    ############################
-
-
-    @app.callback(
-        Output('ranking-table', 'columns'),
-        [Input('metric-to-show', 'value')],
-        [State('network-ready', 'value'),
-        State('initial-selection', 'children'),
-        State('dates-slider', 'value')]
-    )
-    def update_ranking_header(metric, ready, selection_json, slider):
-        if not ready or not metric or not slider:
-            print('not ready header')
-            raise PreventUpdate()
-
-        selection = json.loads(selection_json)
-        wiki = selection['wikis'][0]
-        network_code = selection['network']
-        (lower, upper) = data_controller.get_time_bounds(wiki, slider[0], slider[1])
-        network = data_controller.get_network(wiki, network_code, lower, upper)
-
-        df = network.get_metric_dataframe(metric)
-        return [{"name": i, "id": i} for i in df.columns]
-
-
-    @app.callback(
-        Output('ranking-table', 'data'),
-        [Input('ranking-table', 'pagination_settings'),
-        Input('ranking-table', 'sorting_settings'),
-        Input('metric-to-show', 'value'),
-        Input('dates-slider', 'value')],
-        [State('network-ready', 'value'),
-        State('initial-selection', 'children')]
-    )
-    def update_ranking(pag_set, sort_set, metric, slider, ready, selection_json):
-        if not ready or not metric or not slider:
-            raise PreventUpdate()
-
-        selection = json.loads(selection_json)
-        wiki = selection['wikis'][0]
-        network_code = selection['network']
-        (lower, upper) = data_controller.get_time_bounds(wiki, slider[0], slider[1])
-        network = data_controller.get_network(wiki, network_code, lower, upper)
-
-        df = network.get_metric_dataframe(metric)
-
-        # check the col to sort
-        if sort_set and sort_set[0]['column_id'] in list(df):
-            df = df.sort_values(sort_set[0]['column_id'],
-                ascending=sort_set[0]['direction'] == 'asc',
-                inplace=False)
-        elif not df.empty:
-            df = df.sort_values(metric, ascending=False)
-        else:
-            return []
-
-        return df.iloc[
-                pag_set['current_page']*pag_set['page_size']:
-                (pag_set['current_page'] + 1)*pag_set['page_size']
-            ].to_dict('rows')
+    bind_sidebar_callbacks(app)
 
 
     @app.callback(
@@ -447,6 +382,86 @@ def bind_callbacks(app):
         return selection
 
 
+    @app.callback(
+        Output('network-ready', 'value'),
+        [Input('ready', 'value')],
+        [State('initial-selection', 'children'),
+        State('dates-slider', 'value')]
+    )
+    def update_network(ready, selection_json, slider):
+        if not ready or not slider:
+            raise PreventUpdate()
+
+        # get network instance from selection
+        selection = json.loads(selection_json)
+        wiki = selection['wikis'][0]
+        network_code = selection['network']
+
+        if debug:
+            print(f'Updating network with values:\
+            \n\t- wiki: {wiki["url"]}\
+            \n\t- network: {network_code}\
+            \n\t- slider: ({slider[0]},{slider[1]})')
+
+        print(' * [Info] Building the network....')
+        time_start_calculations = time.perf_counter()
+        (lower_bound, upper_bound) = data_controller\
+                .get_time_bounds(wiki, slider[0], slider[1])
+        network = data_controller.get_network(wiki, network_code, lower_bound, upper_bound)
+
+        time_end_calculations = time.perf_counter() - time_start_calculations
+        print(f' * [Timing] Network ready in {time_end_calculations} seconds')
+
+        return network.to_cytoscape_dict()
+
+
+    @app.callback(
+        Output('cytoscape', 'stylesheet'),
+        [Input('cytoscape', 'elements'),
+        Input('tg-show-labels', 'on'),
+        Input('tg-show-clusters', 'on'),
+        Input('highlight-node', 'value'),
+        Input('dd-color-metric', 'value')],
+        [State('network-ready', 'value'),
+        State('initial-selection', 'children')]
+    )
+    def update_stylesheet(_, lb_switch, clus_switch, nodes_selc, dd_val,
+        cy_network, selection_json):
+
+        if not cy_network:
+            raise PreventUpdate()
+
+        selection = json.loads(selection_json)
+        network_code = selection['network']
+
+        directed = net_factory.is_directed(network_code)
+        stylesheet = CytoscapeStylesheet(directed=directed)
+        metric = {}
+
+        if dd_val:
+            metric = net_factory.get_secondary_metrics(network_code)[dd_val]
+
+        if not nodes_selc:
+            stylesheet.all_transformations(cy_network, metric)
+        else:
+            stylesheet.highlight_nodes(cy_network, nodes_selc)
+
+        if lb_switch:
+            stylesheet.set_label('label')
+        else:
+            stylesheet.set_label('')
+
+        if clus_switch:
+            stylesheet.color_nodes_by_cluster()
+        else:
+            stylesheet.color_nodes(cy_network, metric)
+
+        return stylesheet.cy_stylesheet
+
+
+    ####################################
+    # TODO Remove this function is useless
+    ####################################
     @app.callback(
         Output('ready', 'value'),
         [Input('dates-slider', 'value')]
@@ -481,6 +496,12 @@ def bind_callbacks(app):
         State('dates-slider', 'value')]
     )
     def check_available_data(cyto, selection_json, slider):
+        """
+        Checks if there's a network to plot
+        """
+        if not slider:
+            raise PreventUpdate()
+
         cyto_class = 'show'
         no_data_class = 'non-show cyto-dim'
         no_data_children = []
@@ -594,6 +615,12 @@ def bind_callbacks(app):
         State('date-slider-container', 'children')]
     )
     def move_slider_range(bt_back, bt_forward, step, di_slider):
+        """
+        Controls to move the slider selection
+        """
+        if not step:
+            raise PreventUpdate()
+
         step = int(step)
 
         if bt_back and int(bt_back) > int(bt_forward):
@@ -675,34 +702,6 @@ def bind_callbacks(app):
 
 
     @app.callback(
-        Output('user-info', 'children'),
-        [Input('cytoscape', 'tapNodeData')],
-        [State('initial-selection', 'children')]
-    )
-    def update_node_info(user_info, selection_json):
-        if not user_info:
-            raise PreventUpdate()
-
-        selection = json.loads(selection_json)
-        network_code = selection['network']
-        dic_info = net_factory.get_user_info(network_code)
-        dic_metrics = net_factory.get_available_metrics(network_code)
-
-        info_stack = []
-        # Let's add the user info
-        for key in dic_info.keys():
-            if dic_info[key] in user_info:
-                info_stack.append(html.P(f'{key}: {user_info[dic_info[key]]}'))
-
-        # Let's add the metrics
-        for key in dic_metrics.keys():
-            if dic_metrics[key] in user_info:
-                info_stack.append(html.P(f'{key}: {user_info[dic_metrics[key]]}'))
-
-        return info_stack
-
-
-    @app.callback(
         Output('distribution-graph', 'figure'),
         [Input('scale', 'value'),
         Input('dates-slider', 'value')],
@@ -732,7 +731,6 @@ def bind_callbacks(app):
                 }
             )],
             'layout': go.Layout(
-                title='Degree Distribution',
                 xaxis={
                     'title': 'K',
                     'type': 'linear' if scale_type == 'Linear' else 'log'
@@ -742,7 +740,6 @@ def bind_callbacks(app):
                     'type': 'linear' if scale_type == 'Linear' else 'log'
                 },
                 margin={'l': 40, 'b': 30, 't': 10, 'r': 0},
-                height=450,
                 hovermode='closest'
             )
         }
