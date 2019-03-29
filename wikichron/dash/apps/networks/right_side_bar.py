@@ -29,13 +29,13 @@ global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
 
-def build_sidebar() -> html.Div:
+def build_sidebar(network_code) -> html.Div:
     """
     Use this function in order to build and get the side elements
     """
     return html.Div(className='', children=[
         build_network_stats(list(BaseNetwork.get_network_stats().keys())),
-        build_table(),
+        build_table(network_code),
         build_user_stats()
         ])
 
@@ -59,7 +59,15 @@ def build_network_stats(stats: list()) -> html.Div:
     return html.Div(children=[header, body], className='pane side-pane')
 
 
-def build_table() -> html.Div:
+def build_table(network_code) -> html.Div:
+    dict_metrics = net_factory.get_available_metrics(network_code)
+    options = []
+    for k in dict_metrics.keys():
+        options.append({
+            'label': k,
+            'value': k
+        })
+
     header = html.Div(children=[
         'Ranking',
         html.Hr(className='pane-hr')
@@ -67,6 +75,11 @@ def build_table() -> html.Div:
     className='header-pane sidebar-header-pane')
 
     body = html.Div(children=[
+            dcc.Dropdown(
+                id='dd-local-metric',
+                options=options,
+                placeholder='Select a local metric'
+            ),
             dash_table.DataTable(
                 id='ranking-table',
                 pagination_settings={
@@ -127,7 +140,7 @@ def bind_sidebar_callbacks(app):
 
         @app.callback(
             Output('ranking-table', 'columns'),
-            [Input('metric-to-show', 'value')],
+            [Input('dd-local-metric', 'value')],
             [State('network-ready', 'value'),
             State('initial-selection', 'children'),
             State('dates-slider', 'value')]
@@ -151,7 +164,7 @@ def bind_sidebar_callbacks(app):
             Output('ranking-table', 'data'),
             [Input('ranking-table', 'pagination_settings'),
             Input('ranking-table', 'sorting_settings'),
-            Input('metric-to-show', 'value'),
+            Input('dd-local-metric', 'value'),
             Input('dates-slider', 'value')],
             [State('network-ready', 'value'),
             State('initial-selection', 'children')]
@@ -220,13 +233,11 @@ def bind_sidebar_callbacks(app):
 
         # @app.callback(
         #     Output('metric-to-show', 'value'),
-        #     [Input('show-page-rank', 'n_clicks_timestamp'),
-        #     Input('show-edits', 'n_clicks_timestamp'),
-        #     Input('show-betweenness', 'n_clicks_timestamp')],
+        #     [Input('dd-local-metric', 'value')],
         #     [State('network-ready', 'value'),
         #     State('initial-selection', 'children')]
         # )
-        # def select_metric(tm_pr, tm_edits, tm_bet, ready, selection_json):
+        # def select_metric(dd_val, ready, selection_json):
         #     if not ready:
         #         raise PreventUpdate()
 

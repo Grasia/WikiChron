@@ -316,7 +316,9 @@ div.user-container-stat > p:nth-child(2){
  *****************************************************************/
 .distribution-pane{
     height: 34%;
-    width: 100%;
+    width: 80%;
+    padding-right: 3rem;
+    margin: auto;
 }
 
 .plot-container{

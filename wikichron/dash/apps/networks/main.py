@@ -352,7 +352,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
 
     body = html.Div(children = [
         main,
-        build_sidebar()
+        build_sidebar(network_type_code)
     ], className='body')
 
     return html.Div(children = [header, body])
