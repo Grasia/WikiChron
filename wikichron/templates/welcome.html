@@ -17,40 +17,44 @@
 
     <section class="container">
       <div id="mode-options">
+
         <div class="card">
-          <div class="card-img-top">
-            <img src={{url_for('static', filename='classic/assets/line_graph.svg')}} class="mode-image" alt="Graph image classic">
-            <img src={{url_for('static', filename='classic/assets/logo_classic_text.svg')}} alt="Logo title classic">
-          </div>
+          <a href="/classic" class="link-unstyled">
+            <div class="card-img-top">
+              <img src={{url_for('static', filename='classic/assets/line_graph.svg')}} class="mode-image" alt="Graph image classic">
+              <img src={{url_for('static', filename='classic/assets/logo_classic_text.svg')}} alt="Logo title classic">
+            </div>
             <div class="card-body">
               <div class="d-flex flex-row align-items-center">
                 <p class="card-text">Choose among a big set of metrics and compare its evolution between several wikis at once</p>
                 <div><a class="btn btn-link to-app-link" href="/classic">>></a></div>
               </div>
             </div>
+          </a>
         </div>
+
         <div class="card">
-          <div class="card-img-top">
-            <img src={{url_for('static', filename='networks/assets/network_graph.svg')}} class="mode-image" alt="Graph image networks">
-            <img src={{url_for('static', filename='networks/assets/logo_networks_text.svg')}} alt="Logo title networks">
-          </div>
+          <a href="/networks" class="link-unstyled">
+            <div class="card-img-top">
+              <img src={{url_for('static', filename='networks/assets/network_graph.svg')}} class="mode-image" alt="Graph image networks">
+              <img src={{url_for('static', filename='networks/assets/logo_networks_text.svg')}} alt="Logo title networks">
+            </div>
             <div class="card-body">
               <div class="d-flex flex-row align-items-center">
                 <p class="card-text">Visualize networks of collaboration and communication between the wiki members</p>
                 <div><a class="btn btn-link to-app-link" href="/networks">>></a></div>
               </div>
             </div>
+          </a>
         </div>
+
       </div>
     </section>
 
     <section class="container">
       <div id="comming-soon">
         <div class="comming-soon-img-container">
-  <!--
           <img src={{url_for('static', filename='monowiki/assets/logo_monowiki_text.svg')}} alt="Logo title monowiki">
-  -->
-          <img src={{url_for('static', filename='monowiki/assets/logo_classic_text.svg')}} alt="Logo title monowiki">
         </div>
 
         <p>Comming soon</p>
