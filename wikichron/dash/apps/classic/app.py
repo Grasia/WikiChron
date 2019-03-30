@@ -50,10 +50,6 @@ debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
 ######### GLOBAL VARIABLES #########
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', # dash stylesheet
-                        'https://use.fontawesome.com/releases/v5.0.9/css/all.css',  # fontawesome css
-]
-
 # list of js files to import from the app (either local or remote)
 to_import_js = []
 
@@ -361,6 +357,15 @@ def create_dash_app(server):
     schema_and_hostname = f'{server.config["PREFERRED_URL_SCHEME"]}://{server.config["APP_HOSTNAME"]}'
     meta_tags = define_meta_tags(schema_and_hostname, assets_url_path)
 
+    if not debug:
+        external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', # dash stylesheet
+                            'https://use.fontawesome.com/releases/v5.0.9/css/all.css',  # fontawesome css
+        ]
+    else:
+        external_stylesheets = [f'{assets_url_path}/lib/chriddyp.css', # dash stylesheet
+                                f'{assets_url_path}/lib/fontawesome-v.5.0.9.css',  # fontawesome css
+        ]
+
     print('Creating new Dash instance...')
     app = dash.Dash(__name__,
                     server = server,
@@ -371,14 +376,10 @@ def create_dash_app(server):
     app.title = 'WikiChron'
     app.config['suppress_callback_exceptions'] = True
 
-    # uncoment for offline serving of css:
-    #~ app.css.config.serve_locally = True
+    if debug: # In development use offline serving of deps
+        app.css.config.serve_locally = True
+        app.scripts.config.serve_locally = True
 
-    # uncoment for offline serving of js:
-    #~ app.scripts.config.serve_locally = True
-
-    # skeleton.css: (Already included in dash stylesheet)
-    #~ app.css.append_css({"external_url": "https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"})
 
     app_cache = cache.set_up_cache(app, debug)
     data_controller.set_cache(app_cache)
