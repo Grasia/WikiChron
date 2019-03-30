@@ -341,7 +341,6 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                 html.Div(id='network-ready', style={'display': 'none'}),
                 html.Div(id='signal-data', style={'display': 'none'}),
                 html.Div(id='ready', style={'display': 'none'}),
-                html.Div(id='metric-to-show', style={'display': 'none'}),
                 html.Div(id='highlight-node', style={'display': 'none'})
             ])
 
@@ -359,24 +358,6 @@ def bind_callbacks(app):
 
     # Sidebar callbacks
     bind_sidebar_callbacks(app)
-
-
-    @app.callback(
-        Output('highlight-node', 'value'),
-        [Input('ranking-table', 'derived_virtual_data'),
-        Input('ranking-table', 'derived_virtual_selected_rows')]
-    )
-    def highlight_node(data, selected):
-        if not data:
-            raise PreventUpdate()
-
-        # Reset the stylesheet
-        if not selected:
-            return None
-
-        # highlight nodes selected
-        selection = [data[s] for s in selected]
-        return selection
 
 
     @app.callback(
@@ -464,7 +445,6 @@ def bind_callbacks(app):
         [Input('dates-slider', 'value')]
     )
     def ready_to_plot_networks(*args):
-        #print (args)
         if not all(args):
             print('not ready!')
             return False

@@ -140,8 +140,8 @@
 }
 
 #bt-back, #bt-forward {
-    height: 30px;
-    width: 40px;
+    height: 3rem;
+    width: 3rem;
     line-height: 0;
     padding: 0;
     letter-spacing: 0;
@@ -333,7 +333,7 @@ div.user-container-stat > p:nth-child(2){
 
 #distribution-graph {
     height: 30vh;
-    width: 75vw;
+    /* width: 75vw; */
     padding-left: 1rem;
 }
 
@@ -356,5 +356,60 @@ div.pane:nth-child(6) > div:nth-child(1) > div:nth-child(2) {
 
 #scale > label > input {
     transform: scale(1);
+}
+ /*****************************************************************/
+
+ /*****************************************************************
+ * Ranking pane conf
+ *****************************************************************/
+ div.pane:nth-child(2) > div:nth-child(2) > div:nth-child(1) {
+     display: flex;
+     justify-content: right;
+     margin-bottom: 1.2rem;
+ }
+
+#dd-local-metric {
+    width: 55%;
+}
+
+#ranking-table{
+    margin-bottom: 1.2rem;
+}
+
+th.dash-header > div {
+    display: flex;
+    justify-content: space-around;
+    align-items: baseline;
+    flex-wrap: wrap;
+}
+
+th, td {
+    border: 0;
+}
+
+.cell-1-1 > table > tbody > tr > td > input {
+    transform: scale(1);
+    margin: 0.5rem 1rem 0 0;
+}
+
+.cell-1-1 > table:nth-child(1) > tbody:nth-child(1) > tr > td:nth-child(2) > div {
+    text-align: left;
+}
+
+
+#ranking-table > div:nth-child(2){
+    display: flex;
+    justify-content: right;
+    flex-wrap: wrap;
+}
+
+.previous-page, .next-page {
+    height: 4rem;
+    width: 7rem;
+    line-height: 0;
+    padding: 0;
+    letter-spacing: 0;
+    font-size: 12px;
+    text-transform: initial;
 }
  /*****************************************************************/
