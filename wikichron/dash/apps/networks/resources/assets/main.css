@@ -101,10 +101,6 @@
     justify-content: right;
 }
 
-.icon {
-    opacity: 0.9;
-}
-
 .icon:hover {
     opacity: 1;
 }
@@ -413,3 +409,28 @@ th, td {
     text-transform: initial;
 }
  /*****************************************************************/
+
+  /*****************************************************************
+ * Foot conf
+ *****************************************************************/
+.foot {
+    display: flex;
+    justify-content: space-between;
+    background-color: #0D233C;
+    margin-top: 3.5rem;
+    color: white;
+    height: 5vh;
+    align-items: center;
+    padding: 3rem;
+}
+
+.foot > div:nth-child(2){
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.foot > div:nth-child(2) > p{
+    margin-left: 1rem;
+}
+  /*****************************************************************/

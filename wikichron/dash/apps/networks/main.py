@@ -99,12 +99,6 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                         html.A('< Go back to selection', href=selection_url, style={'font-weight': 'bold'}),
                         html.Div([
                             html.A(
-                                html.Img(src='{}/share.svg'.format(assets_url_path)),
-                                id='share-button',
-                                className='icon',
-                                title='Share current selection'
-                            ),
-                            html.A(
                                 html.Img(src='{}/cloud_download.svg'.format(assets_url_path)),
                                 href=href_download_button,
                                 id='download-button',
@@ -113,19 +107,11 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                                 title='Download data'
                             ),
                             html.A(
-                                html.Img(src='{}/documentation.svg'.format(assets_url_path)),
-                                href='https://github.com/Grasia/WikiChron/wiki/',
-                                target='_blank',
+                                html.Img(src='{}/share.svg'.format(assets_url_path)),
+                                id='share-button',
                                 className='icon',
-                                title='Documentation'
-                            ),
-                            html.A(
-                                html.Img(src='{}/ico-github.svg'.format(assets_url_path)),
-                                href='https://github.com/Grasia/WikiChron-networks',
-                                target='_blank',
-                                className='icon',
-                                title='Github repo'
-                            ),
+                                title='Share current selection'
+                            )
                         ], 
                         className='icons-bar')
                     ])
@@ -351,7 +337,29 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
         build_sidebar(network_type_code)
     ], className='body')
 
-    return html.Div(children = [header, body])
+    foot = html.Div(children=[
+        html.P('Developded by Youssef El Faqir El Rhazoui'),
+        html.Div([
+            html.A(
+                html.Img(src='{}/ico-github.svg'.format(assets_url_path)),
+                href='https://github.com/Grasia/WikiChron-networks',
+                target='_blank',
+                className='icon',
+                title='Github repo'
+            ),
+            html.P('GitHub'),
+            html.A(
+                html.Img(src='{}/documentation.svg'.format(assets_url_path)),
+                href='https://github.com/Grasia/WikiChron/wiki/',
+                target='_blank',
+                className='icon',
+                title='Documentation'
+            ),
+            html.P('Docs'),
+        ])
+    ], className='foot')
+
+    return html.Div(children = [header, body, foot])
 
 
 def bind_callbacks(app):
