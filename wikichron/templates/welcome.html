@@ -18,8 +18,8 @@
     <section class="container">
       <div id="mode-options">
 
+      <a href="/classic" class="link-unstyled">
         <div class="card">
-          <a href="/classic" class="link-unstyled">
             <div class="card-img-top">
               <img src={{url_for('static', filename='classic/assets/line_graph.svg')}} class="mode-image" alt="Graph image classic">
               <img src={{url_for('static', filename='classic/assets/logo_classic_text.svg')}} alt="Logo title classic">
@@ -27,15 +27,15 @@
             <div class="card-body">
               <div class="d-flex flex-row align-items-center">
                 <p class="card-text">Choose among a big set of metrics and compare its evolution between several wikis at once</p>
-                <div><a class="btn btn-link to-app-link" href="/classic">>></a></div>
+                <div><img height="30px" src={{url_for('static', filename='assets/arrow.svg')}} class="btn btn-link to-app-link"></img></div>
               </div>
             </div>
-          </a>
         </div>
+      </a>
 
+      <a href="/networks" class="link-unstyled">
         <div class="card">
-          <a href="/networks" class="link-unstyled">
-            <div class="card-img-top">
+          <div class="card-img-top">
               <img src={{url_for('static', filename='networks/assets/network_graph.svg')}} class="mode-image" alt="Graph image networks">
               <img src={{url_for('static', filename='networks/assets/logo_networks_text.svg')}} alt="Logo title networks">
             </div>
@@ -45,8 +45,8 @@
                 <div><a class="btn btn-link to-app-link" href="/networks">>></a></div>
               </div>
             </div>
-          </a>
         </div>
+      </a>
 
       </div>
     </section>
