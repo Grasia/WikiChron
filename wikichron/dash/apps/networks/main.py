@@ -264,25 +264,22 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     def build_distribution_pane() -> html.Div:
         header = html.Div(children=[
             html.P('Degree Distribution'),
-            html.Hr(className='pane-hr')
-            ], className='header-pane')
+            html.Hr(className='pane-hr'),
+            ], className='header-pane sidebar-header-pane')
 
-        body = html.Div([
-            html.Div(children=[
-                html.P('Scale:'),
-                dcc.RadioItems(
-                    id='scale',
-                    options=[{'label': i, 'value': i} for i in ['Linear', 'Log']],
-                    value='Linear',
-                    labelStyle={'display': 'inline-block'}
-                )
-            ]),
-            dcc.Graph(
-                id='distribution-graph'
-            )
-        ])
+        left_body = html.Div(children=[
+                        html.P('Scale:'),
+                        dcc.RadioItems(
+                            id='scale',
+                            options=[{'label': i, 'value': i} for i in ['Linear', 'Log']],
+                            value='Linear'
+                        )
+                    ])
+        left = html.Div([header, left_body])
 
-        return html.Div(children=[header, body], className='pane main-pane distribution-pane')
+        body = dcc.Graph(id='distribution-graph')
+
+        return html.Div(children=[left, body], className='pane distribution-pane')
 
 
     def dropdown_color_metric_selector(network_code):
@@ -303,11 +300,11 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
 
     def build_network_controls(network_code):
         togg1 = html.Div([
-            daq.BooleanSwitch(id='tg-show-labels', on=False),
+            daq.BooleanSwitch(id='tg-show-labels', className='toggle', on=False),
             html.P('Show labels')
         ])
         togg2 = html.Div([
-            daq.BooleanSwitch(id='tg-show-clusters', on=False),
+            daq.BooleanSwitch(id='tg-show-clusters', className='toggle', on=False),
             html.P('Show clusters')
         ])
         left = html.Div([togg1, togg2])
@@ -360,7 +357,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
 
 def bind_callbacks(app):
 
-    # Right sidebar callbacks
+    # Sidebar callbacks
     bind_sidebar_callbacks(app)
 
 
