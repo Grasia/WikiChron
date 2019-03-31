@@ -183,11 +183,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                     ),
 
                     html.Div(children=[
-                        html.Span(id='slider-desc',
-                        children=[
-                            html.Strong('Time interval (months):')
-                        ]),
-
+                        html.Span('Time interval (months):'),
                         html.Div(children=[
                             html.Button("<<", id="bt-back", n_clicks_timestamp='0'),
                             dcc.Input(id="in-step-slider" , type='number', 
@@ -212,8 +208,8 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
 
 
     def cytoscape_component():
-        no_data = html.Div(children=[html.P('Nothing to show')], 
-            id='no-data', className='non-show cyto-dim')
+        no_data = html.Div(children=[html.P()], 
+            id='no-data', className='non-show')
         cytoscape = dash_cytoscape.Cytoscape(
                     id='cytoscape',
                     className='show',
@@ -238,13 +234,9 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                         'coolingFactor': 0.95,
                         'minTemp': 1.0
                     },
-                    style = {
-                        'height': '65vh',
-                        'width': '100%'
-                    },
                     stylesheet = CytoscapeStylesheet.make_basic_stylesheet()
         )
-        return html.Div(style={'display': 'flex'}, children=[cytoscape, no_data])
+        return html.Div(children=[cytoscape, no_data], className='cyto-dim')
 
 
     def build_distribution_pane() -> html.Div:
@@ -320,8 +312,10 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                 html.Div(id='initial-selection', style={'display': 'none'},
                             children=args_selection),
                 build_network_controls(network_type_code),
-                cytoscape_component(),
-                build_distribution_pane(),
+                html.Div([
+                    cytoscape_component(),
+                    build_distribution_pane()
+                ]),
 
                 # Signal data
                 html.Div(id='network-ready', style={'display': 'none'}),
@@ -488,11 +482,11 @@ def bind_callbacks(app):
             raise PreventUpdate()
 
         cyto_class = 'show'
-        no_data_class = 'non-show cyto-dim'
+        no_data_class = 'non-show'
         no_data_children = []
         if not cyto:
             cyto_class = 'non-show'
-            no_data_class = 'show cyto-dim'
+            no_data_class = 'show'
 
             selection = json.loads(selection_json)
             wiki = selection['wikis'][0]

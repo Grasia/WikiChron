@@ -45,7 +45,7 @@ class TalkPagesNetwork(BaseNetwork):
     }
 
     SECONDARY_METRICS = {
-        'Absolute Longevity': {
+        'Lifespan': {
             'key': 'abs_birth_int',
             'max': 'max_abs_birth_int',
             'min': 'min_abs_birth_int'
@@ -60,8 +60,8 @@ class TalkPagesNetwork(BaseNetwork):
     USER_INFO = {
         'User ID': 'id',
         'User Name': 'label',
-        'Absolute Birth': 'abs_birth',
-        'Cluster': 'cluster',
+        'Birth': 'abs_birth',
+        'Cluster #': 'cluster',
         'Article Edits': 'article_edits'
     }
 

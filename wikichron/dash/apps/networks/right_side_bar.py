@@ -223,7 +223,7 @@ def bind_sidebar_callbacks(app):
                 data_keys = df.columns
                 data = df.iloc[
                         pag_set['current_page']*pag_set['page_size']:
-                        (pag_set['current_page'])*pag_set['page_size']
+                        (pag_set['current_page'] + 1)*pag_set['page_size']
                     ].to_dict('rows')
 
             # fill with empty rows

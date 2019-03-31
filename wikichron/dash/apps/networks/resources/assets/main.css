@@ -30,6 +30,14 @@
 .body > div:nth-child(2) {
     width: 25%;
 }
+
+/* cytoscape + distribution graph */
+#main > div:nth-child(5) {
+    display: flex;
+    flex-direction: column;
+    height: 80%;
+    width: 100%;
+}
 /******************************************************************/
 
 /*****************************************************************
@@ -69,6 +77,7 @@
 
 .main-header-pane{
     font-size: 24px;
+    opacity: 0.9;
 }
 
 .pane-hr{
@@ -102,11 +111,11 @@
 }
 
 .icon:hover {
-    opacity: 1;
+    opacity: 0.7;
 }
 
 .icon:not(:first-child) {
-    margin-left: 18px;
+    margin-left: 2rem;
 }
 
 /* Go back custom */
@@ -119,15 +128,16 @@
 /*****************************************************************
  * Slider conf and its content ()
  *****************************************************************/
+.date-slider-div {
+    margin-top: 2rem;
+}
+
 .slider-add-on {
     display: flex;
     align-items: center;
     margin-top: 1rem;
-    margin-left: -5px;
-}
-
-.date-slider-div {
-    margin-top: 25px;
+    margin-left: -0.5rem;
+    font-size: 12px;
 }
 
 /* Slider controls conf*/
@@ -144,10 +154,10 @@
 }
 
 #in-step-slider{
-    height: 30px;
-    width: 65px;
+    height: 3rem;
+    width: 7rem;
     margin: 0 0.6rem 0 0.6rem;
-    padding: 4px 6px;
+    padding: 0.5rem 1rem;
 }
 /******************************************************************/
 
@@ -214,22 +224,29 @@
  *****************************************************************/
 .show{
     display: initial;
+    flex-grow: 1;
 }
 
 .non-show{
     display: none;
+    flex-grow: 0;
 }
 
 .cyto-dim {
-    height: 65vh;
+    flex-grow: 2;
     width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 #no-data {
-    font-size: 26px;
-    font-weight: bold;
+    font-size: 22px;
+    font-weight: 600;
+    opacity: 0.8;
     text-align: center;
-    padding: 5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 /*****************************************************************/
 
@@ -284,7 +301,7 @@ div.user-container-stat > p:nth-child(2){
     padding: 0.5rem;
     margin-top: -1rem;
     margin-left: 1.5rem;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 /* div [ div [switch + label] + div [switch + label] ] */
@@ -315,7 +332,7 @@ div.user-container-stat > p:nth-child(2){
 }
 
 #dd-color-metric{
-    width: 18%;
+    width: 20rem;
 }
 /*****************************************************************/
 
@@ -323,22 +340,22 @@ div.user-container-stat > p:nth-child(2){
  * Degree distribution pane conf
  *****************************************************************/
 .distribution-pane {
-    height: 30vh;
+    flex-grow: 1;
     display: flex;
+    margin-right: 0.5rem;
 }
 
 #distribution-graph {
-    height: 30vh;
-    /* width: 75vw; */
+    flex-grow: 5;
     padding-left: 1rem;
 }
 
-div.pane:nth-child(6) > div:nth-child(1) {
-    width: 15%;
+.distribution-pane > div:nth-child(1) {
+    flex-grow: 1;
     padding-right: 1rem;
 }
 
-div.pane:nth-child(6) > div:nth-child(1) > div:nth-child(2) {
+.distribution-pane > div:nth-child(1) > div:nth-child(2) {
     display: flex;
     font-size: 12px;
     flex-wrap: wrap;
@@ -365,11 +382,7 @@ div.pane:nth-child(6) > div:nth-child(1) > div:nth-child(2) {
  }
 
 #dd-local-metric {
-    width: 55%;
-}
-
-#ranking-table{
-    margin-bottom: 1.2rem;
+    width: 18rem;
 }
 
 th.dash-header > div {
@@ -379,7 +392,7 @@ th.dash-header > div {
     flex-wrap: wrap;
 }
 
-th, td {
+.cell-1-1 > table > tbody > tr > td {
     border: 0;
 }
 
@@ -391,7 +404,6 @@ th, td {
 .cell-1-1 > table:nth-child(1) > tbody:nth-child(1) > tr > td:nth-child(2) > div {
     text-align: left;
 }
-
 
 #ranking-table > div:nth-child(2){
     display: flex;
