@@ -20,6 +20,9 @@ from flask import Blueprint, current_app
 # classic
 import wikichron.dash.apps.classic.metrics.interface as classic_interface
 import wikichron.dash.apps.classic.data_controller as classic_data_controller
+# monowiki
+import wikichron.dash.apps.monowiki.metrics.interface as monowiki_interface
+import wikichron.dash.apps.monowiki.data_controller as monowiki_data_controller
 # networks
 import wikichron.dash.apps.networks.networks.interface as networks_interface
 import wikichron.dash.apps.networks.data_controller as networks_data_controller
@@ -61,6 +64,33 @@ def classic_app():
 
     return flask.render_template("classic/selection/selection.html",
                                 title = 'WikiChron Classic - selection',
+                                development = config["DEBUG"],
+                                wikis = wikis,
+                                categories = categories_frontend)
+
+@server_bp.route('/monowiki/') #TOMOVE to BP
+@server_bp.route('/monowiki/selection') #TOMOVE to BP
+def monowiki_app():
+
+    def transform_metric_obj_in_metric_frontend(metric):
+        return {'name': metric.text,
+                'code': metric.code,
+                'descp': metric.descp,
+                'category': metric.category}
+
+    config = current_app.config;
+
+    wikis = monowiki_data_controller.get_available_wikis()
+
+    metrics_by_category_backend = monowiki_interface.get_available_metrics_by_category()
+    # transform metric objects to a dict with the info we need for metrics:
+    categories_frontend = {}
+    for (cat_obj, cat_metrics) in metrics_by_category_backend.items():
+        cat_name = cat_obj.value
+        categories_frontend[cat_name] = [transform_metric_obj_in_metric_frontend(metric) for metric in cat_metrics]
+
+    return flask.render_template("monowiki/selection/selection.html",
+                                title = 'WikiChron Monowiki - selection',
                                 development = config["DEBUG"],
                                 wikis = wikis,
                                 categories = categories_frontend)
