@@ -40,6 +40,8 @@ from .utils import get_mode_config
 from .networks import interface
 from . import cache
 from . import data_controller
+from .main import bind_callbacks as bind_main_callbacks
+from .main_view import generate_main_content
 
 # production or development (DEBUG) flag:
 global debug;
@@ -66,7 +68,6 @@ global available_networks;
 global available_wikis;
 global available_wikis_dict;
 global side_bar
-global main
 
 
 ######### BEGIN CODE ###########################################################
@@ -206,7 +207,7 @@ def app_bind_callbacks(app):
                 network['code'] = selection['network']
                 network['name'] = get_network_name_from_code(network['code'])
 
-                return main.generate_main_content(wikis, network, query_string)
+                return generate_main_content(wikis, network, query_string)
 
 
         print('There is not a valid wikis & metrics tuple selection yet for plotting any graph')
@@ -386,12 +387,10 @@ def _init_global_vars():
 def _init_app_callbacks(app):
     global side_bar
     from . import side_bar #TOREMOVE (Probably)
-    global main
-    from . import main
 
     app_bind_callbacks(app)
     side_bar.bind_callbacks(app)
-    main.bind_callbacks(app)
+    bind_main_callbacks(app)
     return
 
 
