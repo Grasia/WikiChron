@@ -361,7 +361,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             dff = df[node['label'] == df['contributor_name']]
             if not dff.empty:
                 row = dff.iloc[0]
-                node['abs_birth'] = row['timestamp']
+                node['abs_birth'] = datetime.strftime(row['timestamp'], "%Y/%b/%d")
                 node['abs_birth_int'] = int(datetime.strptime(
                     str(row['timestamp']), "%Y-%m-%d %H:%M:%S").strftime('%s'))
 

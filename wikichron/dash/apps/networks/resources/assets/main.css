@@ -7,7 +7,7 @@
  * Conf of root and its content, header + body( main + sidebar )
  *****************************************************************/
 #main-root{
-    background-color: #EEEEEE;
+    background-color: #FAFAFA;
 }
 
 .main-root-header{
@@ -29,6 +29,14 @@
 /* side-bar conf */
 .body > div:nth-child(2) {
     width: 25%;
+}
+
+/* cytoscape + distribution graph */
+#main > div:nth-child(5) {
+    display: flex;
+    flex-direction: column;
+    height: 80%;
+    width: 100%;
 }
 /******************************************************************/
 
@@ -69,6 +77,7 @@
 
 .main-header-pane{
     font-size: 24px;
+    opacity: 0.9;
 }
 
 .pane-hr{
@@ -101,16 +110,12 @@
     justify-content: right;
 }
 
-.icon {
-    opacity: 0.9;
-}
-
 .icon:hover {
-    opacity: 1;
+    opacity: 0.7;
 }
 
 .icon:not(:first-child) {
-    margin-left: 18px;
+    margin-left: 2rem;
 }
 
 /* Go back custom */
@@ -123,15 +128,16 @@
 /*****************************************************************
  * Slider conf and its content ()
  *****************************************************************/
+.date-slider-div {
+    margin-top: 2rem;
+}
+
 .slider-add-on {
     display: flex;
     align-items: center;
     margin-top: 1rem;
-    margin-left: -5px;
-}
-
-.date-slider-div {
-    margin-top: 25px;
+    margin-left: -0.5rem;
+    font-size: 12px;
 }
 
 /* Slider controls conf*/
@@ -140,18 +146,18 @@
 }
 
 #bt-back, #bt-forward {
-    height: 30px;
-    width: 40px;
+    height: 3rem;
+    width: 3rem;
     line-height: 0;
     padding: 0;
     letter-spacing: 0;
 }
 
 #in-step-slider{
-    height: 30px;
-    width: 65px;
+    height: 3rem;
+    width: 7rem;
     margin: 0 0.6rem 0 0.6rem;
-    padding: 4px 6px;
+    padding: 0.5rem 1rem;
 }
 /******************************************************************/
 
@@ -218,22 +224,29 @@
  *****************************************************************/
 .show{
     display: initial;
+    flex-grow: 1;
 }
 
 .non-show{
     display: none;
+    flex-grow: 0;
 }
 
 .cyto-dim {
-    height: 65vh;
+    flex-grow: 2;
     width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 #no-data {
-    font-size: 26px;
-    font-weight: bold;
+    font-size: 22px;
+    font-weight: 600;
+    opacity: 0.8;
     text-align: center;
-    padding: 5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 /*****************************************************************/
 
@@ -244,10 +257,12 @@
  #net-stats > div{
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
 }
 
 #net-stats > div > div{
     display: flex;
+    flex-wrap: nowrap;
 }
 
 #net-stats > div > div > p:nth-child(2){
@@ -286,6 +301,7 @@ div.user-container-stat > p:nth-child(2){
     padding: 0.5rem;
     margin-top: -1rem;
     margin-left: 1.5rem;
+    font-size: 12px;
 }
 
 /* div [ div [switch + label] + div [switch + label] ] */
@@ -306,35 +322,127 @@ div.user-container-stat > p:nth-child(2){
     margin-right: 0.5rem;
 }
 
-#dd-color-metric {
-    width: 20%;
+.toggle > div > div > div{
+    width: 3.8rem;
+}
+
+.toggle > div > div > div > button{
+    height: 1.5rem;
+    width: 1.5rem;
+}
+
+#dd-color-metric{
+    width: 20rem;
 }
 /*****************************************************************/
 
 /*****************************************************************
  * Degree distribution pane conf
  *****************************************************************/
-.distribution-pane{
-    height: 34%;
-    width: 80%;
-    padding-right: 3rem;
-    margin: auto;
-}
-
-.plot-container{
-    height: 30rem;
-}
-
-div.pane:nth-child(6) > div:nth-child(1){
-    font-size: 20px;
-}
-
-div.pane:nth-child(6) > div:nth-child(2) > div:nth-child(1){
+.distribution-pane {
+    flex-grow: 1;
     display: flex;
+    margin-right: 0.5rem;
+}
+
+#distribution-graph {
+    flex-grow: 5;
+    padding-left: 1rem;
+}
+
+.distribution-pane > div:nth-child(1) {
+    flex-grow: 1;
+    padding-right: 1rem;
+}
+
+.distribution-pane > div:nth-child(1) > div:nth-child(2) {
+    display: flex;
+    font-size: 12px;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+#scale > label{
+    display: flex;
+    align-items: flex-start;
+}
+
+#scale > label > input {
+    transform: scale(1);
+}
+ /*****************************************************************/
+
+ /*****************************************************************
+ * Ranking pane conf
+ *****************************************************************/
+ div.pane:nth-child(2) > div:nth-child(2) > div:nth-child(1) {
+     display: flex;
+     justify-content: right;
+     margin-bottom: 1.2rem;
+ }
+
+#dd-local-metric {
+    width: 18rem;
+}
+
+th.dash-header > div {
+    display: flex;
+    justify-content: space-around;
+    align-items: baseline;
+    flex-wrap: wrap;
+}
+
+.cell-1-1 > table > tbody > tr > td {
+    border: 0;
+}
+
+.cell-1-1 > table > tbody > tr > td > input {
+    transform: scale(1);
+    margin: 0.5rem 1rem 0 0;
+}
+
+.cell-1-1 > table:nth-child(1) > tbody:nth-child(1) > tr > td:nth-child(2) > div {
+    text-align: left;
+}
+
+#ranking-table > div:nth-child(2){
+    display: flex;
+    justify-content: right;
+    flex-wrap: wrap;
+}
+
+.previous-page, .next-page {
+    height: 4rem;
+    width: 7rem;
+    line-height: 0;
+    padding: 0;
+    letter-spacing: 0;
+    font-size: 12px;
+    text-transform: initial;
+}
+ /*****************************************************************/
+
+  /*****************************************************************
+ * Foot conf
+ *****************************************************************/
+.foot {
+    display: flex;
+    justify-content: space-between;
+    background-color: #0D233C;
+    margin-top: 3.5rem;
+    color: white;
+    height: 5vh;
+    align-items: center;
+    padding: 3rem;
+}
+
+.foot > div:nth-child(2){
+    display: flex;
+    justify-content: space-around;
     align-items: center;
 }
 
-div.pane:nth-child(6) > div:nth-child(2) > div:nth-child(1) > p:nth-child(1){
-    margin-right: 0.5rem;
+.foot > div:nth-child(2) > p{
+    margin-left: 1rem;
 }
- /*****************************************************************/
+  /*****************************************************************/
