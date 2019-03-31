@@ -302,6 +302,7 @@ div.user-container-stat > p:nth-child(2){
     margin-top: -1rem;
     margin-left: 1.5rem;
     font-size: 12px;
+    align-items: end;
 }
 
 /* div [ div [switch + label] + div [switch + label] ] */
@@ -314,7 +315,6 @@ div.user-container-stat > p:nth-child(2){
 #main > div:nth-child(4) > div:nth-child(1) > div {
     display: flex;
     justify-content: left;
-    align-items: center;
     margin-right: 3.5rem;
 }
 
@@ -329,6 +329,22 @@ div.user-container-stat > p:nth-child(2){
 .toggle > div > div > div > button{
     height: 1.5rem;
     width: 1.5rem;
+}
+
+#main > div:nth-child(4) > div:nth-child(2){
+    display: flex;
+    align-items: baseline;
+}
+
+#reset_cyto {
+    margin-left: 0.5rem;
+    height: 2rem;
+    width: 4.5rem;
+    line-height: 0;
+    padding: 0;
+    letter-spacing: 0;
+    font-size: 12px;
+    text-transform: initial;
 }
 
 #dd-color-metric{
@@ -429,7 +445,7 @@ th.dash-header > div {
     display: flex;
     justify-content: space-between;
     background-color: #0D233C;
-    margin-top: 3.5rem;
+    margin-top: 3rem;
     color: white;
     height: 5vh;
     align-items: center;
