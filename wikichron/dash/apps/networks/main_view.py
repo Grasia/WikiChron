@@ -409,7 +409,8 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                 html.Div(id='network-ready', style={'display': 'none'}),
                 html.Div(id='signal-data', style={'display': 'none'}),
                 html.Div(id='ready', style={'display': 'none'}),
-                html.Div(id='highlight-node', style={'display': 'none'})
+                html.Div(id='highlight-node', style={'display': 'none'}),
+                html.Div(id='handler-label-signal', style={'display': 'none'})
             ])
 
     header = main_header(selection_url, query_string, mode_config, assets_url_path)
@@ -420,5 +421,5 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     ], className='body')
 
     foot = build_foot(assets_url_path)
-
-    return html.Div(children = [header, body, foot])
+    script = gdc.Import(src='/js/sliderHandlerLabels.js')
+    return html.Div(children = [header, body, foot, script])

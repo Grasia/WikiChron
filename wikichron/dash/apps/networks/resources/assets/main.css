@@ -78,6 +78,7 @@
 .main-header-pane{
     font-size: 24px;
     opacity: 0.9;
+    margin-bottom: 2.5rem;
 }
 
 .pane-hr{
@@ -128,8 +129,17 @@
 /*****************************************************************
  * Slider conf and its content ()
  *****************************************************************/
-.date-slider-div {
-    margin-top: 2rem;
+.handler-label {
+    font-size: 11px;
+    background-color: #9B9B9B;
+    border: 1px solid black;
+    color: white;
+    height: 2rem;
+    width: 6rem;
+    top: -2.5rem;
+    left: -2.5rem;
+    position: absolute;
+    text-align: center;
 }
 
 .slider-add-on {

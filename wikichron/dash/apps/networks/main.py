@@ -334,6 +334,26 @@ def bind_callbacks(app):
 
 
     @app.callback(
+        Output('handler-label-signal', 'children'),
+        [Input('dates-slider', 'value')],
+        [State('initial-selection', 'children')]
+    )
+    def update_slider_handler_labels(slider, selection_json):
+        if not slider:
+            raise PreventUpdate()
+        selection = json.loads(selection_json)
+        wiki = selection['wikis'][0]
+        first_entry = data_controller.get_first_entry(wiki)
+        first_entry = int(datetime.strptime(str(first_entry),
+            "%Y-%m-%d %H:%M:%S").strftime('%s'))
+        origin = first_entry + slider[0] * TIME_DIV
+        end = first_entry + slider[1] * TIME_DIV
+        o_str = str(datetime.fromtimestamp(origin).strftime('%b %Y'))
+        e_str = str(datetime.fromtimestamp(end).strftime('%b %Y'))
+        return f'{o_str}*{e_str}'
+
+
+    @app.callback(
         Output('download-button', 'href'),
         [Input('dates-slider', 'value')],
         [State('download-button', 'href'),
