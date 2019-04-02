@@ -73,7 +73,7 @@ section {
 }
 
 
-#comming-soon {
+#coming-soon {
     display: flex;
     flex-direction: column;
     justify-content: middle;
@@ -81,12 +81,12 @@ section {
 }
 
 
-#comming-soon p {
+#coming-soon p {
     color: orange;
     font-weight: bold;
     font-style: italic;
 }
 
-.comming-soon-img-container {
+.coming-soon-img-container {
     margin-bottom: 17px;
 }

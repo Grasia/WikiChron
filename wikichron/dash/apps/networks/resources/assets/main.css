@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2019 Youssef 'FRYoussef' El Faqir el Rhazoui <f.r.youssef@hotmail.com>
  */
 
@@ -58,7 +58,7 @@
     margin-left: 0.5rem;
     font-size: 12px;
     padding-right: 3rem;
-    padding-left: 3rem; 
+    padding-left: 3rem;
 }
 
 .header-pane {
@@ -401,10 +401,10 @@ div.user-container-stat > p:nth-child(2){
  /*****************************************************************
  * Ranking pane conf
  *****************************************************************/
- div.pane:nth-child(2) > div:nth-child(2) > div:nth-child(1) {
-     display: flex;
-     justify-content: right;
-     margin-bottom: 1.2rem;
+div.pane:nth-child(2) > div:nth-child(2) > div:nth-child(1) {
+    display: flex;
+    justify-content: right;
+    margin-bottom: 1.2rem;
  }
 
 #dd-local-metric {

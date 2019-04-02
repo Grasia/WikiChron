@@ -5,7 +5,7 @@
 
    Created on: 07-dec-2018
 
-   Copyright 2018-2019 Youssef 'FRYoussef' El Faqir El Rhazoui 
+   Copyright 2018-2019 Youssef 'FRYoussef' El Faqir El Rhazoui
         <f.r.youssef@hotmail.com>
 """
 
@@ -552,11 +552,11 @@ def bind_callbacks(app):
     def highlight_node(data, selected):
         if not data:
             raise PreventUpdate()
-        
+
         # Reset the stylesheet
         if not selected:
             return None
-        
+
         # highlight nodes selected
         selection = [data[s] for s in selected]
 
@@ -577,7 +577,7 @@ def bind_callbacks(app):
         Output('ranking-table', 'selected_rows'),
         [Input('dd-local-metric', 'value')]
     )
-    def clean_ranking_slection(_):
+    def clear_ranking_selection(_):
         return []
 
 

@@ -28,9 +28,9 @@ from .networks.models import networks_generator as net_factory
 from .networks.models.BaseNetwork import BaseNetwork
 
 IMAGE_HEADER = 'url(../../../static/assets/header_background.png)'
-RANKING_EMPTY_HEADER = [{'name': 'User', 'id': 'name'}, 
+RANKING_EMPTY_HEADER = [{'name': 'User', 'id': 'name'},
                         {'name': 'Metric', 'id': 'metric'}]
-RANKING_EMPTY_DATA = pd.DataFrame(columns=[RANKING_EMPTY_HEADER[0]['id'], 
+RANKING_EMPTY_DATA = pd.DataFrame(columns=[RANKING_EMPTY_HEADER[0]['id'],
     RANKING_EMPTY_HEADER[1]['id']])
 PAGE_SIZE = 10
 
@@ -47,7 +47,7 @@ def main_header(selection_url, query_string, mode_config, assets_url_path):
     href_download_button = f'{mode_config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
     return (html.Div(
             children=[
-                html.Img(src='{}/wikichron_networks_logo2.svg'.format(assets_url_path), 
+                html.Img(src='{}/wikichron_networks_logo2.svg'.format(assets_url_path),
                     className='title-img'),
                 html.Div(children=[
                     html.A('< Go back to selection', href=selection_url, style={'font-weight': 'bold'}),
@@ -66,7 +66,7 @@ def main_header(selection_url, query_string, mode_config, assets_url_path):
                             className='icon',
                             title='Share current selection'
                         )
-                    ], 
+                    ],
                     className='icons-bar')
                 ])
         ], className='main-root-header', style={'background-image': IMAGE_HEADER})
@@ -140,7 +140,7 @@ def date_slider_control():
                     html.Span('Time interval (months):'),
                     html.Div(children=[
                         html.Button("<<", id="bt-back", n_clicks_timestamp='0'),
-                        dcc.Input(id="in-step-slider" , type='number', 
+                        dcc.Input(id="in-step-slider" , type='number',
                             placeholder='MM', min='1', max='999'),
                         html.Button(">>", id="bt-forward", n_clicks_timestamp='0'),
                     ]),
@@ -162,7 +162,7 @@ def build_slider_pane(selected_wiki_name, selected_network_name):
 
 
 def cytoscape_component():
-    no_data = html.Div(children=[html.P()], 
+    no_data = html.Div(children=[html.P()],
         id='no-data', className='non-show')
     cytoscape = dash_cytoscape.Cytoscape(
                 id='cytoscape',
@@ -226,7 +226,7 @@ def dropdown_color_metric_selector(network_code):
     return dcc.Dropdown(
         id='dd-color-metric',
         options=options,
-        placeholder='Select a metric to color'
+        placeholder='Select a metric to color by'
     )
 
 
@@ -286,6 +286,7 @@ def build_table(network_code) -> html.Div:
             html.Div([dcc.Dropdown(
                 id='dd-local-metric',
                 options=options,
+                value=options[0]['value'],
                 placeholder='Select a local metric'
             )]),
             dash_table.DataTable(
@@ -307,7 +308,7 @@ def build_table(network_code) -> html.Div:
                 },
                 data = RANKING_EMPTY_DATA.to_dict('rows'),
                 columns = RANKING_EMPTY_HEADER,
-            )], 
+            )],
             className='body-pane')
 
     return html.Div(children=[header, body], className='pane side-pane')
@@ -317,10 +318,10 @@ def build_user_stats() -> html.Div:
     header = html.Div(children=[
         'User Stats',
         html.Hr(className='pane-hr')
-    ], 
+    ],
     className='header-pane sidebar-header-pane')
 
-    body = html.Div(id='user-stats', children=['Please, click on a node to show it\'s info'], 
+    body = html.Div(id='user-stats', children=['Please, click on a node to show it\'s info'],
         className='body-pane')
     return html.Div(children=[header, body], className='pane side-pane')
 
