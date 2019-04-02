@@ -286,7 +286,6 @@ def build_table(network_code) -> html.Div:
             html.Div([dcc.Dropdown(
                 id='dd-local-metric',
                 options=options,
-                value=options[0]['value'],
                 placeholder='Select a local metric'
             )]),
             dash_table.DataTable(
@@ -411,7 +410,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                 html.Div(id='signal-data', style={'display': 'none'}),
                 html.Div(id='ready', style={'display': 'none'}),
                 html.Div(id='highlight-node', style={'display': 'none'}),
-                html.Div(id='first-entry-signal', style={'display': 'none'})
+                html.Div(id='handler-label-signal', style={'display': 'none'})
             ])
 
     header = main_header(selection_url, query_string, mode_config, assets_url_path)
