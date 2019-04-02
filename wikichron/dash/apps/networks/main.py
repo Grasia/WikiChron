@@ -58,12 +58,11 @@ def bind_callbacks(app):
 
     @app.callback(
         Output('network-ready', 'value'),
-        [Input('ready', 'value')],
-        [State('initial-selection', 'children'),
-        State('dates-slider', 'value')]
+        [Input('dates-slider', 'value')],
+        [State('initial-selection', 'children')]
     )
-    def update_network(ready, selection_json, slider):
-        if not ready or not slider:
+    def update_network(slider, selection_json):
+        if not slider:
             raise PreventUpdate()
 
         # get network instance from selection
@@ -131,22 +130,6 @@ def bind_callbacks(app):
             stylesheet.color_nodes(cy_network, metric)
 
         return stylesheet.cy_stylesheet
-
-
-    ####################################
-    # TODO Remove this function is useless
-    ####################################
-    @app.callback(
-        Output('ready', 'value'),
-        [Input('dates-slider', 'value')]
-    )
-    def ready_to_plot_networks(*args):
-        if not all(args):
-            print('not ready!')
-            return False
-        if debug:
-            print('Ready to plot network!')
-        return True
 
 
     @app.callback(
@@ -219,7 +202,8 @@ def bind_callbacks(app):
 
 
     @app.callback(
-        Output('date-slider-container', 'children'),
+        [Output('date-slider-container', 'children'),
+        Output('first-entry-signal', 'children')],
         [Input('initial-selection', 'children')],
         [State('url', 'search')]
     )
@@ -279,7 +263,7 @@ def bind_callbacks(app):
                     step=1,
                     value=[low_val, upper_val],
                     marks=range_slider_marks
-                )
+                ), origin
 
 
     @app.callback(
@@ -331,26 +315,6 @@ def bind_callbacks(app):
              raise PreventUpdate('Slider will not change')
 
         return [upper, lower]
-
-
-    @app.callback(
-        Output('handler-label-signal', 'children'),
-        [Input('dates-slider', 'value')],
-        [State('initial-selection', 'children')]
-    )
-    def update_slider_handler_labels(slider, selection_json):
-        if not slider:
-            raise PreventUpdate()
-        selection = json.loads(selection_json)
-        wiki = selection['wikis'][0]
-        first_entry = data_controller.get_first_entry(wiki)
-        first_entry = int(datetime.strptime(str(first_entry),
-            "%Y-%m-%d %H:%M:%S").strftime('%s'))
-        origin = first_entry + slider[0] * TIME_DIV
-        end = first_entry + slider[1] * TIME_DIV
-        o_str = str(datetime.fromtimestamp(origin).strftime('%b %Y'))
-        e_str = str(datetime.fromtimestamp(end).strftime('%b %Y'))
-        return f'{o_str}*{e_str}'
 
 
     @app.callback(
