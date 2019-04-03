@@ -581,6 +581,6 @@ def bind_callbacks(app):
     )
     def hide_caption(switch):
         _class = 'pane caption'
-        if switch:
+        if not switch:
             _class = 'pane non-show'
         return _class

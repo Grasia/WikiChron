@@ -171,8 +171,8 @@ def build_network_controls(network_code):
         html.P('Show clusters')
     ])
     togg3 = html.Div([
-        daq.BooleanSwitch(id='tg-hide-caption', className='toggle', on=True),
-        html.P('Hide caption')
+        daq.BooleanSwitch(id='tg-hide-caption', className='toggle', on=False),
+        html.P('Show caption')
     ])
     left = html.Div([togg1, togg2, togg3])
     center = html.Div([
@@ -217,18 +217,19 @@ def cytoscape_component():
 
 
 def build_caption(network_code: str) -> html.Div:
+    text = net_factory.get_network_description(network_code)
     return html.Div([
         html.Div(children=[
             html.Div(children=[
                 html.Div(children=[], className='caption-node', 
                     style={'background-color': CytoscapeStylesheet.N_MIN_COLOR}),
-                html.P('Lorem Ipsum is simply dummy')
+                html.P(text['min_node_color'])
             ], className='caption-col'),
 
             html.Div(children=[
                 html.Div(children=[], className='caption-node',
                     style={'background-color': CytoscapeStylesheet.N_MAX_COLOR}),
-                html.P('Lorem Ipsum is simply dummy')
+                html.P(text['max_node_color'])
             ], className='caption-col'),
         ], 
         className='caption-row'),
@@ -237,13 +238,13 @@ def build_caption(network_code: str) -> html.Div:
             html.Div(children=[
                 html.Div(children=[], className='caption-node',
                     style={'background-color': CytoscapeStylesheet.N_DEFAULT_COLOR}),
-                html.P('Lorem Ipsum is simply dummy')
+                html.P(text['min_node_size'])
             ], className='caption-col'),
 
             html.Div(children=[
                 html.Div(children=[], className='caption-node node-sized',
                     style={'background-color': CytoscapeStylesheet.N_DEFAULT_COLOR}),
-                html.P('Lorem Ipsum is simply dummy')
+                html.P(text['max_node_size'])
             ], className='caption-col'),
         ], 
         className='caption-row'),
@@ -252,13 +253,13 @@ def build_caption(network_code: str) -> html.Div:
             html.Div(children=[
                 html.Div(children=[], className='caption-edge',
                     style={'background-color': CytoscapeStylesheet.E_DEFAULT_COLOR}),
-                html.P('Lorem Ipsum is simply dummy')
+                html.P(text['min_edge_size'])
             ], className='caption-col'),
 
             html.Div(children=[
                 html.Div(children=[], className='caption-edge edge-sized',
                     style={'background-color': CytoscapeStylesheet.E_DEFAULT_COLOR}),
-                html.P('Lorem Ipsum is simply dummy')
+                html.P(text['max_edge_size'])
             ], className='caption-col'),
         ], 
         className='caption-row'),
