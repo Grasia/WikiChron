@@ -271,6 +271,69 @@
 /*****************************************************************
  * Network stats conf
  *****************************************************************/
+.caption {
+    position: absolute;
+    margin: 37rem 0 0 2rem;
+    height: 18rem;
+    width: 32rem;
+    z-index: 99;
+    font-size: 10px;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.caption-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-grow: 1;
+    align-items: center;
+}
+
+.caption-col {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-grow: 1;
+    align-items: center;
+}
+
+.caption-node {
+    height: 2rem;
+    width: 2rem;
+    border-radius: 100%;
+}
+
+.node-sized {
+    height: 3.5rem;
+    width: 3.5rem;
+}
+
+.caption-edge {
+    height: 0.15rem;
+    width: 3rem;
+}
+
+.edge-sized {
+    height: 0.5rem;
+}
+
+/* div.caption-row:nth-child(3) > div:nth-child(1), div.caption-row:nth-child(3) >div:nth-child(2) {
+    align-items: center;
+} */
+
+div.caption-row > div:nth-child(2) {
+    margin-left: 2.5rem;
+}
+
+/*****************************************************************/
+
+
+/*****************************************************************
+ * Network stats conf
+ *****************************************************************/
  #net-stats > div{
     display: flex;
     justify-content: space-between;
@@ -335,7 +398,7 @@ div.user-container-stat > p:nth-child(2){
     margin-right: 3.5rem;
 }
 
-#tg-show-labels , #tg-show-clusters {
+.toggle {
     margin-right: 0.5rem;
 }
 

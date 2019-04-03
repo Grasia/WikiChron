@@ -573,3 +573,14 @@ def bind_callbacks(app):
                 ], className='user-container-stat'))
 
         return info_stack
+
+
+    @app.callback(
+        Output('caption', 'className'),
+        [Input('tg-hide-caption', 'on')]
+    )
+    def hide_caption(switch):
+        _class = 'pane caption'
+        if switch:
+            _class = 'pane non-show'
+        return _class

@@ -161,6 +161,28 @@ def build_slider_pane(selected_wiki_name, selected_network_name):
     return html.Div(children=[header, body], className='pane main-pane')
 
 
+def build_network_controls(network_code):
+    togg1 = html.Div([
+        daq.BooleanSwitch(id='tg-show-labels', className='toggle', on=False),
+        html.P('Show labels')
+    ])
+    togg2 = html.Div([
+        daq.BooleanSwitch(id='tg-show-clusters', className='toggle', on=False),
+        html.P('Show clusters')
+    ])
+    togg3 = html.Div([
+        daq.BooleanSwitch(id='tg-hide-caption', className='toggle', on=True),
+        html.P('Hide caption')
+    ])
+    left = html.Div([togg1, togg2, togg3])
+    center = html.Div([
+        html.P('Reset View:'),
+        html.Button('Reset', id='reset_cyto')
+    ])
+    right = dropdown_color_metric_selector(network_code)
+    return html.Div(children=[left, center, right])
+
+
 def cytoscape_component():
     no_data = html.Div(children=[html.P()], 
         id='no-data', className='non-show')
@@ -192,6 +214,56 @@ def cytoscape_component():
                 stylesheet = CytoscapeStylesheet.make_basic_stylesheet()
     )
     return html.Div(children=[cytoscape, no_data], className='cyto-dim')
+
+
+def build_caption(network_code: str) -> html.Div:
+    return html.Div([
+        html.Div(children=[
+            html.Div(children=[
+                html.Div(children=[], className='caption-node', 
+                    style={'background-color': CytoscapeStylesheet.N_MIN_COLOR}),
+                html.P('Lorem Ipsum is simply dummy')
+            ], className='caption-col'),
+
+            html.Div(children=[
+                html.Div(children=[], className='caption-node',
+                    style={'background-color': CytoscapeStylesheet.N_MAX_COLOR}),
+                html.P('Lorem Ipsum is simply dummy')
+            ], className='caption-col'),
+        ], 
+        className='caption-row'),
+
+        html.Div(children=[
+            html.Div(children=[
+                html.Div(children=[], className='caption-node',
+                    style={'background-color': CytoscapeStylesheet.N_DEFAULT_COLOR}),
+                html.P('Lorem Ipsum is simply dummy')
+            ], className='caption-col'),
+
+            html.Div(children=[
+                html.Div(children=[], className='caption-node node-sized',
+                    style={'background-color': CytoscapeStylesheet.N_DEFAULT_COLOR}),
+                html.P('Lorem Ipsum is simply dummy')
+            ], className='caption-col'),
+        ], 
+        className='caption-row'),
+
+        html.Div(children=[
+            html.Div(children=[
+                html.Div(children=[], className='caption-edge',
+                    style={'background-color': CytoscapeStylesheet.E_DEFAULT_COLOR}),
+                html.P('Lorem Ipsum is simply dummy')
+            ], className='caption-col'),
+
+            html.Div(children=[
+                html.Div(children=[], className='caption-edge edge-sized',
+                    style={'background-color': CytoscapeStylesheet.E_DEFAULT_COLOR}),
+                html.P('Lorem Ipsum is simply dummy')
+            ], className='caption-col'),
+        ], 
+        className='caption-row'),
+
+    ], id='caption', className='pane non-show')
 
 
 def build_distribution_pane() -> html.Div:
@@ -229,24 +301,6 @@ def dropdown_color_metric_selector(network_code):
         options=options,
         placeholder='Select a metric to color'
     )
-
-
-def build_network_controls(network_code):
-    togg1 = html.Div([
-        daq.BooleanSwitch(id='tg-show-labels', className='toggle', on=False),
-        html.P('Show labels')
-    ])
-    togg2 = html.Div([
-        daq.BooleanSwitch(id='tg-show-clusters', className='toggle', on=False),
-        html.P('Show clusters')
-    ])
-    left = html.Div([togg1, togg2])
-    center = html.Div([
-        html.P('Reset View:'),
-        html.Button('Reset', id='reset_cyto')
-    ])
-    right = dropdown_color_metric_selector(network_code)
-    return html.Div(children=[left, center, right])
 
 
 def build_network_stats(stats: list()) -> html.Div:
@@ -403,7 +457,10 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                             children=args_selection),
                 build_network_controls(network_type_code),
                 html.Div([
-                    cytoscape_component(),
+                    html.Div([
+                        build_caption(network_type_code),
+                        cytoscape_component()
+                    ]),
                     build_distribution_pane()
                 ]),
 
