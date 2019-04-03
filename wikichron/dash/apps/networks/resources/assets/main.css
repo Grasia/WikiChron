@@ -7,12 +7,9 @@
  * Conf of root and its content, header + body( main + sidebar )
  *****************************************************************/
 #main-root{
-    background-color: #FAFAFA;
-}
-
-.main-root-header{
-    width: 100%;
-    height: 10%;
+    background-color: #F5F5F5;
+    display: flex;
+    flex-direction: column;
 }
 
 .body{
@@ -20,6 +17,17 @@
     margin-top: -2.5rem;
     margin-left: 3rem;
     margin-right: 3rem;
+}
+
+.foot {
+    display: flex;
+    justify-content: space-between;
+    background-color: #0D233C;
+    margin-top: 3rem;
+    color: white;
+    height: 5vh;
+    align-items: center;
+    padding: 3rem;
 }
 
 #main {
@@ -243,8 +251,6 @@
 }
 
 .cyto-dim {
-    flex-grow: 2;
-    width: 100%;
     display: flex;
     justify-content: center;
 }
@@ -257,6 +263,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    margin: 10rem 0rem;
 }
 /*****************************************************************/
 
@@ -366,9 +373,9 @@ div.user-container-stat > p:nth-child(2){
  * Degree distribution pane conf
  *****************************************************************/
 .distribution-pane {
-    flex-grow: 1;
     display: flex;
     margin-right: 0.5rem;
+    height: 30vh;
 }
 
 #distribution-graph {
@@ -451,17 +458,6 @@ th.dash-header > div {
   /*****************************************************************
  * Foot conf
  *****************************************************************/
-.foot {
-    display: flex;
-    justify-content: space-between;
-    background-color: #0D233C;
-    margin-top: 3rem;
-    color: white;
-    height: 5vh;
-    align-items: center;
-    padding: 3rem;
-}
-
 .foot > div:nth-child(2){
     display: flex;
     justify-content: space-around;

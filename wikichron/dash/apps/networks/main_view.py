@@ -164,6 +164,7 @@ def build_slider_pane(selected_wiki_name, selected_network_name):
 def cytoscape_component():
     no_data = html.Div(children=[html.P()], 
         id='no-data', className='non-show')
+        
     cytoscape = dash_cytoscape.Cytoscape(
                 id='cytoscape',
                 className='show',
