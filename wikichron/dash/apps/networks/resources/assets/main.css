@@ -453,6 +453,10 @@ th.dash-header > div {
     font-size: 12px;
     text-transform: initial;
 }
+
+.expanded-row--empty-cell{
+    background-color: white;
+}
  /*****************************************************************/
 
   /*****************************************************************

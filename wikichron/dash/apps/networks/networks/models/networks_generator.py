@@ -72,3 +72,14 @@ def is_directed(network_code) -> bool:
         return UserTalkNetwork.is_directed()
     else:
         raise Exception("Something went bad. Missing network type selection.")
+
+
+def get_metric_header(network_code, metric) -> bool:
+    if network_code == CoEditingNetwork.CODE:
+        return CoEditingNetwork.get_metric_header(metric)
+    elif network_code == TalkPagesNetwork.CODE:
+        return TalkPagesNetwork.get_metric_header(metric)
+    elif network_code == UserTalkNetwork.CODE:
+        return UserTalkNetwork.get_metric_header(metric)
+    else:
+        raise Exception("Something went bad. Missing network type selection.")

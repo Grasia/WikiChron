@@ -164,7 +164,7 @@ def build_slider_pane(selected_wiki_name, selected_network_name):
 def cytoscape_component():
     no_data = html.Div(children=[html.P()], 
         id='no-data', className='non-show')
-        
+
     cytoscape = dash_cytoscape.Cytoscape(
                 id='cytoscape',
                 className='show',
@@ -268,7 +268,7 @@ def build_network_stats(stats: list()) -> html.Div:
     return html.Div(children=[header, body], className='pane side-pane')
 
 
-def build_table(network_code) -> html.Div:
+def build_ranking(network_code) -> html.Div:
     dict_metrics = net_factory.get_available_metrics(network_code)
     options = []
     for k in dict_metrics.keys():
@@ -286,6 +286,7 @@ def build_table(network_code) -> html.Div:
     body = html.Div(children=[
             html.Div([dcc.Dropdown(
                 id='dd-local-metric',
+                value=options[1]['label'],
                 options=options,
                 placeholder='Select a local metric'
             )]),
@@ -332,7 +333,7 @@ def build_sidebar(network_code) -> html.Div:
     """
     return html.Div(className='', children=[
         build_network_stats(list(BaseNetwork.get_network_stats().keys())),
-        build_table(network_code),
+        build_ranking(network_code),
         build_user_stats()
     ])
 

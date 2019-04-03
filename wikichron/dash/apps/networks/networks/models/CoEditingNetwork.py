@@ -131,6 +131,16 @@ class CoEditingNetwork(BaseNetwork):
 
 
     @classmethod
+    def get_metric_header(cls, metric: str) -> list:
+        header = list()
+        if metric in cls.AVAILABLE_METRICS:
+            header = [{'name': 'User', 'id': 'User'}, 
+                {'name': metric, 'id': metric}]
+
+        return header
+
+
+    @classmethod
     def get_available_metrics(cls) -> dict:
         return cls.AVAILABLE_METRICS
 

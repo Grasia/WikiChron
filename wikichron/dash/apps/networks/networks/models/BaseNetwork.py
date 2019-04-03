@@ -58,6 +58,14 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         """
         pass
 
+
+    @abc.abstractclassmethod
+    def get_metric_header(self, metric: str) -> list:
+        """
+        Returns a list with the header keys of the function get_metric_dataframe
+        """
+        pass
+
     
     @abc.abstractclassmethod
     def get_available_metrics(self) -> dict:
