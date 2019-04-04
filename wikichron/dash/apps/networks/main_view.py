@@ -50,7 +50,10 @@ def main_header(selection_url, query_string, mode_config, assets_url_path):
                 html.Img(src='{}/wikichron_networks_logo2.svg'.format(assets_url_path), 
                     className='title-img'),
                 html.Div(children=[
-                    html.A('< Go back to selection', href=selection_url, style={'font-weight': 'bold'}),
+                    html.Div([
+                        html.A('< Go back to selection', href=selection_url),
+                        html.A('Switch network >', id='switch-network')
+                    ]),
                     html.Div([
                         html.A(
                             html.Img(src='{}/cloud_download.svg'.format(assets_url_path)),
@@ -71,6 +74,28 @@ def main_header(selection_url, query_string, mode_config, assets_url_path):
                 ])
         ], className='main-root-header', style={'background-image': IMAGE_HEADER})
     )
+
+
+def switch_network_dialog():
+    nets = net_factory.create_available_networks()
+    codes = [n.CODE for n in nets]
+    names = [n.NAME for n in nets]
+    opts = [{'label': l, 'value': v} for l, v in zip(names, codes)]
+    return html.Div([
+        sd_material_ui.Dialog(
+            html.Div([
+                html.H4('Please, select a network type to switch'),
+                dcc.RadioItems(
+                    options=opts,
+                    value=opts[0]['value']
+                ),
+                html.A('Open New Window', id='href-switch-network', target='_blank', href='')
+            ]),
+            id='network-dialog',
+            modal=False,
+            open=False
+        )
+    ])
 
 
 def selection_title(selected_wiki, selected_network):
@@ -463,6 +488,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
             children=[
                 build_slider_pane(selected_wiki_name, selected_network_name),
                 share_modal(share_url_path, download_url_path),
+                #switch_network_dialog(),
                 html.Div(id='initial-selection', style={'display': 'none'},
                             children=args_selection),
                 build_network_controls(network_type_code),

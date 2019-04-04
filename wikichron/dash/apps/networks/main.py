@@ -594,3 +594,17 @@ def bind_callbacks(app):
         if not switch:
             _class = 'pane non-show'
         return _class
+
+
+    @app.callback(
+        Output('network-dialog', 'open'),
+        [Input('switch-network', 'n_clicks')],
+        [State('network-dialog', 'open')]
+    )
+    def show_switch_network_dialog(n_clicks, open_state):
+        if not n_clicks:
+            return False
+        elif n_clicks > 0 and not open_state:
+            return True
+        else:
+            return False

@@ -110,8 +110,9 @@
 }
 
 .title-img {
-    height: calc(40% - 120px);
-    width: 260px;
+    height: 8rem;
+    width: 25rem;
+    margin-left: 5rem;
 }
 
 .icons-bar {
@@ -127,10 +128,13 @@
     margin-left: 2rem;
 }
 
-/* Go back custom */
-.main-root-header > div:nth-child(2) > a:nth-child(1){
+.main-root-header > div > div > a{
     font-weight: bold;
     text-decoration: none;
+}
+
+#switch-network {
+    margin-left: 2.5rem;
 }
 /******************************************************************/
 
