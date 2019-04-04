@@ -7,7 +7,7 @@
 import abc
 from datetime import datetime
 import pandas as pd
-from igraph import Graph, ClusterColoringPalette, VertexClustering
+from igraph import Graph, ClusterColoringPalette, VertexClustering, WEAK
 from colormap.colors import rgb2hex
 
 from .fix_dendrogram import fix_dendrogram
@@ -19,9 +19,12 @@ class BaseNetwork(metaclass=abc.ABCMeta):
     CODE = 'base_network'
     NETWORK_STATS = {
         'Nodes': 'num_nodes',
-        'Assortativity Degree': 'assortativity_degree',
+        'Communities': 'n_communities',
         'Edges': 'num_edges',
-        'Communities': 'n_communities'
+        'Diameter': 'diameter',
+        'Density': 'density',
+        'Connected Components': 'components',
+        'Assortativity Degree': 'assortativity_degree',
     }
 
 
@@ -172,16 +175,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         return di_net
 
 
-    def calculate_metrics(self):
-        """
-        A method which calculate the available metrics 
-        """
-        self.calculate_page_rank()
-        self.calculate_betweenness()
-        self.calculate_assortativity_degree()
-        self.calculate_communities()
-
-
     def write_gml(self, file: str):
         """
         Writes a gml file
@@ -200,7 +193,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             p_r = self.graph.pagerank(directed=self.graph.is_directed(), 
                     weights = weight)
 
-            self.graph.vs['page_rank'] = list(map(lambda x: "{0:.5f}".format(x), p_r))
+            self.graph.vs['page_rank'] = list(map(lambda x: f"{x:.4f}", p_r))
 
 
     def calculate_betweenness(self):
@@ -212,7 +205,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             bet = self.graph.betweenness(directed=self.graph.is_directed(), 
                 weights = weight)
 
-            self.graph.vs['betweenness'] = list(map(lambda x: float("{0:.5f}".format(x)), bet))
+            self.graph.vs['betweenness'] = list(map(lambda x: float(f"{x:.4f}"), bet))
 
 
     def calculate_communities(self):
@@ -246,9 +239,40 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         if not 'assortativity_degree' in self.graph.attributes():
             assortativity = self.graph.assortativity_degree(self.graph.is_directed())
             if assortativity:
-                assortativity = "{0:.5f}".format(assortativity)
+                assortativity = f"{assortativity:.4f}"
 
             self.graph['assortativity_degree'] = assortativity
+
+
+    def calculate_density(self):
+        if not 'density' in self.graph.attributes():
+            density = f'{self.graph.density():.4f}'
+            self.graph['density'] = density
+
+
+    def calculate_diameter(self):
+        if not 'diameter' in self.graph.attributes():
+            diameter = self.graph.diameter(directed=self.graph.is_directed(), unconn=False)
+            self.graph['diameter'] = diameter
+
+
+    def calculate_components(self):
+        if not 'components' in self.graph.attributes():
+            components = self.graph.clusters(mode=WEAK)
+            self.graph['components'] = len(components.subgraphs())
+
+
+    def calculate_metrics(self):
+        """
+        A method which calculate the available metrics 
+        """
+        self.calculate_page_rank()
+        self.calculate_betweenness()
+        self.calculate_assortativity_degree()
+        self.calculate_communities()
+        self.calculate_density()
+        self.calculate_diameter()
+        self.calculate_components()
 
 
     def get_degree_distribution(self) -> (list, list):

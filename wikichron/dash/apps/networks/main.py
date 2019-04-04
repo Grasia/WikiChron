@@ -426,6 +426,8 @@ def bind_callbacks(app):
             if i % 2 == 0:
                 child.append(html.Div(children=group))
                 group = []
+        if group:
+            child.append(html.Div(children=group))
 
         return child
 

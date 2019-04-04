@@ -310,16 +310,25 @@ def build_network_stats(stats: list()) -> html.Div:
         html.Hr(className='pane-hr')
         ], className='header-pane sidebar-header-pane')
 
-    body = html.Div(children=[
-            html.Div([
-                html.P(f'{stats[0]}: ...'),
-                html.P(f'{stats[1]}: ...')
-            ]),
-            html.Div([
-                html.P(f'{stats[2]}: ...'),
-                html.P(f'{stats[3]}: ...')
-            ])], id='net-stats', className='body-pane')
+    # construct body
+    stats = BaseNetwork.get_network_stats()
+    child = []
+    i = 0
+    group = []
+    for k, _ in stats.items():
+        group.append(html.Div(children=[
+            html.P(f'{k}:'),
+            html.P('...')
+        ]))
 
+        i += 1
+        if i % 2 == 0:
+            child.append(html.Div(children=group))
+            group = []
+    if group:
+        child.append(html.Div(children=group))
+
+    body = html.Div(children=child, id='net-stats', className='body-pane')
     return html.Div(children=[header, body], className='pane side-pane')
 
 
