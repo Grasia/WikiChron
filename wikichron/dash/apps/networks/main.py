@@ -542,13 +542,21 @@ def bind_callbacks(app):
 
 
     @app.callback(
-        Output('user-stats', 'children'),
-        [Input('cytoscape', 'tapNodeData')],
-        [State('initial-selection', 'children')]
+        [Output('user-stats', 'children'),
+        Output('clean-user-info', 'value')],
+        [Input('cytoscape', 'tapNodeData'),
+        Input('dates-slider', 'value')],
+        [State('initial-selection', 'children'),
+        State('cytoscape', 'tapNode'),
+        State('clean-user-info', 'value')]
     )
-    def update_node_info(user_info, selection_json):
+    def update_node_info(user_info, _, selection_json, node, old_click):
         if not user_info:
             raise PreventUpdate()
+        
+        if old_click and int(old_click) == int(node["timeStamp"]):
+            clean = 'Please, click on a node to show its info'
+            return clean, old_click
 
         selection = json.loads(selection_json)
         network_code = selection['network']
@@ -572,7 +580,7 @@ def bind_callbacks(app):
                     html.P(user_info[dic_metrics[key]])
                 ], className='user-container-stat'))
 
-        return info_stack
+        return info_stack, node["timeStamp"]
 
 
     @app.callback(

@@ -377,7 +377,7 @@ def build_user_stats() -> html.Div:
     ], 
     className='header-pane sidebar-header-pane')
 
-    body = html.Div(id='user-stats', children=['Please, click on a node to show it\'s info'], 
+    body = html.Div(id='user-stats', children=['Please, click on a node to show its info'], 
         className='body-pane')
     return html.Div(children=[header, body], className='pane side-pane')
 
@@ -467,8 +467,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
 
                 # Signal data
                 html.Div(id='network-ready', style={'display': 'none'}),
-                html.Div(id='signal-data', style={'display': 'none'}),
-                html.Div(id='ready', style={'display': 'none'}),
+                html.Div(id='clean-user-info', style={'display': 'none'}),
                 html.Div(id='highlight-node', style={'display': 'none'}),
                 html.Div(id='first-entry-signal', style={'display': 'none'})
             ])
