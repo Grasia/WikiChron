@@ -72,7 +72,7 @@ def main_header(selection_url, query_string, mode_config, assets_url_path):
                         )
                     ],
                     className='icons-bar')
-                ])
+                ], className='root-header-elems')
         ], className='main-root-header', style={'background-image': IMAGE_HEADER})
     )
 
@@ -96,7 +96,7 @@ def inflate_switch_network_dialog(link, network_code):
                     value=network_code
                 ),
                 html.A('Open new tab', id='href-switch-network', target='_blank', href=link)
-            ])
+            ], className='dialog-content')
 
 
 def inflate_share_dialog(share_link):
@@ -111,18 +111,9 @@ def inflate_share_dialog(share_link):
                     ])
                     ]),
                 ]),
-                # html.P([
-                #     html.Div([
-                #         html.Span('You can find more info about working with the data downloaded in '),
-                #         html.A('this page of our wiki.', href='https://github.com/Grasia/WikiChron/wiki/Downloading-and-working-with-the-data')
-                #     ],
-                #     className='share-modal-paragraph-info-cn'
-                #     )
-                # ]),
                 gdc.Import(src='/js/main.share_modal.js')
                 ],
-                id='share-dialog-inner-div'
-            )
+                className='dialog-content')
 
 
 def build_dilog():
@@ -154,7 +145,7 @@ def date_slider_control():
                         dcc.Input(id="in-step-slider" , type='number',
                             placeholder='MM', min='1', max='999'),
                         html.Button(">>", id="bt-forward", n_clicks_timestamp='0'),
-                    ]),
+                    ], className='slider-controls-pane'),
                 ], className='slider-add-on'),
             ],
             style={'margin-top': '15px', 'display': 'grid'}
@@ -173,25 +164,30 @@ def build_slider_pane(selected_wiki_name, selected_network_name):
 
 
 def build_network_controls(network_code):
-    togg1 = html.Div([
+    togg1 = html.Div(children=[
         daq.BooleanSwitch(id='tg-show-labels', className='toggle', on=False),
         html.P('Show labels')
-    ])
-    togg2 = html.Div([
+    ], className='net-control')
+
+    togg2 = html.Div(children=[
         daq.BooleanSwitch(id='tg-show-clusters', className='toggle', on=False),
         html.P('Show clusters')
-    ])
-    togg3 = html.Div([
-        daq.BooleanSwitch(id='tg-hide-caption', className='toggle', on=False),
-        html.P('Show caption')
-    ])
-    left = html.Div([togg1, togg2, togg3])
-    center = html.Div([
+    ], className='net-control')
+
+    togg3 = html.Div(children=[
+        daq.BooleanSwitch(id='tg-hide-legend', className='toggle', on=False),
+        html.P('Show legend')
+    ], className='net-control')
+
+    left = html.Div(children=[togg1, togg2, togg3], className='toggle-container')
+
+    center = html.Div(children=[
         html.P('Reset View:'),
         html.Button('Reset', id='reset_cyto')
-    ])
+    ], className='net-control')
+
     right = dropdown_color_metric_selector(network_code)
-    return html.Div(children=[left, center, right])
+    return html.Div(children=[left, center, right], className='controls-container')
 
 
 def cytoscape_component():
@@ -227,55 +223,40 @@ def cytoscape_component():
     return html.Div(children=[cytoscape, no_data], className='cyto-dim')
 
 
-def build_caption(network_code: str) -> html.Div:
+def build_legend(network_code: str) -> html.Div:
     text = net_factory.get_network_description(network_code)
     return html.Div([
         html.Div(children=[
-            html.Div(children=[
-                html.Div(children=[], className='caption-node',
-                    style={'background-color': CytoscapeStylesheet.N_MIN_COLOR}),
-                html.P(text['min_node_color'])
-            ], className='caption-col'),
-
-            html.Div(children=[
-                html.Div(children=[], className='caption-node',
-                    style={'background-color': CytoscapeStylesheet.N_MAX_COLOR}),
-                html.P(text['max_node_color'])
-            ], className='caption-col'),
-        ],
-        className='caption-row'),
+            html.Div(children=[], className='legend-node',
+                style={'background-color': CytoscapeStylesheet.N_MIN_COLOR}),
+            html.Div(children=[], className='legend-node',
+                style={'background-color': CytoscapeStylesheet.N_DEFAULT_COLOR}),
+            html.Div(children=[], className='legend-edge',
+                style={'background-color': CytoscapeStylesheet.E_DEFAULT_COLOR}),
+        ], className='legend-col col1-legend'),
 
         html.Div(children=[
-            html.Div(children=[
-                html.Div(children=[], className='caption-node',
-                    style={'background-color': CytoscapeStylesheet.N_DEFAULT_COLOR}),
-                html.P(text['min_node_size'])
-            ], className='caption-col'),
-
-            html.Div(children=[
-                html.Div(children=[], className='caption-node node-sized',
-                    style={'background-color': CytoscapeStylesheet.N_DEFAULT_COLOR}),
-                html.P(text['max_node_size'])
-            ], className='caption-col'),
-        ],
-        className='caption-row'),
+            html.P(text['min_node_color']),
+            html.P(text['min_node_size']),
+            html.P(text['min_edge_size'])
+        ], className='legend-col col2-legend'),
 
         html.Div(children=[
-            html.Div(children=[
-                html.Div(children=[], className='caption-edge',
-                    style={'background-color': CytoscapeStylesheet.E_DEFAULT_COLOR}),
-                html.P(text['min_edge_size'])
-            ], className='caption-col'),
+            html.Div(children=[], className='legend-node',
+                style={'background-color': CytoscapeStylesheet.N_MAX_COLOR}),
+            html.Div(children=[], className='legend-node node-sized',
+                style={'background-color': CytoscapeStylesheet.N_DEFAULT_COLOR}),
+            html.Div(children=[], className='legend-edge edge-sized',
+                style={'background-color': CytoscapeStylesheet.E_DEFAULT_COLOR}),
+        ], className='legend-col col3-legend'),
 
-            html.Div(children=[
-                html.Div(children=[], className='caption-edge edge-sized',
-                    style={'background-color': CytoscapeStylesheet.E_DEFAULT_COLOR}),
-                html.P(text['max_edge_size'])
-            ], className='caption-col'),
-        ],
-        className='caption-row'),
+        html.Div(children=[
+            html.P(text['max_node_color']),
+            html.P(text['max_node_size']),
+            html.P(text['max_edge_size'])
+        ], className='legend-col col4-legend'),
 
-    ], id='caption', className='pane non-show')
+    ], id='legend', className='pane non-show')
 
 
 def build_distribution_pane() -> html.Div:
@@ -291,8 +272,9 @@ def build_distribution_pane() -> html.Div:
                         options=[{'label': i, 'value': i} for i in ['Linear', 'Log']],
                         value='Linear'
                     )
-                ])
-    left = html.Div([header, left_body])
+                ], className='left-distribution-body')
+
+    left = html.Div(children=[header, left_body], className='left-distribution-pane')
 
     body = dcc.Graph(id='distribution-graph')
 
@@ -359,12 +341,12 @@ def build_ranking(network_code) -> html.Div:
     className='header-pane sidebar-header-pane')
 
     body = html.Div(children=[
-            html.Div([dcc.Dropdown(
+            html.Div(children=[dcc.Dropdown(
                 id='dd-local-metric',
                 value=options[1]['label'],
                 options=options,
                 placeholder='Select a local metric'
-            )]),
+            )], className='ranking-selection'),
             dash_table.DataTable(
                 id='ranking-table',
                 pagination_settings={
@@ -406,7 +388,7 @@ def build_sidebar(network_code) -> html.Div:
     """
     Use this function in order to build and get the side elements
     """
-    return html.Div(className='', children=[
+    return html.Div(className='sidebar', children=[
         build_network_stats(list(BaseNetwork.get_network_stats().keys())),
         build_ranking(network_code),
         build_user_stats()
@@ -433,7 +415,7 @@ def build_foot(assets_url_path):
                 title='Documentation'
             ),
             html.P('Docs'),
-        ])
+        ], className='foot-container')
     ], className='foot')
 
 
@@ -475,11 +457,11 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                 build_network_controls(network_type_code),
                 html.Div([
                     html.Div([
-                        build_caption(network_type_code),
+                        build_legend(network_type_code),
                         cytoscape_component()
                     ]),
                     build_distribution_pane()
-                ]),
+                ], className='left-body'),
 
                 # Signal data
                 html.Div(id='network-ready', style={'display': 'none'}),
@@ -490,7 +472,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
 
     header = main_header(selection_url, query_string, mode_config, assets_url_path)
 
-    body = html.Div(children = [
+    body = html.Div(children=[
         main,
         build_sidebar(network_type_code)
     ], className='body')

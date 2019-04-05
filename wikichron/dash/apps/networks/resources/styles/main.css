@@ -35,12 +35,12 @@
 }
 
 /* side-bar conf */
-.body > div:nth-child(2) {
+.sidebar {
     width: 25%;
 }
 
 /* cytoscape + distribution graph */
-#main > div:nth-child(5) {
+.left-body {
     display: flex;
     flex-direction: column;
     height: 80%;
@@ -101,7 +101,7 @@
  * Root header conf and its content (img + icons + A("Go Back..."))
  *****************************************************************/
 /* Go back and icons-bar content */
-.main-root-header > div:nth-child(2) {
+.root-header-elems {
     display: flex;
     justify-content: space-between;
     margin: 0 3rem 0 3rem;
@@ -154,6 +154,19 @@
     text-align: center;
 }
 
+.handler-label-left {
+    left: -5rem;
+}
+
+.handler-label-right {
+    left: 0;
+}
+
+.handler-label > p {
+    margin: 0;
+}
+
+
 .slider-add-on {
     display: flex;
     align-items: center;
@@ -162,8 +175,7 @@
     font-size: 12px;
 }
 
-/* Slider controls conf*/
-.slider-add-on > div:nth-child(2){
+.slider-controls-pane{
     margin-left: 2rem;
 }
 
@@ -241,7 +253,7 @@
     margin-left: 5px;
 }
 
-body > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1){
+.dialog-content{
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -261,7 +273,7 @@ body > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)
     font-size: 13pt;
 }
 
-#share-dialog-inner-div > p:nth-child(2){
+#share-dialog-inner-div > p{
     margin-top: 3rem;
 }
 
@@ -297,35 +309,32 @@ body > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)
 
 
 /*****************************************************************
- * Network stats conf
+ * Legend conf
  *****************************************************************/
-.caption {
+.legend-cls {
     position: absolute;
     margin: 37rem 0 0 2rem;
     height: 18rem;
     width: 32rem;
     z-index: 99;
     font-size: 10px;
-    text-align: right;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.col2-legend, .col3-legend, .col4-legend {
+    margin-left: 2rem;
+}
+
+.legend-col {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-}
-
-.caption-row {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.caption-col {
-    display: flex;
-    flex-direction: row;
     justify-content: space-between;
     align-items: center;
 }
 
-.caption-node {
+.legend-node {
     height: 2rem;
     width: 2rem;
     border-radius: 100%;
@@ -336,7 +345,7 @@ body > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)
     width: 3.5rem;
 }
 
-.caption-edge {
+.legend-edge {
     height: 0.15rem;
     width: 3rem;
 }
@@ -344,19 +353,6 @@ body > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)
 .edge-sized {
     height: 0.5rem;
 }
-
-div.caption-row:nth-child(3) > div:nth-child(1), div.caption-row:nth-child(3) >div:nth-child(2) {
-    align-items: baseline;
-}
-
-div.caption-row > div:nth-child(2) {
-    margin-left: 2.5rem;
-}
-
-div.caption-row:nth-child(2) > div:nth-child(2){
-    align-items: center;
-}
-
 /*****************************************************************/
 
 
@@ -403,8 +399,7 @@ div.user-container-stat > p:nth-child(2){
 /*****************************************************************
  * Switch buttons + dropdown conf
  *****************************************************************/
-/* drop down + switches */
-#main > div:nth-child(4){
+.controls-container{
     display: flex;
     justify-content: space-between;
     padding: 0.5rem;
@@ -415,16 +410,17 @@ div.user-container-stat > p:nth-child(2){
 }
 
 /* div [ div [switch + label] + div [switch + label] ] */
-#main > div:nth-child(4) > div:nth-child(1) {
+.toggle-container {
     display: flex;
     justify-content: left;
 }
 
-/* div [switch + label] */
-#main > div:nth-child(4) > div:nth-child(1) > div {
+.net-control {
     display: flex;
     justify-content: left;
     margin-right: 3.5rem;
+    display: flex;
+    align-items: center;
 }
 
 .toggle {
@@ -438,11 +434,6 @@ div.user-container-stat > p:nth-child(2){
 .toggle > div > div > div > button{
     height: 1.5rem;
     width: 1.5rem;
-}
-
-#main > div:nth-child(4) > div:nth-child(2){
-    display: flex;
-    align-items: baseline;
 }
 
 #reset_cyto {
@@ -475,15 +466,14 @@ div.user-container-stat > p:nth-child(2){
     padding-left: 1rem;
 }
 
-.distribution-pane > div:nth-child(1) {
+.left-distribution-pane {
     flex-grow: 1;
     padding-right: 1rem;
 }
 
-.distribution-pane > div:nth-child(1) > div:nth-child(2) {
+.left-distribution-body {
     display: flex;
     font-size: 12px;
-    flex-wrap: wrap;
     margin-top: 2rem;
 }
 
@@ -500,7 +490,7 @@ div.user-container-stat > p:nth-child(2){
  /*****************************************************************
  * Ranking pane conf
  *****************************************************************/
-div.pane:nth-child(2) > div:nth-child(2) > div:nth-child(1) {
+.ranking-selection {
     display: flex;
     justify-content: right;
     margin-bottom: 1.2rem;
@@ -530,6 +520,7 @@ th.dash-header > div {
     text-align: left;
 }
 
+/* Paging buttons */
 #ranking-table > div:nth-child(2){
     display: flex;
     justify-content: right;
@@ -550,13 +541,13 @@ th.dash-header > div {
   /*****************************************************************
  * Foot conf
  *****************************************************************/
-.foot > div:nth-child(2){
+.foot-container{
     display: flex;
     justify-content: space-around;
     align-items: center;
 }
 
-.foot > div:nth-child(2) > p{
+.foot-container > p{
     margin-left: 1rem;
 }
   /*****************************************************************/

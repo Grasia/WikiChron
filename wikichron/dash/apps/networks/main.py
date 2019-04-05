@@ -555,11 +555,11 @@ def bind_callbacks(app):
 
 
     @app.callback(
-        Output('caption', 'className'),
-        [Input('tg-hide-caption', 'on')]
+        Output('legend', 'className'),
+        [Input('tg-hide-legend', 'on')]
     )
     def hide_caption(switch):
-        _class = 'pane caption'
+        _class = 'pane legend-cls'
         if not switch:
             _class = 'pane non-show'
         return _class

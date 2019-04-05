@@ -23,9 +23,10 @@ function update_labels(mutation) {
 handlers = document.querySelectorAll("div.rc-slider-handle");
 // get handlers date values
 dates = document.querySelectorAll("#handler-labels");
+handlerClasses = ['handler-label-left', 'handler-label-right']
 
-for (i = 0; i < 2; i++){
-    handlers[i].innerHTML += "<div class='handler-label'><p id=handler-label" + i + "></p></div>";
+for (i = 0; i < handlerClasses.length; i++){
+    handlers[i].innerHTML += `<div class='handler-label ${handlerClasses[i]}'><p id=handler-label${i}></p></div>`;
 
     // now, add event when value change
     observer = new MutationObserver( function(mutations){
