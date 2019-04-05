@@ -159,7 +159,8 @@ def load_external_dash_libs_in_layout():
 
 
 def generate_welcome_page():
-    assets_url_path = os.path.join(current_app.config['DASH_BASE_PATHNAME'],
+    mode_config = get_mode_config(current_app)
+    assets_url_path = os.path.join(mode_config['DASH_STATIC_PATHNAME'],
                                     'assets')
     return html.Div(id='welcome-container',
             className='container',
@@ -350,23 +351,20 @@ def create_dash_app(server):
     # load config
     config = get_mode_config(server)
     wikichron_base_pathname = config['DASH_BASE_PATHNAME']
-    assets_url_path = os.path.join(wikichron_base_pathname, 'assets')
+    path_to_serve_assets = config['DASH_STATIC_FOLDER']
+    assets_url_path = os.path.join(config['DASH_STATIC_PATHNAME'], 'assets')
     assets_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                'resources', 'assets')
+                                path_to_serve_assets)
 
     schema_and_hostname = f'{server.config["PREFERRED_URL_SCHEME"]}://{server.config["APP_HOSTNAME"]}'
     meta_tags = define_meta_tags(schema_and_hostname, assets_url_path)
-
-    external_stylesheets = [f'{assets_url_path}/lib/chriddyp.css', # dash stylesheet
-                            f'{assets_url_path}/lib/fontawesome-v.5.0.9.css',  # fontawesome css
-                            ]
 
     print('Creating new Dash instance...')
     app = dash.Dash(__name__,
                     server = server,
                     meta_tags = meta_tags,
-                    external_stylesheets = external_stylesheets,
                     url_base_pathname = wikichron_base_pathname,
+                    assets_url_path = path_to_serve_assets,
                     assets_folder = assets_folder)
     app.title = 'WikiChron'
     app.config['suppress_callback_exceptions'] = True

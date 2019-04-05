@@ -82,7 +82,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
     server_config = current_app.config
     mode_config = get_mode_config(current_app)
     # Contructs the assets_url_path for image sources:
-    assets_url_path = os.path.join(mode_config['DASH_BASE_PATHNAME'], 'assets')
+    assets_url_path = os.path.join(mode_config['DASH_STATIC_PATHNAME'], 'assets')
 
 
     def main_header():
