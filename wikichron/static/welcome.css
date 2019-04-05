@@ -9,11 +9,13 @@ h1 {
     font-weight: 900;
 }
 
-section {
-    margin-bottom: 100px;
+#welcome-content {
+    margin-top: -20px;
+    margin-bottom: 5%;
 }
 
 #welcome-title {
+    margin-bottom: 0px;
     display: flex;
     flex-direction: column;
     align-items: center;
