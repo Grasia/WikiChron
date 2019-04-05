@@ -22,12 +22,26 @@ h1 {
     justify-content: center;
     height: 300px;
     width: 100vw;
-    background-image: url("/static/assets/header_background.png"); /*TOFIX*/
-    background-image: url("/static/assets/header_background_1x.png");
-/*
-    background-image: url("/static/assets/header_background_2x.png");
-*/
     background-color: #21446D;
+    background-size: cover;
+}
+
+@media all {
+    #welcome-title {
+        background-image: url("/static/assets/header_background.png");
+    }
+}
+
+@media all and (min-width: 1441px) {
+    #welcome-title {
+        background-image: url("/static/assets/header_background_1x.png");
+    }
+}
+
+@media all and (min-width: 1921px){
+    #welcome-title {
+        background-image: url("/static/assets/header_background_2x.png");
+    }
 }
 
 #welcome-title p {
