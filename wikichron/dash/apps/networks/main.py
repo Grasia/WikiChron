@@ -504,9 +504,11 @@ def bind_callbacks(app):
 
     @app.callback(
         Output('ranking-table', 'selected_rows'),
-        [Input('dd-local-metric', 'value')]
+        [Input('dd-local-metric', 'value'),
+        Input('ranking-table', 'pagination_settings'),
+        Input('ranking-table', 'sorting_settings')]
     )
-    def clear_ranking_selection(_):
+    def clear_ranking_selection(_1, _2, _3):
         return []
 
 
