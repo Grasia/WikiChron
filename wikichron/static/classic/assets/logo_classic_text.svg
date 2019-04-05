@@ -1,27 +1,142 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="237px" height="57px" viewBox="0 0 237 57" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: sketchtool 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
-    <title>F1F4480E-7762-4AF9-AB9D-13F862529FE2</title>
-    <desc>Created with sketchtool.</desc>
-    <defs></defs>
-    <g id="Diseño" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="home_previa" transform="translate(-200.000000, -439.000000)">
-            <g id="classic" transform="translate(160.000000, 292.000000)">
-                <g id="tipo-logo" transform="translate(40.000000, 147.000000)">
-                    <polygon id="Fill-14" fill="#22446D" points="0.6641 3.0371 10.9681 3.0371 14.6581 22.2521 18.5281 3.0371 27.3931 3.0371 31.7581 22.4761 35.6731 3.0371 45.1221 3.0371 37.6521 35.2111 27.3481 35.2111 22.8491 15.9971 18.3041 35.2111 8.1341 35.2111"></polygon>
-                    <path d="M47.554,35.2109 L56.373,35.2109 L56.373,11.6769 L47.554,11.6769 L47.554,35.2109 Z M47.148,5.4669 C47.148,2.8579 49.218,0.9679 51.964,0.9679 C54.663,0.9679 56.733,2.8579 56.733,5.4669 C56.733,8.0319 54.663,9.9219 51.964,9.9219 C49.218,9.9219 47.148,8.0319 47.148,5.4669 Z" id="Fill-16" fill="#22446D"></path>
-                    <polygon id="Fill-18" fill="#22446D" points="60.918 1.4619 69.782 1.4619 69.782 20.5869 75.497 11.6769 84.587 11.6769 77.343 22.2059 85.173 35.2109 75.362 35.2109 69.782 25.4009 69.782 35.2109 60.918 35.2109"></polygon>
-                    <path d="M87.692,35.2109 L96.512,35.2109 L96.512,11.6769 L87.692,11.6769 L87.692,35.2109 Z M87.288,5.4669 C87.288,2.8579 89.357,0.9679 92.103,0.9679 C94.802,0.9679 96.872,2.8579 96.872,5.4669 C96.872,8.0319 94.802,9.9219 92.103,9.9219 C89.357,9.9219 87.288,8.0319 87.288,5.4669 Z" id="Fill-19" fill="#22446D"></path>
-                    <path d="M100.2021,19.3262 L100.2021,18.9672 C100.2021,9.0222 107.3561,2.5422 116.8511,2.5422 C125.5361,2.5422 131.3861,6.5022 132.1511,15.2312 L121.6221,15.2312 C121.3061,12.2622 119.7311,10.5972 116.8961,10.5972 C113.2071,10.5972 110.9571,13.4762 110.9571,18.9222 L110.9571,19.2812 C110.9571,24.6372 113.1161,27.6062 117.0771,27.6062 C119.9561,27.6062 122.0261,26.1212 122.3861,22.8822 L132.5561,22.8822 C132.0161,31.3412 125.8061,35.7962 117.3021,35.7962 C105.6921,35.7962 100.2021,29.1812 100.2021,19.3262" id="Fill-20" fill="#4B8FCC"></path>
-                    <path d="M135.4365,1.4619 L144.3015,1.4619 L144.3015,15.4569 C145.6065,12.9819 148.1255,11.0469 152.0865,11.0469 C156.5415,11.0469 159.6455,13.8819 159.6455,19.7319 L159.6455,35.2109 L150.7825,35.2109 L150.7825,21.7119 C150.7825,19.3259 149.9265,18.1109 147.8115,18.1109 C145.6065,18.1109 144.3015,19.4169 144.3015,22.2059 L144.3015,35.2109 L135.4365,35.2109 L135.4365,1.4619 Z" id="Fill-21" fill="#4B8FCC"></path>
-                    <path d="M163.7412,11.6768 L172.6062,11.6768 L172.6062,16.4468 C174.0912,12.8018 176.6562,11.3178 180.1662,11.3628 L180.1662,19.6418 C175.2612,19.3708 172.6062,20.9908 172.6062,24.3658 L172.6062,35.2108 L163.7412,35.2108 L163.7412,11.6768 Z" id="Fill-22" fill="#4B8FCC"></path>
-                    <path d="M199.291,23.5566 L199.291,23.2416 C199.291,19.5516 197.986,17.5716 195.241,17.5716 C192.542,17.5716 191.057,19.4166 191.057,23.1066 L191.057,23.4666 C191.057,27.2906 192.406,29.2716 195.241,29.2716 C197.94,29.2716 199.291,27.2906 199.291,23.5566 M182.102,23.7366 L182.102,23.3756 C182.102,15.7266 187.816,11.0466 195.241,11.0466 C202.576,11.0466 208.29,15.5916 208.29,23.1516 L208.29,23.5116 C208.29,31.2506 202.53,35.7956 195.196,35.7956 C187.861,35.7956 182.102,31.4766 182.102,23.7366" id="Fill-23" fill="#4B8FCC"></path>
-                    <path d="M211.3965,11.6768 L220.2605,11.6768 L220.2605,15.4568 C221.5665,12.9818 224.0855,11.0468 228.0455,11.0468 C232.5005,11.0468 235.6055,13.8818 235.6055,19.7318 L235.6055,35.2108 L226.7415,35.2108 L226.7415,21.7118 C226.7415,19.3258 225.8855,18.1118 223.7705,18.1118 C221.5665,18.1118 220.2605,19.4168 220.2605,22.2058 L220.2605,35.2108 L211.3965,35.2108 L211.3965,11.6768 Z" id="Fill-24" fill="#4B8FCC"></path>
-                    <text id="classics" font-family="Roboto-Bold, Roboto" font-size="23" font-weight="bold" line-spacing="33" fill="#4B8FCC">
-                        <tspan x="154.003662" y="53">classics</tspan>
-                    </text>
-                </g>
-            </g>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="237px"
+   height="63px"
+   viewBox="0 0 237 57"
+   version="1.1"
+   id="svg2"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="logo_classic_text_edited_2.svg">
+  <metadata
+     id="metadata29">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>F1F4480E-7762-4AF9-AB9D-13F862529FE2</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="4"
+     gridtolerance="7"
+     guidetolerance="4"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1543"
+     inkscape:window-height="876"
+     id="namedview27"
+     showgrid="false"
+     showguides="false"
+     inkscape:zoom="3.7354333"
+     inkscape:cx="102.52153"
+     inkscape:cy="11.72933"
+     inkscape:window-x="57"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="tipo-logo"
+     inkscape:snap-path-clip="true"
+     inkscape:snap-path-mask="true"
+     inkscape:snap-perpendicular="true"
+     inkscape:snap-tangential="true" />
+  <!-- Generator: sketchtool 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+  <title
+     id="title4">F1F4480E-7762-4AF9-AB9D-13F862529FE2</title>
+  <desc
+     id="desc6">Created with sketchtool.</desc>
+  <defs
+     id="defs8" />
+  <g
+     id="Diseño"
+     stroke-width="1"
+     stroke="none"
+     fill-rule="evenodd"
+     fill="none">
+    <g
+       id="home_previa"
+       transform="translate(-200.000000, -439.000000)">
+      <g
+         id="classic"
+         transform="translate(160.000000, 292.000000)">
+        <g
+           id="tipo-logo"
+           transform="translate(40.000000, 147.000000)">
+          <g
+             id="g3357"
+             transform="translate(0.49829182,-2.1416525)">
+            <polygon
+               points="18.3041,35.2111 8.1341,35.2111 0.6641,3.0371 10.9681,3.0371 14.6581,22.2521 18.5281,3.0371 27.3931,3.0371 31.7581,22.4761 35.6731,3.0371 45.1221,3.0371 37.6521,35.2111 27.3481,35.2111 22.8491,15.9971 "
+               id="Fill-14"
+               style="fill:#22446d" />
+            <path
+               id="Fill-16"
+               d="m 47.554,35.2109 8.819,0 0,-23.534 -8.819,0 0,23.534 z M 47.148,5.4669 c 0,-2.609 2.07,-4.499 4.816,-4.499 2.699,0 4.769,1.89 4.769,4.499 0,2.565 -2.07,4.455 -4.769,4.455 -2.746,0 -4.816,-1.89 -4.816,-4.455 z"
+               inkscape:connector-curvature="0"
+               style="fill:#22446d" />
+            <polygon
+               points="60.918,1.4619 69.782,1.4619 69.782,20.5869 75.497,11.6769 84.587,11.6769 77.343,22.2059 85.173,35.2109 75.362,35.2109 69.782,25.4009 69.782,35.2109 60.918,35.2109 "
+               id="Fill-18"
+               style="fill:#22446d" />
+            <path
+               id="Fill-19"
+               d="m 87.692,35.2109 8.82,0 0,-23.534 -8.82,0 0,23.534 z M 87.288,5.4669 c 0,-2.609 2.069,-4.499 4.815,-4.499 2.699,0 4.769,1.89 4.769,4.499 0,2.565 -2.07,4.455 -4.769,4.455 -2.746,0 -4.815,-1.89 -4.815,-4.455 z"
+               inkscape:connector-curvature="0"
+               style="fill:#22446d" />
+            <path
+               id="Fill-20"
+               d="m 100.2021,19.3262 0,-0.359 c 0,-9.945 7.154,-16.425 16.649,-16.425 8.685,0 14.535,3.96 15.3,12.689 l -10.529,0 c -0.316,-2.969 -1.891,-4.634 -4.726,-4.634 -3.689,0 -5.939,2.879 -5.939,8.325 l 0,0.359 c 0,5.356 2.159,8.325 6.12,8.325 2.879,0 4.949,-1.485 5.309,-4.724 l 10.17,0 c -0.54,8.459 -6.75,12.914 -15.254,12.914 -11.61,0 -17.1,-6.615 -17.1,-16.47"
+               inkscape:connector-curvature="0"
+               style="fill:#4b8fcc" />
+            <path
+               id="Fill-21"
+               d="m 135.4365,1.4619 8.865,0 0,13.995 c 1.305,-2.475 3.824,-4.41 7.785,-4.41 4.455,0 7.559,2.835 7.559,8.685 l 0,15.479 -8.863,0 0,-13.499 c 0,-2.386 -0.856,-3.601 -2.971,-3.601 -2.205,0 -3.51,1.306 -3.51,4.095 l 0,13.005 -8.865,0 0,-33.749 z"
+               inkscape:connector-curvature="0"
+               style="fill:#4b8fcc" />
+            <path
+               id="Fill-22"
+               d="m 163.7412,11.6768 8.865,0 0,4.77 c 1.485,-3.645 4.05,-5.129 7.56,-5.084 l 0,8.279 c -4.905,-0.271 -7.56,1.349 -7.56,4.724 l 0,10.845 -8.865,0 0,-23.534 z"
+               inkscape:connector-curvature="0"
+               style="fill:#4b8fcc" />
+            <path
+               id="Fill-23"
+               d="m 199.291,23.5566 0,-0.315 c 0,-3.69 -1.305,-5.67 -4.05,-5.67 -2.699,0 -4.184,1.845 -4.184,5.535 l 0,0.36 c 0,3.824 1.349,5.805 4.184,5.805 2.699,0 4.05,-1.981 4.05,-5.715 m -17.189,0.18 0,-0.361 c 0,-7.649 5.714,-12.329 13.139,-12.329 7.335,0 13.049,4.545 13.049,12.105 l 0,0.36 c 0,7.739 -5.76,12.284 -13.094,12.284 -7.335,0 -13.094,-4.319 -13.094,-12.059"
+               inkscape:connector-curvature="0"
+               style="fill:#4b8fcc" />
+            <path
+               id="Fill-24"
+               d="m 211.3965,11.6768 8.864,0 0,3.78 c 1.306,-2.475 3.825,-4.41 7.785,-4.41 4.455,0 7.56,2.835 7.56,8.685 l 0,15.479 -8.864,0 0,-13.499 c 0,-2.386 -0.856,-3.6 -2.971,-3.6 -2.204,0 -3.51,1.305 -3.51,4.094 l 0,13.005 -8.864,0 0,-23.534 z"
+               inkscape:connector-curvature="0"
+               style="fill:#4b8fcc" />
+          </g>
+          <text
+             id="text23"
+             font-size="23"
+             font-weight="bold"
+             line-spacing="33"
+             x="-0.4010033"
+             style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.25px;line-height:125%;font-family:Roboto-Bold, Roboto;-inkscape-font-specification:'Roboto-Bold, Roboto, Bold';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#4b8fcc"
+             y="3.701961"
+             sodipodi:linespacing="125%">
+            <tspan
+               x="153.60265"
+               y="56.701962"
+               id="tspan25"
+               style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.25px;line-height:125%;font-family:Roboto-Bold, Roboto;-inkscape-font-specification:'Roboto-Bold, Roboto, Bold';text-align:start;writing-mode:lr-tb;text-anchor:start">classic</tspan>
+          </text>
         </g>
+      </g>
     </g>
+  </g>
 </svg>
