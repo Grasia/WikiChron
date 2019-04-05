@@ -14,6 +14,8 @@ import os
 import time
 import json
 from datetime import datetime
+
+from flask import current_app
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -23,11 +25,13 @@ import plotly.graph_objs as go
 from urllib.parse import parse_qs, urlencode
 
 # Local imports:
+from .utils import get_mode_config
 from . import data_controller
 from .networks.models import networks_generator as net_factory
 from .networks.CytoscapeStylesheet import CytoscapeStylesheet
 from .networks.models.BaseNetwork import BaseNetwork
-from .main_view import RANKING_EMPTY_DATA, RANKING_EMPTY_HEADER, PAGE_SIZE
+from .main_view import RANKING_EMPTY_DATA, RANKING_EMPTY_HEADER, PAGE_SIZE, \
+    inflate_switch_network_dialog, inflate_share_dialog
 
 TIME_DIV = 60 * 60 * 24 * 30
 selection_params = {'wikis', 'network', 'lower_bound', 'upper_bound'}
@@ -186,22 +190,6 @@ def bind_callbacks(app):
 
 
     @app.callback(
-        Output('share-dialog', 'open'),
-        [Input('share-button', 'n_clicks')],
-        [State('share-dialog', 'open')]
-    )
-    def show_share_modal(n_clicks: int, open_state: bool):
-        if not n_clicks: # modal init closed
-            return False
-        elif n_clicks > 0 and not open_state: # opens if we click and `open` state is not open
-            return True
-        else: # otherwise, leave it closed.
-            return False
-
-        return # bind_callbacks
-
-
-    @app.callback(
         [Output('date-slider-container', 'children'),
         Output('first-entry-signal', 'children')],
         [Input('initial-selection', 'children')],
@@ -337,27 +325,6 @@ def bind_callbacks(app):
             print(f'Download href updated to: {href}')
 
         return href
-
-
-    @app.callback(
-        Output('share-link-input', 'value'),
-        [Input('dates-slider', 'value')],
-        [State('share-link-input', 'value'),
-        State('initial-selection', 'children')]
-    )
-    def update_share_url(slider, query_string, selection_json):
-        if not slider:
-            raise PreventUpdate()
-        selection = json.loads(selection_json)
-        wiki = selection['wikis'][0]
-
-        query_splited = query_string.split("?")
-        new_query = update_query_by_time(wiki, query_splited[1], slider[1], slider[0])
-        new_query = f'{query_splited[0]}?{new_query}'
-        if debug:
-            print(f'Share link updated to: {new_query}')
-
-        return new_query
 
 
     @app.callback(
@@ -597,14 +564,58 @@ def bind_callbacks(app):
 
 
     @app.callback(
-        Output('network-dialog', 'open'),
-        [Input('switch-network', 'n_clicks')],
-        [State('network-dialog', 'open')]
+        [Output('dialog', 'children'),
+        Output('dialog', 'open')],
+        [Input('share-button', 'n_clicks_timestamp'),
+        Input('switch-network', 'n_clicks_timestamp')],
+        [State('dialog', 'open'),
+        State('url', 'search'),
+        State('dates-slider', 'value'),
+        State('initial-selection', 'children')]
     )
-    def show_switch_network_dialog(n_clicks, open_state):
-        if not n_clicks:
-            return False
-        elif n_clicks > 0 and not open_state:
-            return True
+    def show_share_modal(t_clicks_share, t_clicks_switch, open_state, query_string, slider, selection_json):
+        if int(t_clicks_share) == 0 and int(t_clicks_switch) == 0:
+            return [], False
+
+        elif not open_state:
+            selection = json.loads(selection_json)
+            wiki = selection['wikis'][0]
+            network_code = selection['network']
+            query_splited = query_string.split("?")
+            new_query = update_query_by_time(wiki, query_splited[1], slider[1], slider[0])
+
+            server_config = current_app.config
+            mode_config = get_mode_config(current_app)
+            url = f'{server_config["PREFERRED_URL_SCHEME"]}://'
+            url = f'{url}{server_config["APP_HOSTNAME"]}'
+            url = f'{url}{mode_config["DASH_BASE_PATHNAME"]}?{new_query}'
+
+            child = []
+            if int(t_clicks_share) > int(t_clicks_switch):
+                child = inflate_share_dialog(url)
+            elif int(t_clicks_share) < int(t_clicks_switch):
+                child = inflate_switch_network_dialog(url, network_code)
+
+            return child, True
+
         else:
-            return False
+            return [], False
+
+
+    @app.callback(
+        Output('href-switch-network', 'href'),
+        [Input('radio-network-type', 'value')],
+        [State('href-switch-network', 'href')]
+    )
+    def update_switch_network_link(value, link):
+        if not (value or link):
+            raise PreventUpdate()
+
+        link_splited = link.split("?")
+        link_dict = parse_qs(link_splited[1])
+        selection = { param: link_dict[param] for param in set(link_dict.keys()) & selection_params }
+        selection['network'] = value
+        new_link = urlencode(selection,  doseq=True)
+        if debug:
+            print(f'Switched to {value} network')
+        return f'{link_splited[0]}?{new_link}'

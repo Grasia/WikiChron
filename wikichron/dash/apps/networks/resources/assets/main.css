@@ -128,7 +128,7 @@
     margin-left: 2rem;
 }
 
-.main-root-header > div > div > a{
+.main-root-header > div > div > a, #href-switch-network{
     font-weight: bold;
     text-decoration: none;
 }
@@ -239,6 +239,30 @@
 
 .share-modal-paragraph-info-cn {
     margin-left: 5px;
+}
+
+body > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1){
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#radio-network-type{
+    margin: 3rem 0;
+    margin-left: 14rem;
+}
+
+#radio-network-type > label > input {
+    transform: scale(1);
+}
+
+#href-switch-network {
+    margin-left: 15rem;
+    font-size: 13pt;
+}
+
+#share-dialog-inner-div > p:nth-child(2){
+    margin-top: 3rem;
 }
 
 /*****************************************************************
