@@ -28,9 +28,9 @@ from .networks.models import networks_generator as net_factory
 from .networks.models.BaseNetwork import BaseNetwork
 
 IMAGE_HEADER = 'url(../../../static/assets/header_background.png)'
-RANKING_EMPTY_HEADER = [{'name': 'User', 'id': 'name'}, 
+RANKING_EMPTY_HEADER = [{'name': 'User', 'id': 'name'},
                         {'name': 'Metric', 'id': 'metric'}]
-RANKING_EMPTY_DATA = pd.DataFrame(columns=[RANKING_EMPTY_HEADER[0]['id'], 
+RANKING_EMPTY_DATA = pd.DataFrame(columns=[RANKING_EMPTY_HEADER[0]['id'],
     RANKING_EMPTY_HEADER[1]['id']])
 PAGE_SIZE = 10
 
@@ -47,7 +47,7 @@ def main_header(selection_url, query_string, mode_config, assets_url_path):
     href_download_button = f'{mode_config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
     return (html.Div(
             children=[
-                html.Img(src='{}/wikichron_networks_logo2.svg'.format(assets_url_path), 
+                html.Img(src='{}/wikichron_networks_logo2.svg'.format(assets_url_path),
                     className='title-img'),
                 html.Div(children=[
                     html.Div([
@@ -70,7 +70,7 @@ def main_header(selection_url, query_string, mode_config, assets_url_path):
                             title='Share current selection',
                             n_clicks_timestamp='0'
                         )
-                    ], 
+                    ],
                     className='icons-bar')
                 ])
         ], className='main-root-header', style={'background-image': IMAGE_HEADER})
@@ -151,7 +151,7 @@ def date_slider_control():
                     html.Span('Time interval (months):'),
                     html.Div(children=[
                         html.Button("<<", id="bt-back", n_clicks_timestamp='0'),
-                        dcc.Input(id="in-step-slider" , type='number', 
+                        dcc.Input(id="in-step-slider" , type='number',
                             placeholder='MM', min='1', max='999'),
                         html.Button(">>", id="bt-forward", n_clicks_timestamp='0'),
                     ]),
@@ -195,7 +195,7 @@ def build_network_controls(network_code):
 
 
 def cytoscape_component():
-    no_data = html.Div(children=[html.P()], 
+    no_data = html.Div(children=[html.P()],
         id='no-data', className='non-show')
 
     cytoscape = dash_cytoscape.Cytoscape(
@@ -232,7 +232,7 @@ def build_caption(network_code: str) -> html.Div:
     return html.Div([
         html.Div(children=[
             html.Div(children=[
-                html.Div(children=[], className='caption-node', 
+                html.Div(children=[], className='caption-node',
                     style={'background-color': CytoscapeStylesheet.N_MIN_COLOR}),
                 html.P(text['min_node_color'])
             ], className='caption-col'),
@@ -242,7 +242,7 @@ def build_caption(network_code: str) -> html.Div:
                     style={'background-color': CytoscapeStylesheet.N_MAX_COLOR}),
                 html.P(text['max_node_color'])
             ], className='caption-col'),
-        ], 
+        ],
         className='caption-row'),
 
         html.Div(children=[
@@ -257,7 +257,7 @@ def build_caption(network_code: str) -> html.Div:
                     style={'background-color': CytoscapeStylesheet.N_DEFAULT_COLOR}),
                 html.P(text['max_node_size'])
             ], className='caption-col'),
-        ], 
+        ],
         className='caption-row'),
 
         html.Div(children=[
@@ -272,7 +272,7 @@ def build_caption(network_code: str) -> html.Div:
                     style={'background-color': CytoscapeStylesheet.E_DEFAULT_COLOR}),
                 html.P(text['max_edge_size'])
             ], className='caption-col'),
-        ], 
+        ],
         className='caption-row'),
 
     ], id='caption', className='pane non-show')
@@ -384,7 +384,7 @@ def build_ranking(network_code) -> html.Div:
                 },
                 data = RANKING_EMPTY_DATA.to_dict('rows'),
                 columns = RANKING_EMPTY_HEADER,
-            )], 
+            )],
             className='body-pane')
 
     return html.Div(children=[header, body], className='pane side-pane')
@@ -394,10 +394,10 @@ def build_user_stats() -> html.Div:
     header = html.Div(children=[
         'User Stats',
         html.Hr(className='pane-hr')
-    ], 
+    ],
     className='header-pane sidebar-header-pane')
 
-    body = html.Div(id='user-stats', children=['Please, click on a node to show its info'], 
+    body = html.Div(id='user-stats', children=['Please, click on a node to show its info'],
         className='body-pane')
     return html.Div(children=[header, body], className='pane side-pane')
 
@@ -452,7 +452,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     mode_config = get_mode_config(current_app)
 
     # Contructs the assets_url_path for image sources:
-    assets_url_path = os.path.join(mode_config['DASH_BASE_PATHNAME'], 'assets')
+    assets_url_path = os.path.join(mode_config['DASH_STATIC_PATHNAME'], 'assets')
 
     if debug:
         print ('Generating main...')
