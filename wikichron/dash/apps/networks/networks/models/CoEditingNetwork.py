@@ -29,10 +29,6 @@ class CoEditingNetwork(BaseNetwork):
                       differents editions on the same page computes only once.
 
     """
-
-    # aprox 1 month = 30 days
-    TIME_DIV = 60 * 60 * 24 * 30
-    TIME_BOUND = 24 * 15
     NAME = 'Co-Editing'
     CODE = 'co_editing_network'
     DIRECTED = False

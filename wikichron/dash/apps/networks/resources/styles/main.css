@@ -46,6 +46,11 @@
     height: 80%;
     width: 100%;
 }
+
+a{
+    font-weight: bold;
+    text-decoration: none;
+}
 /******************************************************************/
 
 /*****************************************************************
@@ -126,11 +131,6 @@
 
 .icon:not(:first-child) {
     margin-left: 2rem;
-}
-
-.main-root-header > div > div > a, #href-switch-network{
-    font-weight: bold;
-    text-decoration: none;
 }
 
 #switch-network {
@@ -255,26 +255,34 @@
 
 .dialog-content{
     display: flex;
-    flex-direction: row;
-    justify-content: center;
+    flex-direction: column;
+}
+
+.dialog-content > * {
+    flex-grow: 1;
+    margin: 1rem auto;
+    display: flex;
+    align-items: center;
+}
+
+.dialog-content > :first-child {
+    margin-top: 0;
 }
 
 #radio-network-type{
-    margin: 3rem 0;
-    margin-left: 14rem;
+    display: initial;
 }
 
 #radio-network-type > label > input {
     transform: scale(1);
 }
 
-#href-switch-network {
-    margin-left: 15rem;
+#new-switch-network, #this-switch-network {
     font-size: 13pt;
 }
 
-#share-dialog-inner-div > p{
-    margin-top: 3rem;
+#this-switch-network {
+    margin-right: 5rem;
 }
 
 /*****************************************************************

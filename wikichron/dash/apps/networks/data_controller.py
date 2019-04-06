@@ -155,7 +155,7 @@ def get_bot_names(wiki: dict) -> set:
 
 def get_time_bounds(wiki, lower, upper):
     """
-    Returns a timestamps from upper and lower values
+    Returns timestamps from upper and lower values
     """
     first_entry = get_first_entry(wiki)
     first_entry = int(datetime.strptime(str(first_entry),
@@ -166,4 +166,18 @@ def get_time_bounds(wiki, lower, upper):
 
     upper_bound = datetime.fromtimestamp(upper_bound).strftime("%Y-%m-%d %H:%M:%S")
     lower_bound = datetime.fromtimestamp(lower_bound).strftime("%Y-%m-%d %H:%M:%S")
+    return (lower_bound, upper_bound)
+
+
+def get_time_int(wiki, lower, upper):
+    """
+    Returns ints from upper and lower values
+    """
+    first_entry = get_first_entry(wiki)
+    first_entry = int(datetime.strptime(str(first_entry),
+        "%Y-%m-%d %H:%M:%S").strftime('%s'))
+
+    upper_bound = first_entry + upper * TIME_DIV
+    lower_bound = first_entry + lower * TIME_DIV
+
     return (lower_bound, upper_bound)

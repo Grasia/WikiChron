@@ -91,19 +91,22 @@ def inflate_switch_network_dialog(link, network_code):
     opts = [{'label': l, 'value': v} for l, v in zip(names, codes)]
 
     return html.Div([
-                html.H3('Please, select a network to switch'),
+                html.H4('Please, select a network to switch'),
                 dcc.RadioItems(
                     id='radio-network-type',
                     options=opts,
                     value=network_code
                 ),
-                html.A('Open new tab', id='href-switch-network', target='_blank', href=link)
+                html.Div(children=[
+                    html.A('Open in this tab', id='this-switch-network', href=link),
+                    html.A('Open in a new tab', id='new-switch-network', target='_blank', href=link)
+                ])
             ], className='dialog-content')
 
 
 def inflate_share_dialog(share_link):
     return html.Div(children=[
-                html.H3('Share WikiChron with others or save your work!'),
+                html.H4('Share WikiChron with others!'),
                 html.P([
                     html.Strong('Link with your current selection:'),
                     html.Div(className='share-modal-link-and-button-cn', children=[

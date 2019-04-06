@@ -27,6 +27,7 @@ from urllib.parse import parse_qs, urlencode
 # Local imports:
 from .utils import get_mode_config
 from . import data_controller
+from .data_controller import TIME_DIV
 from .networks.models import networks_generator as net_factory
 from .networks.CytoscapeStylesheet import CytoscapeStylesheet
 from .networks.models.BaseNetwork import BaseNetwork
@@ -34,7 +35,7 @@ from .main_view import RANKING_EMPTY_DATA, RANKING_EMPTY_HEADER, PAGE_SIZE, \
     inflate_switch_network_dialog, inflate_share_dialog, NO_DATA_USER_STATS_HEADER, \
     NO_DATA_USER_STATS_BODY
 
-TIME_DIV = 60 * 60 * 24 * 30
+
 selection_params = {'wikis', 'network', 'lower_bound', 'upper_bound'}
 
 global debug
@@ -47,11 +48,7 @@ def update_query_by_time(wiki, query_string, up_val, low_val):
     # get only the parameters we are interested in for the side_bar selection
     selection = { param: query_string_dict[param] for param in set(query_string_dict.keys()) & selection_params }
 
-    # Let's parse the time values
-    first_entry = data_controller.get_first_entry(wiki)
-    first_entry = int(datetime.strptime(str(first_entry), "%Y-%m-%d %H:%M:%S").strftime('%s'))
-    upper_bound = first_entry + up_val * TIME_DIV
-    lower_bound = first_entry + low_val * TIME_DIV
+    lower_bound, upper_bound = data_controller.get_time_int(wiki, low_val, up_val)
 
     # Now, time to update the query
     selection['upper_bound'] = upper_bound
@@ -187,10 +184,7 @@ def bind_callbacks(app):
 
             selection = json.loads(selection_json)
             wiki = selection['wikis'][0]
-            first_entry = data_controller.get_first_entry(wiki)
-            first_entry = int(datetime.strptime(str(first_entry), "%Y-%m-%d %H:%M:%S").strftime('%s'))
-            upper_bound = first_entry + slider[1] * TIME_DIV
-            lower_bound = first_entry + slider[0] * TIME_DIV
+            lower_bound, upper_bound = data_controller.get_time_int(wiki, slider[0], slider[1])
             upper_bound = datetime.fromtimestamp(upper_bound).strftime('%B/%Y')
             lower_bound = datetime.fromtimestamp(lower_bound).strftime('%B/%Y')
 
@@ -572,7 +566,7 @@ def bind_callbacks(app):
 
         elif not open_state:
             trigger = trigger.triggered[0]['prop_id'].split('.')[0]
-            
+
             selection = json.loads(selection_json)
             wiki = selection['wikis'][0]
             network_code = selection['network']
@@ -598,9 +592,10 @@ def bind_callbacks(app):
 
 
     @app.callback(
-        Output('href-switch-network', 'href'),
+        [Output('new-switch-network', 'href'),
+        Output('this-switch-network', 'href')],
         [Input('radio-network-type', 'value')],
-        [State('href-switch-network', 'href')]
+        [State('new-switch-network', 'href')]
     )
     def update_switch_network_link(value, link):
         if not (value or link):
@@ -613,4 +608,6 @@ def bind_callbacks(app):
         new_link = urlencode(selection,  doseq=True)
         if debug:
             print(f'Switched to {value} network')
-        return f'{link_splited[0]}?{new_link}'
+        new_link = f'{link_splited[0]}?{new_link}'
+        
+        return new_link, new_link
