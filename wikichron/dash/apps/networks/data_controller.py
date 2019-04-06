@@ -28,7 +28,6 @@ global data_dir;
 global precooked_net_dir;
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 precooked_net_dir = os.getenv('PRECOOKED_NETWORK_DIR', 'precooked_data/networks')
-TIME_DIV = 60 * 60 * 24 * 30
 
 ### CACHED FUNCTIONS ###
 
@@ -153,26 +152,16 @@ def get_bot_names(wiki: dict) -> set:
     return {bot['name'] for bot in di_wiki['bots']}
 
 
-def get_time_bounds_timestamp(wiki, lower, upper):
-    """
-    Returns timestamps from upper and lower values
-    """
-    lower_bound, upper_bound = get_time_bounds_int(wiki, lower, upper)
-
-    upper_bound = datetime.fromtimestamp(upper_bound).strftime("%Y-%m-%d %H:%M:%S")
-    lower_bound = datetime.fromtimestamp(lower_bound).strftime("%Y-%m-%d %H:%M:%S")
-    return (lower_bound, upper_bound)
+def calculate_index_all_months(wiki):
+    data = read_data(wiki)
+    monthly_data = data.groupby(pd.Grouper(key='timestamp', freq='MS'))
+    index = monthly_data.size().index
+    return index
 
 
-def get_time_bounds_int(wiki, lower, upper):
-    """
-    Returns ints from upper and lower values
-    """
-    first_entry = get_first_entry(wiki)
-    first_entry = int(datetime.strptime(str(first_entry),
-        "%Y-%m-%d %H:%M:%S").strftime('%s'))
+def parse_int_to_timestamp(time):
+    return datetime.fromtimestamp(int(time)).strftime("%Y-%m-%d")
 
-    upper_bound = first_entry + upper * TIME_DIV
-    lower_bound = first_entry + lower * TIME_DIV
 
-    return (lower_bound, upper_bound)
+def parse_timestamp_to_int(time):
+    return int(datetime.strptime(str(time), "%Y-%m-%d").strftime('%s'))

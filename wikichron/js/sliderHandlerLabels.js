@@ -5,16 +5,18 @@
  * Copyright Youssef El Faqir El Rhazoui 
  */
 
- const TIME_DIV = 60 * 60 * 24 * 30;
- const MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+const MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+var time_index = document.querySelector("#dates-index").innerHTML;
+time_index = time_index.replace(/[\\"]/g, "");
+time_index = time_index.split(", ");
 
 function update_labels(mutation) {
     let val = parseInt(mutation.target.getAttribute("aria-valuenow"), 10);
-    let time = parseInt(document.querySelector("#first-entry-signal").innerHTML, 10);
-    val = time + val * TIME_DIV;
-    let date = new Date(0);
-    date.setUTCSeconds(val);
-    date = MONTH[date.getMonth()] + " " + date.getFullYear();
+
+    time = time_index[val];
+    time = time.split("-");
+    month = MONTH[parseInt(time[1])-1]
+    date = `${month} ${time[0]}`
     mutation.target.children[0].children[0].innerHTML = date
 }
 

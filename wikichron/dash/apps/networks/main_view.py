@@ -26,6 +26,7 @@ from .utils import get_mode_config
 from .networks.CytoscapeStylesheet import CytoscapeStylesheet
 from .networks.models import networks_generator as net_factory
 from .networks.models.BaseNetwork import BaseNetwork
+from . import data_controller
 
 IMAGE_HEADER = 'url(../../../static/assets/header_background.png)'
 RANKING_EMPTY_HEADER = [{'name': 'User', 'id': 'name'},
@@ -454,6 +455,9 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     selected_network_name = network_type_arg['name']
     selection_url = f'{mode_config["HOME_MODE_PATHNAME"]}'
 
+    time_index = data_controller.calculate_index_all_months(wikis_arg[0])
+    time_index = json.dumps(time_index.date.tolist(), default=str)
+
     main = html.Div(
             id='main',
             className='control-text',
@@ -475,7 +479,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                 html.Div(id='network-ready', style={'display': 'none'}),
                 html.Div(id='old-state-node', style={'display': 'none'}),
                 html.Div(id='highlight-node', style={'display': 'none'}),
-                html.Div(id='first-entry-signal', style={'display': 'none'})
+                html.Div(id='dates-index', children=time_index, style={'display': 'none'})
             ])
 
     header = main_header(selection_url, query_string, mode_config, assets_url_path)

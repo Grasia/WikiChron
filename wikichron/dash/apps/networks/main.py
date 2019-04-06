@@ -14,6 +14,7 @@ import os
 import time
 import json
 from datetime import datetime
+import pandas as pd
 
 from flask import current_app
 import dash
@@ -27,7 +28,6 @@ from urllib.parse import parse_qs, urlencode
 # Local imports:
 from .utils import get_mode_config
 from . import data_controller
-from .data_controller import TIME_DIV
 from .networks.models import networks_generator as net_factory
 from .networks.CytoscapeStylesheet import CytoscapeStylesheet
 from .networks.models.BaseNetwork import BaseNetwork
@@ -42,13 +42,13 @@ global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
 
-def update_query_by_time(wiki, query_string, up_val, low_val):
+def update_query_by_time(query_string, up_val, low_val):
     query_string_dict = parse_qs(query_string)
 
     # get only the parameters we are interested in for the side_bar selection
     selection = { param: query_string_dict[param] for param in set(query_string_dict.keys()) & selection_params }
-
-    lower_bound, upper_bound = data_controller.get_time_bounds_int(wiki, low_val, up_val)
+    lower_bound = data_controller.parse_timestamp_to_int(low_val)
+    upper_bound = data_controller.parse_timestamp_to_int(up_val)
 
     # Now, time to update the query
     selection['upper_bound'] = upper_bound
@@ -61,11 +61,14 @@ def bind_callbacks(app):
     @app.callback(
         Output('network-ready', 'value'),
         [Input('dates-slider', 'value')],
-        [State('initial-selection', 'children')]
+        [State('initial-selection', 'children'),
+        State('dates-index', 'children')]
     )
-    def update_network(slider, selection_json):
+    def update_network(slider, selection_json, time_index):
         if not slider:
             raise PreventUpdate()
+
+        time_index = json.loads(time_index)
 
         # get network instance from selection
         selection = json.loads(selection_json)
@@ -80,9 +83,7 @@ def bind_callbacks(app):
 
         print(' * [Info] Building the network....')
         time_start_calculations = time.perf_counter()
-        (lower_bound, upper_bound) = data_controller\
-                .get_time_bounds_timestamp(wiki, slider[0], slider[1])
-        network = data_controller.get_network(wiki, network_code, lower_bound, upper_bound)
+        network = data_controller.get_network(wiki, network_code, time_index[slider[0]], time_index[slider[1]])
 
         time_end_calculations = time.perf_counter() - time_start_calculations
         print(f' * [Timing] Network ready in {time_end_calculations} seconds')
@@ -165,16 +166,18 @@ def bind_callbacks(app):
         Output('no-data', 'className'),
         Output('no-data', 'children')],
         [Input('cytoscape', 'elements')],
-        [State('initial-selection', 'children'),
-        State('dates-slider', 'value')]
+        [State('dates-slider', 'value'),
+        State('dates-index', 'children')]
     )
-    def check_available_data(cyto, selection_json, slider):
+    def check_available_data(cyto, slider, time_index):
         """
         Checks if there's a network to plot
         """
         if not slider:
             raise PreventUpdate()
 
+        time_index = json.loads(time_index)
+        time_index = pd.DatetimeIndex(time_index)
         cyto_class = 'show'
         no_data_class = 'non-show'
         no_data_children = []
@@ -182,11 +185,8 @@ def bind_callbacks(app):
             cyto_class = 'non-show'
             no_data_class = 'show'
 
-            selection = json.loads(selection_json)
-            wiki = selection['wikis'][0]
-            lower_bound, upper_bound = data_controller.get_time_bounds_int(wiki, slider[0], slider[1])
-            upper_bound = datetime.fromtimestamp(upper_bound).strftime('%B/%Y')
-            lower_bound = datetime.fromtimestamp(lower_bound).strftime('%B/%Y')
+            upper_bound = time_index[slider[0]].strftime('%b/%Y')
+            lower_bound = time_index[slider[1]].strftime('%b/%Y')
 
             no_data_children = [
                 html.P('Nothing to show,'),
@@ -198,15 +198,16 @@ def bind_callbacks(app):
 
 
     @app.callback(
-        [Output('date-slider-container', 'children'),
-        Output('first-entry-signal', 'children')],
+        Output('date-slider-container', 'children'),
         [Input('initial-selection', 'children')],
-        [State('url', 'search')]
+        [State('url', 'search'),
+        State('dates-index', 'children')]
     )
-    def update_slider(selection_json, query_string):
-         # get network instance from selection
-        selection = json.loads(selection_json)
-        wiki = selection['wikis'][0]
+    def update_slider(_, query_string, time_index):
+        time_index = json.loads(time_index)
+        df_time = pd.DataFrame(time_index)
+        time_index = pd.DatetimeIndex(time_index)
+        max_time = len(time_index)
 
         # Attention! query_string includes heading ? symbol
         query_string_dict = parse_qs(query_string[1:])
@@ -214,22 +215,13 @@ def bind_callbacks(app):
         # get only the parameters we are interested in for the side_bar selection
         selection = { param: query_string_dict[param] for param in set(query_string_dict.keys()) & selection_params }
 
-        origin = data_controller.get_first_entry(wiki)
-        end = data_controller.get_last_entry(wiki)
-
-        origin = int(datetime.strptime(str(origin),
-            "%Y-%m-%d %H:%M:%S").strftime('%s'))
-        end = int(datetime.strptime(str(end),
-            "%Y-%m-%d %H:%M:%S").strftime('%s'))
-
-        time_gap = end - origin
-        max_time = time_gap // TIME_DIV
-
         if all(k in selection for k in ('lower_bound', 'upper_bound')):
-            low_val = (int(selection['lower_bound'][0]) - origin) // TIME_DIV
-            upper_val = (int(selection['upper_bound'][0]) - origin) // TIME_DIV
+            low_val = data_controller.parse_int_to_timestamp(selection['lower_bound'][0])
+            low_val = df_time[df_time[0] == low_val].index[0]
+            upper_val = data_controller.parse_int_to_timestamp(selection['upper_bound'][0])
+            upper_val = df_time[df_time[0] == upper_val].index[0]
         else:
-            low_val = 1
+            low_val = 0
             upper_val = int(2 + max_time / 10)
 
         if max_time < 12:
@@ -245,21 +237,18 @@ def bind_callbacks(app):
         else:
             step_for_marks = 36
 
-        range_slider_marks = {i: datetime.fromtimestamp(origin
-         + i * TIME_DIV).strftime('%b %Y') for i in range(1,
-         max_time-step_for_marks, step_for_marks)}
-
-        range_slider_marks[max_time] = datetime.fromtimestamp(
-        origin + max_time * TIME_DIV).strftime('%b %Y')
+        subset_times = time_index[0:max_time-step_for_marks:step_for_marks]
+        range_slider_marks = {i*step_for_marks: x.strftime('%b %Y') for i, x in enumerate(subset_times)}
+        range_slider_marks[max_time-1] = time_index[max_time-1].strftime('%b %Y')
 
         return  dcc.RangeSlider(
                     id='dates-slider',
-                    min=1,
-                    max=max_time,
+                    min=0,
+                    max=max_time-1,
                     step=1,
                     value=[low_val, upper_val],
                     marks=range_slider_marks
-                ), origin
+                )
 
 
     @app.callback(
@@ -318,16 +307,16 @@ def bind_callbacks(app):
         Output('download-button', 'href'),
         [Input('dates-slider', 'value')],
         [State('download-button', 'href'),
-        State('initial-selection', 'children')]
+        State('dates-index', 'children')]
     )
-    def update_download_url(slider, query_string, selection_json):
+    def update_download_url(slider, query_string, time_index):
         if not slider:
             raise PreventUpdate()
-        selection = json.loads(selection_json)
-        wiki = selection['wikis'][0]
+
+        time_index = json.loads(time_index)
 
         query_splited = query_string.split("?")
-        new_query = update_query_by_time(wiki, query_splited[1], slider[1], slider[0])
+        new_query = update_query_by_time(query_splited[1], time_index[slider[1]], time_index[slider[0]])
         href = f'{query_splited[0]}?{new_query}'
 
         if debug:
@@ -340,17 +329,19 @@ def bind_callbacks(app):
         Output('distribution-graph', 'figure'),
         [Input('scale', 'value'),
         Input('dates-slider', 'value')],
-        [State('initial-selection', 'children')]
+        [State('initial-selection', 'children'),
+        State('dates-index', 'children')]
     )
-    def update_graph(scale_type, slider, selection_json):
+    def update_graph(scale_type, slider, selection_json, time_index):
         if not slider:
             raise PreventUpdate()
 
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0]
         network_code = selection['network']
-        (lower, upper) = data_controller.get_time_bounds_timestamp(wiki, slider[0], slider[1])
-        network = data_controller.get_network(wiki, network_code, lower, upper)
+        time_index = json.loads(time_index)
+
+        network = data_controller.get_network(wiki, network_code, time_index[slider[0]], time_index[slider[1]])
 
         (k, p_k) = network.get_degree_distribution()
 
@@ -414,12 +405,14 @@ def bind_callbacks(app):
         [Input('dd-local-metric', 'value'),
         Input('network-ready', 'value')],
         [State('dates-slider', 'value'),
-        State('initial-selection', 'children')]
+        State('initial-selection', 'children'),
+        State('dates-index', 'children')]
     )
-    def update_ranking(metric, ready, slider, selection_json):
+    def update_ranking(metric, ready, slider, selection_json, time_index):
         if not ready or not slider:
             raise PreventUpdate()
 
+        time_index = json.loads(time_index)
         header = RANKING_EMPTY_HEADER
         data = RANKING_EMPTY_DATA.to_dict('rows')
         data_keys = RANKING_EMPTY_DATA.columns
@@ -429,8 +422,7 @@ def bind_callbacks(app):
             wiki = selection['wikis'][0]
             network_code = selection['network']
             header_tmp = net_factory.get_metric_header(network_code, metric)
-            (lower, upper) = data_controller.get_time_bounds_timestamp(wiki, slider[0], slider[1])
-            network = data_controller.get_network(wiki, network_code, lower, upper)
+            network = data_controller.get_network(wiki, network_code, time_index[slider[0]], time_index[slider[1]])
 
             df = network.get_metric_dataframe(metric)
 
@@ -557,9 +549,11 @@ def bind_callbacks(app):
         [State('dialog', 'open'),
         State('url', 'search'),
         State('dates-slider', 'value'),
-        State('initial-selection', 'children')]
+        State('initial-selection', 'children'),
+        State('dates-index', 'children')]
     )
-    def show_share_modal(t_clicks_share, t_clicks_switch, open_state, query_string, slider, selection_json):
+    def show_share_modal(t_clicks_share, t_clicks_switch, open_state, query_string, slider, 
+        selection_json, time_index):
         trigger = dash.callback_context
         if not trigger:
             return [], False
@@ -568,10 +562,10 @@ def bind_callbacks(app):
             trigger = trigger.triggered[0]['prop_id'].split('.')[0]
 
             selection = json.loads(selection_json)
-            wiki = selection['wikis'][0]
             network_code = selection['network']
+            time_index = json.loads(time_index)
             query_splited = query_string.split("?")
-            new_query = update_query_by_time(wiki, query_splited[1], slider[1], slider[0])
+            new_query = update_query_by_time(query_splited[1], time_index[slider[1]], time_index[slider[0]])
 
             server_config = current_app.config
             mode_config = get_mode_config(current_app)
