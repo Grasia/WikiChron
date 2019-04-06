@@ -114,17 +114,8 @@ def main():
             raise Exception(f'Wiki {wiki["url"]} is not reacheable. Possibly moved or deleted. Check, whether its url is correct.')
 
         url = 'https://' + wiki['url']
-        wiki['name'] = get_name(url)
         wiki['bots'] = get_bots(url)
 
-
-        # Uncomment to get wikia images in base 64
-        #if (is_wikia_wiki(wiki['url'])):
-            #b64 = get_wikia_wordmark_file(wiki['url'])
-            #if b64:
-                #wiki['imageSrc'] = b64
-            #else:
-                #print(f'\n-->Failed to find image for wiki: {wiki["url"]}<--\n')
 
         wiki['lastUpdated'] = str(date.today())
 
@@ -150,11 +141,21 @@ def main():
         wikis_json = []
 
     for wiki in wikis:
-        if wiki['url'] in current_wikis_positions:
+        if wiki['url'] in current_wikis_positions: # already in wikis.json
             position = current_wikis_positions[wiki['url']]
             wikis_json[position].update(wiki)
-        else:
+        else:                                      # new wiki for wikis.json
+            # get name and image only for new wiki entries
+            wiki['name'] = get_name(url)
+            if (is_wikia_wiki(wiki['url'])):
+                b64 = get_wikia_wordmark_file(wiki['url'])
+                if b64:
+                    wiki['imageSrc'] = b64
+                else:
+                    print(f'\n-->Failed to find image for wiki: {wiki["url"]}<--\n')
+            # append to wikis.json
             wikis_json.append(wiki)
+
     output_wikis = open(output_wikis_fn, 'w')
     json.dump(wikis_json, output_wikis, indent='\t')
     output_wikis.close()
