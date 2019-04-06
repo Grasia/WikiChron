@@ -471,7 +471,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
 
                 # Signal data
                 html.Div(id='network-ready', style={'display': 'none'}),
-                html.Div(id='clean-user-info', style={'display': 'none'}),
+                html.Div(id='old-state-node', style={'display': 'none'}),
                 html.Div(id='highlight-node', style={'display': 'none'}),
                 html.Div(id='first-entry-signal', style={'display': 'none'})
             ])

@@ -487,12 +487,12 @@ def bind_callbacks(app):
     @app.callback(
         [Output('user-stats-title', 'children'),
         Output('user-stats', 'children'),
-        Output('clean-user-info', 'value')],
+        Output('old-state-node', 'value')],
         [Input('cytoscape', 'tapNodeData'),
         Input('dates-slider', 'value')],
         [State('initial-selection', 'children'),
         State('cytoscape', 'tapNode'),
-        State('clean-user-info', 'value')]
+        State('old-state-node', 'value')]
     )
     def update_node_info(user_info, _, selection_json, node, old_click):
         if not user_info:
