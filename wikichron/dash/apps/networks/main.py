@@ -97,17 +97,20 @@ def bind_callbacks(app):
         Output('cytoscape', 'stylesheet'),
         [Input('cytoscape', 'elements'),
         Input('tg-show-labels', 'on'),
-        Input('tg-show-clusters', 'on'),
         Input('highlight-node', 'value'),
+        Input('tg-show-clusters', 'on'),
         Input('dd-color-metric', 'value')],
         [State('network-ready', 'value'),
         State('initial-selection', 'children')]
     )
-    def update_stylesheet(_, lb_switch, clus_switch, nodes_selc, dd_val,
+    def update_stylesheet(_, lb_switch, nodes_selc, clus_switch, dd_val,
         cy_network, selection_json):
 
         if not cy_network:
             raise PreventUpdate()
+
+        trigger = dash.callback_context
+        trigger = trigger.triggered[0]['prop_id'].split('.')[0]
 
         selection = json.loads(selection_json)
         network_code = selection['network']
@@ -129,9 +132,19 @@ def bind_callbacks(app):
         else:
             stylesheet.set_label('')
 
-        if clus_switch:
+        color = False
+        # if trigger was launched by those compenents
+        if trigger == 'tg-show-clusters' and clus_switch:
             stylesheet.color_nodes_by_cluster()
-        else:
+            color = True
+        elif trigger == 'dd-color-metric' and metric:
+                stylesheet.color_nodes(cy_network, metric)
+                color = True
+
+        # if neither of those was launch the trigger
+        if not color and clus_switch:
+            stylesheet.color_nodes_by_cluster()
+        elif not color:
             stylesheet.color_nodes(cy_network, metric)
 
         return stylesheet.cy_stylesheet
@@ -257,8 +270,8 @@ def bind_callbacks(app):
 
     @app.callback(
         Output('dates-slider', 'value'),
-        [Input('bt-back', 'n_clicks_timestamp'),
-        Input('bt-forward', 'n_clicks_timestamp')],
+        [Input('bt-back', 'n_clicks'),
+        Input('bt-forward', 'n_clicks')],
         [State('in-step-slider', 'value'),
         State('date-slider-container', 'children')]
     )
@@ -266,15 +279,16 @@ def bind_callbacks(app):
         """
         Controls to move the slider selection
         """
-        if not step:
+        trigger = dash.callback_context
+        if not trigger:
             raise PreventUpdate()
+
+        trigger = trigger.triggered[0]['prop_id'].split('.')[0]
 
         step = int(step)
 
-        if bt_back and int(bt_back) > int(bt_forward):
+        if trigger == 'bt-back':
             step = -step
-        elif not (bt_forward and int(bt_forward) > int(bt_back)):
-            raise PreventUpdate()
 
         # step value is in [0, n] | n € N
         # if bt_forward is pressed, the step value will be a positive value
@@ -544,18 +558,21 @@ def bind_callbacks(app):
     @app.callback(
         [Output('dialog', 'children'),
         Output('dialog', 'open')],
-        [Input('share-button', 'n_clicks_timestamp'),
-        Input('switch-network', 'n_clicks_timestamp')],
+        [Input('share-button', 'n_clicks'),
+        Input('switch-network', 'n_clicks')],
         [State('dialog', 'open'),
         State('url', 'search'),
         State('dates-slider', 'value'),
         State('initial-selection', 'children')]
     )
     def show_share_modal(t_clicks_share, t_clicks_switch, open_state, query_string, slider, selection_json):
-        if int(t_clicks_share) == 0 and int(t_clicks_switch) == 0:
+        trigger = dash.callback_context
+        if not trigger:
             return [], False
 
         elif not open_state:
+            trigger = trigger.triggered[0]['prop_id'].split('.')[0]
+            
             selection = json.loads(selection_json)
             wiki = selection['wikis'][0]
             network_code = selection['network']
@@ -569,9 +586,9 @@ def bind_callbacks(app):
             url = f'{url}{mode_config["DASH_BASE_PATHNAME"]}?{new_query}'
 
             child = []
-            if int(t_clicks_share) > int(t_clicks_switch):
+            if trigger == 'share-button':
                 child = inflate_share_dialog(url)
-            elif int(t_clicks_share) < int(t_clicks_switch):
+            elif trigger == 'switch-network':
                 child = inflate_switch_network_dialog(url, network_code)
 
             return child, True

@@ -55,7 +55,7 @@ def main_header(selection_url, query_string, mode_config, assets_url_path):
                 html.Div(children=[
                     html.Div([
                         html.A('< Go back to selection', href=selection_url),
-                        html.A('Switch network >', id='switch-network', n_clicks_timestamp='0')
+                        html.A('Switch network >', id='switch-network')
                     ]),
                     html.Div([
                         html.A(
@@ -70,8 +70,7 @@ def main_header(selection_url, query_string, mode_config, assets_url_path):
                             html.Img(src='{}/share.svg'.format(assets_url_path)),
                             id='share-button',
                             className='icon',
-                            title='Share current selection',
-                            n_clicks_timestamp='0'
+                            title='Share current selection'
                         )
                     ],
                     className='icons-bar')
@@ -144,10 +143,10 @@ def date_slider_control():
                 html.Div(children=[
                     html.Span('Time interval (months):'),
                     html.Div(children=[
-                        html.Button("<<", id="bt-back", n_clicks_timestamp='0'),
+                        html.Button("<<", id="bt-back"),
                         dcc.Input(id="in-step-slider" , type='number',
                             placeholder='MM', min='1', max='999'),
-                        html.Button(">>", id="bt-forward", n_clicks_timestamp='0'),
+                        html.Button(">>", id="bt-forward"),
                     ], className='slider-controls-pane'),
                 ], className='slider-add-on'),
             ],
