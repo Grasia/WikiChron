@@ -41,6 +41,17 @@ def get_user_info(network_code):
         raise Exception("Something went bad. Missing network type selection.")
 
 
+def get_node_name(network_code):
+    if network_code == CoEditingNetwork.CODE:
+        return CoEditingNetwork.get_node_name()
+    elif network_code == TalkPagesNetwork.CODE:
+        return TalkPagesNetwork.get_node_name()
+    elif network_code == UserTalkNetwork.CODE:
+        return UserTalkNetwork.get_node_name()
+    else:
+        raise Exception("Something went bad. Missing network type selection.")
+
+
 def get_available_metrics(network_code):
     if network_code == CoEditingNetwork.CODE:
         return CoEditingNetwork.get_available_metrics()

@@ -65,13 +65,17 @@ class UserTalkNetwork(BaseNetwork):
     }
 
     USER_INFO = {
-        'User ID': 'id',
-        'User Name': 'label',
+        #'User ID': 'id',
         'Birth': 'abs_birth',
         'Cluster #': 'cluster',
         'Article Edits': 'article_edits',
         'Talk Page Edits': 'talk_edits'
     }
+
+    NODE_NAME = {
+        'User': 'label'
+    }
+
 
     def __init__(self, is_directed = True, graph = {}, alias = ''):
         super().__init__(is_directed, graph, alias)
@@ -182,6 +186,11 @@ class UserTalkNetwork(BaseNetwork):
     @classmethod
     def get_user_info(cls) -> dict:
         return cls.USER_INFO
+
+
+    @classmethod
+    def get_node_name(cls) -> dict:
+        return cls.NODE_NAME
 
 
     @classmethod

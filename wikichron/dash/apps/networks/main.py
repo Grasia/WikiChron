@@ -31,7 +31,8 @@ from .networks.models import networks_generator as net_factory
 from .networks.CytoscapeStylesheet import CytoscapeStylesheet
 from .networks.models.BaseNetwork import BaseNetwork
 from .main_view import RANKING_EMPTY_DATA, RANKING_EMPTY_HEADER, PAGE_SIZE, \
-    inflate_switch_network_dialog, inflate_share_dialog
+    inflate_switch_network_dialog, inflate_share_dialog, NO_DATA_USER_STATS_HEADER, \
+    NO_DATA_USER_STATS_BODY
 
 TIME_DIV = 60 * 60 * 24 * 30
 selection_params = {'wikis', 'network', 'lower_bound', 'upper_bound'}
@@ -484,7 +485,8 @@ def bind_callbacks(app):
 
 
     @app.callback(
-        [Output('user-stats', 'children'),
+        [Output('user-stats-title', 'children'),
+        Output('user-stats', 'children'),
         Output('clean-user-info', 'value')],
         [Input('cytoscape', 'tapNodeData'),
         Input('dates-slider', 'value')],
@@ -497,13 +499,16 @@ def bind_callbacks(app):
             raise PreventUpdate()
         
         if old_click and int(old_click) == int(node["timeStamp"]):
-            clean = 'Please, click on a node to show its info'
-            return clean, old_click
+            return NO_DATA_USER_STATS_HEADER, NO_DATA_USER_STATS_BODY, old_click
 
         selection = json.loads(selection_json)
         network_code = selection['network']
+        dict_header = net_factory.get_node_name(network_code)
         dic_info = net_factory.get_user_info(network_code)
         dic_metrics = net_factory.get_available_metrics(network_code)
+
+        header_key = list(dict_header.keys())[0]
+        header = f'{header_key}: {user_info[dict_header[header_key]]}'
 
         info_stack = []
         # Let's add the user info
@@ -522,7 +527,7 @@ def bind_callbacks(app):
                     html.P(user_info[dic_metrics[key]])
                 ], className='user-container-stat'))
 
-        return info_stack, node["timeStamp"]
+        return header, info_stack, node["timeStamp"]
 
 
     @app.callback(

@@ -33,6 +33,9 @@ RANKING_EMPTY_HEADER = [{'name': 'User', 'id': 'name'},
 RANKING_EMPTY_DATA = pd.DataFrame(columns=[RANKING_EMPTY_HEADER[0]['id'],
     RANKING_EMPTY_HEADER[1]['id']])
 PAGE_SIZE = 10
+NO_DATA_USER_STATS_HEADER = 'User Stats'
+NO_DATA_USER_STATS_BODY = 'Please, click on a node to show its info'
+
 
 global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
@@ -377,12 +380,12 @@ def build_ranking(network_code) -> html.Div:
 
 def build_user_stats() -> html.Div:
     header = html.Div(children=[
-        'User Stats',
+        html.Span(NO_DATA_USER_STATS_HEADER, id='user-stats-title'),
         html.Hr(className='pane-hr')
     ],
     className='header-pane sidebar-header-pane')
 
-    body = html.Div(id='user-stats', children=['Please, click on a node to show its info'],
+    body = html.Div(id='user-stats', children=[NO_DATA_USER_STATS_BODY],
         className='body-pane')
     return html.Div(children=[header, body], className='pane side-pane')
 

@@ -19,7 +19,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
     CODE = 'base_network'
     NETWORK_STATS = {
         'Nodes': 'num_nodes',
-        'Communities': 'n_communities',
+        'Clusters': 'n_communities',
         'Edges': 'num_edges',
         'Diameter': 'diameter',
         'Density': 'density',
@@ -83,6 +83,11 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         """
         Return a dict with the user info
         """
+        pass
+
+
+    @abc.abstractclassmethod
+    def get_node_name(self) -> dict:
         pass
 
 
