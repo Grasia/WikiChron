@@ -50,6 +50,12 @@
                             <span class="font-weight-bold">{{wiki.edits or "NA"}}</span>
                         </div>
                     </p>
+                    <p class="card-text">
+                        <div class="wiki-item">
+                            <span><em>Last updated:</em></span>
+                            <em>{{wiki.lastUpdated or "NA"}}</em>
+                        </div>
+                    </p>
                     <p class="wiki-url font-weight-bold">
                         <a href="https://{{wiki.url}}" class="card-link" target="_blank">
                             {{wiki.url}}
