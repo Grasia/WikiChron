@@ -109,20 +109,16 @@ $('.wiki-input').on( "click", function({target}) {
 function init_current_selection() {
 
     /* init wikis current selection */
-    var checkedBoxes = $('.wiki-checkbox').
+    var checkedBoxes = $('.wiki-input').
                         filter( function(index, element){
                             return element.checked
                         })
     if (checkedBoxes.length > 0) {
         var badgesContainer = $('#wiki-badges-container');
         var wikiCode = checkedBoxes[0].value;
-        var wikiName = checkedBoxes[0].dataset.wikiName;
+        var wikiName = checkedBoxes[0].dataset.name;
         var badgeSelectedWiki = generate_wiki_badge(wikiCode, wikiName);
         badgesContainer.html(badgeSelectedWiki);
-
-        //~ $('#selection-footer-button')[0].disabled = false;
-    } else {
-        //~ $('#selection-footer-button')[0].disabled = true;
     }
 
     /* init networks current selection */

@@ -14,7 +14,7 @@ import os
 from urllib.parse import urljoin
 import flask
 import flask
-from flask import Blueprint, current_app
+from flask import Blueprint, current_app, request
 
 # Imports from dash apps
 # classic
@@ -38,7 +38,7 @@ def index():
                                 title = 'WikiChron - Welcome')
 
 
-@server_bp.route('/classic/') #TOMOVE to BP
+@server_bp.route('/classic/') #TOMOVE to BP # will be wizard screen
 @server_bp.route('/classic/selection') #TOMOVE to BP
 def classic_app():
 
@@ -59,15 +59,22 @@ def classic_app():
         cat_name = cat_obj.value
         categories_frontend[cat_name] = [transform_metric_obj_in_metric_frontend(metric) for metric in cat_metrics]
 
+    # take all wikis and metrics in query string
+    selected_wikis   = set(request.args.getlist('wikis'))
+    selected_metrics = set(request.args.getlist('metrics'))
+
     return flask.render_template("classic/selection/selection.html",
                                 title = 'WikiChron Classic - selection',
                                 mode = 'classic',
                                 development = config["DEBUG"],
                                 wikis = wikis,
-                                categories = categories_frontend)
+                                categories = categories_frontend,
+                                pre_selected_wikis = selected_wikis,
+                                pre_selected_metrics = selected_metrics,
+                                )
 
 
-@server_bp.route('/networks/') #TOMOVE to BP
+@server_bp.route('/networks/') #TOMOVE to BP # will be wizard screen
 @server_bp.route('/networks/selection') #TOMOVE to BP
 def networks_app():
 
@@ -80,12 +87,19 @@ def networks_app():
     for nw in network_backend_objects:
         networks_frontend.append({ 'name': nw.NAME, 'code': nw.CODE})
 
+    # take only the first one in case more than one
+    selected_wikis    = request.args.get('wikis', default=set(), type=str)
+    selected_networks = request.args.get('network', default=set(), type=str)
+
     return flask.render_template("networks/selection/selection.html",
                                 title = 'WikiChron Networks - selection',
                                 mode = 'networks',
                                 development = config["DEBUG"],
                                 wikis = wikis,
-                                networks = networks_frontend)
+                                networks = networks_frontend,
+                                pre_selected_wikis = selected_wikis,
+                                pre_selected_networks = selected_networks
+                                )
 
 
 #--------- BEGIN AUX SERVERS (non pure flask / jinja / html / http servers) ---#

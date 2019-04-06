@@ -73,7 +73,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
         -wikis_arg: wikis to use
         -metrics_arg: metrics to apply to those wikis
         -relative_time_arg: Use relative or absolute time axis?
-        -query_string: string for the download button
+        -query_string: query string of the current selection
 
     Return: An HTML object with the main content
     """
@@ -295,7 +295,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
     share_url_path = f'{server_config["PREFERRED_URL_SCHEME"]}://{server_config["APP_HOSTNAME"]}{mode_config["DASH_BASE_PATHNAME"]}{query_string}'
     download_url_path = f'{server_config["PREFERRED_URL_SCHEME"]}://{server_config["APP_HOSTNAME"]}{mode_config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
 
-    selection_url = f'{mode_config["HOME_MODE_PATHNAME"]}'
+    selection_url = f'{mode_config["HOME_MODE_PATHNAME"]}selection{query_string}'
 
     return html.Div(id='main',
         className='control-text',

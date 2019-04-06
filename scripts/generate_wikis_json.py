@@ -19,14 +19,16 @@ from bs4 import BeautifulSoup
 import json
 import os
 import re
+import pandas as pd
+from datetime import date
 
 from query_bot_users import get_bots
 from get_wikia_images_base64 import get_wikia_wordmark_file
 
 if 'WIKICHRON_DATA_DIR' in os.environ:
-   data_dir = os.environ['WIKICHRON_DATA_DIR']
+    data_dir = os.environ['WIKICHRON_DATA_DIR']
 else:
-   data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../data')
+    data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../data')
 
 input_wikis_fn = os.path.join(data_dir, 'wikis.csv')
 output_wikis_fn = os.path.join(data_dir, 'wikis.json')
@@ -35,93 +37,58 @@ stats = ['articles','pages','edits']
 
 
 def get_name(url):
-   req = requests.get(url)
-   if req.status_code != 200:
-      print (req.status_code)
-      req.raise_for_status()
 
+    req = requests.get(url)
+    if req.status_code != 200:
+        print (req.status_code)
+        req.raise_for_status()
+        return 'Unknown'
 
-def get_stats(base_url):
+    try:
+        # Process HTML with bs4
+        html = BeautifulSoup(req.text,"lxml")
+        name = html.select_one('div.wds-community-header__sitename a').text
+    except AttributeError:
+        print('Name could not be retrieved from html.')
+        return 'Unknown'
 
-   url = base_url + "/wiki/Special:Statistics"
-
-   # HTTP request to the web
-   req = requests.get(url)
-
-   if req.status_code != 200:
-      print (req.status_code)
-      return False
-
-   try:
-      # Process HTML with bs4
-      html = BeautifulSoup(req.text,"lxml")
-      name = html.select_one('div.wds-community-header__sitename a').text
-
-      result = {}
-      result['name'] = name
-      for stat in stats:
-         row = html.select_one(row_selector+stat+" td.mw-statistics-numbers")
-         text = row.text.replace(',','')
-         text = text.replace('.','')
-         text = text.replace('\xa0', '')
-         value = int(text)
-         result[stat] = value
-   except AttributeError:
-      print('One stat could not be retrieved.')
-      return False
-
-   return result
-
-
-def get_nonbot_users_no(url):
-    """
-    Get actual number of nonbots users of a wiki.
-    It makes two requests to the Special:ListUsers endpoint.
-    One for all users and one for bots users, and it substracts all users number
-    by bot users number.
-    """
-
-    def query_users(url, only_bots):
-        """
-        Make a POST request to the Special:ListUsers endpoint
-        It can query for all users of the wiki (including bots)
-        of for bots users only.
-        """
-
-        if not only_bots:
-            data = {
-                'groups': "all,bot,bureaucrat,rollback,sysop,threadmoderator,authenticated,bot-global,content-reviewer,content-volunteer,council,fandom-editor,global-discussions-moderator,helper,restricted-login,restricted-login-exempt,reviewer,staff,util,vanguard,voldev,vstf,",
-                'username': "",
-                'edits': 0,
-                'limit': "50",
-                'offset': "0",
-                'loop': 0 # simulate user behaviour
-            }
-        else:
-            data = {
-                'groups': "bot,bot-global,",
-                'username': "",
-                'edits': 0,
-                'limit': "50",
-                'offset': "0",
-                'loop': 1 # simulate user behaviour
-            }
-
-        req = requests.post(url, data)
-
-        # Checking status code before returning count number
-        if 200 == req.status_code:
-            return req.json()['iTotalDisplayRecords']
-        else:
-            req.raise_for_status()
-
-
-    users_url = url + '/index.php?action=ajax&rs=ListusersAjax::axShowUsers'
-    return query_users(users_url, False) - query_users(users_url, True)
+    return name
 
 
 def is_wikia_wiki(url):
     return (re.search('.*\.(fandom|wikia)\.com.*', url) != None)
+
+
+def get_stats(data : pd.DataFrame) -> dict:
+    stats = {}
+
+    stats['edits'] = data['revision_id'].nunique()
+    stats['pages'] = data['page_id'].nunique()
+    stats['users'] = data['contributor_id'].nunique()
+    stats['articles'] = data[data['page_ns'] == 0]['page_id'].nunique()
+
+    data = data.sort_values(by = 'timestamp')
+    first_edit = data.head(1)
+    stats['first_edit'] = {
+                    'revision_id': int(first_edit['revision_id'].values[0]),
+                    'date': str(first_edit['timestamp'].values[0])
+                    }
+
+    last_edit = data.tail(1)
+    stats['last_edit'] = {
+                    'revision_id': int(last_edit['revision_id'].values[0]),
+                    'date': str(last_edit['timestamp'].values[0])
+                    }
+
+    return stats
+
+
+def load_dataframe_from_csv(csv: str):
+    df = pd.read_csv(os.path.join(data_dir, csv),
+                    delimiter=',', quotechar='|',
+                    index_col=False)
+    df['timestamp']=pd.to_datetime(df['timestamp'],format='%Y-%m-%dT%H:%M:%SZ')
+    return df
 
 
 def main():
@@ -136,26 +103,21 @@ def main():
         wiki['url'] = row['url']
         wiki['data'] = row['csvfile']
 
-        url = 'http://' + wiki['url']
-        result_stats = get_stats(url)
+        wiki_df = load_dataframe_from_csv(wiki['data'])
+        result_stats = get_stats(wiki_df)
+
+        #~ result_stats = get_stats(url)
+
         if result_stats:
             wiki.update(result_stats)
         else:
             raise Exception(f'Wiki {wiki["url"]} is not reacheable. Possibly moved or deleted. Check, whether its url is correct.')
 
-        #~ wiki.name = get_name(url)
+        url = 'https://' + wiki['url']
         wiki['bots'] = get_bots(url)
 
 
-        users_no = get_nonbot_users_no(url)
-        wiki['users'] = users_no
-
-        if (is_wikia_wiki(wiki['url'])):
-            b64 = get_wikia_wordmark_file(wiki['url'])
-            if b64:
-                wiki['imageSrc'] = b64
-            else:
-                print(f'\n-->Failed to find image for wiki: {wiki["url"]}<--\n')
+        wiki['lastUpdated'] = str(date.today())
 
         wiki['verified'] = True # Our own provided wikis are "verified"
 
@@ -163,12 +125,10 @@ def main():
 
         wikis.append(wiki)
 
-        #~ print(', '.join(row))
-
     wikisfile.close()
 
-    #~ result_json = json.dumps(wikis)
-    #~ print(result_json)
+    result_json = json.dumps(wikis)
+    print(result_json)
 
     try:
         output_wikis = open(output_wikis_fn)
@@ -181,11 +141,21 @@ def main():
         wikis_json = []
 
     for wiki in wikis:
-        if wiki['url'] in current_wikis_positions:
+        if wiki['url'] in current_wikis_positions: # already in wikis.json
             position = current_wikis_positions[wiki['url']]
             wikis_json[position].update(wiki)
-        else:
+        else:                                      # new wiki for wikis.json
+            # get name and image only for new wiki entries
+            wiki['name'] = get_name(url)
+            if (is_wikia_wiki(wiki['url'])):
+                b64 = get_wikia_wordmark_file(wiki['url'])
+                if b64:
+                    wiki['imageSrc'] = b64
+                else:
+                    print(f'\n-->Failed to find image for wiki: {wiki["url"]}<--\n')
+            # append to wikis.json
             wikis_json.append(wiki)
+
     output_wikis = open(output_wikis_fn, 'w')
     json.dump(wikis_json, output_wikis, indent='\t')
     output_wikis.close()

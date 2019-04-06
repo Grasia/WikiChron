@@ -24,9 +24,9 @@ from bs4 import BeautifulSoup
 
 
 if 'WIKICHRON_DATA_DIR' in os.environ:
-   data_dir = os.environ['WIKICHRON_DATA_DIR']
+    data_dir = os.environ['WIKICHRON_DATA_DIR']
 else:
-   data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../data')
+    data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../data')
 
 input_wikis_fn = os.path.join(data_dir, 'wikis.csv')
 
