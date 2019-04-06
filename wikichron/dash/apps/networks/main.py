@@ -48,7 +48,7 @@ def update_query_by_time(wiki, query_string, up_val, low_val):
     # get only the parameters we are interested in for the side_bar selection
     selection = { param: query_string_dict[param] for param in set(query_string_dict.keys()) & selection_params }
 
-    lower_bound, upper_bound = data_controller.get_time_int(wiki, low_val, up_val)
+    lower_bound, upper_bound = data_controller.get_time_bounds_int(wiki, low_val, up_val)
 
     # Now, time to update the query
     selection['upper_bound'] = upper_bound
@@ -81,7 +81,7 @@ def bind_callbacks(app):
         print(' * [Info] Building the network....')
         time_start_calculations = time.perf_counter()
         (lower_bound, upper_bound) = data_controller\
-                .get_time_bounds(wiki, slider[0], slider[1])
+                .get_time_bounds_timestamp(wiki, slider[0], slider[1])
         network = data_controller.get_network(wiki, network_code, lower_bound, upper_bound)
 
         time_end_calculations = time.perf_counter() - time_start_calculations
@@ -184,7 +184,7 @@ def bind_callbacks(app):
 
             selection = json.loads(selection_json)
             wiki = selection['wikis'][0]
-            lower_bound, upper_bound = data_controller.get_time_int(wiki, slider[0], slider[1])
+            lower_bound, upper_bound = data_controller.get_time_bounds_int(wiki, slider[0], slider[1])
             upper_bound = datetime.fromtimestamp(upper_bound).strftime('%B/%Y')
             lower_bound = datetime.fromtimestamp(lower_bound).strftime('%B/%Y')
 
@@ -349,7 +349,7 @@ def bind_callbacks(app):
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0]
         network_code = selection['network']
-        (lower, upper) = data_controller.get_time_bounds(wiki, slider[0], slider[1])
+        (lower, upper) = data_controller.get_time_bounds_timestamp(wiki, slider[0], slider[1])
         network = data_controller.get_network(wiki, network_code, lower, upper)
 
         (k, p_k) = network.get_degree_distribution()
@@ -429,7 +429,7 @@ def bind_callbacks(app):
             wiki = selection['wikis'][0]
             network_code = selection['network']
             header_tmp = net_factory.get_metric_header(network_code, metric)
-            (lower, upper) = data_controller.get_time_bounds(wiki, slider[0], slider[1])
+            (lower, upper) = data_controller.get_time_bounds_timestamp(wiki, slider[0], slider[1])
             network = data_controller.get_network(wiki, network_code, lower, upper)
 
             df = network.get_metric_dataframe(metric)
@@ -609,5 +609,5 @@ def bind_callbacks(app):
         if debug:
             print(f'Switched to {value} network')
         new_link = f'{link_splited[0]}?{new_link}'
-        
+
         return new_link, new_link
