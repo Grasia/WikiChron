@@ -34,7 +34,11 @@
 
 
         <!-- Favicon -->
-        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        {% if mode == 'networks' %}
+            <link rel="shortcut icon" href="{{ url_for('static', filename='networks/favicon.ico') }}">
+        {% else %}
+            <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        {% endif %}
 
 
         <!-- Dependencies for development (local and unminified) -->
@@ -102,6 +106,7 @@
 
         <!-- Common deps for both prod and dev -->
         <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='header.css') }}">
 
 
         <!-- Additional per-page dependencies will be inserted here -->

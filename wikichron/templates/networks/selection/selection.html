@@ -12,19 +12,11 @@
 
 {% block content %}
 
-    <header>
-        <div id='logo-container' class="sticky-header">
-            <img height="80px" src={{url_for('static', filename='networks/assets/logo_networks.svg')}} />
-        </div>
-
-            <div class='intro-container'>
-                <p id='selection-header-welcome'>Welcome to WikiChron <em>Networks</em></p>
-                <div id='selection-header-paragraph-div'>
-                    <img />
-                    <p id="selection-header-paragraph">Select one wiki, one network and press generate to start</p>
-                </div>
-            </div>
-    </header>
+    {% with %}
+        {% set logo_src = url_for('static', filename='networks/assets/logo_networks_white.svg') %}
+        {% set header_paragraph = "Select one wiki, one network and press generate to start" %}
+        {% include "header.html" %}
+    {% endwith %}
 
     <div class="tabs-bar-container">
         <ul class="nav nav-tabs" id="tabs" role="tablist">
