@@ -61,6 +61,7 @@ def classic_app():
 
     return flask.render_template("classic/selection/selection.html",
                                 title = 'WikiChron Classic - selection',
+                                mode = 'classic',
                                 development = config["DEBUG"],
                                 wikis = wikis,
                                 categories = categories_frontend)
@@ -81,6 +82,7 @@ def networks_app():
 
     return flask.render_template("networks/selection/selection.html",
                                 title = 'WikiChron Networks - selection',
+                                mode = 'networks',
                                 development = config["DEBUG"],
                                 wikis = wikis,
                                 networks = networks_frontend)
