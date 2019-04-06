@@ -20,6 +20,7 @@ import json
 import os
 import re
 import pandas as pd
+from datetime import date
 
 from query_bot_users import get_bots
 from get_wikia_images_base64 import get_wikia_wordmark_file
@@ -66,6 +67,19 @@ def get_stats(data : pd.DataFrame) -> dict:
     stats['users'] = data['contributor_id'].nunique()
     stats['articles'] = data[data['page_ns'] == 0]['page_id'].nunique()
 
+    data = data.sort_values(by = 'timestamp')
+    first_edit = data.head(1)
+    stats['first_edit'] = {
+                    'revision_id': int(first_edit['revision_id'].values[0]),
+                    'date': str(first_edit['timestamp'].values[0])
+                    }
+
+    last_edit = data.tail(1)
+    stats['last_edit'] = {
+                    'revision_id': int(last_edit['revision_id'].values[0]),
+                    'date': str(last_edit['timestamp'].values[0])
+                    }
+
     return stats
 
 
@@ -111,6 +125,8 @@ def main():
                 #wiki['imageSrc'] = b64
             #else:
                 #print(f'\n-->Failed to find image for wiki: {wiki["url"]}<--\n')
+
+        wiki['lastUpdated'] = str(date.today())
 
         wiki['verified'] = True # Our own provided wikis are "verified"
 
