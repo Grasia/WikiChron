@@ -457,7 +457,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
             className='control-text',
             children=[
                 build_slider_pane(selected_wiki_name, selected_network_name),
-                #build_dilog(),
+                build_dilog(),
                 html.Div(id='initial-selection', style={'display': 'none'},
                             children=args_selection),
                 build_network_controls(network_type_code),
