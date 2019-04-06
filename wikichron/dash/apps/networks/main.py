@@ -400,42 +400,18 @@ def bind_callbacks(app):
 
 
     @app.callback(
-        Output('ranking-table', 'columns'),
+        [Output('ranking-table', 'columns'),
+        Output('ranking-table', 'data')],
         [Input('dd-local-metric', 'value'),
-        Input('network-ready', 'value')],
-        [State('initial-selection', 'children')]
-    )
-    def update_ranking_header(metric, ready, selection_json):
-        if not ready:
-            if debug:
-                print('not ready header')
-            raise PreventUpdate()
-
-        if not metric:
-            return RANKING_EMPTY_HEADER
-
-        selection = json.loads(selection_json)
-        network_code = selection['network']
-        header = net_factory.get_metric_header(network_code, metric)
-
-        if not header:
-            raise PreventUpdate()
-        return header
-
-
-    @app.callback(
-        Output('ranking-table', 'data'),
-        [Input('ranking-table', 'pagination_settings'),
-        Input('ranking-table', 'sorting_settings'),
-        Input('dd-local-metric', 'value'),
         Input('network-ready', 'value')],
         [State('dates-slider', 'value'),
         State('initial-selection', 'children')]
     )
-    def update_ranking(pag_set, sort_set, metric, ready, slider, selection_json):
+    def update_ranking(metric, ready, slider, selection_json):
         if not ready or not slider:
             raise PreventUpdate()
 
+        header = RANKING_EMPTY_HEADER
         data = RANKING_EMPTY_DATA.to_dict('rows')
         data_keys = RANKING_EMPTY_DATA.columns
 
@@ -443,25 +419,20 @@ def bind_callbacks(app):
             selection = json.loads(selection_json)
             wiki = selection['wikis'][0]
             network_code = selection['network']
+            header_tmp = net_factory.get_metric_header(network_code, metric)
             (lower, upper) = data_controller.get_time_bounds(wiki, slider[0], slider[1])
             network = data_controller.get_network(wiki, network_code, lower, upper)
 
             df = network.get_metric_dataframe(metric)
 
-            if not df.empty:
-                # check the col to sort
-                if sort_set and sort_set[0]['column_id'] in list(df):
-                    df = df.sort_values(sort_set[0]['column_id'],
-                        ascending=sort_set[0]['direction'] == 'asc',
-                        inplace=False)
-                else:
-                    df = df.sort_values(metric, ascending=False)
+            if header_tmp:
+                header = header_tmp
 
-                data_keys = df.columns
-                data = df.iloc[
-                        pag_set['current_page']*pag_set['page_size']:
-                        (pag_set['current_page'] + 1)*pag_set['page_size']
-                    ].to_dict('rows')
+            if not df.empty:
+                df = df.sort_values(metric, ascending=False)
+
+            data_keys = df.columns
+            data = df.to_dict('rows')
 
         # fill with empty rows
         for _ in range(0, PAGE_SIZE - len(data)):
@@ -470,7 +441,7 @@ def bind_callbacks(app):
                 empty_dict[k] = ''
             data.append(empty_dict)
 
-        return data
+        return header, data
 
 
     @app.callback(

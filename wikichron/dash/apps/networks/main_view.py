@@ -349,23 +349,26 @@ def build_ranking(network_code) -> html.Div:
             )], className='ranking-selection'),
             dash_table.DataTable(
                 id='ranking-table',
-                pagination_settings={
-                    'current_page': 0,
-                    'page_size': PAGE_SIZE
-                },
-                pagination_mode='be',
-                sorting='be',
+                columns = RANKING_EMPTY_HEADER,
+                data = RANKING_EMPTY_DATA.to_dict('rows'),
+                filtering=True,
+                sorting=True,
                 sorting_type='single',
                 sorting_settings=[],
                 row_selectable="multi",
                 selected_rows=[],
                 style_as_list_view=True,
+                pagination_mode='fe',
+                pagination_settings={
+                    "displayed_pages": 1,
+                    'current_page': 0,
+                    'page_size': PAGE_SIZE
+                },
+                navigation="page",
                 style_header={
                     'backgroundColor': 'white',
                     'fontWeight': '600'
                 },
-                data = RANKING_EMPTY_DATA.to_dict('rows'),
-                columns = RANKING_EMPTY_HEADER,
             )],
             className='body-pane')
 
@@ -451,7 +454,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
             className='control-text',
             children=[
                 build_slider_pane(selected_wiki_name, selected_network_name),
-                build_dilog(),
+                #build_dilog(),
                 html.Div(id='initial-selection', style={'display': 'none'},
                             children=args_selection),
                 build_network_controls(network_type_code),
