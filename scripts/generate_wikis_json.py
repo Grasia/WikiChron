@@ -116,7 +116,7 @@ def main():
         wiki['bots'] = get_bots(wiki['url'])
 
 
-        wiki['lastUpdated'] = str(date.today())
+        wiki['lastUpdated'] = row['lastUpdated']
 
         wiki['verified'] = True # Our own provided wikis are "verified"
 
