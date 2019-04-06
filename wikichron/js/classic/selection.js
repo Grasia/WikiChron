@@ -103,6 +103,11 @@ function create_badges_in_container(inputs, container, type) {
 }
 
 
+function unfoldCategoryMetrics(catName) {
+    document.getElementById(catName).classList.add('show');
+}
+
+
 function init_current_selection() {
     var checkedBoxes;
     var badgesContainer;
@@ -124,6 +129,9 @@ function init_current_selection() {
 
     badgesContainer = $('#metrics-badges-container');
     create_badges_in_container(checkedBoxes, badgesContainer, 'metric');
+    for (let metric of checkedBoxes) {
+        unfoldCategoryMetrics(metric.dataset.catName);
+    }
 
     check_enable_action_button();
 

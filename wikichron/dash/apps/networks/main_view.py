@@ -452,7 +452,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
 
     selected_wiki_name = wikis_arg[0]['name']
     selected_network_name = network_type_arg['name']
-    selection_url = f'{mode_config["HOME_MODE_PATHNAME"]}'
+    selection_url = f'{mode_config["HOME_MODE_PATHNAME"]}selection{query_string}'
 
     main = html.Div(
             id='main',
