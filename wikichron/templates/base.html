@@ -34,7 +34,11 @@
 
 
         <!-- Favicon -->
-        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        {% if mode == 'networks' %}
+            <link rel="shortcut icon" href="{{ url_for('static', filename='networks/favicon.ico') }}">
+        {% else %}
+            <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        {% endif %}
 
 
         <!-- Dependencies for development (local and unminified) -->
