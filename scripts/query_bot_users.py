@@ -99,6 +99,7 @@ def is_wikia_wiki(url):
 
 def get_bots(url):
    if is_wikia_wiki(url): # detect Wikia wikis
+      url = 'https://' + url
       return wikia_get_bots(url)
    else:
       return mediawiki_get_bots(url)
