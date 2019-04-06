@@ -359,11 +359,11 @@ def bind_callbacks(app):
             )],
             'layout': go.Layout(
                 xaxis={
-                    'title': 'K',
+                    'title': 'Degree',
                     'type': 'linear' if scale_type == 'Linear' else 'log'
                 },
                 yaxis={
-                    'title': 'P_k',
+                    'title': 'Population',
                     'type': 'linear' if scale_type == 'Linear' else 'log'
                 },
                 margin={'l': 40, 'b': 30, 't': 10, 'r': 0},

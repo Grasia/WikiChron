@@ -7,7 +7,8 @@
 import abc
 from datetime import datetime
 import pandas as pd
-from igraph import Graph, ClusterColoringPalette, VertexClustering, WEAK
+from igraph import Graph, ClusterColoringPalette, VertexClustering,\
+    WEAK
 from colormap.colors import rgb2hex
 
 from .fix_dendrogram import fix_dendrogram
@@ -282,13 +283,26 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
     def get_degree_distribution(self) -> (list, list):
         """
-        It returns the degree distribution
+        Returns the degree distribution:
+            if its directed is the sum of out and in degree
+            if not its the out degree
         """
+
+        degree = self.graph.degree()
+        max_degree = self.graph.maxdegree()
+
+        # igraph issue? it always return double of degree
+        # even if you launch it with mode=OUT
+        if not self.graph.is_directed():
+            degree = list(map(lambda x: x//2, degree))
+            max_degree = max_degree // 2
+
         # Let's count the number of each degree
-        p_k = [0 for i in range(0, self.graph.maxdegree()+1)]
-        for x in self.graph.degree(): p_k[x] += 1
+        p_k = [0 for i in range(0, max_degree + 1)]
+        for x in degree: p_k[x] += 1
+            
         # Now, we are gonna clean the 0's
-        k = [i for i in range(0, self.graph.maxdegree()+1) if p_k[i] > 0]
+        k = [i for i in range(0, max_degree + 1) if p_k[i] > 0]
         p_k = list(filter(lambda x: x > 0, p_k))
 
         return (k, p_k)
