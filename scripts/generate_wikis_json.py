@@ -36,7 +36,9 @@ row_selector = "tr.mw-statistics-"
 stats = ['articles','pages','edits']
 
 
-def get_name(url):
+def get_name(base_url):
+
+    url = 'https://' + base_url
 
     req = requests.get(url)
     if req.status_code != 200:
@@ -106,18 +108,15 @@ def main():
         wiki_df = load_dataframe_from_csv(wiki['data'])
         result_stats = get_stats(wiki_df)
 
-        #~ result_stats = get_stats(url)
-
         if result_stats:
             wiki.update(result_stats)
         else:
             raise Exception(f'Wiki {wiki["url"]} is not reacheable. Possibly moved or deleted. Check, whether its url is correct.')
 
-        url = 'https://' + wiki['url']
-        wiki['bots'] = get_bots(url)
+        wiki['bots'] = get_bots(wiki['url'])
 
 
-        wiki['lastUpdated'] = str(date.today())
+        wiki['lastUpdated'] = row['lastUpdated']
 
         wiki['verified'] = True # Our own provided wikis are "verified"
 
@@ -146,7 +145,7 @@ def main():
             wikis_json[position].update(wiki)
         else:                                      # new wiki for wikis.json
             # get name and image only for new wiki entries
-            wiki['name'] = get_name(url)
+            wiki['name'] = get_name(wiki['url'])
             if (is_wikia_wiki(wiki['url'])):
                 b64 = get_wikia_wordmark_file(wiki['url'])
                 if b64:
