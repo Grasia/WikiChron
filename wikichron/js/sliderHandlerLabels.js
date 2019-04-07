@@ -7,7 +7,7 @@
 
 const MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 var time_index = document.querySelector("#dates-index").innerHTML;
-time_index = time_index.replace(/[\\"]/g, "");
+time_index = time_index.replace(/\"/g, "").slice(1,-1);
 time_index = time_index.split(", ");
 
 function update_labels(mutation) {
