@@ -216,13 +216,22 @@ def bind_callbacks(app):
         selection = { param: query_string_dict[param] for param in set(query_string_dict.keys()) & selection_params }
 
         if all(k in selection for k in ('lower_bound', 'upper_bound')):
+            # parse the dates
             low_val = data_controller.parse_int_to_timestamp(selection['lower_bound'][0])
-            low_val = df_time[df_time[0] == low_val].index[0]
             upper_val = data_controller.parse_int_to_timestamp(selection['upper_bound'][0])
+
+            # get the date in allowed index
+            low_val = df_time[df_time[0] >= low_val].min().values[0]
+            upper_val = df_time[df_time[0] >= upper_val].min().values[0]
+
+            # timestamp to index
+            low_val = df_time[df_time[0] == low_val].index[0]
             upper_val = df_time[df_time[0] == upper_val].index[0]
+
         else:
             low_val = 0
             upper_val = int(2 + max_time / 10)
+
 
         if max_time < 12:
             step_for_marks = 1
