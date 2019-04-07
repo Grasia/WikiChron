@@ -185,8 +185,8 @@ def bind_callbacks(app):
             cyto_class = 'non-show'
             no_data_class = 'show'
 
-            upper_bound = time_index[slider[0]].strftime('%b/%Y')
-            lower_bound = time_index[slider[1]].strftime('%b/%Y')
+            upper_bound = time_index[slider[1]].strftime('%b/%Y')
+            lower_bound = time_index[slider[0]].strftime('%b/%Y')
 
             no_data_children = [
                 html.P('Nothing to show,'),
