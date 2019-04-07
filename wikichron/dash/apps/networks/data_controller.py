@@ -143,11 +143,14 @@ def clean_up_bot_activity(df, wiki):
 def get_bot_names(wiki: dict) -> set:
     wikis_json_file = open(os.path.join(data_dir, 'wikis.json'))
     wikis = json.load(wikis_json_file)
-
+    di_wiki = {}
     for i in range(len(wikis)):
         if wikis[i]['name'] == wiki:
             di_wiki = wikis[i]
             break
+
+    if not di_wiki or 'bots' not in di_wiki:
+        return {} 
 
     return {bot['name'] for bot in di_wiki['bots']}
 

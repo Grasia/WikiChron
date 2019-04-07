@@ -272,7 +272,7 @@ def bind_callbacks(app):
         Controls to move the slider selection
         """
         trigger = dash.callback_context
-        if not trigger:
+        if not trigger or not step:
             raise PreventUpdate()
 
         trigger = trigger.triggered[0]['prop_id'].split('.')[0]
