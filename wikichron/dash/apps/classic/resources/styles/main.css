@@ -102,3 +102,36 @@
     margin-left: 5px;
 }
 
+#header {
+    height: 135px;
+    background-size: cover;
+    padding: 22px 20px 20px 20px;
+}
+
+#header-container {
+    margin: 0 25px 0 25px;
+}
+
+#header hr {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+
+@media all {
+    .main-root-header {
+        background-image: url("/static/assets/header_background.png");
+    }
+}
+
+@media all and (min-width: 1441px) {
+    .main-root-header {
+        background-image: url("/static/assets/header_background_1x.png");
+    }
+}
+
+@media all and (min-width: 1921px){
+    .main-root-header {
+        background-image: url("/static/assets/header_background_2x.png");
+    }
+}

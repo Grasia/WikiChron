@@ -28,7 +28,6 @@ from .networks.models import networks_generator as net_factory
 from .networks.models.BaseNetwork import BaseNetwork
 from . import data_controller
 
-IMAGE_HEADER = 'url(../../../static/assets/header_background.png)'
 RANKING_EMPTY_HEADER = [{'name': 'User', 'id': 'name'},
                         {'name': 'Metric', 'id': 'metric'}]
 RANKING_EMPTY_DATA = pd.DataFrame(columns=[RANKING_EMPTY_HEADER[0]['id'],
@@ -76,7 +75,8 @@ def main_header(selection_url, query_string, mode_config, assets_url_path):
                     ],
                     className='icons-bar')
                 ], className='root-header-elems')
-        ], className='main-root-header', style={'background-image': IMAGE_HEADER})
+        ], className='main-root-header'
+        )
     )
 
 

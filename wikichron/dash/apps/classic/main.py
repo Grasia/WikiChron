@@ -93,45 +93,62 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
         """
         href_download_button = f'{mode_config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
         return (html.Div(id='header',
-                className='container',
-                style={'display': 'flex', 'align-items': 'center', \
-                        'justify-content': 'space-between'},
-                children=[
-                    html.Span(
-                        html.Img(src='{}/logo_wikichron.svg'.format(assets_url_path)),
-                        id='tool-title'),
-                    html.Div([
-                        html.A(
-                            html.Img(src='{}/share.svg'.format(assets_url_path)),
-                            id='share-button',
-                            className='icon',
-                            title='Share current selection'
-                        ),
-                        html.A(
-                            html.Img(src='{}/cloud_download.svg'.format(assets_url_path)),
-                            href=href_download_button,
-                            id='download-button',
-                            target='_blank',
-                            className='icon',
-                            title='Download data'
-                        ),
-                        html.A(
-                            html.Img(src='{}/documentation.svg'.format(assets_url_path)),
-                            href='https://github.com/Grasia/WikiChron/wiki/',
-                            target='_blank',
-                            className='icon',
-                            title='Documentation'
-                        ),
-                        html.A(
-                            html.Img(src='{}/ico-github.svg'.format(assets_url_path)),
-                            href='https://github.com/Grasia/WikiChron',
-                            target='_blank',
-                            className='icon',
-                            title='Github repo'
-                        ),
-                    ],
-                    id='icons-bar')
-            ])
+                className='main-root-header',
+                children = [
+                    html.Div(
+                        id='header-container',
+                        children=[
+                            html.Div(
+                                html.Img(src='{}/logo_wikichron_white.svg'.format(assets_url_path)),
+                                id='tool-title'),
+                            html.Hr(),
+                            html.Div(
+                                style={'display': 'flex', 'align-items': 'center', \
+                                        'justify-content': 'space-between'},
+                                children=[
+                                    html.Div([
+                                        html.Strong(
+                                            html.A('< Go back to selection', href=selection_url)
+                                        )
+                                    ]),
+
+                                    html.Div([
+                                        html.A(
+                                            html.Img(src='{}/share.svg'.format(assets_url_path)),
+                                            id='share-button',
+                                            className='icon',
+                                            title='Share current selection'
+                                        ),
+                                        html.A(
+                                            html.Img(src='{}/cloud_download.svg'.format(assets_url_path)),
+                                            href=href_download_button,
+                                            id='download-button',
+                                            target='_blank',
+                                            className='icon',
+                                            title='Download data'
+                                        ),
+                                        html.A(
+                                            html.Img(src='{}/documentation.svg'.format(assets_url_path)),
+                                            href='https://github.com/Grasia/WikiChron/wiki/',
+                                            target='_blank',
+                                            className='icon',
+                                            title='Documentation'
+                                        ),
+                                        html.A(
+                                            html.Img(src='{}/ico-github.svg'.format(assets_url_path)),
+                                            href='https://github.com/Grasia/WikiChron',
+                                            target='_blank',
+                                            className='icon',
+                                            title='Github repo'
+                                        ),
+                                    ],
+                                    id='icons-bar')
+                                ]
+                            )
+                        ]
+                    )
+                ]
+            )
         );
 
 
@@ -301,8 +318,6 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
         className='control-text',
         style={'width': '100%'},
         children=[
-
-            html.A('Go back to selection', href=selection_url),
 
             main_header(),
 

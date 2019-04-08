@@ -14,10 +14,6 @@ p {
     margin-bottom: 0.75rem;
 }
 
-#tool-title {
-    margin-top: 22px;
-}
-
 input[type=checkbox] {
   transform: scale(1.5);
   margin-right: 12px;

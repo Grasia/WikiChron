@@ -125,8 +125,12 @@ a{
     justify-content: right;
 }
 
+.icon {
+    opacity: 0.8;
+}
+
 .icon:hover {
-    opacity: 0.7;
+    opacity: 1;
 }
 
 .icon:not(:first-child) {
@@ -559,3 +563,26 @@ th.dash-header > div {
     margin-left: 1rem;
 }
   /*****************************************************************/
+
+.main-root-header {
+    background-size: cover;
+}
+
+
+@media all {
+    .main-root-header {
+        background-image: url("/static/assets/header_background.png");
+    }
+}
+
+@media all and (min-width: 1441px) {
+    .main-root-header {
+        background-image: url("/static/assets/header_background_1x.png");
+    }
+}
+
+@media all and (min-width: 1921px){
+    .main-root-header {
+        background-image: url("/static/assets/header_background_2x.png");
+    }
+}
