@@ -220,3 +220,7 @@ footer.action-button-container{
     height: 57px;
     width: 256px;
 }
+
+#metrics-cards-container {
+    width: 99%; /* Leave 1% of space for scrollbar */
+}
