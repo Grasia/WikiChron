@@ -26,7 +26,7 @@ class CytoscapeStylesheet():
 	E_DEFAULT_SIZE = '1'
 	E_MIN_SIZE = '1'
 	E_MAX_SIZE = '10'
-	E_DEFAULT_OPACITY = '1'
+	E_DEFAULT_OPACITY = '0.8'
 	HIGHLIGHT_NODE = {
 		"background-color": "#B10DC9",
 		"border-color": "black",
@@ -37,6 +37,17 @@ class CytoscapeStylesheet():
 		"text-opacity": 1,
 		"z-index": 9999
 	}
+	
+	EDGE_LABEL = {
+		"label": "data(weight)",
+		"z-index": 9999,
+		"text-opacity": 1,
+		"opacity": 1,
+		'text-valign': 'top',
+		'text-background-color': '#FFFFFF',
+		'text-background-opacity': '1'
+	}
+
 
 	def __init__(self, directed = False, cy_stylesheet = []):
 		if not cy_stylesheet:
@@ -119,16 +130,10 @@ class CytoscapeStylesheet():
 			{network['max_node_size']}, {self.N_MIN_FONT}, {self.N_MAX_FONT})"
 
 
-	# def color_edges(self, _):
-	# 	self.cy_stylesheet[1]['style']['line-color'] = \
-	# 		'mapData(w_time, 0, 2, #9E9E9E, #000000)'
 	def color_edges(self, _):
 		self.cy_stylesheet[1]['style']['line-color'] = self.E_DEFAULT_COLOR
 
 
-	# def set_edges_opacity(self, _):
-	# 	self.cy_stylesheet[1]['style']['opacity'] = \
-	# 		'mapData(w_time, 0, 2, 0.4, 1)'
 	def set_edges_opacity(self, _):
 		self.cy_stylesheet[1]['style']['opacity'] = self.E_DEFAULT_OPACITY
 
@@ -156,12 +161,25 @@ class CytoscapeStylesheet():
 		self.cy_stylesheet[0]['style']['content'] = content
 
 
+	def set_edge_label(self, edge_id):
+		if not edge_id:
+			return
+
+		selector = f'edge[id = "{edge_id}"]'
+		di_style = {
+			'selector': selector,
+			'style': self.EDGE_LABEL
+		}
+		self.cy_stylesheet.append(di_style)
+
+
 	def all_transformations(self, network, metric):
 		self.color_nodes(network, metric)
 		self.size_nodes(network)
 		self.color_edges(network)
 		self.set_edges_opacity(network)
 		self.size_edges(network)
+		self.set_edge_label('')
 
 
 	def highlight_nodes(self, network, selc_nodes):

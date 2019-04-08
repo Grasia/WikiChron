@@ -97,12 +97,13 @@ def bind_callbacks(app):
         Input('tg-show-labels', 'on'),
         Input('highlight-node', 'value'),
         Input('tg-show-clusters', 'on'),
-        Input('dd-color-metric', 'value')],
+        Input('dd-color-metric', 'value'),
+        Input('cytoscape', 'tapEdgeData')],
         [State('network-ready', 'value'),
         State('initial-selection', 'children')]
     )
     def update_stylesheet(_, lb_switch, nodes_selc, clus_switch, dd_val,
-        cy_network, selection_json):
+        edge, cy_network, selection_json):
 
         if not cy_network:
             raise PreventUpdate()
@@ -129,6 +130,10 @@ def bind_callbacks(app):
             stylesheet.set_label('label')
         else:
             stylesheet.set_label('')
+
+        # Set edge label only on click label, this will removed in the future
+        if trigger == 'cytoscape' and edge:
+            stylesheet.set_edge_label(edge['id'])
 
         color = False
         # if trigger was launched by those compenents

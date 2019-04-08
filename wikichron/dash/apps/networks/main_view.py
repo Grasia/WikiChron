@@ -171,7 +171,7 @@ def build_slider_pane(selected_wiki_name, selected_network_name):
 
 def build_network_controls(network_code):
     togg1 = html.Div(children=[
-        daq.BooleanSwitch(id='tg-show-labels', className='toggle', on=False),
+        daq.BooleanSwitch(id='tg-show-labels', className='toggle', on=True),
         html.P('Show labels')
     ], className='net-control')
 
