@@ -160,7 +160,13 @@ def filter_users_pageNS(data, index, page_ns):
 ###### Callable Functions ######
 
 ############################ METRIC 1: USERS NEW AND USERS REINCIDENT ###############################################################
-#this metric is the same as the users_active, but getting rid of anonymous users	
+
+def users_new(data, index):
+    users = data.drop_duplicates('contributor_id')
+    series = users.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
+    if index is not None:
+        series = series.reindex(index, fill_value=0)
+    return series
 
 #users who make their second edition in the wiki (we want the count for this kind of users per month)
 def users_reincident(data, index):
@@ -229,13 +235,15 @@ def users_first_edit_more_than_6_months_ago(data, index):
     return filter_users_first_edition(data, index, 7, 0)
 
 def users_first_edit(data, index):
+    this_month = users_new(data, index)
     one_three = users_first_edit_between_1_3_months_ago(data, index)
     four_six = users_first_edit_between_4_6_months_ago(data, index)
     more_six = users_first_edit_more_than_6_months_ago(data, index)
-    one_three.name = 'between 1 and 3 months'
-    four_six.name = 'between 4 and 6 months'
-    more_six.name = 'more than 6 months'
-    return [one_three, four_six, more_six]
+    this_month.name ='this month'
+    one_three.name = 'between 1 and 3 months ago'
+    four_six.name = 'between 4 and 6 months ago'
+    more_six.name = 'more than 6 months ago'
+    return [this_month, one_three, four_six, more_six]
 ############################ METRIC 4 #################################################################################################
 
 # This metric counts, among the users that have edited in that month X, the ones that have edited the last time in month X-1
@@ -255,15 +263,17 @@ def users_last_edit_more_than_6_months_ago(data, index):
     return filter_users_last_edition(data, index, 6)
 
 def users_last_edit(data, index):
+    this_month = users_new(data, index)
     one_month = users_last_edit_1_month_ago(data, index)
     two_three_months = users_last_edit_2_or_3_months_ago(data, index)
     four_six_months = users_last_edit_4_or_5_or_6_months_ago(data, index)
     more_six_months = users_last_edit_more_than_6_months_ago(data, index)
+    this_month.name = 'this month'
     one_month.name = '1 month ago'
     two_three_months.name = 'between 2 and 3 months ago'
     four_six_months.name = 'between 4 and 6 months ago'
     more_six_months.name = 'more than six months ago'
-    return [one_month, two_three_months, four_six_months, more_six_months]
+    return [this_month, one_month, two_three_months, four_six_months, more_six_months]
 
 ############################ METRIC 5 #################################################################################################
 
