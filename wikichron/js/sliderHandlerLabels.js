@@ -1,8 +1,8 @@
 /**
  * This script is used to improve an dcc.RangeSlider
  * It adds an handler labels.
- * 
- * Copyright Youssef El Faqir El Rhazoui 
+ *
+ * Copyright Youssef El Faqir El Rhazoui
  */
 
 const MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -35,4 +35,18 @@ for (i = 0; i < handlerClasses.length; i++){
         mutations.forEach(update_labels);
     });
     observer.observe(handlers[i], { attributes: true});
+
+    init_labels(handlers[i], `handler-label${i}`);
+}
+
+
+function init_labels(handler, handlerId) {
+    let val = parseInt(handler.getAttribute("aria-valuenow"), 10);
+
+    time = time_index[val];
+    time = time.split("-");
+    month = MONTH[parseInt(time[1])-1]
+    date = `${month} ${time[0]}`
+
+    document.getElementById(handlerId).innerHTML = date
 }
