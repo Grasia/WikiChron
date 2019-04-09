@@ -119,8 +119,8 @@ def edits_user_talk(data, index):
 
 
 def users_active_more_than_x_editions(data, index, x):
-    monthly_edits = data.groupby([pd.Grouper(key='timestamp', freq='MS'), 'contributor_name']).size()
-    monthly_edits_filtered = monthly_edits[monthly_edits > x].to_frame(name='pages_edited').reset_index()
+    monthly_edits = data.groupby([pd.Grouper(key='timestamp', freq='MS'), 'contributor_id']).size()
+    monthly_edits_filtered = monthly_edits[monthly_edits >= x].to_frame(name='pages_edited').reset_index()
     series = monthly_edits_filtered.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
     if index is not None:
         series = series.reindex(index, fill_value=0)
@@ -187,17 +187,17 @@ def users_anonymous_active(data, index):
 
 # this metric gets, per month, those users who have contributed to the wiki in more than 4 editions.
 def users_active_more_than_4_editions(data, index):
-    return users_active_more_than_x_editions(data, index, 4)
+    return users_active_more_than_x_editions(data, index, 5)
 
 
 # this metric gets, per month, those users who have contributed to the wiki in more than 24 editions.
 def users_active_more_than_24_editions(data, index):
-    return users_active_more_than_x_editions(data, index, 24)
+    return users_active_more_than_x_editions(data, index, 25)
 
 
 # this metric gets, per month, those users who have contributed to the wiki in more than 99 editions.
 def users_active_more_than_99_editions(data, index):
-    return users_active_more_than_x_editions(data, index, 99)
+    return users_active_more_than_x_editions(data, index, 100)
 
 
 ########################################################################
