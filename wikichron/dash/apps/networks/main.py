@@ -62,13 +62,15 @@ def bind_callbacks(app):
         Output('network-ready', 'value'),
         [Input('dates-slider', 'value')],
         [State('initial-selection', 'children'),
-        State('dates-index', 'children')]
+        State('dates-index', 'children'),
+        State('dates-index-end', 'children')]
     )
-    def update_network(slider, selection_json, time_index):
+    def update_network(slider, selection_json, time_index_beg, time_index_end):
         if not slider:
             raise PreventUpdate()
 
-        time_index = json.loads(time_index)
+        time_index_beg = json.loads(time_index_beg)
+        time_index_end = json.loads(time_index_end)
 
         # get network instance from selection
         selection = json.loads(selection_json)
@@ -83,7 +85,12 @@ def bind_callbacks(app):
 
         print(' * [Info] Building the network....')
         time_start_calculations = time.perf_counter()
-        network = data_controller.get_network(wiki, network_code, time_index[slider[0]], time_index[slider[1]])
+
+        lower_bound = time_index_beg[slider[0]]
+        upper_bound = time_index_end[slider[1]]
+
+        network = data_controller.get_network(wiki, network_code,
+                                            lower_bound, upper_bound)
 
         time_end_calculations = time.perf_counter() - time_start_calculations
         print(f' * [Timing] Network ready in {time_end_calculations} seconds')
@@ -172,17 +179,21 @@ def bind_callbacks(app):
         Output('no-data', 'children')],
         [Input('cytoscape', 'elements')],
         [State('dates-slider', 'value'),
-        State('dates-index', 'children')]
+        State('dates-index', 'children'),
+        State('dates-index-end', 'children')]
     )
-    def check_available_data(cyto, slider, time_index):
+    def check_available_data(cyto, slider, time_index_beg, time_index_end):
         """
         Checks if there's a network to plot
         """
         if not slider:
             raise PreventUpdate()
 
-        time_index = json.loads(time_index)
-        time_index = pd.DatetimeIndex(time_index)
+        time_index_beg = json.loads(time_index_beg)
+        time_index_end = json.loads(time_index_end)
+        time_index_beg = pd.DatetimeIndex(time_index_beg)
+        time_index_end = pd.DatetimeIndex(time_index_end)
+
         cyto_class = 'show'
         no_data_class = 'non-show'
         no_data_children = []
@@ -190,8 +201,8 @@ def bind_callbacks(app):
             cyto_class = 'non-show'
             no_data_class = 'show'
 
-            upper_bound = time_index[slider[1]].strftime('%b/%Y')
-            lower_bound = time_index[slider[0]].strftime('%b/%Y')
+            lower_bound = time_index_beg[slider[0]].strftime('%d/%b/%Y')
+            upper_bound = time_index_end[slider[1]].strftime('%d/%b/%Y')
 
             no_data_children = [
                 html.P('Nothing to show,'),
@@ -344,18 +355,24 @@ def bind_callbacks(app):
         [Input('scale', 'value'),
         Input('dates-slider', 'value')],
         [State('initial-selection', 'children'),
-        State('dates-index', 'children')]
+        State('dates-index', 'children'),
+        State('dates-index-end', 'children')]
     )
-    def update_graph(scale_type, slider, selection_json, time_index):
+    def update_graph(scale_type, slider, selection_json, time_index_beg, time_index_end):
         if not slider:
             raise PreventUpdate()
 
         selection = json.loads(selection_json)
         wiki = selection['wikis'][0]
         network_code = selection['network']
-        time_index = json.loads(time_index)
 
-        network = data_controller.get_network(wiki, network_code, time_index[slider[0]], time_index[slider[1]])
+        time_index_beg = json.loads(time_index_beg)
+        time_index_end = json.loads(time_index_end)
+
+        lower_bound = time_index_beg[slider[0]]
+        upper_bound = time_index_end[slider[1]]
+
+        network = data_controller.get_network(wiki, network_code, lower_bound, upper_bound)
 
         (k, p_k) = network.get_degree_distribution()
 
@@ -420,13 +437,16 @@ def bind_callbacks(app):
         Input('network-ready', 'value')],
         [State('dates-slider', 'value'),
         State('initial-selection', 'children'),
-        State('dates-index', 'children')]
+        State('dates-index', 'children'),
+        State('dates-index-end', 'children')]
     )
-    def update_ranking(metric, ready, slider, selection_json, time_index):
+    def update_ranking(metric, ready, slider, selection_json, time_index_beg, time_index_end):
         if not ready or not slider:
             raise PreventUpdate()
 
-        time_index = json.loads(time_index)
+        time_index_beg = json.loads(time_index_beg)
+        time_index_end = json.loads(time_index_end)
+
         header = RANKING_EMPTY_HEADER
         data = RANKING_EMPTY_DATA.to_dict('rows')
         data_keys = RANKING_EMPTY_DATA.columns
@@ -436,7 +456,12 @@ def bind_callbacks(app):
             wiki = selection['wikis'][0]
             network_code = selection['network']
             header_tmp = net_factory.get_metric_header(network_code, metric)
-            network = data_controller.get_network(wiki, network_code, time_index[slider[0]], time_index[slider[1]])
+
+            lower_bound = time_index_beg[slider[0]]
+            upper_bound = time_index_end[slider[1]]
+
+            network = data_controller.get_network(wiki, network_code,
+                                                  lower_bound, upper_bound)
 
             df = network.get_metric_dataframe(metric)
 
@@ -511,7 +536,7 @@ def bind_callbacks(app):
     def update_node_info(user_info, _, selection_json, node, old_click):
         if not user_info:
             raise PreventUpdate()
-        
+
         if old_click and int(old_click) == int(node["timeStamp"]):
             return NO_DATA_USER_STATS_HEADER, NO_DATA_USER_STATS_BODY, old_click
 
@@ -566,7 +591,7 @@ def bind_callbacks(app):
         State('initial-selection', 'children'),
         State('dates-index', 'children')]
     )
-    def show_share_modal(t_clicks_share, t_clicks_switch, open_state, query_string, slider, 
+    def show_share_modal(t_clicks_share, t_clicks_switch, open_state, query_string, slider,
         selection_json, time_index):
         trigger = dash.callback_context
         if not trigger:
