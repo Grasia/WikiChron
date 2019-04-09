@@ -63,13 +63,13 @@ def get_available_metrics(network_code):
         raise Exception("Something went bad. Missing network type selection.")
 
 
-def get_secondary_metrics(network_code):
+def get_metrics_to_plot(network_code):
     if network_code == CoEditingNetwork.CODE:
-        return CoEditingNetwork.get_secondary_metrics()
+        return CoEditingNetwork.get_metrics_to_plot()
     elif network_code == TalkPagesNetwork.CODE:
-        return TalkPagesNetwork.get_secondary_metrics()
+        return TalkPagesNetwork.get_metrics_to_plot()
     elif network_code == UserTalkNetwork.CODE:
-        return UserTalkNetwork.get_secondary_metrics()
+        return UserTalkNetwork.get_metrics_to_plot()
     else:
         raise Exception("Something went bad. Missing network type selection.")
 

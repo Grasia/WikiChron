@@ -12,8 +12,8 @@ class CytoscapeStylesheet():
 
 	N_DEFAULT_COLOR = '#78909C'
 	N_MIN_COLOR = '#64B5F6'
-	N_MAX_COLOR = '#0D47A1'
-	N_DEFAULT_SIZE = '30'
+	N_MAX_COLOR = '#FFEB3B' #'#0D47A1'
+	N_DEFAULT_SIZE = '10'
 	N_MIN_SIZE = '10'
 	N_MAX_SIZE = '60'
 	N_DEFAULT_FONT = '12'
@@ -101,12 +101,13 @@ class CytoscapeStylesheet():
 			self.size_nodes_default()
 			return
 
+		# TO FIX 
 		self.cy_stylesheet[0]['style']['height'] = \
-			f"mapData(num_edits, {network['min_node_size']}, \
+			f"mapData(num_edits_log, {network['min_node_size']}, \
 			{network['max_node_size']}, {self.N_MIN_SIZE}, {self.N_MAX_SIZE})"
 
 		self.cy_stylesheet[0]['style']['width'] = \
-			f"mapData(num_edits, {network['min_node_size']}, \
+			f"mapData(num_edits_log, {network['min_node_size']}, \
 			{network['max_node_size']}, {self.N_MIN_SIZE}, {self.N_MAX_SIZE})"
 
 		self.size_font_labels(network)
@@ -143,17 +144,17 @@ class CytoscapeStylesheet():
 
 
 	def size_edges(self, network):
-		if not all(k in network for k in ('min_edge_size', 'max_edge_size')):
+		if not all(k in network for k in ('min_weight', 'max_weight')):
 			self.size_edges_default()
 			return
 
-		if network['min_edge_size'] == network['max_edge_size']:
+		if network['min_weight'] == network['max_weight']:
 			self.size_edges_default()
 			return
 
 		self.cy_stylesheet[1]['style']['width'] = \
-			f"mapData(weight, {network['min_edge_size']}, \
-			{network['max_edge_size']}, {self.E_MIN_SIZE}, {self.E_MAX_SIZE})"
+			f"mapData(weight_log, {network['min_weight']}, \
+			{network['max_weight']}, {self.E_MIN_SIZE}, {self.E_MAX_SIZE})"
 
 
 	def set_label(self, text):

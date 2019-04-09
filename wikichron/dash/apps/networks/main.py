@@ -126,7 +126,7 @@ def bind_callbacks(app):
         metric = {}
 
         if dd_val:
-            metric = net_factory.get_secondary_metrics(network_code)[dd_val]
+            metric = net_factory.get_metrics_to_plot(network_code)[dd_val]
 
         if not nodes_selc:
             stylesheet.all_transformations(cy_network, metric)

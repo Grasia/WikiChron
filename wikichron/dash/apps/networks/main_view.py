@@ -288,7 +288,7 @@ def build_distribution_pane() -> html.Div:
 
 
 def dropdown_color_metric_selector(network_code):
-    dict_metrics = net_factory.get_secondary_metrics(network_code)
+    dict_metrics = net_factory.get_metrics_to_plot(network_code)
     options = []
     for k in dict_metrics.keys():
         options.append({

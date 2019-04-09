@@ -10,6 +10,7 @@ import pandas as pd
 from igraph import Graph, ClusterColoringPalette, VertexClustering,\
     WEAK
 from colormap.colors import rgb2hex
+from math import log
 
 from .fix_dendrogram import fix_dendrogram
 
@@ -18,6 +19,14 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
     NAME = 'Base Network'
     CODE = 'base_network'
+    NODE_METRICS_TO_PLOT = {}
+    EDGE_METRICS_TO_PLOT = {
+        'Weight': {
+            'key': 'weight',
+            'min': 'min_weight',
+            'max': 'max_weight',
+        }
+    }
     NETWORK_STATS = {
         'Nodes': 'num_nodes',
         'Clusters': 'n_communities',
@@ -93,15 +102,11 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
 
     @abc.abstractclassmethod
-    def get_secondary_metrics(cls) -> dict:
+    def get_metrics_to_plot(cls) -> dict:
         """
         Returns a dict with the metrics, the dict must get the following structure:
             dict = {
-                'Metric name well formatted': {
-                    'key': 'a vertex key',
-                    'max': 'a graph key',
-                    'min': 'a graph key'
-                }
+                'Metric name well formatted': 'a vertex key'
             }
         """
         pass
@@ -132,12 +137,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         """
         self.graph['num_nodes'] = self.graph.vcount()
         self.graph['num_edges'] = self.graph.ecount()
-        if 'num_edits' in self.graph.vs.attributes():
-            self.graph['max_node_size'] = max(self.graph.vs['num_edits'])
-            self.graph['min_node_size'] = min(self.graph.vs['num_edits'])
-        if 'weight' in self.graph.es.attributes():
-            self.graph['max_edge_size'] = max(self.graph.es['weight'])
-            self.graph['min_edge_size'] = min(self.graph.es['weight'])
 
 
     def to_cytoscape_dict(self) -> dict:
@@ -150,15 +149,33 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         """
         di_net = {}
         network = []
+        metrics_to_plot = [val for key, val in self.NODE_METRICS_TO_PLOT.items()]
+        metrics_to_plot = metrics_to_plot + [val for key, val in self.EDGE_METRICS_TO_PLOT.items()]
+        keys_to_plot = {metric['key'] for metric in metrics_to_plot}
+
+        #### TO FIX ###########################
+        keys_to_plot.remove('abs_birth_int')
+        metric = None
+        for metric in metrics_to_plot:
+            if metric['key'] == 'abs_birth_int':
+                break
+        metrics_to_plot.remove(metric)
+        di_net[metric['max']] = max(self.graph.vs['abs_birth_int'])
+        di_net[metric['min']] = min(self.graph.vs['abs_birth_int'])
+        ###########################
 
         # node attrs
         for node in self.graph.vs:
             data = {'data': {}}
             for attr in self.graph.vs.attributes():
                 val = node[attr]
-                if attr == 'id':
-                    val = str(val)
+                
+                if attr in keys_to_plot:
+                    val2 = 0 if val == 0 else log(val)
+                    data['data'][f'{attr}_log'] = val2      
+
                 data['data'][attr] = val
+
             network.append(data)
 
         # edge attrs
@@ -168,14 +185,28 @@ class BaseNetwork(metaclass=abc.ABCMeta):
                 val = edge[attr]
                 if attr == 'id':
                     continue
-                if attr == 'source' or attr == 'target':
-                    val = str(val)
+                if attr in keys_to_plot:
+                    val2 = 0 if val == 0 else log(val)
+                    data['data'][f'{attr}_log'] = val2
+
                 data['data'][attr] = val
             network.append(data)
 
         # graph attrs
         for attr in self.graph.attributes():
             di_net[attr] = self.graph[attr]
+
+        # add max min metrics to plot
+        for metric in metrics_to_plot:
+            if metric['key'] in self.graph.vs.attributes():
+                _max = max(self.graph.vs[metric['key']])
+                _min = min(self.graph.vs[metric['key']])
+            else:
+                _max = max(self.graph.es[metric['key']])
+                _min = min(self.graph.es[metric['key']])
+
+            di_net[metric['max']] = 0 if _max == 0 else log(_max)
+            di_net[metric['min']] = 0 if _min == 0 else log(_min)
 
         di_net['network'] = network
         return di_net

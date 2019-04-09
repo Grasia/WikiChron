@@ -40,7 +40,12 @@ class CoEditingNetwork(BaseNetwork):
         'Page Rank': 'page_rank'
     }
 
-    SECONDARY_METRICS = {
+    NODE_METRICS_TO_PLOT = {
+        'Article Edits': {
+            'key': 'num_edits',
+            'max': 'max_node_size',
+            'min': 'min_node_size'
+        },
         'Lifespan': {
             'key': 'abs_birth_int',
             'max': 'max_abs_birth_int',
@@ -155,16 +160,8 @@ class CoEditingNetwork(BaseNetwork):
 
 
     @classmethod
-    def get_secondary_metrics(cls) -> dict:
-        return cls.SECONDARY_METRICS
-
-
-    def add_graph_attrs(self):
-        super().add_graph_attrs()
-        for _, val in self.SECONDARY_METRICS.items():
-            if val['key'] in self.graph.vs.attributes():
-                self.graph[val['max']] = max(self.graph.vs[val['key']])
-                self.graph[val['min']] = min(self.graph.vs[val['key']])
+    def get_metrics_to_plot(cls) -> dict:
+        return cls.NODE_METRICS_TO_PLOT
 
 
     @classmethod
