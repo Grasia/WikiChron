@@ -169,7 +169,7 @@ def users_registered_accum(data, index):
 
 
 def users_active(data, index):
-    return users_active_more_than_x_editions(data, index, 1)
+    return users_active_more_than_x_editions(data, index, 0)
 
 
 # this metric is the same as the users_active, but getting rid of anonymous users
