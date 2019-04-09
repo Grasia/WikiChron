@@ -451,12 +451,15 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     network_type_code = network_type_arg['code']
     args_selection = json.dumps({"wikis": wikis_arg, "network": network_type_code})
 
-    selected_wiki_name = wikis_arg[0]['name']
+    selected_wiki = wikis_arg[0]
+    selected_wiki_name = selected_wiki['name']
     selected_network_name = network_type_arg['name']
     selection_url = f'{mode_config["HOME_MODE_PATHNAME"]}selection{query_string}'
 
-    time_index = data_controller.calculate_index_all_months(wikis_arg[0])
-    time_index = json.dumps(time_index.date.tolist(), default=str)
+    (time_index_beginning, time_index_end) = data_controller.calculate_indices_all_months(selected_wiki)
+
+    time_index_beginning = json.dumps(time_index_beginning.date.tolist(), default=str)
+    time_index_end = json.dumps(time_index_end.date.tolist(), default=str)
 
     main = html.Div(
             id='main',
@@ -479,7 +482,8 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                 html.Div(id='network-ready', style={'display': 'none'}),
                 html.Div(id='old-state-node', style={'display': 'none'}),
                 html.Div(id='highlight-node', style={'display': 'none'}),
-                html.Div(id='dates-index', children=time_index, style={'display': 'none'})
+                html.Div(id='dates-index', children=time_index_beginning, style={'display': 'none'}),
+                html.Div(id='dates-index-end', children=time_index_end, style={'display': 'none'})
             ])
 
     header = main_header(selection_url, query_string, mode_config, assets_url_path)

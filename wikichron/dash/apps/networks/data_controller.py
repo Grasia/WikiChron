@@ -150,16 +150,18 @@ def get_bot_names(wiki: dict) -> set:
             break
 
     if not di_wiki or 'bots' not in di_wiki:
-        return {} 
+        return {}
 
     return {bot['name'] for bot in di_wiki['bots']}
 
 
-def calculate_index_all_months(wiki):
+def calculate_indices_all_months(wiki):
     data = read_data(wiki)
-    monthly_data = data.groupby(pd.Grouper(key='timestamp', freq='MS'))
-    index = monthly_data.size().index
-    return index
+    monthly_data_align_begining = data.groupby(pd.Grouper(key='timestamp', freq='MS'))
+    monthly_data_align_end = data.groupby(pd.Grouper(key='timestamp', freq='M'))
+    begining_index = monthly_data_align_begining.size().index
+    end_index = monthly_data_align_end.size().index
+    return (begining_index, end_index)
 
 
 def parse_int_to_timestamp(time):
