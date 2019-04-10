@@ -1,13 +1,14 @@
 'use strict';
 
+var wikisList;
 
 /* List.js */
 function init_list_js() {
     var options = {
-    valueNames: [ 'wiki-name', 'wiki-url' ]
+        valueNames: [ 'wiki-name', 'wiki-url' ]
     };
 
-    var wikisList = new List('wiki-cards-container', options);
+    wikisList = new List('wiki-cards-container', options);
 
     $('#search-wiki-input').on('keyup', function() {
         let searchString = $(this).val();
@@ -34,6 +35,12 @@ function check_enable_action_button() {
 function unselect_badge(target) {
     var target_badge = target.parentNode;
     var code = target_badge.dataset.code;
+
+    // Clear search in order to uncheck a wiki card
+    // Because of https://github.com/javve/list.js/issues/380
+    wikisList.search('')
+    document.getElementById('search-wiki-input').value = "";
+
     $(`input[id="checkbox-${code}"]`)[0].checked = false;
     target_badge.remove();
     check_enable_action_button();
