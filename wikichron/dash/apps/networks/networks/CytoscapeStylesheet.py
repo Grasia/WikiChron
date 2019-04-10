@@ -11,8 +11,8 @@
 class CytoscapeStylesheet():
 
 	N_DEFAULT_COLOR = '#78909C'
-	N_MIN_COLOR = '#64B5F6'
-	N_MAX_COLOR = '#FFEB3B' #'#0D47A1'
+	N_MIN_COLOR = '#1A237E' #'#64B5F6'
+	N_MAX_COLOR = '#F3E5F5' #'#0D47A1'
 	N_DEFAULT_SIZE = '10'
 	N_MIN_SIZE = '10'
 	N_MAX_SIZE = '60'
@@ -100,7 +100,7 @@ class CytoscapeStylesheet():
 		if network['min_node_size'] == network['max_node_size']:
 			self.size_nodes_default()
 			return
-
+		print(f"\n\nmax: {network['max_node_size']}\nmin: {network['min_node_size']}\n\n")
 		# TO FIX 
 		self.cy_stylesheet[0]['style']['height'] = \
 			f"mapData(num_edits_log, {network['min_node_size']}, \

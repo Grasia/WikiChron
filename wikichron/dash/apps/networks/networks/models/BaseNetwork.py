@@ -10,7 +10,7 @@ import pandas as pd
 from igraph import Graph, ClusterColoringPalette, VertexClustering,\
     WEAK
 from colormap.colors import rgb2hex
-from math import log
+from math import log1p as log
 
 from .fix_dendrogram import fix_dendrogram
 
@@ -171,8 +171,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
                 val = node[attr]
                 
                 if attr in keys_to_plot:
-                    val2 = 0 if val == 0 else log(val)
-                    data['data'][f'{attr}_log'] = val2      
+                    data['data'][f'{attr}_log'] = int(log(val)*10)      
 
                 data['data'][attr] = val
 
@@ -186,8 +185,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
                 if attr == 'id':
                     continue
                 if attr in keys_to_plot:
-                    val2 = 0 if val == 0 else log(val)
-                    data['data'][f'{attr}_log'] = val2
+                    data['data'][f'{attr}_log'] = int(log(val)*10)
 
                 data['data'][attr] = val
             network.append(data)
@@ -197,16 +195,18 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             di_net[attr] = self.graph[attr]
 
         # add max min metrics to plot
+        _max = 0
+        _min = 0
         for metric in metrics_to_plot:
             if metric['key'] in self.graph.vs.attributes():
                 _max = max(self.graph.vs[metric['key']])
                 _min = min(self.graph.vs[metric['key']])
-            else:
+            elif metric['key'] in self.graph.es.attributes():
                 _max = max(self.graph.es[metric['key']])
                 _min = min(self.graph.es[metric['key']])
 
-            di_net[metric['max']] = 0 if _max == 0 else log(_max)
-            di_net[metric['min']] = 0 if _min == 0 else log(_min)
+            di_net[metric['max']] = int(log(_max)*10)
+            di_net[metric['min']] = int(log(_min)*10)
 
         di_net['network'] = network
         return di_net
