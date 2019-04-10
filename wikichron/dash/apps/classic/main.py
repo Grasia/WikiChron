@@ -99,8 +99,9 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
                         id='header-container',
                         children=[
                             html.Div(
-                                html.Img(src='{}/logo_wikichron_white.svg'.format(assets_url_path)),
-                                id='tool-title'),
+                                html.Img(src='{}/logo_classic_white.svg'.format(assets_url_path),
+                                    id='title-img'),
+                            ),
                             html.Hr(),
                             html.Div(
                                 style={'display': 'flex', 'align-items': 'center', \
@@ -321,19 +322,14 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
 
             main_header(),
 
-            html.Hr(),
-
             html.Div(id='selection-div',
                 className='container',
                 children=[
                     select_wikis_and_metrics_control(wikis_dropdown_options, metrics_dropdown_options),
-                    select_time_axis_control('relative' if relative_time else 'absolute')
+                    select_time_axis_control('relative' if relative_time else 'absolute'),
+                    date_slider_control(),
                 ]
              ),
-
-            date_slider_control(),
-
-            html.Hr(),
 
             html.Div(id='graphs'),
 

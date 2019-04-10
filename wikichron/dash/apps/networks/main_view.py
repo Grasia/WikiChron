@@ -49,33 +49,40 @@ def main_header(selection_url, query_string, mode_config, assets_url_path):
     """
     href_download_button = f'{mode_config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
     return (html.Div(
+            id='header',
             children=[
-                html.Img(src='{}/wikichron_networks_logo2.svg'.format(assets_url_path),
-                    className='title-img'),
-                html.Div(children=[
-                    html.Div([
-                        html.A('< Go back to selection', href=selection_url),
-                        html.A('Switch network >', id='switch-network')
-                    ]),
-                    html.Div([
-                        html.A(
-                            html.Img(src='{}/cloud_download.svg'.format(assets_url_path)),
-                            href=href_download_button,
-                            id='download-button',
-                            target='_blank',
-                            className='icon',
-                            title='Download data'
-                        ),
-                        html.A(
-                            html.Img(src='{}/share.svg'.format(assets_url_path)),
-                            id='share-button',
-                            className='icon',
-                            title='Share current selection'
-                        )
-                    ],
-                    className='icons-bar')
-                ], className='root-header-elems')
-        ], className='main-root-header'
+                html.Div(
+                    id='header-container',
+                    children=[
+                        html.Img(src='{}/wikichron_networks_logo2.svg'.format(assets_url_path),
+                            id='title-img'),
+                        html.Hr(),
+                        html.Div(children=[
+                            html.Div([
+                                html.A('< Go back to selection', href=selection_url),
+                                html.A('Switch network >', id='switch-network')
+                            ]),
+                            html.Div([
+                                html.A(
+                                    html.Img(src='{}/cloud_download.svg'.format(assets_url_path)),
+                                    href=href_download_button,
+                                    id='download-button',
+                                    target='_blank',
+                                    className='icon',
+                                    title='Download data'
+                                ),
+                                html.A(
+                                    html.Img(src='{}/share.svg'.format(assets_url_path)),
+                                    id='share-button',
+                                    className='icon',
+                                    title='Share current selection'
+                                )
+                            ],
+                            className='icons-bar')
+                        ], className='root-header-elems')
+                    ]
+                )
+            ], className='main-root-header'
         )
     )
 
