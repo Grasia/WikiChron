@@ -46,31 +46,13 @@ class UserTalkNetwork(BaseNetwork):
         'Page Rank': 'page_rank'
     }
 
-    NODE_METRICS_TO_PLOT = {
-        'Edits in its own page': {
-            'key': 'num_edits',
-            'log': 'num_edits_log',
-            'max': 'max_node_size',
-            'min': 'min_node_size'
-        },
-        'Lifespan': {
-            'key': 'abs_birth_int',
-            'max': 'max_abs_birth_int',
-            'min': 'min_abs_birth_int'
-        },
-        'Article Edits': {
-            'key': 'article_edits',
-            'log': 'article_edits_log',
-            'max': 'max_article_edits',
-            'min': 'min_article_edits'
-        },
-        'Talk Edits': {
-            'key': 'talk_edits',
-            'log': 'talk_edits_log',
-            'max': 'max_talk_edits',
-            'min': 'min_talk_edits'
+    NODE_METRICS_TO_PLOT = BaseNetwork.NODE_METRICS_TO_PLOT.copy()
+    NODE_METRICS_TO_PLOT['Edits in its own page'] = \
+        {
+            'key': 'own_u_edits',
+            'max': 'max_own_u_edits',
+            'min': 'min_own_u_edits'
         }
-    }
 
     USER_INFO = {
         #'User ID': 'id',
@@ -119,8 +101,11 @@ class UserTalkNetwork(BaseNetwork):
                 self.graph.vs[count_v]['id'] = int(r['contributor_id'])
                 self.graph.vs[count_v]['label'] = r['contributor_name']
                 self.graph.vs[count_v]['num_edits'] = 0
+                self.graph.vs[count_v]['user_talks'] = {int(r['page_id'])}
                 count_v += 1
 
+            # count diferent pages
+            self.graph.vs[mapper_v[r['contributor_name']]]['user_talks'].add(int(r['page_id']))
 
             if page_t == r['contributor_name']:
                 self.graph.vs[mapper_v[page_t]]['num_edits'] += 1
@@ -150,6 +135,7 @@ class UserTalkNetwork(BaseNetwork):
                     max_id += 1
                     self.graph.vs[count_v]['label'] = page_name
                     self.graph.vs[count_v]['num_edits'] = 0
+                    self.graph.vs[count_v]['user_talks'] = set()
                     count_v += 1
 
                 self.graph.add_edge(mapper_v[user], mapper_v[page_name])
@@ -161,6 +147,11 @@ class UserTalkNetwork(BaseNetwork):
                 self.graph.es[count_e]['source'] = source
                 self.graph.es[count_e]['target'] = target
                 count_e += 1
+
+        # total pages
+        if 'user_talks' in self.graph.vs.attributes():
+            user_talks = [len(node['user_talks']) for node in self.graph.vs]
+            self.graph.vs['user_talks'] = user_talks
 
 
     def get_metric_dataframe(self, metric):
@@ -174,6 +165,11 @@ class UserTalkNetwork(BaseNetwork):
             return df
 
         return pd.DataFrame()
+
+
+    def add_others(self, df):
+        self.calculate_edits(df, 'article')
+        self.calculate_edits(df, 'talk')
 
 
     @classmethod
@@ -223,6 +219,15 @@ class UserTalkNetwork(BaseNetwork):
         return desc
 
 
-    def add_others(self, df):
-        self.calculate_edits(df, 'article')
-        self.calculate_edits(df, 'talk')
+    @classmethod
+    def get_main_class_metric(cls) -> str:
+        if 'Edits in its own page' in cls.NODE_METRICS_TO_PLOT:
+            return cls.NODE_METRICS_TO_PLOT['Edits in its own page']
+        else:
+            return ''
+
+
+    @classmethod
+    def get_main_class_key(cls) -> str:
+        metric = cls.get_main_class_metric()
+        return metric['key'] if metric and 'key' in metric else ''

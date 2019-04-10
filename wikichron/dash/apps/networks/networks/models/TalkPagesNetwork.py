@@ -44,25 +44,7 @@ class TalkPagesNetwork(BaseNetwork):
         'Page Rank': 'page_rank'
     }
 
-    NODE_METRICS_TO_PLOT = {
-        'Talk Page Edits': {
-            'key': 'num_edits',
-            'log': 'num_edits_log',
-            'max': 'max_node_size',
-            'min': 'min_node_size'
-        },
-        'Lifespan': {
-            'key': 'abs_birth_int',
-            'max': 'max_abs_birth_int',
-            'min': 'min_abs_birth_int'
-        },
-        'Article Edits': {
-            'key': 'article_edits',
-            'log': 'article_edits_log',
-            'max': 'max_article_edits',
-            'min': 'min_article_edits'
-        }
-    }
+    #NODE_METRICS_TO_PLOT = {}
 
     USER_INFO = {
         #'User ID': 'id',
@@ -96,9 +78,11 @@ class TalkPagesNetwork(BaseNetwork):
                 self.graph.vs[count]['id'] = int(r['contributor_id'])
                 self.graph.vs[count]['label'] = r['contributor_name']
                 self.graph.vs[count]['num_edits'] = 0
+                self.graph.vs[count]['talks'] = {int(r['page_id'])}
                 count += 1
 
             self.graph.vs[mapper_v[int(r['contributor_id'])]]['num_edits'] += 1
+            self.graph.vs[mapper_v[int(r['contributor_id'])]]['talks'].add(int(r['page_id']))
 
             # A page gets serveral contributors
             if not int(r['page_id']) in user_per_page:
@@ -126,6 +110,11 @@ class TalkPagesNetwork(BaseNetwork):
                     self.graph.es[mapper_e[k_edge]]['id'] = k_edge
                     self.graph.es[mapper_e[k_edge]]['source'] = u1
                     self.graph.es[mapper_e[k_edge]]['target'] = u2
+
+        # total pages
+        if 'talks' in self.graph.vs.attributes():
+            talks = [len(node['talks']) for node in self.graph.vs]
+            self.graph.vs['talks'] = talks
     
 
     def get_metric_dataframe(self, metric):
@@ -139,6 +128,10 @@ class TalkPagesNetwork(BaseNetwork):
             return df
 
         return pd.DataFrame()
+
+
+    def add_others(self, df):
+        self.calculate_edits(df, 'article')
 
 
     @classmethod
@@ -187,6 +180,16 @@ class TalkPagesNetwork(BaseNetwork):
         desc['max_edge_size'] = 'A strong communication'
         return desc
 
-    
-    def add_others(self, df):
-        self.calculate_edits(df, 'article')
+
+    @classmethod
+    def get_main_class_metric(cls) -> str:
+        if 'Talk Page Edits' in cls.NODE_METRICS_TO_PLOT:
+            return cls.NODE_METRICS_TO_PLOT['Talk Page Edits']
+        else:
+            return ''
+
+
+    @classmethod
+    def get_main_class_key(cls) -> str:
+        metric = cls.get_main_class_metric()
+        return metric['log'] if metric and 'log' in metric else ''

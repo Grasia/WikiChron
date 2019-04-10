@@ -123,15 +123,16 @@ def bind_callbacks(app):
 
         directed = net_factory.is_directed(network_code)
         stylesheet = CytoscapeStylesheet(directed=directed)
-        metric = {}
+        selected_metric = {}
+        size_metric = net_factory.get_main_class_metric(network_code)
 
         if dd_val:
-            metric = net_factory.get_metrics_to_plot(network_code)[dd_val]
+            selected_metric = net_factory.get_metrics_to_plot(network_code)[dd_val]
 
         if not nodes_selc:
-            stylesheet.all_transformations(cy_network, metric)
+            stylesheet.all_transformations(cy_network, selected_metric, size_metric)
         else:
-            stylesheet.highlight_nodes(cy_network, nodes_selc)
+            stylesheet.highlight_nodes(cy_network, nodes_selc, size_metric)
 
         if lb_switch:
             stylesheet.set_label('label')
@@ -147,15 +148,15 @@ def bind_callbacks(app):
         if trigger == 'tg-show-clusters' and clus_switch:
             stylesheet.color_nodes_by_cluster()
             color = True
-        elif trigger == 'dd-color-metric' and metric:
-                stylesheet.color_nodes(cy_network, metric)
+        elif trigger == 'dd-color-metric' and selected_metric:
+                stylesheet.color_nodes(cy_network, selected_metric)
                 color = True
 
         # if neither of those was launch the trigger
         if not color and clus_switch:
             stylesheet.color_nodes_by_cluster()
         elif not color:
-            stylesheet.color_nodes(cy_network, metric)
+            stylesheet.color_nodes(cy_network, selected_metric)
 
         return stylesheet.cy_stylesheet
 

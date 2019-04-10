@@ -69,7 +69,7 @@ class CytoscapeStylesheet():
 
 
 	def color_nodes(self, network, metric):
-		if not metric or not all(k in network for k in (metric['max'], metric['min'])):
+		if not metric or not all(k in metric for k in ('max', 'min', 'key')):
 			self.color_nodes_default(self.N_DEFAULT_COLOR)
 			return
 
@@ -77,8 +77,10 @@ class CytoscapeStylesheet():
 			self.color_nodes_default(self.N_MIN_COLOR)
 			return
 
+		key = metric['log'] if 'log' in metric else metric['key']
+
 		self.cy_stylesheet[0]['style']['background-color'] = \
-			f"mapData({metric['key']}, {network[metric['min']]}, \
+			f"mapData({key}, {network[metric['min']]}, \
 			{network[metric['max']]}, {self.N_MIN_COLOR}, {self.N_MAX_COLOR})"
 
 
@@ -92,43 +94,43 @@ class CytoscapeStylesheet():
 		self.size_font_labels_default()
 
 
-	def size_nodes(self, network):
-		if not all(k in network for k in ('min_node_size', 'max_node_size')):
+	def size_nodes(self, metric):
+		if not metric or not all(k in metric for k in ('min', 'max', 'key')):
 			self.size_nodes_default()
 			return
 
-		if network['min_node_size'] == network['max_node_size']:
+		if metric['min'] == metric['max']:
 			self.size_nodes_default()
 			return
-			
-		# TO FIX 
-		self.cy_stylesheet[0]['style']['height'] = \
-			f"mapData(num_edits_log, {network['min_node_size']}, \
-			{network['max_node_size']}, {self.N_MIN_SIZE}, {self.N_MAX_SIZE})"
+		
+		key = metric['log'] if 'log' in metric else metric['key']
 
-		self.cy_stylesheet[0]['style']['width'] = \
-			f"mapData(num_edits_log, {network['min_node_size']}, \
-			{network['max_node_size']}, {self.N_MIN_SIZE}, {self.N_MAX_SIZE})"
+		self.cy_stylesheet[0]['style']['height'] = f"mapData({key}, {metric['min']}, \
+			{metric['max']}, {self.N_MIN_SIZE}, {self.N_MAX_SIZE})"
 
-		self.size_font_labels(network)
+		self.cy_stylesheet[0]['style']['width'] = f"mapData({key}, {metric['min']}, \
+			{metric['max']}, {self.N_MIN_SIZE}, {self.N_MAX_SIZE})"
+
+		self.size_font_labels(metric)
 
 
 	def size_font_labels_default(self):	
 		self.cy_stylesheet[0]['style']['font-size'] = self.N_DEFAULT_FONT
 
 
-	def size_font_labels(self, network):
-		if not all(k in network for k in ('min_node_size', 'max_node_size')):
+	def size_font_labels(self, metric):
+		if not metric or not all(k in metric for k in ('min', 'max', 'key')):
 			self.size_font_labels_default()
 			return
 
-		if network['min_node_size'] == network['max_node_size']:
+		if metric['min'] == metric['max']:
 			self.size_font_labels_default()
 			return
 
-		self.cy_stylesheet[0]['style']['font-size'] = \
-			f"mapData(num_edits_log, {network['min_node_size']}, \
-			{network['max_node_size']}, {self.N_MIN_FONT}, {self.N_MAX_FONT})"
+		key = metric['log'] if 'log' in metric else metric['key']
+
+		self.cy_stylesheet[0]['style']['font-size'] = f"mapData({key}, {metric['min']}, \
+			{metric['max']}, {self.N_MIN_FONT}, {self.N_MAX_FONT})"
 
 
 	def color_edges(self, _):
@@ -174,17 +176,17 @@ class CytoscapeStylesheet():
 		self.cy_stylesheet.append(di_style)
 
 
-	def all_transformations(self, network, metric):
-		self.color_nodes(network, metric)
-		self.size_nodes(network)
+	def all_transformations(self, network, metric_color, metric_size):
+		self.color_nodes(network, metric_color)
+		self.size_nodes(metric_size)
 		self.color_edges(network)
 		self.set_edges_opacity(network)
 		self.size_edges(network)
 		self.set_edge_label('')
 
 
-	def highlight_nodes(self, network, selc_nodes):
-		self.size_nodes(network)
+	def highlight_nodes(self, network, selc_nodes, metric_size):
+		self.size_nodes(metric_size)
 		self.color_edges(network)
 		self.set_edges_opacity(network)
 		self.size_edges(network)

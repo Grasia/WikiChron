@@ -19,7 +19,27 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
     NAME = 'Base Network'
     CODE = 'base_network'
-    NODE_METRICS_TO_PLOT = {}
+
+    NODE_METRICS_TO_PLOT = {
+        'Article Edits': {
+            'key': 'article_edits',
+            'log': 'article_edits_log',
+            'max': 'max_article_edits',
+            'min': 'min_article_edits'
+        },
+        'Lifespan': {
+            'key': 'abs_birth_int',
+            'max': 'max_abs_birth_int',
+            'min': 'min_abs_birth_int'
+        },
+        'Talk Page Edits': {
+            'key': 'talk_edits',
+            'log': 'talk_edits_log',
+            'max': 'max_talk_edits',
+            'min': 'min_talk_edits'
+        }
+    }
+
     EDGE_METRICS_TO_PLOT = {
         'Weight': {
             'key': 'weight',
@@ -27,6 +47,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             'max': 'max_weight',
         }
     }
+
     NETWORK_STATS = {
         'Nodes': 'num_nodes',
         'Clusters': 'n_communities',
@@ -126,6 +147,19 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         pass
 
 
+    @abc.abstractclassmethod
+    def get_main_class_metric(cls) -> str:
+        """
+        This method should retrun a main class metric (e.g. article edits) 
+        """
+        pass
+
+
+    @abc.abstractclassmethod
+    def get_main_class_key(cls) -> str:
+        pass
+
+
     @classmethod
     def get_network_stats(cls) -> dict:
         return cls.NETWORK_STATS
@@ -184,6 +218,8 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             di_net[attr] = self.graph[attr]
 
         # add max min metrics to plot
+        _max = 0
+        _min = 0
         for metric in metrics_to_plot:
             if metric['key'] in self.graph.vs.attributes():
                 _max = max(self.graph.vs[metric['key']])
@@ -195,12 +231,15 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             if 'log' in metric.keys():
                 _max = int(log(_max+1)*100)
                 _min = int(log(_min+1)*100)
-                print(f"max-{metric['key']}: {_max}")
 
             di_net[metric['max']] = _max
             di_net[metric['min']] = _min
 
+        metric_size = self.get_main_class_key()
+        if metric_size:
+            di_net['size'] = metric_size
         di_net['network'] = network
+
         return di_net
 
 
@@ -411,6 +450,10 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         This function adds as a vertex attr the edits from other namespace
         type_e parameter only accept {talk, article, user_talk}
         """
+        allowed_types = {'talk', 'article', 'user_talk'}
+        if type_e not in allowed_types:
+            raise Exception(f"Not allowed type: {type_e}, it must be {allowed_types}")
+
         if 'label' not in self.graph.vs.attributes():
             return
 
@@ -423,17 +466,20 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             key = f'{type_e}_{key}'
         elif type_e == 'user_talk':
             raise Exception(f'type: {type_e} is not implemented yet')
-            # dff = self.remove_non_user_talk_data(df)
-            # key = f'{type_e}_{key}'
         else:
             raise Exception(f'type: {type_e} is not defined')
 
         mapper = {self.graph.vs[i]['label']: i for i in range(self.graph.vcount())}
         edits = [0 for i in range(self.graph.vcount())]
+        pages = [set() for _ in range(self.graph.vcount())]
         for _, row in dff.iterrows():
             if row['contributor_name'] in mapper.keys():
                 edits[mapper[row['contributor_name']]] += 1
+                pages[mapper[row['contributor_name']]].add(int(row['page_id']))
 
+        sizer = lambda x: len(x)
+        pages = list(map(sizer, pages))
+        self.graph.vs[f"{type_e}s"] = pages
         self.graph.vs[key] = edits
 
 

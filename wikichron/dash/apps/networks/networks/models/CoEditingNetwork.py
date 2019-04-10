@@ -40,25 +40,7 @@ class CoEditingNetwork(BaseNetwork):
         'Page Rank': 'page_rank'
     }
 
-    NODE_METRICS_TO_PLOT = {
-        'Article Edits': {
-            'key': 'num_edits',
-            'log': 'num_edits_log',
-            'max': 'max_node_size',
-            'min': 'min_node_size'
-        },
-        'Lifespan': {
-            'key': 'abs_birth_int',
-            'max': 'max_abs_birth_int',
-            'min': 'min_abs_birth_int'
-        },
-        'Talk Edits': {
-            'key': 'talk_edits',
-            'log': 'talk_edits_log',
-            'max': 'max_talk_edits',
-            'min': 'min_talk_edits'
-        }
-    }
+    #NODE_METRICS_TO_PLOT = {}
 
     USER_INFO = {
         #'User ID': 'id',
@@ -91,9 +73,11 @@ class CoEditingNetwork(BaseNetwork):
                 self.graph.vs[count]['id'] = int(r['contributor_id'])
                 self.graph.vs[count]['label'] = r['contributor_name']
                 self.graph.vs[count]['num_edits'] = 0
+                self.graph.vs[count]['articles'] = {int(r['page_id'])}
                 count += 1
 
             self.graph.vs[mapper_v[int(r['contributor_id'])]]['num_edits'] += 1
+            self.graph.vs[mapper_v[int(r['contributor_id'])]]['articles'].add(int(r['page_id']))
 
             # A page gets serveral contributors
             if not int(r['page_id']) in user_per_page:
@@ -122,6 +106,11 @@ class CoEditingNetwork(BaseNetwork):
                     self.graph.es[mapper_e[k_edge]]['source'] = u1
                     self.graph.es[mapper_e[k_edge]]['target'] = u2
 
+        # total pages
+        if 'articles' in self.graph.vs.attributes():
+            articles = [len(node['articles']) for node in self.graph.vs]
+            self.graph.vs['articles'] = articles
+
 
     def get_metric_dataframe(self, metric):
         if self.AVAILABLE_METRICS[metric] in self.graph.vs.attributes()\
@@ -134,6 +123,10 @@ class CoEditingNetwork(BaseNetwork):
             return df
 
         return pd.DataFrame()
+
+
+    def add_others(self, df):
+        self.calculate_edits(df, 'talk')
 
 
     @classmethod
@@ -183,5 +176,15 @@ class CoEditingNetwork(BaseNetwork):
         return desc
 
 
-    def add_others(self, df):
-        self.calculate_edits(df, 'talk')
+    @classmethod
+    def get_main_class_metric(cls) -> str:
+        if 'Article Edits' in cls.NODE_METRICS_TO_PLOT:
+            return cls.NODE_METRICS_TO_PLOT['Article Edits']
+        else:
+            return ''
+
+
+    @classmethod
+    def get_main_class_key(cls) -> str:
+        metric = cls.get_main_class_metric()
+        return metric['log'] if metric and 'log' in metric else ''
