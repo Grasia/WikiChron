@@ -160,8 +160,9 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             if metric['key'] == 'abs_birth_int':
                 break
         metrics_to_plot.remove(metric)
-        di_net[metric['max']] = max(self.graph.vs['abs_birth_int'])
-        di_net[metric['min']] = min(self.graph.vs['abs_birth_int'])
+        if 'abs_birth_int' in self.graph.vs.attributes():
+            di_net[metric['max']] = max(self.graph.vs['abs_birth_int'])
+            di_net[metric['min']] = min(self.graph.vs['abs_birth_int'])
         ###########################
 
         # node attrs
