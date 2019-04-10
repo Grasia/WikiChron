@@ -100,7 +100,7 @@ class CytoscapeStylesheet():
 		if network['min_node_size'] == network['max_node_size']:
 			self.size_nodes_default()
 			return
-		print(f"\n\nmax: {network['max_node_size']}\nmin: {network['min_node_size']}\n\n")
+			
 		# TO FIX 
 		self.cy_stylesheet[0]['style']['height'] = \
 			f"mapData(num_edits_log, {network['min_node_size']}, \
