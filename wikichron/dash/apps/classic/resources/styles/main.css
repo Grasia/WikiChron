@@ -1,5 +1,13 @@
 /* Main */
 
+#main {
+    background-color: #F3F3F3;
+}
+
+#graphs {
+    margin-top: 3rem;
+}
+
 #icons-bar {
     display: flex;
     justify-content: space-between;
@@ -40,7 +48,6 @@
 
 .selector {
     padding: 10px;
-    background: #ededed78;
     border-radius: 8px;
 }
 
@@ -102,6 +109,8 @@
     margin-left: 5px;
 }
 
+/* Header */
+
 #header {
     height: 135px;
     background-size: cover;
@@ -112,11 +121,27 @@
     margin: 0 25px 0 25px;
 }
 
+#selection-div hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
 #header hr {
     margin-top: 1rem;
     margin-bottom: 1.5rem;
 }
 
+#selection-div {
+    margin-top: -3rem;
+    border: 1px solid #E8E8E8;
+    border-radius: 8px;
+    padding: 20px 20px 20px 20px;
+    background-color: white;
+}
+
+#title-img {
+    height: 5rem;
+}
 
 @media all {
     .main-root-header {

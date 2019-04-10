@@ -58,7 +58,7 @@ a{
  *****************************************************************/
 .pane {
     background-color: white;
-    border-radius: 0.3rem;
+    border-radius: 8px;
     margin: 1rem 2rem 1rem 2rem;
     padding: 1.5rem 2rem 1.5rem 2rem;
 }
@@ -103,7 +103,7 @@ a{
 /******************************************************************/
 
 /*****************************************************************
- * Root header conf and its content (img + icons + A("Go Back..."))
+ * Header conf and its content (img + icons + A("Go Back..."))
  *****************************************************************/
 /* Go back and icons-bar content */
 .root-header-elems {
@@ -114,10 +114,8 @@ a{
     padding-bottom: 2rem;
 }
 
-.title-img {
+#title-img {
     height: 8rem;
-    width: 25rem;
-    margin-left: 5rem;
 }
 
 .icons-bar {
@@ -140,6 +138,43 @@ a{
 #switch-network {
     margin-left: 2.5rem;
 }
+
+.main-root-header {
+    background-size: cover;
+}
+
+#header {
+    height: 135px;
+    background-size: cover;
+    padding: 22px 20px 20px 20px;
+}
+
+
+#header hr {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+
+@media all {
+    .main-root-header {
+        background-image: url("/static/assets/header_background.png");
+    }
+}
+
+@media all and (min-width: 1441px) {
+    .main-root-header {
+        background-image: url("/static/assets/header_background_1x.png");
+    }
+}
+
+@media all and (min-width: 1921px){
+    .main-root-header {
+        background-image: url("/static/assets/header_background_2x.png");
+    }
+}
+
+
 /******************************************************************/
 
 /*****************************************************************
@@ -561,28 +596,4 @@ th.dash-header > div {
 
 .foot-container > p{
     margin-left: 1rem;
-}
-  /*****************************************************************/
-
-.main-root-header {
-    background-size: cover;
-}
-
-
-@media all {
-    .main-root-header {
-        background-image: url("/static/assets/header_background.png");
-    }
-}
-
-@media all and (min-width: 1441px) {
-    .main-root-header {
-        background-image: url("/static/assets/header_background_1x.png");
-    }
-}
-
-@media all and (min-width: 1921px){
-    .main-root-header {
-        background-image: url("/static/assets/header_background_2x.png");
-    }
 }

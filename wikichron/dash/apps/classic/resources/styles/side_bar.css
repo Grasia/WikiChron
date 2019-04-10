@@ -108,7 +108,7 @@ p#fold-button {
     border: None;
     height: 57px;
     width: 256px;
-    border-radius: 4px;
+    border-radius: 8px;
     background-color: #49A5E6;
     color : white;
     font-family: 'Roboto', sans-serif;
