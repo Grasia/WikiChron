@@ -102,6 +102,12 @@ def networks_app():
                                 )
 
 
+@server_bp.route('/app/')
+def redirect_app_to_classic():
+    print('Redirecting user from old endpoint "/app" to /classic/app...')
+    return flask.redirect('/classic/app/?{}'.format(bytes.decode(request.query_string)), code=302)
+
+
 #--------- BEGIN AUX SERVERS (non pure flask / jinja / html / http servers) ---#
 
 #--- JS server ----#
