@@ -10,7 +10,7 @@ import pandas as pd
 from igraph import Graph, ClusterColoringPalette, VertexClustering,\
     WEAK
 from colormap.colors import rgb2hex
-from math import log1p as log
+from math import log10 as log
 
 from .fix_dendrogram import fix_dendrogram
 
@@ -151,19 +151,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         network = []
         metrics_to_plot = [val for key, val in self.NODE_METRICS_TO_PLOT.items()]
         metrics_to_plot = metrics_to_plot + [val for key, val in self.EDGE_METRICS_TO_PLOT.items()]
-        keys_to_plot = {metric['key'] for metric in metrics_to_plot}
-
-        #### TO FIX ###########################
-        keys_to_plot.remove('abs_birth_int')
-        metric = None
-        for metric in metrics_to_plot:
-            if metric['key'] == 'abs_birth_int':
-                break
-        metrics_to_plot.remove(metric)
-        if 'abs_birth_int' in self.graph.vs.attributes():
-            di_net[metric['max']] = max(self.graph.vs['abs_birth_int'])
-            di_net[metric['min']] = min(self.graph.vs['abs_birth_int'])
-        ###########################
+        keys_to_plot = {metric['key'] for metric in metrics_to_plot if 'log' in metric.keys()}
 
         # node attrs
         for node in self.graph.vs:
@@ -172,7 +160,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
                 val = node[attr]
                 
                 if attr in keys_to_plot:
-                    data['data'][f'{attr}_log'] = int(log(val)*10)      
+                    data['data'][f'{attr}_log'] = int(log(val+1)*100)
 
                 data['data'][attr] = val
 
@@ -186,7 +174,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
                 if attr == 'id':
                     continue
                 if attr in keys_to_plot:
-                    data['data'][f'{attr}_log'] = int(log(val)*10)
+                    data['data'][f'{attr}_log'] = int(log(val+1)*100)
 
                 data['data'][attr] = val
             network.append(data)
@@ -196,8 +184,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             di_net[attr] = self.graph[attr]
 
         # add max min metrics to plot
-        _max = 0
-        _min = 0
         for metric in metrics_to_plot:
             if metric['key'] in self.graph.vs.attributes():
                 _max = max(self.graph.vs[metric['key']])
@@ -206,8 +192,13 @@ class BaseNetwork(metaclass=abc.ABCMeta):
                 _max = max(self.graph.es[metric['key']])
                 _min = min(self.graph.es[metric['key']])
 
-            di_net[metric['max']] = int(log(_max)*10)
-            di_net[metric['min']] = int(log(_min)*10)
+            if 'log' in metric.keys():
+                _max = int(log(_max+1)*100)
+                _min = int(log(_min+1)*100)
+                print(f"max-{metric['key']}: {_max}")
+
+            di_net[metric['max']] = _max
+            di_net[metric['min']] = _min
 
         di_net['network'] = network
         return di_net

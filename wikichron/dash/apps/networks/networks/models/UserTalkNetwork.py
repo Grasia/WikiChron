@@ -49,6 +49,7 @@ class UserTalkNetwork(BaseNetwork):
     NODE_METRICS_TO_PLOT = {
         'Edits in its own page': {
             'key': 'num_edits',
+            'log': 'num_edits_log',
             'max': 'max_node_size',
             'min': 'min_node_size'
         },
@@ -59,11 +60,13 @@ class UserTalkNetwork(BaseNetwork):
         },
         'Article Edits': {
             'key': 'article_edits',
+            'log': 'article_edits_log',
             'max': 'max_article_edits',
             'min': 'min_article_edits'
         },
         'Talk Edits': {
             'key': 'talk_edits',
+            'log': 'talk_edits_log',
             'max': 'max_talk_edits',
             'min': 'min_talk_edits'
         }

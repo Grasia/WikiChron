@@ -47,6 +47,7 @@ class TalkPagesNetwork(BaseNetwork):
     NODE_METRICS_TO_PLOT = {
         'Talk Page Edits': {
             'key': 'num_edits',
+            'log': 'num_edits_log',
             'max': 'max_node_size',
             'min': 'min_node_size'
         },
@@ -57,6 +58,7 @@ class TalkPagesNetwork(BaseNetwork):
         },
         'Article Edits': {
             'key': 'article_edits',
+            'log': 'article_edits_log',
             'max': 'max_article_edits',
             'min': 'min_article_edits'
         }

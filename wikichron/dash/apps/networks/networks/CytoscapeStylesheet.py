@@ -11,8 +11,8 @@
 class CytoscapeStylesheet():
 
 	N_DEFAULT_COLOR = '#78909C'
-	N_MIN_COLOR = '#1A237E' #'#64B5F6'
-	N_MAX_COLOR = '#F3E5F5' #'#0D47A1'
+	N_MIN_COLOR = '#F3E5F5'
+	N_MAX_COLOR = '#1A237E'
 	N_DEFAULT_SIZE = '10'
 	N_MIN_SIZE = '10'
 	N_MAX_SIZE = '60'
@@ -26,7 +26,7 @@ class CytoscapeStylesheet():
 	E_DEFAULT_SIZE = '1'
 	E_MIN_SIZE = '1'
 	E_MAX_SIZE = '10'
-	E_DEFAULT_OPACITY = '0.8'
+	E_DEFAULT_OPACITY = '1'
 	HIGHLIGHT_NODE = {
 		"background-color": "#B10DC9",
 		"border-color": "black",
@@ -127,7 +127,7 @@ class CytoscapeStylesheet():
 			return
 
 		self.cy_stylesheet[0]['style']['font-size'] = \
-			f"mapData(num_edits, {network['min_node_size']}, \
+			f"mapData(num_edits_log, {network['min_node_size']}, \
 			{network['max_node_size']}, {self.N_MIN_FONT}, {self.N_MAX_FONT})"
 
 
@@ -216,7 +216,10 @@ class CytoscapeStylesheet():
                     'font-size': cls.N_DEFAULT_FONT,
                     'background-color': cls.N_DEFAULT_COLOR,
                     'height': cls.N_DEFAULT_SIZE,
-                    'width': cls.N_DEFAULT_SIZE
+                    'width': cls.N_DEFAULT_SIZE,
+					'border-color': 'black',
+					'border-width': 1,
+					'border-opacity': 1,
                 }
             },
             {

@@ -43,6 +43,7 @@ class CoEditingNetwork(BaseNetwork):
     NODE_METRICS_TO_PLOT = {
         'Article Edits': {
             'key': 'num_edits',
+            'log': 'num_edits_log',
             'max': 'max_node_size',
             'min': 'min_node_size'
         },
@@ -53,6 +54,7 @@ class CoEditingNetwork(BaseNetwork):
         },
         'Talk Edits': {
             'key': 'talk_edits',
+            'log': 'talk_edits_log',
             'max': 'max_talk_edits',
             'min': 'min_talk_edits'
         }
