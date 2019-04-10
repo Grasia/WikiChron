@@ -19,7 +19,7 @@ class CoEditingNetwork(BaseNetwork):
         - Node:
             * id: user id on the wiki
             * label: the user name with id contributor_id on the wiki
-            * num_edits: the number of edit in the whole wiki
+            * article_edits: the number of edit in the whole wiki
             * abs_birth: the first edit in the whole network
 
         - Edge:
@@ -35,7 +35,7 @@ class CoEditingNetwork(BaseNetwork):
 
     # only metrics for the ranking
     AVAILABLE_METRICS = {
-        'Article Edits': 'num_edits',
+        'Article Edits': 'article_edits',
         'Betweenness': 'betweenness',
         'Page Rank': 'page_rank'
     }
@@ -72,11 +72,11 @@ class CoEditingNetwork(BaseNetwork):
                 mapper_v[int(r['contributor_id'])] = count
                 self.graph.vs[count]['id'] = int(r['contributor_id'])
                 self.graph.vs[count]['label'] = r['contributor_name']
-                self.graph.vs[count]['num_edits'] = 0
+                self.graph.vs[count]['article_edits'] = 0
                 self.graph.vs[count]['articles'] = {int(r['page_id'])}
                 count += 1
 
-            self.graph.vs[mapper_v[int(r['contributor_id'])]]['num_edits'] += 1
+            self.graph.vs[mapper_v[int(r['contributor_id'])]]['article_edits'] += 1
             self.graph.vs[mapper_v[int(r['contributor_id'])]]['articles'].add(int(r['page_id']))
 
             # A page gets serveral contributors

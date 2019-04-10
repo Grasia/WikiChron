@@ -10,7 +10,7 @@ import pandas as pd
 from igraph import Graph, ClusterColoringPalette, VertexClustering,\
     WEAK
 from colormap.colors import rgb2hex
-from math import log10 as log
+from math import log1p as log
 
 from .fix_dendrogram import fix_dendrogram
 
@@ -194,7 +194,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
                 val = node[attr]
                 
                 if attr in keys_to_plot:
-                    data['data'][f'{attr}_log'] = int(log(val+1)*100)
+                    data['data'][f'{attr}_log'] = int(log(val)*10)
 
                 data['data'][attr] = val
 
@@ -208,7 +208,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
                 if attr == 'id':
                     continue
                 if attr in keys_to_plot:
-                    data['data'][f'{attr}_log'] = int(log(val+1)*100)
+                    data['data'][f'{attr}_log'] = int(log(val)*10)
 
                 data['data'][attr] = val
             network.append(data)
@@ -229,8 +229,8 @@ class BaseNetwork(metaclass=abc.ABCMeta):
                 _min = min(self.graph.es[metric['key']])
 
             if 'log' in metric.keys():
-                _max = int(log(_max+1)*100)
-                _min = int(log(_min+1)*100)
+                _max = int(log(_max)*10)
+                _min = int(log(_min)*10)
 
             di_net[metric['max']] = _max
             di_net[metric['min']] = _min
