@@ -580,4 +580,3 @@ class BaseNetwork(metaclass=abc.ABCMeta):
                 node['birth_value'] = max_date
         
         self.graph.vs['birth_value'] = list(map(inverter, self.graph.vs['birth_value']))
-        print(self.graph.vs['birth_value'])
