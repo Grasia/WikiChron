@@ -9,6 +9,7 @@
    Copyright 2017-2019 Youssef 'FRYoussef' El Faqir El Rhazoui <f.r.youssef@hotmail.com>
 """
 
+from .BaseNetwork import BaseNetwork
 from .CoEditingNetwork import CoEditingNetwork
 from .TalkPagesNetwork import TalkPagesNetwork
 from .UserTalkNetwork import UserTalkNetwork
@@ -54,24 +55,17 @@ def get_node_name(network_code):
 
 def get_available_metrics(network_code):
     if network_code == CoEditingNetwork.CODE:
-        return CoEditingNetwork.get_available_metrics()
+        return BaseNetwork.get_available_metrics(CoEditingNetwork.DIRECTED)
     elif network_code == TalkPagesNetwork.CODE:
-        return TalkPagesNetwork.get_available_metrics()
+        return BaseNetwork.get_available_metrics(TalkPagesNetwork.DIRECTED)
     elif network_code == UserTalkNetwork.CODE:
-        return UserTalkNetwork.get_available_metrics()
+        return BaseNetwork.get_available_metrics(UserTalkNetwork.DIRECTED)
     else:
         raise Exception("Something went bad. Missing network type selection.")
 
 
 def get_metrics_to_plot(network_code):
-    if network_code == CoEditingNetwork.CODE:
-        return CoEditingNetwork.get_metrics_to_plot()
-    elif network_code == TalkPagesNetwork.CODE:
-        return TalkPagesNetwork.get_metrics_to_plot()
-    elif network_code == UserTalkNetwork.CODE:
-        return UserTalkNetwork.get_metrics_to_plot()
-    else:
-        raise Exception("Something went bad. Missing network type selection.")
+    return BaseNetwork.get_metrics_to_plot()
 
 
 def is_directed(network_code) -> bool:

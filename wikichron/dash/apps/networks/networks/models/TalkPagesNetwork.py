@@ -140,11 +140,6 @@ class TalkPagesNetwork(BaseNetwork):
 
 
     @classmethod
-    def get_available_metrics(cls) -> dict:
-        return cls.AVAILABLE_METRICS
-
-
-    @classmethod
     def get_user_info(cls) -> dict:
         return cls.USER_INFO
 
@@ -152,11 +147,6 @@ class TalkPagesNetwork(BaseNetwork):
     @classmethod
     def get_node_name(cls) -> dict:
         return cls.NODE_NAME
-
-
-    @classmethod
-    def get_metrics_to_plot(cls) -> dict:
-        return cls.NODE_METRICS_TO_PLOT
 
 
     @classmethod

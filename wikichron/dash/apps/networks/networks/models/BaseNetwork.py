@@ -20,6 +20,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
     NAME = 'Base Network'
     CODE = 'base_network'
+    DIRECTED = False
 
 # CHANGE NAME
     NODE_METRICS_TO_PLOT = {
@@ -55,6 +56,9 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 # TO FIX
 # This param will be removed, u should use NODE_METRICS_TO_PLOT
     AVAILABLE_METRICS = {
+        'Degree': 'degree',
+        'In-degree': 'indegree',
+        'Out-degree': 'outdegree',
         'Betweenness': 'betweenness',
         'Page rank': 'page_rank',
         'Edited articles': 'articles',
@@ -127,14 +131,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         """
         pass
 
-    
-    @abc.abstractclassmethod
-    def get_available_metrics(self) -> dict:
-        """
-        Return a dict with the metrics
-        """
-        pass
-
 
     @abc.abstractclassmethod
     def get_user_info(self) -> dict:
@@ -146,17 +142,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
     @abc.abstractclassmethod
     def get_node_name(self) -> dict:
-        pass
-
-
-    @abc.abstractclassmethod
-    def get_metrics_to_plot(cls) -> dict:
-        """
-        Returns a dict with the metrics, the dict must get the following structure:
-            dict = {
-                'Metric name well formatted': 'a vertex key'
-            }
-        """
         pass
 
 
@@ -190,6 +175,33 @@ class BaseNetwork(metaclass=abc.ABCMeta):
     @classmethod
     def get_network_stats(cls) -> dict:
         return cls.NETWORK_STATS
+
+
+    @classmethod
+    def get_available_metrics(cls, directed) -> dict:
+        """
+        Return a dict with the metrics
+        """
+        metrics = cls.AVAILABLE_METRICS.copy()
+        if directed:
+            del metrics['Degree']
+        else:
+            del metrics['In-degree']
+            del metrics['Out-degree']
+
+        return metrics
+
+
+    @classmethod
+    def get_metrics_to_plot(cls) -> dict:
+        """
+        Returns a dict with the metrics, the dict must get the following structure:
+            dict = {
+                'Metric name well formatted': 'a vertex key'
+            }
+        """
+        return cls.NODE_METRICS_TO_PLOT
+
 
 
     def add_graph_attrs(self):
@@ -311,22 +323,28 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             self.graph['gini_betweenness'] = f"{gini:.4f}"
 
 
+    def calculate_degree(self):
+        if self.graph.is_directed() and 'indegree' not in self.graph.vs:
+            self.graph.vs['indegree'] = self.graph.indegree()
+            self.graph.vs['outdegree'] = self.graph.outdegree()
+        elif 'degree' not in self.graph.vs:
+            divider = lambda x: x//2
+            degree = self.graph.degree()
+            degree = list(map(divider, degree))
+            self.graph.vs['degree'] = degree
+
+
     def calculate_gini_degree(self):
         if self.graph.is_directed() and 'gini_indegree' not in\
             self.graph.attributes():
 
-            in_degree = self.graph.indegree()
-            gini = ineq.gini_corrected(in_degree)
+            gini = ineq.gini_corrected(self.graph.vs['indegree'])
             self.graph['gini_indegree'] = f"{gini:.4f}"
-            out_degree = self.graph.outdegree()
-            gini = ineq.gini_corrected(out_degree)
+            gini = ineq.gini_corrected(self.graph.vs['outdegree'])
             self.graph['gini_outdegree'] = f"{gini:.4f}"
 
         elif 'gini_degree' not in self.graph.attributes():
-            divider = lambda x: x//2
-            degree = self.graph.degree()
-            degree = list(map(divider, degree))
-            gini = ineq.gini_corrected(degree)
+            gini = ineq.gini_corrected(self.graph.vs['degree'])
             self.graph['gini_degree'] = f"{gini:.4f}"
 
 
@@ -391,6 +409,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         self.calculate_page_rank()
         self.calculate_betweenness()
         self.calculate_gini_betweenness()
+        self.calculate_degree()
         self.calculate_gini_degree()
         self.calculate_assortativity_degree()
         self.calculate_communities()
@@ -548,7 +567,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             dff = df[node['label'] == df['contributor_name']]
             if not dff.empty:
                 row = dff.iloc[0]
-                node['abs_birth'] = datetime.strftime(row['timestamp'], "%Y/%b/%d")
+                node['abs_birth'] = datetime.strftime(row['timestamp'], "%d/%b/%Y")
                 node['abs_birth_int'] = int(datetime.strptime(
                     str(row['timestamp']), "%Y-%m-%d %H:%M:%S").strftime('%s'))
 
