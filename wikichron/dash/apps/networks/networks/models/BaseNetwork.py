@@ -24,10 +24,10 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
 # CHANGE NAME
     NODE_METRICS_TO_PLOT = {
-        'Lifespan': {
-            'key': 'abs_birth_int',
-            'max': 'max_abs_birth_int',
-            'min': 'min_abs_birth_int'
+        'Tenure': {
+            'key': 'birth_value',
+            'max': 'max_birth_value',
+            'min': 'min_birth_value'
         },
         'Edited articles': {
             'key': 'articles',
@@ -35,16 +35,16 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             'max': 'max_articles',
             'min': 'min_articles'
         },
-        'Edited talk pages': {
-            'key': 'talks',
-            'max': 'max_talks',
-            'min': 'min_talks'
-        },
         'Article edits': {
             'key': 'article_edits',
             'log': 'article_edits_log',
             'max': 'max_article_edits',
             'min': 'min_article_edits'
+        },
+        'Edited talk pages': {
+            'key': 'talks',
+            'max': 'max_talks',
+            'min': 'min_talks'
         },
         'Talk page edits': {
             'key': 'talk_edits',
@@ -62,8 +62,8 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         'Betweenness': 'betweenness',
         'Page rank': 'page_rank',
         'Edited articles': 'articles',
-        'Edited talk pages': 'talks',
         'Article edits': 'article_edits',
+        'Edited talk pages': 'talks',
         'Talk page edits': 'talk_edits',
     }
 
@@ -77,13 +77,13 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
     NETWORK_STATS = {
         'Nodes': 'num_nodes',
-        'Connected components': 'components',
-        'Edges': 'num_edges',
         'Diameter': 'diameter',
+        'Edges': 'num_edges',
         'Density': 'density',
-        'Gini of betweenness': 'gini_betweenness',
-        'Assortativity degree': 'assortativity_degree',
+        'Connected components': 'components',
         'Clusters': 'n_communities',
+        'Assortativity degree': 'assortativity_degree',
+        'Gini of betweenness': 'gini_betweenness',
         'Gini of degree': 'gini_degree',
         'Gini of in-degree': 'gini_indegree',
         'Gini of out-degree': 'gini_outdegree',
@@ -562,18 +562,22 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         """
         Calculates the birth of all the vertex without filter_by_time 
         """
+        inverter = lambda x: 1/x*1000
         max_date = 0
         for node in self.graph.vs:
             dff = df[node['label'] == df['contributor_name']]
             if not dff.empty:
                 row = dff.iloc[0]
-                node['abs_birth'] = datetime.strftime(row['timestamp'], "%d/%b/%Y")
-                node['abs_birth_int'] = int(datetime.strptime(
+                node['birth'] = datetime.strftime(row['timestamp'], "%d/%b/%Y")
+                node['birth_value'] = int(datetime.strptime(
                     str(row['timestamp']), "%Y-%m-%d %H:%M:%S").strftime('%s'))
 
                 # this is a weak solution to avoid users with no activity
-                if max_date < node['abs_birth_int']:
-                    max_date = node['abs_birth_int']
+                if max_date < node['birth_value']:
+                    max_date = node['birth_value']
             else:
-                node['abs_birth'] = 'Not available'
-                node['abs_birth_int'] = max_date
+                node['birth'] = 'Not available'
+                node['birth_value'] = max_date
+        
+        self.graph.vs['birth_value'] = list(map(inverter, self.graph.vs['birth_value']))
+        print(self.graph.vs['birth_value'])

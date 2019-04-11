@@ -60,7 +60,7 @@ class UserTalkNetwork(BaseNetwork):
 
     USER_INFO = {
         #'User ID': 'id',
-        'Birth': 'abs_birth',
+        'Birth': 'birth',
         'Cluster #': 'cluster'
     }
 
