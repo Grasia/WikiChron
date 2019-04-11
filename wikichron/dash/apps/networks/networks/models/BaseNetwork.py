@@ -80,6 +80,9 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         'Gini of betweenness': 'gini_betweenness',
         'Assortativity degree': 'assortativity_degree',
         'Clusters': 'n_communities',
+        'Gini of degree': 'gini_degree',
+        'Gini of in-degree': 'gini_indegree',
+        'Gini of out-degree': 'gini_outdegree',
     }
 
 
@@ -301,9 +304,30 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
 
     def calculate_gini_betweenness(self):
-        if 'betweenness' in self.graph.vs.attributes():
+        if 'betweenness' in self.graph.vs.attributes() and 'gini_betweenness'\
+            not in self.graph.vs.attributes():
+
             gini = ineq.gini_corrected(self.graph.vs['betweenness'])
             self.graph['gini_betweenness'] = f"{gini:.4f}"
+
+
+    def calculate_gini_degree(self):
+        if self.graph.is_directed() and 'gini_indegree' not in\
+            self.graph.vs.attributes():
+
+            in_degree = self.graph.indegree()
+            gini = ineq.gini_corrected(in_degree)
+            self.graph['gini_indegree'] = f"{gini:.4f}"
+            out_degree = self.graph.outdegree()
+            gini = ineq.gini_corrected(out_degree)
+            self.graph['gini_outdegree'] = f"{gini:.4f}"
+
+        elif 'gini_degree' not in self.graph.vs.attributes():
+            divider = lambda x: x//2
+            degree = self.graph.degree()
+            degree = list(map(divider, degree))
+            gini = ineq.gini_corrected(degree)
+            self.graph['gini_degree'] = f"{gini:.4f}"
 
 
     def calculate_communities(self):
@@ -367,6 +391,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         self.calculate_page_rank()
         self.calculate_betweenness()
         self.calculate_gini_betweenness()
+        self.calculate_gini_degree()
         self.calculate_assortativity_degree()
         self.calculate_communities()
         self.calculate_density()

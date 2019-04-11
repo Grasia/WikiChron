@@ -416,6 +416,9 @@ def bind_callbacks(app):
         i = 0
         group = []
         for k, val in stats.items():
+            if val not in cy_network:
+                continue
+                
             group.append(html.Div(children=[
                 html.P(f'{k}:'),
                 html.P(cy_network[val])
