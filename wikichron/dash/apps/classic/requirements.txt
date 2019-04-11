@@ -19,7 +19,7 @@ grasia-dash-components==0.3.4
 gunicorn==19.9.0
 idna==2.7
 ipython-genutils==0.2.0
-inequality-coefficients==1.1.1
+inequality-coefficients==1.2.2
 itsdangerous==1.1.0
 Jinja2==2.10
 jsonschema==3.0.1
