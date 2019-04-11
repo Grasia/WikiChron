@@ -305,7 +305,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
     def calculate_gini_betweenness(self):
         if 'betweenness' in self.graph.vs.attributes() and 'gini_betweenness'\
-            not in self.graph.vs.attributes():
+            not in self.graph.attributes():
 
             gini = ineq.gini_corrected(self.graph.vs['betweenness'])
             self.graph['gini_betweenness'] = f"{gini:.4f}"
@@ -313,7 +313,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
     def calculate_gini_degree(self):
         if self.graph.is_directed() and 'gini_indegree' not in\
-            self.graph.vs.attributes():
+            self.graph.attributes():
 
             in_degree = self.graph.indegree()
             gini = ineq.gini_corrected(in_degree)
@@ -322,7 +322,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             gini = ineq.gini_corrected(out_degree)
             self.graph['gini_outdegree'] = f"{gini:.4f}"
 
-        elif 'gini_degree' not in self.graph.vs.attributes():
+        elif 'gini_degree' not in self.graph.attributes():
             divider = lambda x: x//2
             degree = self.graph.degree()
             degree = list(map(divider, degree))
