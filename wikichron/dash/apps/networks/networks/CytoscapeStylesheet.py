@@ -94,43 +94,43 @@ class CytoscapeStylesheet():
 		self.size_font_labels_default()
 
 
-	def size_nodes(self, metric):
+	def size_nodes(self, network, metric):
 		if not metric or not all(k in metric for k in ('min', 'max', 'key')):
 			self.size_nodes_default()
 			return
 
-		if metric['min'] == metric['max']:
+		if network[metric['max']] == network[metric['min']]:
 			self.size_nodes_default()
 			return
 		
 		key = metric['log'] if 'log' in metric else metric['key']
 
-		self.cy_stylesheet[0]['style']['height'] = f"mapData({key}, {metric['min']}, \
-			{metric['max']}, {self.N_MIN_SIZE}, {self.N_MAX_SIZE})"
+		self.cy_stylesheet[0]['style']['height'] = f"mapData({key}, {network[metric['min']]}, \
+			{network[metric['max']]}, {self.N_MIN_SIZE}, {self.N_MAX_SIZE})"
 
-		self.cy_stylesheet[0]['style']['width'] = f"mapData({key}, {metric['min']}, \
-			{metric['max']}, {self.N_MIN_SIZE}, {self.N_MAX_SIZE})"
+		self.cy_stylesheet[0]['style']['width'] = f"mapData({key}, {network[metric['min']]}, \
+			{network[metric['max']]}, {self.N_MIN_SIZE}, {self.N_MAX_SIZE})"
 
-		self.size_font_labels(metric)
+		self.size_font_labels(network, metric)
 
 
 	def size_font_labels_default(self):	
 		self.cy_stylesheet[0]['style']['font-size'] = self.N_DEFAULT_FONT
 
 
-	def size_font_labels(self, metric):
+	def size_font_labels(self, network, metric):
 		if not metric or not all(k in metric for k in ('min', 'max', 'key')):
 			self.size_font_labels_default()
 			return
 
-		if metric['min'] == metric['max']:
+		if network[metric['max']] == network[metric['min']]:
 			self.size_font_labels_default()
 			return
 
 		key = metric['log'] if 'log' in metric else metric['key']
 
-		self.cy_stylesheet[0]['style']['font-size'] = f"mapData({key}, {metric['min']}, \
-			{metric['max']}, {self.N_MIN_FONT}, {self.N_MAX_FONT})"
+		self.cy_stylesheet[0]['style']['font-size'] = f"mapData({key}, {network[metric['min']]}, \
+			{network[metric['max']]}, {self.N_MIN_FONT}, {self.N_MAX_FONT})"
 
 
 	def color_edges(self, _):
@@ -155,7 +155,7 @@ class CytoscapeStylesheet():
 			return
 
 		self.cy_stylesheet[1]['style']['width'] = \
-			f"mapData(weight_log, {network['min_weight']}, \
+			f"mapData(weight, {network['min_weight']}, \
 			{network['max_weight']}, {self.E_MIN_SIZE}, {self.E_MAX_SIZE})"
 
 
@@ -178,7 +178,7 @@ class CytoscapeStylesheet():
 
 	def all_transformations(self, network, metric_color, metric_size):
 		self.color_nodes(network, metric_color)
-		self.size_nodes(metric_size)
+		self.size_nodes(network, metric_size)
 		self.color_edges(network)
 		self.set_edges_opacity(network)
 		self.size_edges(network)
@@ -186,7 +186,7 @@ class CytoscapeStylesheet():
 
 
 	def highlight_nodes(self, network, selc_nodes, metric_size):
-		self.size_nodes(metric_size)
+		self.size_nodes(network, metric_size)
 		self.color_edges(network)
 		self.set_edges_opacity(network)
 		self.size_edges(network)

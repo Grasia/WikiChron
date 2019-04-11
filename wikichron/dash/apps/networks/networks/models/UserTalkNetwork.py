@@ -23,7 +23,7 @@ class UserTalkNetwork(BaseNetwork):
 
     Arguments:
         - Node:
-            * num_edits: the number of edits in itself's user-talk-page
+            * own_u_edits: the number of edits in itself's user-talk-page
             * article_edits: edits in article pages
             * talk_edits: edits in talk pages
             * id: The user id in the wiki
@@ -40,11 +40,9 @@ class UserTalkNetwork(BaseNetwork):
     CODE = 'user_talk_network'
     DIRECTED = True
 
-    AVAILABLE_METRICS = {
-        'Edits in its own page': 'num_edits',
-        'Betweenness': 'betweenness',
-        'Page Rank': 'page_rank'
-    }
+    AVAILABLE_METRICS = BaseNetwork.AVAILABLE_METRICS.copy()
+    AVAILABLE_METRICS['Edits in its own page'] = 'own_u_edits'
+    AVAILABLE_METRICS['User Talks'] = 'user_talks'
 
     NODE_METRICS_TO_PLOT = BaseNetwork.NODE_METRICS_TO_PLOT.copy()
     NODE_METRICS_TO_PLOT['Edits in its own page'] = \
@@ -53,13 +51,17 @@ class UserTalkNetwork(BaseNetwork):
             'max': 'max_own_u_edits',
             'min': 'min_own_u_edits'
         }
+    NODE_METRICS_TO_PLOT['User Talks'] = \
+        {
+            'key': 'user_talks',
+            'max': 'max_user_talks',
+            'min': 'min_user_talks'
+        }
 
     USER_INFO = {
         #'User ID': 'id',
         'Birth': 'abs_birth',
-        'Cluster #': 'cluster',
-        'Article Edits': 'article_edits',
-        'Talk Page Edits': 'talk_edits'
+        'Cluster #': 'cluster'
     }
 
     NODE_NAME = {
@@ -100,7 +102,7 @@ class UserTalkNetwork(BaseNetwork):
                 mapper_v[r['contributor_name']] = count_v
                 self.graph.vs[count_v]['id'] = int(r['contributor_id'])
                 self.graph.vs[count_v]['label'] = r['contributor_name']
-                self.graph.vs[count_v]['num_edits'] = 0
+                self.graph.vs[count_v]['own_u_edits'] = 0
                 self.graph.vs[count_v]['user_talks'] = {int(r['page_id'])}
                 count_v += 1
 
@@ -108,7 +110,7 @@ class UserTalkNetwork(BaseNetwork):
             self.graph.vs[mapper_v[r['contributor_name']]]['user_talks'].add(int(r['page_id']))
 
             if page_t == r['contributor_name']:
-                self.graph.vs[mapper_v[page_t]]['num_edits'] += 1
+                self.graph.vs[mapper_v[page_t]]['own_u_edits'] += 1
             else:
                 # A page gets serveral contributors
                 if not page_t in user_per_page:
@@ -134,7 +136,7 @@ class UserTalkNetwork(BaseNetwork):
                     self.graph.vs[count_v]['id'] = max_id
                     max_id += 1
                     self.graph.vs[count_v]['label'] = page_name
-                    self.graph.vs[count_v]['num_edits'] = 0
+                    self.graph.vs[count_v]['own_u_edits'] = 0
                     self.graph.vs[count_v]['user_talks'] = set()
                     count_v += 1
 

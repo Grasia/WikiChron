@@ -22,7 +22,7 @@ class TalkPagesNetwork(BaseNetwork):
 
     Arguments:
         - Node:
-            * num_edits: The editions number in all talk pages
+            * talk_edits: The editions number in all talk pages
             * article_edits: edits in article pages
             * id: The user id in the wiki
             * label: the user name in the wiki
@@ -38,19 +38,14 @@ class TalkPagesNetwork(BaseNetwork):
     CODE = 'talk_pages_network'
     DIRECTED = False
 
-    AVAILABLE_METRICS = {
-        'Talk Page Edits': 'num_edits',
-        'Betweenness': 'betweenness',
-        'Page Rank': 'page_rank'
-    }
+    #AVAILABLE_METRICS = {}
 
     #NODE_METRICS_TO_PLOT = {}
 
     USER_INFO = {
         #'User ID': 'id',
         'Birth': 'abs_birth',
-        'Cluster #': 'cluster',
-        'Article Edits': 'article_edits'
+        'Cluster #': 'cluster'
     }
 
     NODE_NAME = {
@@ -77,11 +72,11 @@ class TalkPagesNetwork(BaseNetwork):
                 mapper_v[int(r['contributor_id'])] = count
                 self.graph.vs[count]['id'] = int(r['contributor_id'])
                 self.graph.vs[count]['label'] = r['contributor_name']
-                self.graph.vs[count]['num_edits'] = 0
+                self.graph.vs[count]['talk_edits'] = 0
                 self.graph.vs[count]['talks'] = {int(r['page_id'])}
                 count += 1
 
-            self.graph.vs[mapper_v[int(r['contributor_id'])]]['num_edits'] += 1
+            self.graph.vs[mapper_v[int(r['contributor_id'])]]['talk_edits'] += 1
             self.graph.vs[mapper_v[int(r['contributor_id'])]]['talks'].add(int(r['page_id']))
 
             # A page gets serveral contributors
