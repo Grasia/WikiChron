@@ -20,24 +20,46 @@ class BaseNetwork(metaclass=abc.ABCMeta):
     NAME = 'Base Network'
     CODE = 'base_network'
 
+# CHANGE NAME
     NODE_METRICS_TO_PLOT = {
+        'Lifespan': {
+            'key': 'abs_birth_int',
+            'max': 'max_abs_birth_int',
+            'min': 'min_abs_birth_int'
+        },
+        'Articles': {
+            'key': 'articles',
+            'log': 'articles_log',
+            'max': 'max_articles',
+            'min': 'min_articles'
+        },
+        'Talk Pages': {
+            'key': 'talks',
+            'max': 'max_talks',
+            'min': 'min_talks'
+        },
         'Article Edits': {
             'key': 'article_edits',
             'log': 'article_edits_log',
             'max': 'max_article_edits',
             'min': 'min_article_edits'
         },
-        'Lifespan': {
-            'key': 'abs_birth_int',
-            'max': 'max_abs_birth_int',
-            'min': 'min_abs_birth_int'
-        },
         'Talk Page Edits': {
             'key': 'talk_edits',
             'log': 'talk_edits_log',
             'max': 'max_talk_edits',
             'min': 'min_talk_edits'
-        }
+        },
+    }
+# TO FIX
+# This param will be removed, u should use NODE_METRICS_TO_PLOT
+    AVAILABLE_METRICS = {
+        'Betweenness': 'betweenness',
+        'Page Rank': 'page_rank',
+        'Articles': 'articles',
+        'Talk Pages': 'talks',
+        'Article Edits': 'article_edits',
+        'Talk Page Edits': 'talk_edits',
     }
 
     EDGE_METRICS_TO_PLOT = {
@@ -194,7 +216,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
                 val = node[attr]
                 
                 if attr in keys_to_plot:
-                    data['data'][f'{attr}_log'] = int(log(val)*10)
+                    data['data'][f'{attr}_log'] = int(log(val)*100)
 
                 data['data'][attr] = val
 
@@ -208,7 +230,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
                 if attr == 'id':
                     continue
                 if attr in keys_to_plot:
-                    data['data'][f'{attr}_log'] = int(log(val)*10)
+                    data['data'][f'{attr}_log'] = int(log(val)*100)
 
                 data['data'][attr] = val
             network.append(data)
@@ -229,8 +251,8 @@ class BaseNetwork(metaclass=abc.ABCMeta):
                 _min = min(self.graph.es[metric['key']])
 
             if 'log' in metric.keys():
-                _max = int(log(_max)*10)
-                _min = int(log(_min)*10)
+                _max = int(log(_max)*100)
+                _min = int(log(_min)*100)
 
             di_net[metric['max']] = _max
             di_net[metric['min']] = _min

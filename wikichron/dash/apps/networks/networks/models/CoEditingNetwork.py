@@ -33,12 +33,7 @@ class CoEditingNetwork(BaseNetwork):
     CODE = 'co_editing_network'
     DIRECTED = False
 
-    # only metrics for the ranking
-    AVAILABLE_METRICS = {
-        'Article Edits': 'article_edits',
-        'Betweenness': 'betweenness',
-        'Page Rank': 'page_rank'
-    }
+    #AVAILABLE_METRICS = {}
 
     #NODE_METRICS_TO_PLOT = {}
 
@@ -46,7 +41,6 @@ class CoEditingNetwork(BaseNetwork):
         #'User ID': 'id',
         'Birth': 'abs_birth',
         'Cluster #': 'cluster',
-        'Talk Page Edits': 'talk_edits',
     }
 
     NODE_NAME = {

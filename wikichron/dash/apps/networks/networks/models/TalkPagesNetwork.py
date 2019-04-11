@@ -38,19 +38,14 @@ class TalkPagesNetwork(BaseNetwork):
     CODE = 'talk_pages_network'
     DIRECTED = False
 
-    AVAILABLE_METRICS = {
-        'Talk Page Edits': 'talk_edits',
-        'Betweenness': 'betweenness',
-        'Page Rank': 'page_rank'
-    }
+    #AVAILABLE_METRICS = {}
 
     #NODE_METRICS_TO_PLOT = {}
 
     USER_INFO = {
         #'User ID': 'id',
         'Birth': 'abs_birth',
-        'Cluster #': 'cluster',
-        'Article Edits': 'article_edits'
+        'Cluster #': 'cluster'
     }
 
     NODE_NAME = {

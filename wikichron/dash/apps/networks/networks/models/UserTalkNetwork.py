@@ -40,11 +40,9 @@ class UserTalkNetwork(BaseNetwork):
     CODE = 'user_talk_network'
     DIRECTED = True
 
-    AVAILABLE_METRICS = {
-        'Edits in its own page': 'own_u_edits',
-        'Betweenness': 'betweenness',
-        'Page Rank': 'page_rank'
-    }
+    AVAILABLE_METRICS = BaseNetwork.AVAILABLE_METRICS.copy()
+    AVAILABLE_METRICS['Edits in its own page'] = 'own_u_edits'
+    AVAILABLE_METRICS['User Talks'] = 'user_talks'
 
     NODE_METRICS_TO_PLOT = BaseNetwork.NODE_METRICS_TO_PLOT.copy()
     NODE_METRICS_TO_PLOT['Edits in its own page'] = \
@@ -53,13 +51,17 @@ class UserTalkNetwork(BaseNetwork):
             'max': 'max_own_u_edits',
             'min': 'min_own_u_edits'
         }
+    NODE_METRICS_TO_PLOT['User Talks'] = \
+        {
+            'key': 'user_talks',
+            'max': 'max_user_talks',
+            'min': 'min_user_talks'
+        }
 
     USER_INFO = {
         #'User ID': 'id',
         'Birth': 'abs_birth',
-        'Cluster #': 'cluster',
-        'Article Edits': 'article_edits',
-        'Talk Page Edits': 'talk_edits'
+        'Cluster #': 'cluster'
     }
 
     NODE_NAME = {
