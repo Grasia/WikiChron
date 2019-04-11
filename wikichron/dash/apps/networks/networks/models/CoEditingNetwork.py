@@ -172,8 +172,8 @@ class CoEditingNetwork(BaseNetwork):
 
     @classmethod
     def get_main_class_metric(cls) -> str:
-        if 'Article Edits' in cls.NODE_METRICS_TO_PLOT:
-            return cls.NODE_METRICS_TO_PLOT['Article Edits']
+        if 'Article edits' in cls.NODE_METRICS_TO_PLOT:
+            return cls.NODE_METRICS_TO_PLOT['Article edits']
         else:
             return ''
 

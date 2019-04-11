@@ -178,8 +178,8 @@ class TalkPagesNetwork(BaseNetwork):
 
     @classmethod
     def get_main_class_metric(cls) -> str:
-        if 'Talk Page Edits' in cls.NODE_METRICS_TO_PLOT:
-            return cls.NODE_METRICS_TO_PLOT['Talk Page Edits']
+        if 'Talk page edits' in cls.NODE_METRICS_TO_PLOT:
+            return cls.NODE_METRICS_TO_PLOT['Talk page edits']
         else:
             return ''
 

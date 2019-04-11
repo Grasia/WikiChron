@@ -42,7 +42,7 @@ class UserTalkNetwork(BaseNetwork):
 
     AVAILABLE_METRICS = BaseNetwork.AVAILABLE_METRICS.copy()
     AVAILABLE_METRICS['Edits in its own page'] = 'own_u_edits'
-    AVAILABLE_METRICS['User Talks'] = 'user_talks'
+    AVAILABLE_METRICS['Edited user talks'] = 'user_talks'
 
     NODE_METRICS_TO_PLOT = BaseNetwork.NODE_METRICS_TO_PLOT.copy()
     NODE_METRICS_TO_PLOT['Edits in its own page'] = \

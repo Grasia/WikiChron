@@ -11,6 +11,7 @@ from igraph import Graph, ClusterColoringPalette, VertexClustering,\
     WEAK
 from colormap.colors import rgb2hex
 from math import log1p as log
+import inequality_coefficients as ineq
 
 from .fix_dendrogram import fix_dendrogram
 
@@ -27,24 +28,24 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             'max': 'max_abs_birth_int',
             'min': 'min_abs_birth_int'
         },
-        'Articles': {
+        'Edited articles': {
             'key': 'articles',
             'log': 'articles_log',
             'max': 'max_articles',
             'min': 'min_articles'
         },
-        'Talk Pages': {
+        'Edited talk pages': {
             'key': 'talks',
             'max': 'max_talks',
             'min': 'min_talks'
         },
-        'Article Edits': {
+        'Article edits': {
             'key': 'article_edits',
             'log': 'article_edits_log',
             'max': 'max_article_edits',
             'min': 'min_article_edits'
         },
-        'Talk Page Edits': {
+        'Talk page edits': {
             'key': 'talk_edits',
             'log': 'talk_edits_log',
             'max': 'max_talk_edits',
@@ -55,11 +56,11 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 # This param will be removed, u should use NODE_METRICS_TO_PLOT
     AVAILABLE_METRICS = {
         'Betweenness': 'betweenness',
-        'Page Rank': 'page_rank',
-        'Articles': 'articles',
-        'Talk Pages': 'talks',
-        'Article Edits': 'article_edits',
-        'Talk Page Edits': 'talk_edits',
+        'Page rank': 'page_rank',
+        'Edited articles': 'articles',
+        'Edited talk pages': 'talks',
+        'Article edits': 'article_edits',
+        'Talk page edits': 'talk_edits',
     }
 
     EDGE_METRICS_TO_PLOT = {
@@ -72,12 +73,13 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
     NETWORK_STATS = {
         'Nodes': 'num_nodes',
-        'Clusters': 'n_communities',
+        'Connected components': 'components',
         'Edges': 'num_edges',
         'Diameter': 'diameter',
         'Density': 'density',
-        'Connected Components': 'components',
-        'Assortativity Degree': 'assortativity_degree',
+        'Gini of betweenness': 'gini_betweenness',
+        'Assortativity degree': 'assortativity_degree',
+        'Clusters': 'n_communities',
     }
 
 
@@ -298,6 +300,12 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             self.graph.vs['betweenness'] = list(map(lambda x: float(f"{x:.4f}"), bet))
 
 
+    def calculate_gini_betweenness(self):
+        if 'betweenness' in self.graph.vs.attributes():
+            gini = ineq.gini_corrected(self.graph.vs['betweenness'])
+            self.graph['gini_betweenness'] = f"{gini:.4f}"
+
+
     def calculate_communities(self):
         """
         Calculates communities and assigns a color per community
@@ -358,6 +366,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         """
         self.calculate_page_rank()
         self.calculate_betweenness()
+        self.calculate_gini_betweenness()
         self.calculate_assortativity_degree()
         self.calculate_communities()
         self.calculate_density()
