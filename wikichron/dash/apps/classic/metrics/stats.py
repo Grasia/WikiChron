@@ -346,7 +346,7 @@ def gini_accum(data, index):
         if (n_users) < MINIMAL_USERS_GINI:
             gini_accum_df[indices[i]] = np.NaN
         else:
-            gini_accum_df[indices[i]] = ineq.gini_corrected(values)
+            gini_accum_df[indices[i]] = ineq.gini_corrected(values, n_users)
         i = i + 1
 
     return gini_accum_df
