@@ -12,6 +12,7 @@ from igraph import Graph, ClusterColoringPalette, VertexClustering,\
 from colormap.colors import rgb2hex
 from math import log1p as log
 import inequality_coefficients as ineq
+import numpy as np
 
 from .fix_dendrogram import fix_dendrogram
 
@@ -321,7 +322,11 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             not in self.graph.attributes():
 
             gini = ineq.gini_corrected(self.graph.vs['betweenness'])
-            self.graph['gini_betweenness'] = f"{gini:.4f}"
+            value = 'nan'
+            if gini is not np.nan:
+                value = f"{gini:.4f}"
+
+            self.graph['gini_betweenness'] = value
 
 
     def calculate_degree(self):
@@ -340,13 +345,22 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             self.graph.attributes():
 
             gini = ineq.gini_corrected(self.graph.vs['indegree'])
-            self.graph['gini_indegree'] = f"{gini:.4f}"
+            value = 'nan'
+            if gini is not np.nan:
+                value = value = f"{gini:.4f}"
+            self.graph['gini_indegree'] = value
             gini = ineq.gini_corrected(self.graph.vs['outdegree'])
-            self.graph['gini_outdegree'] = f"{gini:.4f}"
+            value = 'nan'
+            if gini is not np.nan:
+                value = value = f"{gini:.4f}"
+            self.graph['gini_outdegree'] = value
 
         elif 'gini_degree' not in self.graph.attributes():
             gini = ineq.gini_corrected(self.graph.vs['degree'])
-            self.graph['gini_degree'] = f"{gini:.4f}"
+            value = 'nan'
+            if gini is not np.nan:
+                value = value = f"{gini:.4f}"
+            self.graph['gini_degree'] = value
 
 
     def calculate_communities(self):

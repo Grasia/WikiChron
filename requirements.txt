@@ -24,7 +24,7 @@ fs==2.1.1
 grasia-dash-components==0.3.4
 gunicorn==19.9.0
 idna==2.6
-inequality-coefficients==1.1.1
+inequality-coefficients==1.2.3
 ipython-genutils==0.2.0
 itsdangerous==0.24
 Jinja2==2.10
