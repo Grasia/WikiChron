@@ -13,7 +13,7 @@
 from enum import Enum, unique
 @unique
 class MetricCategory(Enum):
-    PAGES = 'New Pages'
+    PAGES = 'Pages'
     EDITIONS = 'Edits'
     USERS = 'Users'
     RATIOS = 'Ratios'
