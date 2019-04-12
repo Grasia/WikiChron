@@ -168,7 +168,9 @@ def bind_callbacks(app):
         Input('reset_cyto', 'n_clicks')]
     )
     def add_network_elements(cy_network, _):
-        if not cy_network and 'network' not in cy_network:
+        if not cy_network:
+            raise PreventUpdate()
+        if 'network' not in cy_network:
             raise PreventUpdate()
 
         return [1, cy_network['network']]

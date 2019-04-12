@@ -592,4 +592,5 @@ class BaseNetwork(metaclass=abc.ABCMeta):
                 node['birth'] = 'Not available'
                 node['birth_value'] = max_date
         
-        self.graph.vs['birth_value'] = list(map(inverter, self.graph.vs['birth_value']))
+        if 'birth_value' in self.graph.vs.attributes():
+            self.graph.vs['birth_value'] = list(map(inverter, self.graph.vs['birth_value']))
