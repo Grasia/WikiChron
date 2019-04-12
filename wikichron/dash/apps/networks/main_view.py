@@ -282,7 +282,7 @@ def build_distribution_pane() -> html.Div:
                     html.P('Scale:'),
                     dcc.RadioItems(
                         id='scale',
-                        options=[{'label': i, 'value': i} for i in ['Linear', 'Log']],
+                        options=[{'label': i, 'value': i} for i in ['Linear', 'Log', 'Log-Log']],
                         value='Linear'
                     )
                 ], className='left-distribution-body')

@@ -522,6 +522,7 @@ div.user-container-stat > p:nth-child(2){
     display: flex;
     font-size: 12px;
     margin-top: 2rem;
+    align-items: center;
 }
 
 #scale > label{

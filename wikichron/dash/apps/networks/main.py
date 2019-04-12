@@ -377,25 +377,27 @@ def bind_callbacks(app):
 
         (k, p_k) = network.get_degree_distribution()
 
+        x_scale = 'linear'
+        y_scale = 'linear'
+        if scale_type == 'Log':
+            y_scale = 'log'    
+        elif scale_type == 'Log-Log':
+            x_scale = 'log'
+            y_scale = 'log'
+
         return {
-            'data': [go.Scatter(
+            'data': [go.Bar(
                 x=k,
                 y=p_k,
-                mode='markers',
-                marker={
-                    'size': 15,
-                    'opacity': 0.5,
-                    'line': {'width': 0.5, 'color': 'white'}
-                }
             )],
             'layout': go.Layout(
                 xaxis={
                     'title': 'Degree',
-                    'type': 'linear' if scale_type == 'Linear' else 'log'
+                    'type': x_scale
                 },
                 yaxis={
-                    'title': 'Population',
-                    'type': 'linear' if scale_type == 'Linear' else 'log'
+                    'title': 'Frequency',
+                    'type': y_scale
                 },
                 margin={'l': 40, 'b': 30, 't': 10, 'r': 0},
                 hovermode='closest'
