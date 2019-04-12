@@ -59,6 +59,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         'Degree': 'degree',
         'In-degree': 'indegree',
         'Out-degree': 'outdegree',
+        'Closeness': 'closeness',
         'Betweenness': 'betweenness',
         'Page rank': 'page_rank',
         'Edited articles': 'articles',
@@ -401,6 +402,17 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             components = self.graph.clusters(mode=WEAK)
             self.graph['components'] = len(components.subgraphs())
 
+    
+    def calculate_closeness(self):
+        if 'closeness' not in self.graph.vs.attributes() and 'weight'\
+            in self.graph.es.attributes():
+
+            rounder = lambda x: f"{x:.4f}"
+            closeness = self.graph.closeness(weights='weight')
+            closeness = list(map(rounder, closeness))
+            self.graph.vs['closeness'] = closeness
+
+
 
     def calculate_metrics(self):
         """
@@ -416,6 +428,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         self.calculate_density()
         self.calculate_diameter()
         self.calculate_components()
+        self.calculate_closeness()
 
 
     def get_degree_distribution(self) -> (list, list):
