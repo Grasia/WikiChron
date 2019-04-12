@@ -413,7 +413,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             self.graph.vs['closeness'] = closeness
 
 
-
     def calculate_metrics(self):
         """
         A method which calculate the available metrics 
