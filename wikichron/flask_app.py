@@ -13,7 +13,7 @@
 import os
 from urllib.parse import urljoin
 import flask
-import flask
+import json
 from flask import Blueprint, current_app, request
 
 # Imports from dash apps
@@ -91,10 +91,14 @@ def networks_app():
     selected_wikis    = request.args.get('wikis', default=set(), type=str)
     selected_networks = request.args.get('network', default=set(), type=str)
 
+    time_axis = ['Jan 2015', 'Feb 2016']
+    time_axis_json = json.dumps(time_axis)
+
     return flask.render_template("networks/selection/selection.html",
                                 title = 'WikiChron Networks - selection',
                                 mode = 'networks',
                                 development = config["DEBUG"],
+                                time_axis = time_axis_json,
                                 wikis = wikis,
                                 networks = networks_frontend,
                                 pre_selected_wikis = selected_wikis,

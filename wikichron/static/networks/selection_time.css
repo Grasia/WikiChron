@@ -1,0 +1,22 @@
+/* Custom CSS*/
+
+.slider-container {
+    width: 100%;
+}
+
+.slider {
+    width: 100%;
+    height: 14px;
+    background: #D7D7D7;
+    outline: none;
+}
+
+.slider-handle {
+    width: 25px !important;
+    height: 25px !important;
+    border-radius: 50% !important;
+    border: 3px solid #FFFFFF !important;
+    box-sizing: border-box !important;
+    background: #4FB6FF !important;
+    cursor: pointer !important;
+}
