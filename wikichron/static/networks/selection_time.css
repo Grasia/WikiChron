@@ -24,3 +24,12 @@
 .ui-widget-header {
     background-color: #4FB6FF;
 }
+
+.ui-state-hover {
+    width: 27px !important;
+    height: 27px !important;
+}
+
+.ui-state-active {
+    background: #3D71AE !important;
+}
