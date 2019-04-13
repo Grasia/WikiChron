@@ -92,6 +92,7 @@ def networks_app():
     selected_networks = request.args.get('network', default=set(), type=str)
 
     time_axis = ['Jan 2015', 'Feb 2016']
+
     time_axis_json = json.dumps(time_axis)
 
     return flask.render_template("networks/selection/selection.html",

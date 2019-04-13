@@ -1,8 +1,7 @@
 var timeIndex;
 
 $(function() {
-    //~ timeIndex = JSON.parse($('#time-axis-container').html());
-    timeIndex = ['Jan 2015', 'Feb 2016']
+    timeIndex = JSON.parse($('#time-axis-container').html());
 })
 
 
