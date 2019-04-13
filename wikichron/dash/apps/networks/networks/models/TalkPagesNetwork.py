@@ -114,6 +114,8 @@ class TalkPagesNetwork(BaseNetwork):
         if 'talks' in self.graph.vs.attributes():
             talks = [len(node['talks']) for node in self.graph.vs]
             self.graph.vs['talks'] = talks
+
+        print(f"\n\n{self.graph.has_multiple()}\n\n")
     
 
     def get_metric_dataframe(self, metric):
