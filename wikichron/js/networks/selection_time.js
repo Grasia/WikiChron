@@ -1,12 +1,21 @@
-var timeIndex;
+var dateIndex = [];
 
 $(function() {
-    timeIndex = JSON.parse($('#time-axis-container').html());
+    var dateFirst = new Date($('#time-axis-first').html());
+    var dateLast = new Date($('#time-axis-last').html());
+    console.log(dateFirst);
+    console.log(dateLast);
+    var d = dateFirst;
+    while (d < dateLast) {
+        //~ dateIndex.push(`${d.getMonth()} ${d.getUTCFullYear()}`);
+        dateIndex.push(d.toLocaleString('en-US', { timeZone: 'UTC', formatMatcher: 'basic', month: 'short', year: "numeric" }))
+        d.setMonth(d.getMonth() + 1);
+    }
 })
 
 
 function getDateFromSlider(sliderValue) {
-    return timeIndex[sliderValue]
+    return dateIndex[sliderValue]
 }
 
 
