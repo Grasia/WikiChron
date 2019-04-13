@@ -23,16 +23,19 @@ $( function() {
     var lower;
     var upper;
 
+    monthsNo = dateIndex.length
+    months10Percentage = Math.round(monthsNo * 0.1)
+
     $( "#slider-range" ).slider({
-      range: true,
-      min: 0,
-      max: 500,
-      values: [ 0, 1 ],
-      step : 1,
-      slide: function( event, ui ) {
-        lower = ui.values[ 0 ]
-        upper = ui.values[ 1 ]
-        $( "#time-axis-selection" ).html(getDateFromSlider(lower) + " - " + getDateFromSlider(upper));
+        range: true,
+        min: 0,
+        max: monthsNo - 1, // zero-indexed
+        values: [ 0, months10Percentage],
+        step : 1,
+        slide: function( event, ui ) {
+            lower = ui.values[ 0 ]
+            upper = ui.values[ 1 ]
+            $( "#time-axis-selection" ).html(getDateFromSlider(lower) + " - " + getDateFromSlider(upper));
       }
     });
 

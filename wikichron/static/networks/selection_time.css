@@ -20,3 +20,7 @@
     background: #4FB6FF !important;
     cursor: pointer !important;
 }
+
+.ui-widget-header {
+    background-color: #4FB6FF;
+}
