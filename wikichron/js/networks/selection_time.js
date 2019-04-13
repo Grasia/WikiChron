@@ -1,8 +1,12 @@
 var dateIndex = [];
 
 $(function() {
-    var dateFirst = new Date($('#time-axis-first').html());
-    var dateLast = new Date($('#time-axis-last').html());
+    var wikiCode = 'cocktails.fandom.com'
+    //~ var dateFirst = new Date($('#time-axis-first').html());
+    //~ var dateLast = new Date($('#time-axis-last').html());
+    var times = JSON.parse($('#time-spans-container').html());
+    var dateFirst = new Date(times[wikiCode]['first_date']);
+    var dateLast = new Date(times[wikiCode]['last_date']);
     console.log(dateFirst);
     console.log(dateLast);
     var d = dateFirst;

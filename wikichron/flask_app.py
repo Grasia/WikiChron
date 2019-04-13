@@ -91,10 +91,14 @@ def networks_app():
     selected_wikis    = request.args.get('wikis', default=set(), type=str)
     selected_networks = request.args.get('network', default=set(), type=str)
 
+    time_spans = { wiki['url']: {'first_date': wiki['first_edit']['date'], 'last_date': wiki['last_edit']['date']} for wiki in wikis}
+    time_spans_json = json.dumps(time_spans)
+
     return flask.render_template("networks/selection/selection.html",
                                 title = 'WikiChron Networks - selection',
                                 mode = 'networks',
                                 development = config["DEBUG"],
+                                time_spans = time_spans_json,
                                 wikis = wikis,
                                 networks = networks_frontend,
                                 pre_selected_wikis = selected_wikis,
