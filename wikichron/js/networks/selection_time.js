@@ -15,6 +15,8 @@ $(function() {
         dateIndex.push(d.toLocaleString('en-US', { timeZone: 'UTC', formatMatcher: 'basic', month: 'short', year: "numeric" }))
         d.setMonth(d.getMonth() + 1);
     }
+
+    dateIndex.push(dateLast.toLocaleString('en-US', { timeZone: 'UTC', formatMatcher: 'basic', month: 'short', year: "numeric" }))
 })
 
 
