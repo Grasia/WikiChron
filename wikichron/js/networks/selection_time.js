@@ -1,7 +1,20 @@
-var dateIndex = [];
+var dateIndex;
 
-$(function() {
-    var wikiCode = 'cocktails.fandom.com'
+function getSelectedWikiCode (){
+    var selectedWiki = $('.current-selected-wiki')[0]
+    if (selectedWiki) {
+        return selectedWiki.dataset.code;
+    } else {
+        return false
+    }
+}
+
+onChangeWiki = function() {
+    var wikiCode = getSelectedWikiCode();
+
+    if (!wikiCode) return;
+
+    dateIndex = []
     //~ var dateFirst = new Date($('#time-axis-first').html());
     //~ var dateLast = new Date($('#time-axis-last').html());
     var times = JSON.parse($('#time-spans-container').html());
@@ -17,7 +30,9 @@ $(function() {
     }
 
     dateIndex.push(dateLast.toLocaleString('en-US', { timeZone: 'UTC', formatMatcher: 'basic', month: 'short', year: "numeric" }))
-})
+
+    createSlider();
+}
 
 
 function getDateFromSlider(sliderValue) {
@@ -25,7 +40,7 @@ function getDateFromSlider(sliderValue) {
 }
 
 
-$( function() {
+createSlider = function() {
     var lower;
     var upper;
 
@@ -54,5 +69,11 @@ $( function() {
         getDateFromSlider(upper)
     )
 
-  } );
+  }
 
+
+$( function () {
+    $('#wiki-badges-container').bind("DOMSubtreeModified", function() {
+        onChangeWiki();
+    });
+});
