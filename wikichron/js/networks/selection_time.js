@@ -18,14 +18,16 @@ onChangeWiki = function() {
     dateIndex = []
     var dateFirst = new Date(wikisTimelifes[wikiCode]['first_date']);
     var dateLast = new Date(wikisTimelifes[wikiCode]['last_date']);
-    var d = dateFirst;
-    while (d < dateLast) {
-        //~ dateIndex.push(`${d.getMonth()} ${d.getUTCFullYear()}`);
-        dateIndex.push(d.toLocaleString('en-US', { timeZone: 'UTC', formatMatcher: 'basic', month: 'short', year: "numeric" }))
+    var firstMonth = new Date(dateFirst.getFullYear(), dateFirst.getMonth(), 1, 0, 0, 0)
+    var lastMonth = new Date(dateLast.getFullYear(), dateLast.getMonth(), 1, 0, 0, 0)
+    var d = firstMonth;
+    console.log(d.getTime());
+    while (d <= lastMonth) {
+        dateIndex.push(d.getTime())
         d.setMonth(d.getMonth() + 1);
     }
 
-    dateIndex.push(dateLast.toLocaleString('en-US', { timeZone: 'UTC', formatMatcher: 'basic', month: 'short', year: "numeric" }))
+    dateIndex.push(lastMonth)
 
     createSlider();
 }
@@ -36,6 +38,14 @@ function getDateFromSlider(sliderValue) {
 }
 
 
+function formatDate (unixDate) {
+    date = new Date(unixDate)
+    return date.toLocaleString('en-US',
+                                { formatMatcher: 'basic',
+                                  month: 'short', year: "numeric" })
+}
+
+
 createSlider = function() {
     var lower;
     var upper;
@@ -43,7 +53,7 @@ createSlider = function() {
     monthsNo = dateIndex.length
     months10Percentage = Math.round(monthsNo * 0.1)
 
-    $( "#slider-range" ).slider({
+    $( "#time-slider" ).slider({
         range: true,
         min: 0,
         max: monthsNo - 1, // zero-indexed
@@ -52,17 +62,17 @@ createSlider = function() {
         slide: function( event, ui ) {
             lower = ui.values[ 0 ]
             upper = ui.values[ 1 ]
-            $( "#time-axis-selection" ).html(getDateFromSlider(lower) + " - " + getDateFromSlider(upper));
+            $( "#time-axis-selection" ).html(formatDate(getDateFromSlider(lower)) + " - " + formatDate(getDateFromSlider(upper)));
       }
     });
 
     // Init display numbers
-    lower = $( "#slider-range" ).slider( "values", 0 )
-    upper = $( "#slider-range" ).slider( "values", 1 )
+    lower = $( "#time-slider" ).slider( "values", 0 )
+    upper = $( "#time-slider" ).slider( "values", 1 )
     $( "#time-axis-selection" ).html(
-        getDateFromSlider(lower) +
+        formatDate(getDateFromSlider(lower)) +
         " - " +
-        getDateFromSlider(upper)
+        formatDate(getDateFromSlider(upper))
     )
 
   }
@@ -90,4 +100,6 @@ $( function () { // on load
     $('#wiki-badges-container').bind("DOMSubtreeModified", function() {
         onChangeWiki();
     });
+
+    onChangeWiki(); // call on initial load
 });

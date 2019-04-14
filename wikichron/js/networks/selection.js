@@ -145,19 +145,30 @@ function init_current_selection() {
 }
 
 
+function getDateFromSlider(sliderValue) {
+    return dateIndex[sliderValue]
+}
+
+
 /* press action button */
 $('#selection-footer-button').on ("click", function() {
     var selectedWiki = $('.current-selected-wiki')[0];
     var selectedNetwork = $('.current-selected-network')[0];
     var target_app_url;
     var selection;
+    var timeSelection;
+    var lowerBound, upperBound;
 
     if (!selectedWiki || !selectedNetwork) { // In case user tries to bypass
                                             // the selection of the form inputs
         return;
     }
 
-    selection = `?wikis=${selectedWiki.dataset.code}&network=${selectedNetwork.dataset.code}`
+    timeSelection =  $('#time-slider').slider("option", "values")
+    lowerBound = getDateFromSlider(timeSelection[0]) / 1000;
+    upperBound = getDateFromSlider(timeSelection[1]) / 1000;
+
+    selection = `?wikis=${selectedWiki.dataset.code}&network=${selectedNetwork.dataset.code}&lower_bound=${lowerBound}&upper_bound=${upperBound}`
 
     target_app_url = `/networks/app/${selection}`
 

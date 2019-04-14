@@ -163,8 +163,8 @@ def calculate_indices_all_months(wiki):
 
 
 def parse_int_to_timestamp(time):
-    return datetime.fromtimestamp(int(time)).strftime("%Y-%m-%d")
+    return datetime.utcfromtimestamp(int(time)).strftime("%Y-%m-%d")
 
 
 def parse_timestamp_to_int(time):
-    return int(datetime.strptime(str(time), "%Y-%m-%d").strftime('%s'))
+    return int(datetime.timestamp(datetime.strptime(str(time), "%Y-%m-%d")))
