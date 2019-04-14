@@ -132,15 +132,11 @@ def serve_local_js(path, js_file):
     return flask.send_from_directory(js_directory, js_file)
 
 
-# Serve lib/ folder only in development mode
 @server_bp.route('/lib/<dep>', defaults={'path': ''})
 @server_bp.route('/lib/<path:path>/<dep>')
 def serve_lib_in_dev(path, dep):
     path = os.path.join('lib/', path)
-    dev = current_app.config["DEBUG"]
-    if dev:
-        return flask.send_from_directory(path, dep)
-    else:
-        print('Trying to retrieve a dependency from a local folder in production. Skipping.')
+    return flask.send_from_directory(path, dep)
+
 
 
