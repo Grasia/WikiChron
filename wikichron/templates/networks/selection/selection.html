@@ -5,13 +5,16 @@
 
     <!-- Specific js and css files for this screen -->
     <link rel="stylesheet" href="{{ url_for('static', filename='networks/selection.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='networks/selection_time.css') }}">
     <script src="/js/networks/selection.js" defer="defer"></script>
+    <script src="/js/networks/selection_time.js" defer="defer"></script>
 
 {% endblock %}
 
 
 {% block content %}
 
+    <!-- include header -->
     {% with %}
         {% set logo_src = url_for('static', filename='networks/assets/logo_networks_white.svg') %}
         {% set header_paragraph = "Select one wiki, one network and press generate to start" %}
@@ -26,17 +29,13 @@
             <li class="nav-item">
                 <a class="nav-link" id="networks-tab" data-toggle="tab" href="#networks" role="tab" aria-controls="networks" aria-selected="false">Networks</a>
             </li>
-<!--
             <li class="nav-item">
-                <a class="nav-link" id="time-tab" data-toggle="tab" href="#time" role="tab" aria-controls="time" aria-selected="false">Time</a>
+                <a class="nav-link disabled" id="time-tab" data-toggle="tab" href="#time" role="tab" aria-controls="time" aria-selected="false">Time</a>
             </li>
--->
         </ul>
     </div>
     <main>
         <section class="selection-content">
-
-
             <div class="tab-content">
                 <div class="current-selection-container">
                     {% include 'networks/selection/current_selection.html' %}
@@ -47,7 +46,9 @@
                 <div class="tab-pane fade" id="networks" role="tabpanel" aria-labelledby="networks-tab">
                     {% include 'networks/selection/selection_networks.html' %}
                 </div>
-                <div class="tab-pane fade" id="time" role="tabpanel" aria-labelledby="time-tab">...</div>
+                <div class="tab-pane fade" id="time" role="tabpanel" aria-labelledby="time-tab">
+                    {% include 'networks/selection/selection_time.html' %}
+                </div>
             </div>
         </section>
 
