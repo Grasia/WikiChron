@@ -179,6 +179,7 @@ footer.action-button-container{
     background-color: #072146;
     bottom: 0px;
     position: fixed;
+    z-index: 10;
 }
 
 #selection-footer-button {

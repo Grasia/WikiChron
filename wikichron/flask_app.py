@@ -13,8 +13,7 @@
 import os
 from urllib.parse import urljoin
 import flask
-import flask
-from flask import Blueprint, current_app, request
+from flask import Blueprint, current_app, request, jsonify
 
 # Imports from dash apps
 # classic
@@ -100,6 +99,16 @@ def networks_app():
                                 pre_selected_wikis = selected_wikis,
                                 pre_selected_networks = selected_networks
                                 )
+
+
+@server_bp.route('/wikisTimelifes.json')
+def serve_wikis_time_lifes():
+
+    wikis = networks_data_controller.get_available_wikis()
+
+    time_spans = { wiki['url']: {'first_date': wiki['first_edit']['date'], 'last_date': wiki['last_edit']['date']} for wiki in wikis}
+    return jsonify(time_spans)
+
 
 
 @server_bp.route('/app/')
