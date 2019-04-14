@@ -106,7 +106,9 @@ def serve_wikis_time_lifes():
 
     wikis = networks_data_controller.get_available_wikis()
 
-    time_spans = { wiki['url']: {'first_date': wiki['first_edit']['date'], 'last_date': wiki['last_edit']['date']} for wiki in wikis}
+    time_spans = { wiki['url']: {'first_date': wiki['first_edit']['date'], 'last_date': wiki['last_edit']['date']}
+                                for wiki in wikis
+                                if 'first_edit' in wiki and 'last_edit' in wiki}
     return jsonify(time_spans)
 
 

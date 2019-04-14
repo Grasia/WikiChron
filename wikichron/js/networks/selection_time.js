@@ -93,7 +93,7 @@ $( function () { // on load
     });
 
     request.fail(function( jqXHR, textStatus ) {
-        alert( "Request failed: " + textStatus + ".\n Please, reload the browser.");
+        console.log( "Request for wikisTimelifes.json failed: " + textStatus + ".\n Please, try reloading the browser or contacting us.");
     });
 
     // bind onChangeWiki when the wiki badge changes

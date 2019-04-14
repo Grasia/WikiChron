@@ -118,7 +118,6 @@ def main():
         except:
             print(f'Unable to get bots for wiki: {wiki["url"]}')
 
-
         wiki['lastUpdated'] = row['lastUpdated']
 
         wiki['verified'] = True # Our own provided wikis are "verified"
