@@ -21,6 +21,13 @@ function init_list_js() {
 function check_enable_action_button() {
     var selectedWikisNo = $('#wiki-badges-container')[0].children.length
     var selectedNetworksNo = $('#network-badges-container')[0].children.length
+
+    if (selectedWikisNo > 0) { // enable Time selection tab
+        $('#time-tab').removeClass('disabled');
+    } else {
+        $('#time-tab').addClass('disabled');
+    }
+
     if (selectedWikisNo > 0 && selectedNetworksNo > 0) {
         $('#selection-footer-button')[0].disabled = false;
     } else {
