@@ -38,30 +38,12 @@ function check_enable_action_button() {
 
 /* checkboxes logic */
 
-// to bind to onclick of remove_badge
-function remove_badge(target) {
-    var target_badge = target.parentNode;
-    var wikiCode = target_badge.dataset.code;
-
-    // Clear search in order to uncheck a wiki card
-    // Because of https://github.com/javve/list.js/issues/380
-    wikisList.search('')
-    document.getElementById('search-wiki-input').value = "";
-
-    $(`input[id="checkbox-${wikiCode}"]`)[0].checked = false;
-    target_badge.remove();
-    check_enable_action_button();
-}
-
 
 // aux function
 function generate_wiki_badge(wikiCode, wikiName) {
     return `
         <div id="current-selected-${wikiCode}" class="badge badge-secondary p-2 current-selected-wiki" data-code="${wikiCode}">
             <span class="mr-2 align-middle">${wikiName}</span>
-            <button type="button" class="close close-wiki-badge align-middle" aria-label="Close" onclick="remove_badge(this)">
-                <span aria-hidden="true">&times;</span>
-            </button>
         </div>
     `;
 }
@@ -103,6 +85,11 @@ $('.wiki-input').on( "click", function({target}) {
         if (sameWiki) { // if same as previous selected, clean current selection
            badgesContainer.html('');
         } else { // if different, unselect previous wiki
+            // Clear search in order to uncheck a wiki card
+            // Because of https://github.com/javve/list.js/issues/380
+            wikisList.search('')
+            document.getElementById('search-wiki-input').value = "";
+
             $(`input[id="checkbox-${currentWikiCode}"]`)[0].checked = false;
         }
     }
