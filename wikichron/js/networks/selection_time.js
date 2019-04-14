@@ -1,4 +1,5 @@
 var dateIndex;
+var wikisTimelifes;
 
 function getSelectedWikiCode (){
     var selectedWiki = $('.current-selected-wiki')[0]
@@ -15,13 +16,8 @@ onChangeWiki = function() {
     if (!wikiCode) return;
 
     dateIndex = []
-    //~ var dateFirst = new Date($('#time-axis-first').html());
-    //~ var dateLast = new Date($('#time-axis-last').html());
-    var times = JSON.parse($('#time-spans-container').html());
-    var dateFirst = new Date(times[wikiCode]['first_date']);
-    var dateLast = new Date(times[wikiCode]['last_date']);
-    console.log(dateFirst);
-    console.log(dateLast);
+    var dateFirst = new Date(wikisTimelifes[wikiCode]['first_date']);
+    var dateLast = new Date(wikisTimelifes[wikiCode]['last_date']);
     var d = dateFirst;
     while (d < dateLast) {
         //~ dateIndex.push(`${d.getMonth()} ${d.getUTCFullYear()}`);
@@ -72,7 +68,25 @@ createSlider = function() {
   }
 
 
-$( function () {
+$( function () { // on load
+
+    // Request time lifes for all wikis
+    var request = $.ajax({
+            url: "/wikisTimelifes.json",
+            method: "GET",
+            dataType: "json",
+            async: false
+        });
+
+    request.done(function( data ) {
+        wikisTimelifes = data;
+    });
+
+    request.fail(function( jqXHR, textStatus ) {
+        alert( "Request failed: " + textStatus + ".\n Please, reload the browser.");
+    });
+
+    // bind onChangeWiki when the wiki badge changes
     $('#wiki-badges-container').bind("DOMSubtreeModified", function() {
         onChangeWiki();
     });
