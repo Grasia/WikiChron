@@ -334,10 +334,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             self.graph.vs['indegree'] = self.graph.indegree()
             self.graph.vs['outdegree'] = self.graph.outdegree()
         elif 'degree' not in self.graph.vs:
-            divider = lambda x: x//2
-            degree = self.graph.degree()
-            degree = list(map(divider, degree))
-            self.graph.vs['degree'] = degree
+            self.graph.vs['degree'] = self.graph.degree()
 
 
     def calculate_gini_degree(self):
@@ -453,12 +450,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
         degree = self.graph.degree()
         max_degree = self.graph.maxdegree()
-
-        # igraph issue? it always return double of degree
-        # even if you launch it with mode=OUT
-        if not self.graph.is_directed():
-            degree = list(map(lambda x: x//2, degree))
-            max_degree = max_degree // 2
 
         # Let's count the number of each degree
         p_k = [0 for i in range(0, max_degree + 1)]
