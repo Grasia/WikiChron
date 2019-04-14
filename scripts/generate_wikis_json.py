@@ -38,7 +38,7 @@ stats = ['articles','pages','edits']
 
 def get_name(base_url):
 
-    url = 'https://' + base_url
+    url = 'http://' + base_url
 
     req = requests.get(url)
     if req.status_code != 200:
@@ -112,8 +112,11 @@ def main():
             wiki.update(result_stats)
         else:
             raise Exception(f'Wiki {wiki["url"]} is not reacheable. Possibly moved or deleted. Check, whether its url is correct.')
-
-        wiki['bots'] = get_bots(wiki['url'])
+        
+        try:
+            wiki['bots'] = get_bots(wiki['url'])
+        except:
+            print(f'Unable to get bots for wiki: {wiki["url"]}')
 
 
         wiki['lastUpdated'] = row['lastUpdated']
