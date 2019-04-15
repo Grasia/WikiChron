@@ -99,7 +99,7 @@ class TalkPagesNetwork(BaseNetwork):
                         self.graph.es[mapper_e[k_edge]]['weight'] += 1
                         continue
                     elif k_edge_2 in mapper_e:
-                        self.graph.es[mapper_e[k_edge_2]]['weight'] += 1
+                        #self.graph.es[mapper_e[k_edge_2]]['weight'] += 1
                         continue
 
                     self.graph.add_edge(mapper_v[u1], mapper_v[u2])
