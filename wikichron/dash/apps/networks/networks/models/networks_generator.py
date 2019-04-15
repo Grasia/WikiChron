@@ -59,13 +59,20 @@ def get_available_metrics(network_code):
     elif network_code == TalkPagesNetwork.CODE:
         return BaseNetwork.get_available_metrics(TalkPagesNetwork.DIRECTED)
     elif network_code == UserTalkNetwork.CODE:
-        return BaseNetwork.get_available_metrics(UserTalkNetwork.DIRECTED)
+        return UserTalkNetwork.get_available_metrics(UserTalkNetwork.DIRECTED)
     else:
         raise Exception("Something went bad. Missing network type selection.")
 
 
 def get_metrics_to_plot(network_code):
-    return BaseNetwork.get_metrics_to_plot()
+    if network_code == CoEditingNetwork.CODE:
+        return BaseNetwork.get_metrics_to_plot()
+    elif network_code == TalkPagesNetwork.CODE:
+        return BaseNetwork.get_metrics_to_plot()
+    elif network_code == UserTalkNetwork.CODE:
+        return UserTalkNetwork.get_metrics_to_plot()
+    else:
+        raise Exception("Something went bad. Missing network type selection.")
 
 
 def is_directed(network_code) -> bool:

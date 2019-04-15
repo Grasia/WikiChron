@@ -43,7 +43,7 @@ class UserTalkNetwork(BaseNetwork):
     NETWORK_STATS = BaseNetwork.NETWORK_STATS.copy()
     NETWORK_STATS['User talk edits'] = 'wiki_user_talk_edits'
 
-    AVAILABLE_METRICS = BaseNetwork.AVAILABLE_METRICS.copy()
+    AVAILABLE_METRICS = BaseNetwork.get_available_metrics(DIRECTED)
     AVAILABLE_METRICS['Edits in its own page'] = 'own_u_edits'
     AVAILABLE_METRICS['Edited user talks'] = 'user_talks'
 
@@ -234,3 +234,13 @@ class UserTalkNetwork(BaseNetwork):
     def get_main_class_key(cls) -> str:
         metric = cls.get_main_class_metric()
         return metric['key'] if metric and 'key' in metric else ''
+
+
+    @classmethod
+    def get_available_metrics(cls, _) -> dict:
+        return cls.AVAILABLE_METRICS
+
+
+    @classmethod
+    def get_metrics_to_plot(cls) -> dict:
+        return cls.NODE_METRICS_TO_PLOT
