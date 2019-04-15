@@ -40,6 +40,9 @@ class UserTalkNetwork(BaseNetwork):
     CODE = 'user_talk_network'
     DIRECTED = True
 
+    NETWORK_STATS = BaseNetwork.NETWORK_STATS.copy()
+    NETWORK_STATS['User talk edits'] = 'wiki_user_talk_edits'
+
     AVAILABLE_METRICS = BaseNetwork.AVAILABLE_METRICS.copy()
     AVAILABLE_METRICS['Edits in its own page'] = 'own_u_edits'
     AVAILABLE_METRICS['Edited user talks'] = 'user_talks'
@@ -150,10 +153,13 @@ class UserTalkNetwork(BaseNetwork):
                 self.graph.es[count_e]['target'] = target
                 count_e += 1
 
-        # total pages
+        # total pages per user
         if 'user_talks' in self.graph.vs.attributes():
             user_talks = [len(node['user_talks']) for node in self.graph.vs]
             self.graph.vs['user_talks'] = user_talks
+
+        # total pages
+        self.graph['wiki_user_talk_edits'] = len(dff.index)
 
 
     def get_metric_dataframe(self, metric):
@@ -187,6 +193,11 @@ class UserTalkNetwork(BaseNetwork):
     @classmethod
     def get_user_info(cls) -> dict:
         return cls.USER_INFO
+
+
+    @classmethod
+    def get_network_stats(cls) -> dict:
+        return cls.NETWORK_STATS
 
 
     @classmethod

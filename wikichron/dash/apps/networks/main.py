@@ -409,13 +409,17 @@ def bind_callbacks(app):
 
     @app.callback(
         Output('net-stats', 'children'),
-        [Input('network-ready', 'value')]
+        [Input('network-ready', 'value')],
+        [State('initial-selection', 'children')]
     )
-    def update_network_stats(cy_network):
+    def update_network_stats(cy_network, selection_json):
         if not cy_network:
             raise PreventUpdate()
 
-        stats = BaseNetwork.get_network_stats()
+        selection = json.loads(selection_json)
+        network_code = selection['network']
+
+        stats = net_factory.get_network_stats(network_code)
         child = []
         i = 0
         group = []

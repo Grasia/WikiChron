@@ -310,14 +310,14 @@ def dropdown_color_metric_selector(network_code):
     )
 
 
-def build_network_stats(stats: list()) -> html.Div:
+def build_network_stats(network_code: str) -> html.Div:
     header = html.Div(children=[
         'Network Stats',
         html.Hr(className='pane-hr')
         ], className='header-pane sidebar-header-pane')
 
     # construct body
-    stats = BaseNetwork.get_network_stats()
+    stats = net_factory.get_network_stats(network_code)
     child = []
     i = 0
     group = []
@@ -405,7 +405,7 @@ def build_sidebar(network_code) -> html.Div:
     Use this function in order to build and get the side elements
     """
     return html.Div(className='sidebar', children=[
-        build_network_stats(list(BaseNetwork.get_network_stats().keys())),
+        build_network_stats(network_code),
         build_ranking(network_code),
         build_user_stats()
     ])

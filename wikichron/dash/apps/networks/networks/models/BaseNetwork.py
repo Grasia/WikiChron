@@ -174,9 +174,9 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         pass
 
 
-    @classmethod
+    @abc.abstractclassmethod
     def get_network_stats(cls) -> dict:
-        return cls.NETWORK_STATS
+        pass
 
 
     @classmethod

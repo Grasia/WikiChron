@@ -33,9 +33,9 @@ class CoEditingNetwork(BaseNetwork):
     CODE = 'co_editing_network'
     DIRECTED = False
 
-    #AVAILABLE_METRICS = {}
-
-    #NODE_METRICS_TO_PLOT = {}
+    NETWORK_STATS = BaseNetwork.NETWORK_STATS.copy()
+    NETWORK_STATS['Edited articles'] = 'wiki_articles'
+    NETWORK_STATS['Article edits'] = 'wiki_article_edits'
 
     USER_INFO = {
         #'User ID': 'id',
@@ -104,10 +104,14 @@ class CoEditingNetwork(BaseNetwork):
                     self.graph.es[mapper_e[k_edge]]['source'] = u1
                     self.graph.es[mapper_e[k_edge]]['target'] = u2
 
-        # total pages
+        # total pages per user
         if 'articles' in self.graph.vs.attributes():
             articles = [len(node['articles']) for node in self.graph.vs]
             self.graph.vs['articles'] = articles
+
+        # total pages
+        self.graph['wiki_articles'] = len(user_per_page)
+        self.graph['wiki_article_edits'] = len(dff.index)
 
 
     def get_metric_dataframe(self, metric):
@@ -140,6 +144,11 @@ class CoEditingNetwork(BaseNetwork):
     @classmethod
     def get_user_info(cls) -> dict:
         return cls.USER_INFO
+
+
+    @classmethod
+    def get_network_stats(cls) -> dict:
+        return cls.NETWORK_STATS
 
 
     @classmethod

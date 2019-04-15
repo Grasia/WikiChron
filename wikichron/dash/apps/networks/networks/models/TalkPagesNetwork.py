@@ -38,9 +38,9 @@ class TalkPagesNetwork(BaseNetwork):
     CODE = 'talk_pages_network'
     DIRECTED = False
 
-    #AVAILABLE_METRICS = {}
-
-    #NODE_METRICS_TO_PLOT = {}
+    NETWORK_STATS = BaseNetwork.NETWORK_STATS.copy()
+    NETWORK_STATS['Edited talk pages'] = 'wiki_talks'
+    NETWORK_STATS['Talk page edits'] = 'wiki_talk_edits'
 
     USER_INFO = {
         #'User ID': 'id',
@@ -110,10 +110,14 @@ class TalkPagesNetwork(BaseNetwork):
                     self.graph.es[mapper_e[k_edge]]['source'] = u1
                     self.graph.es[mapper_e[k_edge]]['target'] = u2
 
-        # total pages
+        # total pages per user 
         if 'talks' in self.graph.vs.attributes():
             talks = [len(node['talks']) for node in self.graph.vs]
             self.graph.vs['talks'] = talks
+
+        # total pages
+        self.graph['wiki_talks'] = len(user_per_page)
+        self.graph['wiki_talk_edits'] = len(dff.index)
     
 
     def get_metric_dataframe(self, metric):
@@ -146,6 +150,11 @@ class TalkPagesNetwork(BaseNetwork):
     @classmethod
     def get_user_info(cls) -> dict:
         return cls.USER_INFO
+
+    
+    @classmethod
+    def get_network_stats(cls) -> dict:
+        return cls.NETWORK_STATS
 
 
     @classmethod
