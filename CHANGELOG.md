@@ -1,6 +1,20 @@
 # Change Log for WikiChron
 
 ## 2.0.0-beta - 2019-04-11
+Launched stable release of WikiChron v2!!! :tada: :tada:
+
+Many bug fixes and improvements. See github history for more.
+
+### Added
+- time selection tab for networks selection screen.
+- many new metrics to networks
+- JqueryUI to deps
+
+### Updated
+- dash-cytoscape dep
+- jinja dep
+
+## 2.0.0-beta - 2019-04-11
 WikiChron upgrades to v2!!
 
 ### Added
