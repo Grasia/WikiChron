@@ -309,18 +309,16 @@ def users_number_of_edits_abs(data, index):
     between_5_24 = users_number_of_edits_between_5_and_24(data, index).to_frame('5_24')
     between_25_99 = users_number_of_edits_between_25_and_99(data, index).to_frame('25_99')
     highEq_100 = users_number_of_edits_highEq_100(data, index).to_frame('highEq_100')
-    concatenar = pd.concat([one_four, between_5_24, between_25_99, highEq_100], axis = 1)
-    concatenar['suma'] = concatenar[['one_four', '5_24', '25_99', 'highEq_100']].sum(axis=1)
-    print(concatenar)
-    #concatenar = concatenar.groupby(pd.Grouper(key='timestamp', freq = 'MS')).sum().to_frame('suma')
-    concatenar['one_four'] = (concatenar['one_four']/concatenar['suma'])*100
-    concatenar['5_24'] = (concatenar['5_24']/concatenar['suma'])*100
-    concatenar['25_99'] = (concatenar['25_99']/concatenar['suma'])*100
-    concatenar['highEq_100'] = (concatenar['highEq_100']/concatenar['suma'])*100
-    one_four = pd.Series(concatenar['one_four'], index = concatenar.index)
-    between_5_24 = pd.Series(concatenar['5_24'], index = concatenar.index)
-    between_25_99 = pd.Series(concatenar['25_99'], index = concatenar.index)
-    highEq_100 = pd.Series(concatenar['highEq_100'], index = concatenar.index)
+    concatenate = pd.concat([one_four, between_5_24, between_25_99, highEq_100], axis = 1)
+    concatenate['suma'] = concatenate[['one_four', '5_24', '25_99', 'highEq_100']].sum(axis=1)
+    concatenate['one_four'] = (concatenate['one_four']/concatenate['suma'])*100
+    concatenate['5_24'] = (concatenate['5_24']/concatenate['suma'])*100
+    concatenate['25_99'] = (concatenate['25_99']/concatenate['suma'])*100
+    concatenate['highEq_100'] = (concatenate['highEq_100']/concatenate['suma'])*100
+    one_four = pd.Series(concatenate['one_four'], index = concatenate.index)
+    between_5_24 = pd.Series(concatenate['5_24'], index = concatenate.index)
+    between_25_99 = pd.Series(concatenate['25_99'], index = concatenate.index)
+    highEq_100 = pd.Series(concatenate['highEq_100'], index = concatenate.index)
     one_four.name = 'between 1 and 4'
     between_5_24.name = 'between 5 and 24'
     between_25_99.name = 'between 25 and 99'
