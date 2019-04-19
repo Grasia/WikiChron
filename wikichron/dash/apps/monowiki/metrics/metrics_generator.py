@@ -46,6 +46,7 @@ def generate_metrics():
     #metrics.append(Metric('users_edits_between_25_99', 'users #edits 3', MetricCategory.USERS, stats.users_number_of_edits_between_25_and_99, 'Users that have completed between 25 and 99 editions until month X-1 (included)'))
     #metrics.append(Metric('users_edits_highEq_100', 'users #edits 4', MetricCategory.USERS, stats.users_number_of_edits_highEq_100, 'Users that have completed >= 100 editions until month X-1 (included)'))
     metrics.append(Metric('users_edits_number_of_edits', 'Users number of edits', MetricCategory.USERS, stats.users_number_of_edits, 'Users whose number of editions in a month is: 1) Between 1 and 4 editions. 2) Between 5 and 24 editions. 3) Between 25 and 99 editions. 4) Higher than 99.'))
+    metrics.append(Metric('users_edits_number_of_edits_abs', 'Users number of edits_abs', MetricCategory.USERS, stats.users_number_of_edits_abs, ''))
 
 # metric 6: wikimedia
 # metric 7
@@ -86,10 +87,10 @@ def generate_dict_metrics_by_category(list_of_metrics):
 
     return metrics_by_category
 
-def main():
+'''def main():
     print (generate_metrics())
     return
 
 if __name__ == '__main__':
-    main()
+    main()'''
 
