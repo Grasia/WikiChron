@@ -19,7 +19,7 @@ class CoEditingNetwork(BaseNetwork):
         - Node:
             * id: user id on the wiki
             * label: the user name with id contributor_id on the wiki
-            * num_edits: the number of edit in the whole wiki
+            * article_edits: the number of edit in the whole wiki
             * abs_birth: the first edit in the whole network
 
         - Edge:
@@ -29,40 +29,22 @@ class CoEditingNetwork(BaseNetwork):
                       differents editions on the same page computes only once.
 
     """
-
-    # aprox 1 month = 30 days
-    TIME_DIV = 60 * 60 * 24 * 30
-    TIME_BOUND = 24 * 15
     NAME = 'Co-Editing'
     CODE = 'co_editing_network'
     DIRECTED = False
 
-    # only metrics for the ranking
-    AVAILABLE_METRICS = {
-        'Article Edits': 'num_edits',
-        'Betweenness': 'betweenness',
-        'Page Rank': 'page_rank'
-    }
-
-    SECONDARY_METRICS = {
-        'Absolute Longevity': {
-            'key': 'abs_birth_int',
-            'max': 'max_abs_birth_int',
-            'min': 'min_abs_birth_int'
-        },
-        'Talk Edits': {
-            'key': 'talk_edits',
-            'max': 'max_talk_edits',
-            'min': 'min_talk_edits'
-        }
-    }
+    NETWORK_STATS = BaseNetwork.NETWORK_STATS.copy()
+    NETWORK_STATS['Edited articles'] = 'wiki_articles'
+    NETWORK_STATS['Article edits'] = 'wiki_article_edits'
 
     USER_INFO = {
-        'User ID': 'id',
-        'User Name': 'label',
-        'Absolute Birth': 'abs_birth',
-        'Cluster': 'cluster',
-        'Talk Page Edits': 'talk_edits',
+        #'User ID': 'id',
+        'Birth': 'birth',
+        'Cluster #': 'cluster',
+    }
+
+    NODE_NAME = {
+        'User': 'label'
     }
 
 
@@ -84,10 +66,12 @@ class CoEditingNetwork(BaseNetwork):
                 mapper_v[int(r['contributor_id'])] = count
                 self.graph.vs[count]['id'] = int(r['contributor_id'])
                 self.graph.vs[count]['label'] = r['contributor_name']
-                self.graph.vs[count]['num_edits'] = 0
+                self.graph.vs[count]['article_edits'] = 0
+                self.graph.vs[count]['articles'] = {int(r['page_id'])}
                 count += 1
 
-            self.graph.vs[mapper_v[int(r['contributor_id'])]]['num_edits'] += 1
+            self.graph.vs[mapper_v[int(r['contributor_id'])]]['article_edits'] += 1
+            self.graph.vs[mapper_v[int(r['contributor_id'])]]['articles'].add(int(r['page_id']))
 
             # A page gets serveral contributors
             if not int(r['page_id']) in user_per_page:
@@ -104,8 +88,12 @@ class CoEditingNetwork(BaseNetwork):
                     if u1 == u2:
                         continue
                     k_edge = (u1 << 32) + u2
+                    k_edge_2 = (u2 << 32) + u1
                     if k_edge in mapper_e:
                         self.graph.es[mapper_e[k_edge]]['weight'] += 1
+                        continue
+                    elif k_edge_2 in mapper_e:
+                        #self.graph.es[mapper_e[k_edge_2]]['weight'] += 1
                         continue
 
                     self.graph.add_edge(mapper_v[u1], mapper_v[u2])
@@ -115,6 +103,15 @@ class CoEditingNetwork(BaseNetwork):
                     self.graph.es[mapper_e[k_edge]]['id'] = k_edge
                     self.graph.es[mapper_e[k_edge]]['source'] = u1
                     self.graph.es[mapper_e[k_edge]]['target'] = u2
+
+        # total pages per user
+        if 'articles' in self.graph.vs.attributes():
+            articles = [len(node['articles']) for node in self.graph.vs]
+            self.graph.vs['articles'] = articles
+
+        # total pages
+        self.graph['wiki_articles'] = len(user_per_page)
+        self.graph['wiki_article_edits'] = len(dff.index)
 
 
     def get_metric_dataframe(self, metric):
@@ -130,9 +127,18 @@ class CoEditingNetwork(BaseNetwork):
         return pd.DataFrame()
 
 
+    def add_others(self, df):
+        self.calculate_edits(df, 'talk')
+
+
     @classmethod
-    def get_available_metrics(cls) -> dict:
-        return cls.AVAILABLE_METRICS
+    def get_metric_header(cls, metric: str) -> list:
+        header = list()
+        if metric in cls.AVAILABLE_METRICS:
+            header = [{'name': 'User', 'id': 'User'}, 
+                {'name': metric, 'id': metric}]
+
+        return header
 
 
     @classmethod
@@ -141,16 +147,13 @@ class CoEditingNetwork(BaseNetwork):
 
 
     @classmethod
-    def get_secondary_metrics(cls) -> dict:
-        return cls.SECONDARY_METRICS
+    def get_network_stats(cls) -> dict:
+        return cls.NETWORK_STATS
 
 
-    def add_graph_attrs(self):
-        super().add_graph_attrs()
-        for _, val in self.SECONDARY_METRICS.items():
-            if val['key'] in self.graph.vs.attributes():
-                self.graph[val['max']] = max(self.graph.vs[val['key']])
-                self.graph[val['min']] = min(self.graph.vs[val['key']])
+    @classmethod
+    def get_node_name(cls) -> dict:
+        return cls.NODE_NAME
 
 
     @classmethod
@@ -158,5 +161,27 @@ class CoEditingNetwork(BaseNetwork):
         return cls.DIRECTED
 
 
-    def add_others(self, df):
-        self.calculate_edits(df, 'talk')
+    @classmethod
+    def get_network_description(cls) -> dict:
+        desc = {}
+        desc['min_node_color'] = 'Lowest value in selected metric'
+        desc['max_node_color'] = 'Highest value in selected metric'
+        desc['min_node_size'] = 'A low edition in articles'
+        desc['max_node_size'] = 'A high edition in articles'
+        desc['min_edge_size'] = 'A weak interaction in the wiki'
+        desc['max_edge_size'] = 'A strong interaction in the wiki'
+        return desc
+
+
+    @classmethod
+    def get_main_class_metric(cls) -> str:
+        if 'Article edits' in cls.NODE_METRICS_TO_PLOT:
+            return cls.NODE_METRICS_TO_PLOT['Article edits']
+        else:
+            return ''
+
+
+    @classmethod
+    def get_main_class_key(cls) -> str:
+        metric = cls.get_main_class_metric()
+        return metric['log'] if metric and 'log' in metric else ''

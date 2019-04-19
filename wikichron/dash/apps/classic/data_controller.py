@@ -150,13 +150,11 @@ def clean_up_bot_activity(df, wiki):
 
 
 def get_first_entry(wiki):
-    df = read_data(wiki)
-    return df['timestamp'].min()
+    return wiki['first_edit']['date']
 
 
 def get_last_entry(wiki):
-    df = read_data(wiki)
-    return df['timestamp'].max()
+    return wiki['last_edit']['date']
 
 
 def get_time_bounds(wiki, lower, upper):

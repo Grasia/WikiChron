@@ -9,6 +9,7 @@
    Copyright 2017-2019 Youssef 'FRYoussef' El Faqir El Rhazoui <f.r.youssef@hotmail.com>
 """
 
+from .BaseNetwork import BaseNetwork
 from .CoEditingNetwork import CoEditingNetwork
 from .TalkPagesNetwork import TalkPagesNetwork
 from .UserTalkNetwork import UserTalkNetwork
@@ -41,24 +42,35 @@ def get_user_info(network_code):
         raise Exception("Something went bad. Missing network type selection.")
 
 
-def get_available_metrics(network_code):
+def get_node_name(network_code):
     if network_code == CoEditingNetwork.CODE:
-        return CoEditingNetwork.get_available_metrics()
+        return CoEditingNetwork.get_node_name()
     elif network_code == TalkPagesNetwork.CODE:
-        return TalkPagesNetwork.get_available_metrics()
+        return TalkPagesNetwork.get_node_name()
     elif network_code == UserTalkNetwork.CODE:
-        return UserTalkNetwork.get_available_metrics()
+        return UserTalkNetwork.get_node_name()
     else:
         raise Exception("Something went bad. Missing network type selection.")
 
 
-def get_secondary_metrics(network_code):
+def get_available_metrics(network_code):
     if network_code == CoEditingNetwork.CODE:
-        return CoEditingNetwork.get_secondary_metrics()
+        return BaseNetwork.get_available_metrics(CoEditingNetwork.DIRECTED)
     elif network_code == TalkPagesNetwork.CODE:
-        return TalkPagesNetwork.get_secondary_metrics()
+        return BaseNetwork.get_available_metrics(TalkPagesNetwork.DIRECTED)
     elif network_code == UserTalkNetwork.CODE:
-        return UserTalkNetwork.get_secondary_metrics()
+        return UserTalkNetwork.get_available_metrics(UserTalkNetwork.DIRECTED)
+    else:
+        raise Exception("Something went bad. Missing network type selection.")
+
+
+def get_metrics_to_plot(network_code):
+    if network_code == CoEditingNetwork.CODE:
+        return BaseNetwork.get_metrics_to_plot()
+    elif network_code == TalkPagesNetwork.CODE:
+        return BaseNetwork.get_metrics_to_plot()
+    elif network_code == UserTalkNetwork.CODE:
+        return UserTalkNetwork.get_metrics_to_plot()
     else:
         raise Exception("Something went bad. Missing network type selection.")
 
@@ -70,5 +82,49 @@ def is_directed(network_code) -> bool:
         return TalkPagesNetwork.is_directed()
     elif network_code == UserTalkNetwork.CODE:
         return UserTalkNetwork.is_directed()
+    else:
+        raise Exception("Something went bad. Missing network type selection.")
+
+
+def get_metric_header(network_code, metric) -> bool:
+    if network_code == CoEditingNetwork.CODE:
+        return CoEditingNetwork.get_metric_header(metric)
+    elif network_code == TalkPagesNetwork.CODE:
+        return TalkPagesNetwork.get_metric_header(metric)
+    elif network_code == UserTalkNetwork.CODE:
+        return UserTalkNetwork.get_metric_header(metric)
+    else:
+        raise Exception("Something went bad. Missing network type selection.")
+
+
+def get_network_description(network_code: str) -> dict:
+    if network_code == CoEditingNetwork.CODE:
+        return CoEditingNetwork.get_network_description()
+    elif network_code == TalkPagesNetwork.CODE:
+        return TalkPagesNetwork.get_network_description()
+    elif network_code == UserTalkNetwork.CODE:
+        return UserTalkNetwork.get_network_description()
+    else:
+        raise Exception("Something went bad. Missing network type selection.")
+
+
+def get_main_class_metric(network_code: str) -> dict:
+    if network_code == CoEditingNetwork.CODE:
+        return CoEditingNetwork.get_main_class_metric()
+    elif network_code == TalkPagesNetwork.CODE:
+        return TalkPagesNetwork.get_main_class_metric()
+    elif network_code == UserTalkNetwork.CODE:
+        return UserTalkNetwork.get_main_class_metric()
+    else:
+        raise Exception("Something went bad. Missing network type selection.")
+
+
+def get_network_stats(network_code: str) -> dict:
+    if network_code == CoEditingNetwork.CODE:
+        return CoEditingNetwork.get_network_stats()
+    elif network_code == TalkPagesNetwork.CODE:
+        return TalkPagesNetwork.get_network_stats()
+    elif network_code == UserTalkNetwork.CODE:
+        return UserTalkNetwork.get_network_stats()
     else:
         raise Exception("Something went bad. Missing network type selection.")

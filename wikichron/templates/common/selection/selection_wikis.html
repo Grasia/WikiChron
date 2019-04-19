@@ -5,7 +5,7 @@
 
         <form class="form-inline">
             <label class="sr-only" for="search-wiki-input">Wiki keywords</label>
-            <input id="search-wiki-input" class="form-control h-100" type="text" placeholder="Search wiki"/>
+            <input id="search-wiki-input" class="form-control h-100" type="text" placeholder="Search wiki" autofocus/>
         </form>
     </div>
 
@@ -19,7 +19,7 @@
                   <div class="card-body">
                     <h4 class="card-title">
                         <div class="custom-control custom-checkbox">
-                            <input class="custom-control-input wiki-input" type="checkbox" id="checkbox-{{wiki.url}}" value="{{wiki.url}}" data-name="{{wiki.name}}" name="wikis">
+                            <input class="custom-control-input wiki-input" type="checkbox" id="checkbox-{{wiki.url}}" value="{{wiki.url}}" data-name="{{wiki.name}}" name="wikis" {{"checked" if wiki.url in pre_selected_wikis}}>
                             <label class="custom-control-label wiki-name" for="checkbox-{{wiki.url}}">{{wiki.name}}</label>
                         </div>
                     </h4>
@@ -48,6 +48,12 @@
                         <div class="wiki-item">
                             <span>Edits:</span>
                             <span class="font-weight-bold">{{wiki.edits or "NA"}}</span>
+                        </div>
+                    </p>
+                    <p class="card-text">
+                        <div class="wiki-item">
+                            <span><em>Last updated:</em></span>
+                            <em>{{wiki.lastUpdated or "NA"}}</em>
                         </div>
                     </p>
                     <p class="wiki-url font-weight-bold">

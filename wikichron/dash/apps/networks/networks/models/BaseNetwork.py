@@ -7,8 +7,12 @@
 import abc
 from datetime import datetime
 import pandas as pd
-from igraph import Graph, ClusterColoringPalette, VertexClustering
+from igraph import Graph, ClusterColoringPalette, VertexClustering,\
+    WEAK
 from colormap.colors import rgb2hex
+from math import log1p as log
+import inequality_coefficients as ineq
+import numpy as np
 
 from .fix_dendrogram import fix_dendrogram
 
@@ -17,11 +21,74 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
     NAME = 'Base Network'
     CODE = 'base_network'
+    DIRECTED = False
+
+# CHANGE NAME
+    NODE_METRICS_TO_PLOT = {
+        'Tenure': {
+            'key': 'birth_value',
+            'max': 'max_birth_value',
+            'min': 'min_birth_value'
+        },
+        'Edited articles': {
+            'key': 'articles',
+            'log': 'articles_log',
+            'max': 'max_articles',
+            'min': 'min_articles'
+        },
+        'Article edits': {
+            'key': 'article_edits',
+            'log': 'article_edits_log',
+            'max': 'max_article_edits',
+            'min': 'min_article_edits'
+        },
+        'Edited talk pages': {
+            'key': 'talks',
+            'max': 'max_talks',
+            'min': 'min_talks'
+        },
+        'Talk page edits': {
+            'key': 'talk_edits',
+            'log': 'talk_edits_log',
+            'max': 'max_talk_edits',
+            'min': 'min_talk_edits'
+        },
+    }
+# TO FIX
+# This param will be removed, u should use NODE_METRICS_TO_PLOT
+    AVAILABLE_METRICS = {
+        'Degree': 'degree',
+        'In-degree': 'indegree',
+        'Out-degree': 'outdegree',
+        'Closeness': 'closeness',
+        'Betweenness': 'betweenness',
+        'Page rank': 'page_rank',
+        'Edited articles': 'articles',
+        'Article edits': 'article_edits',
+        'Edited talk pages': 'talks',
+        'Talk page edits': 'talk_edits',
+    }
+
+    EDGE_METRICS_TO_PLOT = {
+        'Weight': {
+            'key': 'weight',
+            'min': 'min_weight',
+            'max': 'max_weight',
+        }
+    }
+
     NETWORK_STATS = {
         'Nodes': 'num_nodes',
-        'Assortativity Degree': 'assortativity_degree',
+        'Diameter': 'diameter',
         'Edges': 'num_edges',
-        'Communities': 'n_communities'
+        'Density': 'density',
+        'Connected components': 'components',
+        'Clusters': 'n_communities',
+        'Assortativity degree': 'assortativity_degree',
+        'Gini of betweenness': 'gini_betweenness',
+        'Gini of degree': 'gini_degree',
+        'Gini of in-degree': 'gini_indegree',
+        'Gini of out-degree': 'gini_outdegree',
     }
 
 
@@ -58,11 +125,11 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         """
         pass
 
-    
+
     @abc.abstractclassmethod
-    def get_available_metrics(self) -> dict:
+    def get_metric_header(self, metric: str) -> list:
         """
-        Return a dict with the metrics
+        Returns a list with the header keys of the function get_metric_dataframe
         """
         pass
 
@@ -76,16 +143,15 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
 
     @abc.abstractclassmethod
-    def get_secondary_metrics(cls) -> dict:
+    def get_node_name(self) -> dict:
+        pass
+
+
+    @abc.abstractclassmethod
+    def get_network_description(cls) -> dict:
         """
-        Returns a dict with the metrics, the dict must get the following structure:
-            dict = {
-                'Metric name well formatted': {
-                    'key': 'a vertex key',
-                    'max': 'a graph key',
-                    'min': 'a graph key'
-                }
-            }
+        Returns a dict with the network components description
+        (e.g. nodes, color, edge)
         """
         pass
 
@@ -95,9 +161,49 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         pass
 
 
-    @classmethod
+    @abc.abstractclassmethod
+    def get_main_class_metric(cls) -> str:
+        """
+        This method should retrun a main class metric (e.g. article edits) 
+        """
+        pass
+
+
+    @abc.abstractclassmethod
+    def get_main_class_key(cls) -> str:
+        pass
+
+
+    @abc.abstractclassmethod
     def get_network_stats(cls) -> dict:
-        return cls.NETWORK_STATS
+        pass
+
+
+    @classmethod
+    def get_available_metrics(cls, directed) -> dict:
+        """
+        Return a dict with the metrics
+        """
+        metrics = cls.AVAILABLE_METRICS.copy()
+        if directed:
+            del metrics['Degree']
+        else:
+            del metrics['In-degree']
+            del metrics['Out-degree']
+
+        return metrics
+
+
+    @classmethod
+    def get_metrics_to_plot(cls) -> dict:
+        """
+        Returns a dict with the metrics, the dict must get the following structure:
+            dict = {
+                'Metric name well formatted': 'a vertex key'
+            }
+        """
+        return cls.NODE_METRICS_TO_PLOT
+
 
 
     def add_graph_attrs(self):
@@ -106,12 +212,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         """
         self.graph['num_nodes'] = self.graph.vcount()
         self.graph['num_edges'] = self.graph.ecount()
-        if 'num_edits' in self.graph.vs.attributes():
-            self.graph['max_node_size'] = max(self.graph.vs['num_edits'])
-            self.graph['min_node_size'] = min(self.graph.vs['num_edits'])
-        if 'weight' in self.graph.es.attributes():
-            self.graph['max_edge_size'] = max(self.graph.es['weight'])
-            self.graph['min_edge_size'] = min(self.graph.es['weight'])
 
 
     def to_cytoscape_dict(self) -> dict:
@@ -124,15 +224,21 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         """
         di_net = {}
         network = []
+        metrics_to_plot = [val for key, val in self.NODE_METRICS_TO_PLOT.items()]
+        metrics_to_plot = metrics_to_plot + [val for key, val in self.EDGE_METRICS_TO_PLOT.items()]
+        keys_to_plot = {metric['key'] for metric in metrics_to_plot if 'log' in metric.keys()}
 
         # node attrs
         for node in self.graph.vs:
             data = {'data': {}}
             for attr in self.graph.vs.attributes():
                 val = node[attr]
-                if attr == 'id':
-                    val = str(val)
+                
+                if attr in keys_to_plot:
+                    data['data'][f'{attr}_log'] = int(log(val)*100)
+
                 data['data'][attr] = val
+
             network.append(data)
 
         # edge attrs
@@ -140,8 +246,11 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             data = {'data': {}}
             for attr in self.graph.es.attributes():
                 val = edge[attr]
-                if attr == 'id' or attr == 'source' or attr == 'target':
-                    val = str(val)
+                if attr == 'id':
+                    continue
+                if attr in keys_to_plot:
+                    data['data'][f'{attr}_log'] = int(log(val)*100)
+
                 data['data'][attr] = val
             network.append(data)
 
@@ -149,18 +258,30 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         for attr in self.graph.attributes():
             di_net[attr] = self.graph[attr]
 
+        # add max min metrics to plot
+        _max = 0
+        _min = 0
+        for metric in metrics_to_plot:
+            if metric['key'] in self.graph.vs.attributes():
+                _max = max(self.graph.vs[metric['key']])
+                _min = min(self.graph.vs[metric['key']])
+            elif metric['key'] in self.graph.es.attributes():
+                _max = max(self.graph.es[metric['key']])
+                _min = min(self.graph.es[metric['key']])
+
+            if 'log' in metric.keys():
+                _max = int(log(_max)*100)
+                _min = int(log(_min)*100)
+
+            di_net[metric['max']] = _max
+            di_net[metric['min']] = _min
+
+        metric_size = self.get_main_class_key()
+        if metric_size:
+            di_net['size'] = metric_size
         di_net['network'] = network
+
         return di_net
-
-
-    def calculate_metrics(self):
-        """
-        A method which calculate the available metrics 
-        """
-        self.calculate_page_rank()
-        self.calculate_betweenness()
-        self.calculate_assortativity_degree()
-        self.calculate_communities()
 
 
     def write_gml(self, file: str):
@@ -181,7 +302,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             p_r = self.graph.pagerank(directed=self.graph.is_directed(), 
                     weights = weight)
 
-            self.graph.vs['page_rank'] = list(map(lambda x: "{0:.5f}".format(x), p_r))
+            self.graph.vs['page_rank'] = list(map(lambda x: f"{x:.4f}", p_r))
 
 
     def calculate_betweenness(self):
@@ -193,7 +314,50 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             bet = self.graph.betweenness(directed=self.graph.is_directed(), 
                 weights = weight)
 
-            self.graph.vs['betweenness'] = list(map(lambda x: float("{0:.5f}".format(x)), bet))
+            self.graph.vs['betweenness'] = list(map(lambda x: float(f"{x:.4f}"), bet))
+
+
+    def calculate_gini_betweenness(self):
+        if 'betweenness' in self.graph.vs.attributes() and 'gini_betweenness'\
+            not in self.graph.attributes():
+
+            gini = ineq.gini_corrected(self.graph.vs['betweenness'])
+            value = 'nan'
+            if gini is not np.nan:
+                value = f"{gini:.4f}"
+
+            self.graph['gini_betweenness'] = value
+
+
+    def calculate_degree(self):
+        if self.graph.is_directed() and 'indegree' not in self.graph.vs:
+            self.graph.vs['indegree'] = self.graph.indegree()
+            self.graph.vs['outdegree'] = self.graph.outdegree()
+        elif 'degree' not in self.graph.vs:
+            self.graph.vs['degree'] = self.graph.degree()
+
+
+    def calculate_gini_degree(self):
+        if self.graph.is_directed() and 'gini_indegree' not in\
+            self.graph.attributes():
+
+            gini = ineq.gini_corrected(self.graph.vs['indegree'])
+            value = 'nan'
+            if gini is not np.nan:
+                value = value = f"{gini:.4f}"
+            self.graph['gini_indegree'] = value
+            gini = ineq.gini_corrected(self.graph.vs['outdegree'])
+            value = 'nan'
+            if gini is not np.nan:
+                value = value = f"{gini:.4f}"
+            self.graph['gini_outdegree'] = value
+
+        elif 'gini_degree' not in self.graph.attributes():
+            gini = ineq.gini_corrected(self.graph.vs['degree'])
+            value = 'nan'
+            if gini is not np.nan:
+                value = value = f"{gini:.4f}"
+            self.graph['gini_degree'] = value
 
 
     def calculate_communities(self):
@@ -227,20 +391,72 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         if not 'assortativity_degree' in self.graph.attributes():
             assortativity = self.graph.assortativity_degree(self.graph.is_directed())
             if assortativity:
-                assortativity = "{0:.5f}".format(assortativity)
+                assortativity = f"{assortativity:.4f}"
 
             self.graph['assortativity_degree'] = assortativity
 
 
+    def calculate_density(self):
+        if not 'density' in self.graph.attributes():
+            density = f'{self.graph.density():.4f}'
+            self.graph['density'] = density
+
+
+    def calculate_diameter(self):
+        if not 'diameter' in self.graph.attributes():
+            diameter = self.graph.diameter(directed=self.graph.is_directed(), unconn=False)
+            self.graph['diameter'] = diameter
+
+
+    def calculate_components(self):
+        if not 'components' in self.graph.attributes():
+            components = self.graph.clusters(mode=WEAK)
+            self.graph['components'] = len(components.subgraphs())
+
+    
+    def calculate_closeness(self):
+        if 'closeness' not in self.graph.vs.attributes() and 'weight'\
+            in self.graph.es.attributes():
+
+            rounder = lambda x: f"{x:.4f}"
+            closeness = self.graph.closeness(weights='weight')
+            closeness = list(map(rounder, closeness))
+            self.graph.vs['closeness'] = closeness
+
+
+    def calculate_metrics(self):
+        """
+        A method which calculate the available metrics 
+        """
+        self.calculate_page_rank()
+        self.calculate_betweenness()
+        self.calculate_gini_betweenness()
+        self.calculate_degree()
+        self.calculate_gini_degree()
+        self.calculate_assortativity_degree()
+        self.calculate_communities()
+        self.calculate_density()
+        self.calculate_diameter()
+        self.calculate_components()
+        self.calculate_closeness()
+
+
     def get_degree_distribution(self) -> (list, list):
         """
-        It returns the degree distribution
+        Returns the degree distribution:
+            if its directed is the sum of out and in degree
+            if not its the out degree
         """
+
+        degree = self.graph.degree()
+        max_degree = self.graph.maxdegree()
+
         # Let's count the number of each degree
-        p_k = [0 for i in range(0, self.graph.maxdegree()+1)]
-        for x in self.graph.degree(): p_k[x] += 1
+        p_k = [0 for i in range(0, max_degree + 1)]
+        for x in degree: p_k[x] += 1
+            
         # Now, we are gonna clean the 0's
-        k = [i for i in range(0, self.graph.maxdegree()+1) if p_k[i] > 0]
+        k = [i for i in range(0, max_degree + 1) if p_k[i] > 0]
         p_k = list(filter(lambda x: x > 0, p_k))
 
         return (k, p_k)
@@ -326,6 +542,10 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         This function adds as a vertex attr the edits from other namespace
         type_e parameter only accept {talk, article, user_talk}
         """
+        allowed_types = {'talk', 'article', 'user_talk'}
+        if type_e not in allowed_types:
+            raise Exception(f"Not allowed type: {type_e}, it must be {allowed_types}")
+
         if 'label' not in self.graph.vs.attributes():
             return
 
@@ -338,17 +558,20 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             key = f'{type_e}_{key}'
         elif type_e == 'user_talk':
             raise Exception(f'type: {type_e} is not implemented yet')
-            # dff = self.remove_non_user_talk_data(df)
-            # key = f'{type_e}_{key}'
         else:
             raise Exception(f'type: {type_e} is not defined')
 
         mapper = {self.graph.vs[i]['label']: i for i in range(self.graph.vcount())}
         edits = [0 for i in range(self.graph.vcount())]
+        pages = [set() for _ in range(self.graph.vcount())]
         for _, row in dff.iterrows():
             if row['contributor_name'] in mapper.keys():
                 edits[mapper[row['contributor_name']]] += 1
+                pages[mapper[row['contributor_name']]].add(int(row['page_id']))
 
+        sizer = lambda x: len(x)
+        pages = list(map(sizer, pages))
+        self.graph.vs[f"{type_e}s"] = pages
         self.graph.vs[key] = edits
 
 
@@ -356,18 +579,22 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         """
         Calculates the birth of all the vertex without filter_by_time 
         """
+        inverter = lambda x: 1/x*1000
         max_date = 0
         for node in self.graph.vs:
             dff = df[node['label'] == df['contributor_name']]
             if not dff.empty:
                 row = dff.iloc[0]
-                node['abs_birth'] = row['timestamp']
-                node['abs_birth_int'] = int(datetime.strptime(
+                node['birth'] = datetime.strftime(row['timestamp'], "%d/%b/%Y")
+                node['birth_value'] = int(datetime.strptime(
                     str(row['timestamp']), "%Y-%m-%d %H:%M:%S").strftime('%s'))
 
                 # this is a weak solution to avoid users with no activity
-                if max_date < node['abs_birth_int']:
-                    max_date = node['abs_birth_int']
+                if max_date < node['birth_value']:
+                    max_date = node['birth_value']
             else:
-                node['abs_birth'] = 'Not available'
-                node['abs_birth_int'] = max_date
+                node['birth'] = 'Not available'
+                node['birth_value'] = max_date
+        
+        if 'birth_value' in self.graph.vs.attributes():
+            self.graph.vs['birth_value'] = list(map(inverter, self.graph.vs['birth_value']))

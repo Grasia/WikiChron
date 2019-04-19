@@ -13,8 +13,7 @@
 import os
 from urllib.parse import urljoin
 import flask
-import flask
-from flask import Blueprint, current_app
+from flask import Blueprint, current_app, request, jsonify
 
 # Imports from dash apps
 # classic
@@ -41,7 +40,7 @@ def index():
                                 title = 'WikiChron - Welcome')
 
 
-@server_bp.route('/classic/') #TOMOVE to BP
+@server_bp.route('/classic/') #TOMOVE to BP # will be wizard screen
 @server_bp.route('/classic/selection') #TOMOVE to BP
 def classic_app():
 
@@ -62,11 +61,19 @@ def classic_app():
         cat_name = cat_obj.value
         categories_frontend[cat_name] = [transform_metric_obj_in_metric_frontend(metric) for metric in cat_metrics]
 
+    # take all wikis and metrics in query string
+    selected_wikis   = set(request.args.getlist('wikis'))
+    selected_metrics = set(request.args.getlist('metrics'))
+
     return flask.render_template("classic/selection/selection.html",
                                 title = 'WikiChron Classic - selection',
+                                mode = 'classic',
                                 development = config["DEBUG"],
                                 wikis = wikis,
-                                categories = categories_frontend)
+                                categories = categories_frontend,
+                                pre_selected_wikis = selected_wikis,
+                                pre_selected_metrics = selected_metrics,
+                                )
 
 @server_bp.route('/monowiki/') #TOMOVE to BP
 @server_bp.route('/monowiki/selection') #TOMOVE to BP
@@ -96,7 +103,7 @@ def monowiki_app():
                                 categories = categories_frontend)
 
 
-@server_bp.route('/networks/') #TOMOVE to BP
+@server_bp.route('/networks/') #TOMOVE to BP # will be wizard screen
 @server_bp.route('/networks/selection') #TOMOVE to BP
 def networks_app():
 
@@ -109,11 +116,37 @@ def networks_app():
     for nw in network_backend_objects:
         networks_frontend.append({ 'name': nw.NAME, 'code': nw.CODE})
 
+    # take only the first one in case more than one
+    selected_wikis    = request.args.get('wikis', default=set(), type=str)
+    selected_networks = request.args.get('network', default=set(), type=str)
+
     return flask.render_template("networks/selection/selection.html",
                                 title = 'WikiChron Networks - selection',
+                                mode = 'networks',
                                 development = config["DEBUG"],
                                 wikis = wikis,
-                                networks = networks_frontend)
+                                networks = networks_frontend,
+                                pre_selected_wikis = selected_wikis,
+                                pre_selected_networks = selected_networks
+                                )
+
+
+@server_bp.route('/wikisTimelifes.json')
+def serve_wikis_time_lifes():
+
+    wikis = networks_data_controller.get_available_wikis()
+
+    time_spans = { wiki['url']: {'first_date': wiki['first_edit']['date'], 'last_date': wiki['last_edit']['date']}
+                                for wiki in wikis
+                                if 'first_edit' in wiki and 'last_edit' in wiki}
+    return jsonify(time_spans)
+
+
+
+@server_bp.route('/app/')
+def redirect_app_to_classic():
+    print('Redirecting user from old endpoint "/app" to /classic/app...')
+    return flask.redirect('/classic/app/?{}'.format(bytes.decode(request.query_string)), code=302)
 
 
 #--------- BEGIN AUX SERVERS (non pure flask / jinja / html / http servers) ---#
@@ -131,15 +164,11 @@ def serve_local_js(path, js_file):
     return flask.send_from_directory(js_directory, js_file)
 
 
-# Serve lib/ folder only in development mode
 @server_bp.route('/lib/<dep>', defaults={'path': ''})
 @server_bp.route('/lib/<path:path>/<dep>')
 def serve_lib_in_dev(path, dep):
     path = os.path.join('lib/', path)
-    dev = current_app.config["DEBUG"]
-    if dev:
-        return flask.send_from_directory(path, dep)
-    else:
-        print('Trying to retrieve a dependency from a local folder in production. Skipping.')
+    return flask.send_from_directory(path, dep)
+
 
 

@@ -40,6 +40,8 @@ from .utils import get_mode_config
 from .networks import interface
 from . import cache
 from . import data_controller
+from .main import bind_callbacks as bind_main_callbacks
+from .main_view import generate_main_content
 
 # production or development (DEBUG) flag:
 global debug;
@@ -66,7 +68,6 @@ global available_networks;
 global available_wikis;
 global available_wikis_dict;
 global side_bar
-global main
 
 
 ######### BEGIN CODE ###########################################################
@@ -160,8 +161,12 @@ def load_external_dash_libs_in_layout():
 
 
 def generate_welcome_page():
-    assets_url_path = os.path.join(current_app.config['DASH_BASE_PATHNAME'],
-                                    'assets')
+     # Load app config
+    mode_config = get_mode_config(current_app)
+
+    # Contructs the assets_url_path for image sources:
+    assets_url_path = os.path.join(mode_config['DASH_STATIC_PATHNAME'], 'assets')
+
     return html.Div(id='welcome-container',
             className='container',
             children=[
@@ -206,7 +211,7 @@ def app_bind_callbacks(app):
                 network['code'] = selection['network']
                 network['name'] = get_network_name_from_code(network['code'])
 
-                return main.generate_main_content(wikis, network, query_string)
+                return generate_main_content(wikis, network, query_string)
 
 
         print('There is not a valid wikis & metrics tuple selection yet for plotting any graph')
@@ -337,27 +342,19 @@ def create_dash_app(server):
     # load config
     mode_config = get_mode_config(server)
     wikichron_base_pathname = mode_config['DASH_BASE_PATHNAME'];
-    assets_url_path = os.path.join(wikichron_base_pathname, 'assets')
+    path_to_serve_assets = mode_config['DASH_STATIC_FOLDER']
+    assets_url_path = os.path.join(mode_config['DASH_STATIC_PATHNAME'], 'assets')
     assets_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                'resources', 'assets');
+                                path_to_serve_assets);
     schema_and_hostname = f'{server.config["PREFERRED_URL_SCHEME"]}://{server.config["APP_HOSTNAME"]}'
     meta_tags = define_meta_tags(schema_and_hostname, assets_url_path)
-
-    if not debug:
-        external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', # dash stylesheet
-                            'https://use.fontawesome.com/releases/v5.0.9/css/all.css',  # fontawesome css
-        ]
-    else:
-        external_stylesheets = [f'{assets_url_path}/lib/chriddyp.css', # dash stylesheet
-                                f'{assets_url_path}/lib/fontawesome-v.5.0.9.css',  # fontawesome css
-        ]
 
     print('Creating new Dash instance...')
     app = dash.Dash(__name__,
                     server = server,
                     meta_tags = meta_tags,
-                    external_stylesheets = external_stylesheets,
                     url_base_pathname = wikichron_base_pathname,
+                    assets_url_path = path_to_serve_assets,
                     assets_folder = assets_folder)
     app.title = 'WikiChron - Networks'
     app.config['suppress_callback_exceptions'] = True
@@ -386,12 +383,10 @@ def _init_global_vars():
 def _init_app_callbacks(app):
     global side_bar
     from . import side_bar #TOREMOVE (Probably)
-    global main
-    from . import main
 
     app_bind_callbacks(app)
     side_bar.bind_callbacks(app)
-    main.bind_callbacks(app)
+    bind_main_callbacks(app)
     return
 
 

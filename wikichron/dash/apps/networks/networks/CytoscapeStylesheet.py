@@ -11,9 +11,9 @@
 class CytoscapeStylesheet():
 
 	N_DEFAULT_COLOR = '#78909C'
-	N_MIN_COLOR = '#64B5F6'
-	N_MAX_COLOR = '#0D47A1'
-	N_DEFAULT_SIZE = '30'
+	N_MIN_COLOR = '#F3E5F5'
+	N_MAX_COLOR = '#1A237E'
+	N_DEFAULT_SIZE = '10'
 	N_MIN_SIZE = '10'
 	N_MAX_SIZE = '60'
 	N_DEFAULT_FONT = '12'
@@ -37,6 +37,17 @@ class CytoscapeStylesheet():
 		"text-opacity": 1,
 		"z-index": 9999
 	}
+	
+	EDGE_LABEL = {
+		"label": "data(weight)",
+		"z-index": 9999,
+		"text-opacity": 1,
+		"opacity": 1,
+		'text-valign': 'top',
+		'text-background-color': '#FFFFFF',
+		'text-background-opacity': '1'
+	}
+
 
 	def __init__(self, directed = False, cy_stylesheet = []):
 		if not cy_stylesheet:
@@ -58,7 +69,7 @@ class CytoscapeStylesheet():
 
 
 	def color_nodes(self, network, metric):
-		if not metric or not all(k in network for k in (metric['max'], metric['min'])):
+		if not metric or not all(k in metric for k in ('max', 'min', 'key')):
 			self.color_nodes_default(self.N_DEFAULT_COLOR)
 			return
 
@@ -66,8 +77,10 @@ class CytoscapeStylesheet():
 			self.color_nodes_default(self.N_MIN_COLOR)
 			return
 
+		key = metric['log'] if 'log' in metric else metric['key']
+
 		self.cy_stylesheet[0]['style']['background-color'] = \
-			f"mapData({metric['key']}, {network[metric['min']]}, \
+			f"mapData({key}, {network[metric['min']]}, \
 			{network[metric['max']]}, {self.N_MIN_COLOR}, {self.N_MAX_COLOR})"
 
 
@@ -81,54 +94,49 @@ class CytoscapeStylesheet():
 		self.size_font_labels_default()
 
 
-	def size_nodes(self, network):
-		if not all(k in network for k in ('min_node_size', 'max_node_size')):
+	def size_nodes(self, network, metric):
+		if not metric or not all(k in metric for k in ('min', 'max', 'key')):
 			self.size_nodes_default()
 			return
 
-		if network['min_node_size'] == network['max_node_size']:
+		if network[metric['max']] == network[metric['min']]:
 			self.size_nodes_default()
 			return
+		
+		key = metric['log'] if 'log' in metric else metric['key']
 
-		self.cy_stylesheet[0]['style']['height'] = \
-			f"mapData(num_edits, {network['min_node_size']}, \
-			{network['max_node_size']}, {self.N_MIN_SIZE}, {self.N_MAX_SIZE})"
+		self.cy_stylesheet[0]['style']['height'] = f"mapData({key}, {network[metric['min']]}, \
+			{network[metric['max']]}, {self.N_MIN_SIZE}, {self.N_MAX_SIZE})"
 
-		self.cy_stylesheet[0]['style']['width'] = \
-			f"mapData(num_edits, {network['min_node_size']}, \
-			{network['max_node_size']}, {self.N_MIN_SIZE}, {self.N_MAX_SIZE})"
+		self.cy_stylesheet[0]['style']['width'] = f"mapData({key}, {network[metric['min']]}, \
+			{network[metric['max']]}, {self.N_MIN_SIZE}, {self.N_MAX_SIZE})"
 
-		self.size_font_labels(network)
+		self.size_font_labels(network, metric)
 
 
 	def size_font_labels_default(self):	
 		self.cy_stylesheet[0]['style']['font-size'] = self.N_DEFAULT_FONT
 
 
-	def size_font_labels(self, network):
-		if not all(k in network for k in ('min_node_size', 'max_node_size')):
+	def size_font_labels(self, network, metric):
+		if not metric or not all(k in metric for k in ('min', 'max', 'key')):
 			self.size_font_labels_default()
 			return
 
-		if network['min_node_size'] == network['max_node_size']:
+		if network[metric['max']] == network[metric['min']]:
 			self.size_font_labels_default()
 			return
 
-		self.cy_stylesheet[0]['style']['font-size'] = \
-			f"mapData(num_edits, {network['min_node_size']}, \
-			{network['max_node_size']}, {self.N_MIN_FONT}, {self.N_MAX_FONT})"
+		key = metric['log'] if 'log' in metric else metric['key']
+
+		self.cy_stylesheet[0]['style']['font-size'] = f"mapData({key}, {network[metric['min']]}, \
+			{network[metric['max']]}, {self.N_MIN_FONT}, {self.N_MAX_FONT})"
 
 
-	# def color_edges(self, _):
-	# 	self.cy_stylesheet[1]['style']['line-color'] = \
-	# 		'mapData(w_time, 0, 2, #9E9E9E, #000000)'
 	def color_edges(self, _):
 		self.cy_stylesheet[1]['style']['line-color'] = self.E_DEFAULT_COLOR
 
 
-	# def set_edges_opacity(self, _):
-	# 	self.cy_stylesheet[1]['style']['opacity'] = \
-	# 		'mapData(w_time, 0, 2, 0.4, 1)'
 	def set_edges_opacity(self, _):
 		self.cy_stylesheet[1]['style']['opacity'] = self.E_DEFAULT_OPACITY
 
@@ -138,17 +146,17 @@ class CytoscapeStylesheet():
 
 
 	def size_edges(self, network):
-		if not all(k in network for k in ('min_edge_size', 'max_edge_size')):
+		if not all(k in network for k in ('min_weight', 'max_weight')):
 			self.size_edges_default()
 			return
 
-		if network['min_edge_size'] == network['max_edge_size']:
+		if network['min_weight'] == network['max_weight']:
 			self.size_edges_default()
 			return
 
 		self.cy_stylesheet[1]['style']['width'] = \
-			f"mapData(weight, {network['min_edge_size']}, \
-			{network['max_edge_size']}, {self.E_MIN_SIZE}, {self.E_MAX_SIZE})"
+			f"mapData(weight, {network['min_weight']}, \
+			{network['max_weight']}, {self.E_MIN_SIZE}, {self.E_MAX_SIZE})"
 
 
 	def set_label(self, text):
@@ -156,16 +164,29 @@ class CytoscapeStylesheet():
 		self.cy_stylesheet[0]['style']['content'] = content
 
 
-	def all_transformations(self, network, metric):
-		self.color_nodes(network, metric)
-		self.size_nodes(network)
+	def set_edge_label(self, edge_id):
+		if not edge_id:
+			return
+
+		selector = f'edge[id = "{edge_id}"]'
+		di_style = {
+			'selector': selector,
+			'style': self.EDGE_LABEL
+		}
+		self.cy_stylesheet.append(di_style)
+
+
+	def all_transformations(self, network, metric_color, metric_size):
+		self.color_nodes(network, metric_color)
+		self.size_nodes(network, metric_size)
 		self.color_edges(network)
 		self.set_edges_opacity(network)
 		self.size_edges(network)
+		self.set_edge_label('')
 
 
-	def highlight_nodes(self, network, selc_nodes):
-		self.size_nodes(network)
+	def highlight_nodes(self, network, selc_nodes, metric_size):
+		self.size_nodes(network, metric_size)
 		self.color_edges(network)
 		self.set_edges_opacity(network)
 		self.size_edges(network)
@@ -197,7 +218,10 @@ class CytoscapeStylesheet():
                     'font-size': cls.N_DEFAULT_FONT,
                     'background-color': cls.N_DEFAULT_COLOR,
                     'height': cls.N_DEFAULT_SIZE,
-                    'width': cls.N_DEFAULT_SIZE
+                    'width': cls.N_DEFAULT_SIZE,
+					'border-color': 'black',
+					'border-width': 1,
+					'border-opacity': 1,
                 }
             },
             {

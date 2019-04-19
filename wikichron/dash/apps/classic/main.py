@@ -73,7 +73,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
         -wikis_arg: wikis to use
         -metrics_arg: metrics to apply to those wikis
         -relative_time_arg: Use relative or absolute time axis?
-        -query_string: string for the download button
+        -query_string: query string of the current selection
 
     Return: An HTML object with the main content
     """
@@ -82,7 +82,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
     server_config = current_app.config
     mode_config = get_mode_config(current_app)
     # Contructs the assets_url_path for image sources:
-    assets_url_path = os.path.join(mode_config['DASH_BASE_PATHNAME'], 'assets')
+    assets_url_path = os.path.join(mode_config['DASH_STATIC_PATHNAME'], 'assets')
 
 
     def main_header():
@@ -93,45 +93,63 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
         """
         href_download_button = f'{mode_config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
         return (html.Div(id='header',
-                className='container',
-                style={'display': 'flex', 'align-items': 'center', \
-                        'justify-content': 'space-between'},
-                children=[
-                    html.Span(
-                        html.Img(src='{}/logo_wikichron.svg'.format(assets_url_path)),
-                        id='tool-title'),
-                    html.Div([
-                        html.A(
-                            html.Img(src='{}/share.svg'.format(assets_url_path)),
-                            id='share-button',
-                            className='icon',
-                            title='Share current selection'
-                        ),
-                        html.A(
-                            html.Img(src='{}/cloud_download.svg'.format(assets_url_path)),
-                            href=href_download_button,
-                            id='download-button',
-                            target='_blank',
-                            className='icon',
-                            title='Download data'
-                        ),
-                        html.A(
-                            html.Img(src='{}/documentation.svg'.format(assets_url_path)),
-                            href='https://github.com/Grasia/WikiChron/wiki/',
-                            target='_blank',
-                            className='icon',
-                            title='Documentation'
-                        ),
-                        html.A(
-                            html.Img(src='{}/ico-github.svg'.format(assets_url_path)),
-                            href='https://github.com/Grasia/WikiChron',
-                            target='_blank',
-                            className='icon',
-                            title='Github repo'
-                        ),
-                    ],
-                    id='icons-bar')
-            ])
+                className='main-root-header',
+                children = [
+                    html.Div(
+                        id='header-container',
+                        children=[
+                            html.Div(
+                                html.Img(src='{}/logo_classic_white.svg'.format(assets_url_path),
+                                    id='title-img'),
+                            ),
+                            html.Hr(),
+                            html.Div(
+                                style={'display': 'flex', 'align-items': 'center', \
+                                        'justify-content': 'space-between'},
+                                children=[
+                                    html.Div([
+                                        html.Strong(
+                                            html.A('< Go back to selection', href=selection_url)
+                                        )
+                                    ]),
+
+                                    html.Div([
+                                        html.A(
+                                            html.Img(src='{}/share.svg'.format(assets_url_path)),
+                                            id='share-button',
+                                            className='icon',
+                                            title='Share current selection'
+                                        ),
+                                        html.A(
+                                            html.Img(src='{}/cloud_download.svg'.format(assets_url_path)),
+                                            href=href_download_button,
+                                            id='download-button',
+                                            target='_blank',
+                                            className='icon',
+                                            title='Download data'
+                                        ),
+                                        html.A(
+                                            html.Img(src='{}/documentation.svg'.format(assets_url_path)),
+                                            href='https://github.com/Grasia/WikiChron/wiki/',
+                                            target='_blank',
+                                            className='icon',
+                                            title='Documentation'
+                                        ),
+                                        html.A(
+                                            html.Img(src='{}/ico-github.svg'.format(assets_url_path)),
+                                            href='https://github.com/Grasia/WikiChron',
+                                            target='_blank',
+                                            className='icon',
+                                            title='Github repo'
+                                        ),
+                                    ],
+                                    id='icons-bar')
+                                ]
+                            )
+                        ]
+                    )
+                ]
+            )
         );
 
 
@@ -295,30 +313,23 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
     share_url_path = f'{server_config["PREFERRED_URL_SCHEME"]}://{server_config["APP_HOSTNAME"]}{mode_config["DASH_BASE_PATHNAME"]}{query_string}'
     download_url_path = f'{server_config["PREFERRED_URL_SCHEME"]}://{server_config["APP_HOSTNAME"]}{mode_config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
 
-    selection_url = f'{mode_config["HOME_MODE_PATHNAME"]}'
+    selection_url = f'{mode_config["HOME_MODE_PATHNAME"]}selection{query_string}'
 
     return html.Div(id='main',
         className='control-text',
         style={'width': '100%'},
         children=[
 
-            html.A('Go back to selection', href=selection_url),
-
             main_header(),
-
-            html.Hr(),
 
             html.Div(id='selection-div',
                 className='container',
                 children=[
                     select_wikis_and_metrics_control(wikis_dropdown_options, metrics_dropdown_options),
-                    select_time_axis_control('relative' if relative_time else 'absolute')
+                    select_time_axis_control('relative' if relative_time else 'absolute'),
+                    date_slider_control(),
                 ]
              ),
-
-            date_slider_control(),
-
-            html.Hr(),
 
             html.Div(id='graphs'),
 

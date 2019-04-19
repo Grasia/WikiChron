@@ -1,6 +1,35 @@
 # Change Log for WikiChron
 
-## 1.2.0 - 2018-02-14
+## 2.0.0-beta - 2019-04-11
+Launched stable release of WikiChron v2!!! :tada: :tada:
+
+Many bug fixes and improvements. See github history for more.
+
+### Added
+- time selection tab for networks selection screen.
+- many new metrics to networks
+- JqueryUI to deps
+
+### Updated
+- dash-cytoscape dep
+- jinja dep
+
+## 2.0.0-beta - 2019-04-11
+WikiChron upgrades to v2!!
+
+### Added
+- Completely new design :eyes:
+- Added Networks mode :spider_web:
+- too many to list here...
+
+### Changed
+- Use external lib for distribution of participation metrics
+
+### Fixed
+- Bug in Gini calculation
+- Bug in active users calculation (#68 and #69)
+
+## 1.2.0 - 2019-02-14
 
 ### Added
 - New metric: Active registered users (#56)

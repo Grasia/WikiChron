@@ -1,5 +1,6 @@
 'use strict';
 
+var wikisList
 
 /* List.js */
 function init_list_js() {
@@ -7,7 +8,7 @@ function init_list_js() {
     valueNames: [ 'wiki-name', 'wiki-url' ]
     };
 
-    var wikisList = new List('wiki-cards-container', options);
+    wikisList = new List('wiki-cards-container', options);
 
     $('#search-wiki-input').on('keyup', function() {
         let searchString = $(this).val();
@@ -20,6 +21,13 @@ function init_list_js() {
 function check_enable_action_button() {
     var selectedWikisNo = $('#wiki-badges-container')[0].children.length
     var selectedNetworksNo = $('#network-badges-container')[0].children.length
+
+    if (selectedWikisNo > 0) { // enable Time selection tab
+        $('#time-tab').removeClass('disabled');
+    } else {
+        $('#time-tab').addClass('disabled');
+    }
+
     if (selectedWikisNo > 0 && selectedNetworksNo > 0) {
         $('#selection-footer-button')[0].disabled = false;
     } else {
@@ -30,24 +38,12 @@ function check_enable_action_button() {
 
 /* checkboxes logic */
 
-// to bind to onclick of remove_badge
-function remove_badge(target) {
-    var target_badge = target.parentNode;
-    var wikiCode = target_badge.dataset.code;
-    $(`input[id="checkbox-${wikiCode}"]`)[0].checked = false;
-    target_badge.remove();
-    check_enable_action_button();
-}
-
 
 // aux function
 function generate_wiki_badge(wikiCode, wikiName) {
     return `
         <div id="current-selected-${wikiCode}" class="badge badge-secondary p-2 current-selected-wiki" data-code="${wikiCode}">
             <span class="mr-2 align-middle">${wikiName}</span>
-            <button type="button" class="close close-wiki-badge align-middle" aria-label="Close" onclick="remove_badge(this)">
-                <span aria-hidden="true">&times;</span>
-            </button>
         </div>
     `;
 }
@@ -89,6 +85,11 @@ $('.wiki-input').on( "click", function({target}) {
         if (sameWiki) { // if same as previous selected, clean current selection
            badgesContainer.html('');
         } else { // if different, unselect previous wiki
+            // Clear search in order to uncheck a wiki card
+            // Because of https://github.com/javve/list.js/issues/380
+            wikisList.search('')
+            document.getElementById('search-wiki-input').value = "";
+
             $(`input[id="checkbox-${currentWikiCode}"]`)[0].checked = false;
         }
     }
@@ -109,20 +110,16 @@ $('.wiki-input').on( "click", function({target}) {
 function init_current_selection() {
 
     /* init wikis current selection */
-    var checkedBoxes = $('.wiki-checkbox').
+    var checkedBoxes = $('.wiki-input').
                         filter( function(index, element){
                             return element.checked
                         })
     if (checkedBoxes.length > 0) {
         var badgesContainer = $('#wiki-badges-container');
         var wikiCode = checkedBoxes[0].value;
-        var wikiName = checkedBoxes[0].dataset.wikiName;
+        var wikiName = checkedBoxes[0].dataset.name;
         var badgeSelectedWiki = generate_wiki_badge(wikiCode, wikiName);
         badgesContainer.html(badgeSelectedWiki);
-
-        //~ $('#selection-footer-button')[0].disabled = false;
-    } else {
-        //~ $('#selection-footer-button')[0].disabled = true;
     }
 
     /* init networks current selection */
@@ -142,19 +139,30 @@ function init_current_selection() {
 }
 
 
+function getDateFromSlider(sliderValue) {
+    return dateIndex[sliderValue]
+}
+
+
 /* press action button */
 $('#selection-footer-button').on ("click", function() {
     var selectedWiki = $('.current-selected-wiki')[0];
     var selectedNetwork = $('.current-selected-network')[0];
     var target_app_url;
     var selection;
+    var timeSelection;
+    var lowerBound, upperBound;
 
     if (!selectedWiki || !selectedNetwork) { // In case user tries to bypass
                                             // the selection of the form inputs
         return;
     }
 
-    selection = `?wikis=${selectedWiki.dataset.code}&network=${selectedNetwork.dataset.code}`
+    timeSelection =  $('#time-slider').slider("option", "values")
+    lowerBound = getDateFromSlider(timeSelection[0]) / 1000;
+    upperBound = getDateFromSlider(timeSelection[1]) / 1000;
+
+    selection = `?wikis=${selectedWiki.dataset.code}&network=${selectedNetwork.dataset.code}&lower_bound=${lowerBound}&upper_bound=${upperBound}`
 
     target_app_url = `/networks/app/${selection}`
 

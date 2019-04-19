@@ -28,7 +28,6 @@ global data_dir;
 global precooked_net_dir;
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 precooked_net_dir = os.getenv('PRECOOKED_NETWORK_DIR', 'precooked_data/networks')
-TIME_DIV = 60 * 60 * 24 * 30
 
 ### CACHED FUNCTIONS ###
 
@@ -81,13 +80,11 @@ def get_available_wikis():
 
 
 def get_first_entry(wiki):
-    df = read_data(wiki)
-    return df['timestamp'].min()
+    return wiki['first_edit']['date']
 
 
 def get_last_entry(wiki):
-    df = read_data(wiki)
-    return df['timestamp'].max()
+    return wiki['last_edit']['date']
 
 
 def remove_bots_activity(df, bots_ids):
@@ -144,26 +141,30 @@ def clean_up_bot_activity(df, wiki):
 def get_bot_names(wiki: dict) -> set:
     wikis_json_file = open(os.path.join(data_dir, 'wikis.json'))
     wikis = json.load(wikis_json_file)
-
+    di_wiki = {}
     for i in range(len(wikis)):
         if wikis[i]['name'] == wiki:
             di_wiki = wikis[i]
             break
 
+    if not di_wiki or 'bots' not in di_wiki:
+        return {}
+
     return {bot['name'] for bot in di_wiki['bots']}
 
 
-def get_time_bounds(wiki, lower, upper):
-    """
-    Returns a timestamps from upper and lower values
-    """
-    first_entry = get_first_entry(wiki)
-    first_entry = int(datetime.strptime(str(first_entry),
-        "%Y-%m-%d %H:%M:%S").strftime('%s'))
+def calculate_indices_all_months(wiki):
+    data = read_data(wiki)
+    monthly_data_align_begining = data.groupby(pd.Grouper(key='timestamp', freq='MS'))
+    monthly_data_align_end = data.groupby(pd.Grouper(key='timestamp', freq='M'))
+    begining_index = monthly_data_align_begining.size().index
+    end_index = monthly_data_align_end.size().index
+    return (begining_index, end_index)
 
-    upper_bound = first_entry + upper * TIME_DIV
-    lower_bound = first_entry + lower * TIME_DIV
 
-    upper_bound = datetime.fromtimestamp(upper_bound).strftime("%Y-%m-%d %H:%M:%S")
-    lower_bound = datetime.fromtimestamp(lower_bound).strftime("%Y-%m-%d %H:%M:%S")
-    return (lower_bound, upper_bound)
+def parse_int_to_timestamp(time):
+    return datetime.utcfromtimestamp(int(time)).strftime("%Y-%m-%d")
+
+
+def parse_timestamp_to_int(time):
+    return int(datetime.timestamp(datetime.strptime(str(time), "%Y-%m-%d")))

@@ -13,6 +13,7 @@
 import pandas as pd
 import numpy as np
 import math
+import inequality_coefficients as ineq
 
 # CONSTANTS
 MINIMAL_USERS_GINI = 20
@@ -120,7 +121,7 @@ def edits_user_talk(data, index):
 
 def users_active_more_than_x_editions(data, index, x):
     monthly_edits = data.groupby([pd.Grouper(key='timestamp', freq='MS'), 'contributor_id']).size()
-    monthly_edits_filtered = monthly_edits[monthly_edits >= x].to_frame(name='pages_edited').reset_index()
+    monthly_edits_filtered = monthly_edits[monthly_edits > x].to_frame(name='pages_edited').reset_index()
     series = monthly_edits_filtered.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
     if index is not None:
         series = series.reindex(index, fill_value=0)
@@ -169,7 +170,7 @@ def users_registered_accum(data, index):
 
 
 def users_active(data, index):
-    return users_active_more_than_x_editions(data, index, 1)
+    return users_active_more_than_x_editions(data, index, 0)
 
 
 # this metric is the same as the users_active, but getting rid of anonymous users
@@ -322,32 +323,6 @@ def calc_ratio_percentile(data, index, top_percentile, percentile, minimal_users
 
 def gini_accum(data, index):
 
-    def gini_coeff(values):
-        """
-        Extracted from wikixray/graphics.py:70
-        Plots a GINI graph for author contributions
-
-        @type  values: list of ints
-        @param values: list of integers summarizing total contributions for each registered author
-        """
-
-        n_users = len(values) # n_users => n + 1
-        if (n_users) < MINIMAL_USERS_GINI:
-            return np.NaN
-
-        sum_numerator=0
-        sum_denominator=0
-        for i in range(1, n_users):
-            sum_numerator += (n_users-i) * values[i]
-            sum_denominator += values[i]
-        if sum_denominator == 0:
-            return np.NaN
-        ## Apply math function for the Gini coefficient
-        g_coeff = n_users-2*(sum_numerator/sum_denominator)
-        ## Now, apply Deltas, 2003 correction for small datasets:
-        g_coeff *= (1.0 / (n_users - 2))
-        return g_coeff
-
     #~ data = raw_data.set_index([raw_data['timestamp'].dt.to_period('M'), raw_data.index])
     monthly_data = data.groupby(pd.Grouper(key='timestamp', freq='MS'))
     if index is not None:
@@ -364,9 +339,14 @@ def gini_accum(data, index):
         # Get contributions per contributor, sort them
         #   and make it a list to call to gini_coeff()
         values = contributions_per_author(accum_data) \
-                .sort_values(ascending=True) \
                 .tolist()
-        gini_accum_df[indices[i]] = gini_coeff(values)
+
+        n_users = len(values)
+
+        if (n_users) < MINIMAL_USERS_GINI:
+            gini_accum_df[indices[i]] = np.NaN
+        else:
+            gini_accum_df[indices[i]] = ineq.gini_corrected(values, n_users)
         i = i + 1
 
     return gini_accum_df
@@ -398,19 +378,6 @@ def ratio_percentiles_10_20(data, index):
 
 
 def ratio_10_90(data, index):
-
-    # contributions is a *sorted* list of contributions per author
-    #   in an descending order (from most contributions to less contributions)
-    def ratio_top_rest_for_period(contributions, percentage_top):
-        top_percent_users = math.ceil(n_users * percentage_top);
-        #~ rest_users = floor(n_users * (1 - percentage_top));
-        edits_top = contributions[:top_percent_users].sum()
-        edits_rest = contributions[top_percent_users:].sum()
-
-        return edits_top / edits_rest
-
-
-    percentage = 10 * 0.01
     i = 0
     monthly_data = data.groupby(pd.Grouper(key='timestamp', freq='MS'))
     result = pd.Series(index=monthly_data.size().index)
@@ -420,8 +387,7 @@ def ratio_10_90(data, index):
         # Get contributions per contributor, sort them
         #   and make it a Python list
         accum_data = accum_data.append(group)
-        contributions = contributions_per_author(accum_data) \
-                .sort_values(ascending=False)
+        contributions = contributions_per_author(accum_data)
 
         n_users = len(contributions)
 
@@ -429,8 +395,7 @@ def ratio_10_90(data, index):
         if n_users < MINIMAL_USERS_RATIO_10_90:
             result[indices[i]] = np.NaN
         else:
-            result[indices[i]] = ratio_top_rest_for_period(contributions,
-                                                            percentage)
+            result[indices[i]] = ineq.ratio_top10_rest(contributions)
         i = i + 1
 
     return result

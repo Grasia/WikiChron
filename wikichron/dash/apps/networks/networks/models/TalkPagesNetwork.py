@@ -22,7 +22,7 @@ class TalkPagesNetwork(BaseNetwork):
 
     Arguments:
         - Node:
-            * num_edits: The editions number in all talk pages
+            * talk_edits: The editions number in all talk pages
             * article_edits: edits in article pages
             * id: The user id in the wiki
             * label: the user name in the wiki
@@ -38,31 +38,18 @@ class TalkPagesNetwork(BaseNetwork):
     CODE = 'talk_pages_network'
     DIRECTED = False
 
-    AVAILABLE_METRICS = {
-        'Talk Page Edits': 'num_edits',
-        'Betweenness': 'betweenness',
-        'Page Rank': 'page_rank'
-    }
-
-    SECONDARY_METRICS = {
-        'Absolute Longevity': {
-            'key': 'abs_birth_int',
-            'max': 'max_abs_birth_int',
-            'min': 'min_abs_birth_int'
-        },
-        'Article Edits': {
-            'key': 'article_edits',
-            'max': 'max_article_edits',
-            'min': 'min_article_edits'
-        }
-    }
+    NETWORK_STATS = BaseNetwork.NETWORK_STATS.copy()
+    NETWORK_STATS['Edited talk pages'] = 'wiki_talks'
+    NETWORK_STATS['Talk page edits'] = 'wiki_talk_edits'
 
     USER_INFO = {
-        'User ID': 'id',
-        'User Name': 'label',
-        'Absolute Birth': 'abs_birth',
-        'Cluster': 'cluster',
-        'Article Edits': 'article_edits'
+        #'User ID': 'id',
+        'Birth': 'birth',
+        'Cluster #': 'cluster'
+    }
+
+    NODE_NAME = {
+        'User': 'label'
     }
 
 
@@ -85,10 +72,12 @@ class TalkPagesNetwork(BaseNetwork):
                 mapper_v[int(r['contributor_id'])] = count
                 self.graph.vs[count]['id'] = int(r['contributor_id'])
                 self.graph.vs[count]['label'] = r['contributor_name']
-                self.graph.vs[count]['num_edits'] = 0
+                self.graph.vs[count]['talk_edits'] = 0
+                self.graph.vs[count]['talks'] = {int(r['page_id'])}
                 count += 1
 
-            self.graph.vs[mapper_v[int(r['contributor_id'])]]['num_edits'] += 1
+            self.graph.vs[mapper_v[int(r['contributor_id'])]]['talk_edits'] += 1
+            self.graph.vs[mapper_v[int(r['contributor_id'])]]['talks'].add(int(r['page_id']))
 
             # A page gets serveral contributors
             if not int(r['page_id']) in user_per_page:
@@ -105,8 +94,12 @@ class TalkPagesNetwork(BaseNetwork):
                     if u1 == u2:
                         continue
                     k_edge = (u1 << 32) + u2
+                    k_edge_2 = (u2 << 32) + u1
                     if k_edge in mapper_e:
                         self.graph.es[mapper_e[k_edge]]['weight'] += 1
+                        continue
+                    elif k_edge_2 in mapper_e:
+                        #self.graph.es[mapper_e[k_edge_2]]['weight'] += 1
                         continue
 
                     self.graph.add_edge(mapper_v[u1], mapper_v[u2])
@@ -116,6 +109,15 @@ class TalkPagesNetwork(BaseNetwork):
                     self.graph.es[mapper_e[k_edge]]['id'] = k_edge
                     self.graph.es[mapper_e[k_edge]]['source'] = u1
                     self.graph.es[mapper_e[k_edge]]['target'] = u2
+
+        # total pages per user 
+        if 'talks' in self.graph.vs.attributes():
+            talks = [len(node['talks']) for node in self.graph.vs]
+            self.graph.vs['talks'] = talks
+
+        # total pages
+        self.graph['wiki_talks'] = len(user_per_page)
+        self.graph['wiki_talk_edits'] = len(dff.index)
     
 
     def get_metric_dataframe(self, metric):
@@ -131,33 +133,61 @@ class TalkPagesNetwork(BaseNetwork):
         return pd.DataFrame()
 
 
+    def add_others(self, df):
+        self.calculate_edits(df, 'article')
+
+
     @classmethod
-    def get_available_metrics(cls) -> dict:
-        return cls.AVAILABLE_METRICS
+    def get_metric_header(cls, metric: str) -> list:
+        header = list()
+        if metric in cls.AVAILABLE_METRICS:
+            header = [{'name': 'User', 'id': 'User'}, 
+                {'name': metric, 'id': metric}]
+
+        return header
 
 
     @classmethod
     def get_user_info(cls) -> dict:
         return cls.USER_INFO
 
+    
+    @classmethod
+    def get_network_stats(cls) -> dict:
+        return cls.NETWORK_STATS
+
 
     @classmethod
-    def get_secondary_metrics(cls) -> dict:
-        return cls.SECONDARY_METRICS
-
-
-    def add_graph_attrs(self):
-        super().add_graph_attrs()
-        for _, val in self.SECONDARY_METRICS.items():
-            if val['key'] in self.graph.vs.attributes():
-                self.graph[val['max']] = max(self.graph.vs[val['key']])
-                self.graph[val['min']] = min(self.graph.vs[val['key']])
+    def get_node_name(cls) -> dict:
+        return cls.NODE_NAME
 
 
     @classmethod
     def is_directed(cls):
         return cls.DIRECTED
 
-    
-    def add_others(self, df):
-        self.calculate_edits(df, 'article')
+
+    @classmethod
+    def get_network_description(cls) -> dict:
+        desc = {}
+        desc['min_node_color'] = 'Lowest value in selected metric'
+        desc['max_node_color'] = 'Highest value in selected metric'
+        desc['min_node_size'] = 'A low edition in talk articles'
+        desc['max_node_size'] = 'A high edition in talk articles'
+        desc['min_edge_size'] = 'A weak communication'
+        desc['max_edge_size'] = 'A strong communication'
+        return desc
+
+
+    @classmethod
+    def get_main_class_metric(cls) -> str:
+        if 'Talk page edits' in cls.NODE_METRICS_TO_PLOT:
+            return cls.NODE_METRICS_TO_PLOT['Talk page edits']
+        else:
+            return ''
+
+
+    @classmethod
+    def get_main_class_key(cls) -> str:
+        metric = cls.get_main_class_metric()
+        return metric['log'] if metric and 'log' in metric else ''
