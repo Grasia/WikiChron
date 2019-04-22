@@ -58,6 +58,10 @@ def generate_metrics():
     #metrics.append(Metric('talk_page_users', 'Users talk page', MetricCategory.USERS, stats.talk_page_users, 'Users that have edited a talk page.'))
     metrics.append(Metric('type_page_users_edit', 'Users type of edition', MetricCategory.USERS, stats.type_page_users_edit, 'Users who have edited: 1) A main page. 2) A template page. 3) A talk page.'))
 
+#metric to measure level of participation among different user categories
+    metrics.append(Metric('number_of_edits_category', 'editions per user category', MetricCategory.EDITIONS, stats.number_of_edits_by_category, 'number of editions done by each one of the following user categories: 1) users that have done between 1 and 4 editions in all the history of the wiki. 2) users that have done between 5 and 24 editions in all the history of the wiki. 3) users that have done between 25 and 99 editions in all the history of the wiki. 4) users that have done a number greater or equal to 100 editions in all the history of the wiki. 5) New users each month.'))
+
+    metrics.append(Metric('percentage_of_edits_category', '% of edits/user category', MetricCategory.EDITIONS, stats.percentage_of_edits_by_category, '% of editions done by each one of the following user categories: 1) users that have done between 1 and 4 editions in all the history of the wiki. 2) users that have done between 5 and 24 editions in all the history of the wiki. 3) users that have done between 25 and 99 editions in all the history of the wiki. 4) users that have done a number greater or equal to 100 editions in all the history of the wiki. 5) New users each month.'))
    
     # keep this order when plotting graphs inserting 'index_' at the beginning
     #  for every metric code.
