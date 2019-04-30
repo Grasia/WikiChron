@@ -1,3 +1,5 @@
+import multiprocessing
+
 bind = ':80'
 timeout = 1200
 proc_name = 'WikiChron'
