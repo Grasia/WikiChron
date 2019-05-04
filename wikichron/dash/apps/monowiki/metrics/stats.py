@@ -511,4 +511,11 @@ def percentage_of_edits_by_category(data, index):
 
     return [pctage_category1, pctage_category2, pctage_category3, pctage_category4, pctage_category5]
 
-
+def numer_of_persons_per_contributions(data, index):
+    users_registered = data[data['contributor_name']!='Anonymous']
+    mothly = users_registered.groupby([pd.Grouper(key ='timestamp', freq='MS'),'contributor_id']).size()
+    max_contributions = max(mothly)
+    mothly = mothly.to_frame('num_contributions').reset_index()
+    num_person = mothly.groupby([pd.Grouper(key ='timestamp', freq='MS'),'num_contributions']).size()
+    max_persons = max(num_person)
+    return [num_person, max_contributions, max_persons]

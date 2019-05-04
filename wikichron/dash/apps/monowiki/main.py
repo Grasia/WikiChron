@@ -44,28 +44,66 @@ def extract_metrics_objs_from_metrics_codes(metric_codes):
 
 def generate_graphs(data, metrics, wikis, relative_time):
     """ Turn over data[] into plotly graphs objects and store it in graphs[] """
-
     graphs_list = []
+    category = []
     for metric_idx in range(len(metrics)):
         graphs_list.append([])
-        num_submetrics = len(data[metric_idx])
-        for submetric in range(num_submetrics):
+        #print(data[metric_idx])
+        category.append(data[metric_idx].pop(-1))
+        #print(data[metric_idx])
+        if category[metric_idx].value == "Bar":
+            num_submetrics = len(data[metric_idx])
+            for submetric in range(num_submetrics):
+                graphs_list[metric_idx].append(None)
+        else:
             graphs_list[metric_idx].append(None)
 
-    for metric_idx in range(len(metrics)):
-        num_submetrics = len(data[metric_idx])
-        for submetric in range(num_submetrics):
-            metric_data = data[metric_idx][submetric]
-            if relative_time:
-                x_axis = list(range(len(metric_data.index))) # relative to the age of the wiki in months
-            else:
-                x_axis = metric_data.index # natural months
-            graphs_list[metric_idx][submetric] = go.Bar(
-                                x=x_axis,
-                                y=metric_data,
-                                name=metric_data.name
-                                )
 
+    for metric_idx in range(len(metrics)):
+        if category[metric_idx].value == "Bar":
+            num_submetrics = len(data[metric_idx])
+            for submetric in range(num_submetrics):
+                metric_data = data[metric_idx][submetric]
+                if relative_time:
+                    x_axis = list(range(len(metric_data.index))) # relative to the age of the wiki in months
+                else:
+                    x_axis = metric_data.index # natural months
+                graphs_list[metric_idx][submetric] = go.Bar(
+                                    x=x_axis,
+                                    y=metric_data,
+                                    name=metric_data.name
+                                    )
+        else:
+            anterior = None
+            j = -1
+            max = data[metric_idx][1]
+            months = data[metric_idx][0].index.get_level_values(0)
+            g_list = [[0 for j in range(max+1)] for i in range(len(months))]
+            for i, v in data[metric_idx][0].iteritems(): 
+                i = list(i)
+                actual = i[0]
+                num = i[1]
+                if (anterior != actual):
+                    j = j +1
+                    anterior = actual
+                if(j <= len(months)):
+                    g_list[j][num] = v
+    
+            wiki_by_metrics = []
+            for metric_id in range(max+1):
+                metric_row = [g_list[wiki_idx].pop(0) for wiki_idx in range(len(g_list))]
+                wiki_by_metrics.append(metric_row)  
+            #months = months.size()
+            graphs_list[metric_idx][0] = go.Heatmap(z=wiki_by_metrics,
+                               x=months,
+                               y=list(range(max)))
+                               #name=metric_data.name)
+            '''graphs_list[metric_idx][0] = go.Heatmap(
+                            y=['Morning', 'Afternoon', 'Evening'],
+                            x=['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+                            z=[[1, 20, 30, 50, 1], [20, 1, 60, 80, 30], [30, 60, 1, -10, 20]]
+                            #name=metric_data.name
+                            )'''
     return graphs_list
 
 

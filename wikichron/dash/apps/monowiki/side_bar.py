@@ -35,8 +35,8 @@ global debug;
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
 global metric_categories_order;
-metric_categories_order = [MetricCategory.USERS]
-category_names = ['USERS', 'EDITIONS']
+metric_categories_order = [MetricCategory.BAR, MetricCategory.BAR]
+category_names = ['BAR', 'HEATMAPS', 'AREACHART']
 
 wikis_categories_order = ['SMALL', 'MEDIUM', 'LARGE', 'VERY LARGE']
 wikis_categories_descp = ['More than 100 pages', 'More than 1000 pages', 'More than 10k pages', 'More than 10k pages']

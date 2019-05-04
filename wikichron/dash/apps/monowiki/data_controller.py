@@ -84,7 +84,7 @@ def set_cache(cache):
                                 lambda index_1, index_2: index_1.union(index_2),
                                 map(lambda wiki: wiki.index, list_of_selected_wikis))"""
 
-        unified_datetime_index = list_of_selected_wikis[0].index
+        unified_datetime_index = list_of_selected_wikis[0].index.get_level_values(0)
         if relative_time:
             time_axis = list(range(0, len(unified_datetime_index)))
         else:
