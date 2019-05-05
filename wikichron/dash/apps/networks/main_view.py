@@ -417,7 +417,7 @@ def build_foot(assets_url_path):
         html.Div([
             html.A(
                 html.Img(src='{}/ico-github.svg'.format(assets_url_path)),
-                href='https://github.com/Grasia/WikiChron-networks',
+                href='https://github.com/Grasia/WikiChron',
                 target='_blank',
                 className='icon',
                 title='Github repo'
