@@ -29,6 +29,7 @@ TIME_DIV = 60 * 60 * 24 * 30
 
 # Local imports:
 from .metrics.interface import compute_data
+from .metrics.metric import MetricCategory
 
 ### CACHED FUNCTIONS ###
 
@@ -73,18 +74,19 @@ def set_cache(cache):
 
     @cache.memoize()
     def generate_longest_time_axis(list_of_selected_wikis, relative_time):
-        """ Generate time axis index of the oldest wiki """
+        """ Get time axis of selected wiki """
 
         # Make the union of the Datetime indices of every wiki.
         # In this way, we get the date range corresponding of the smallest set that
         #  covers all the lifespan of all wikis.
         # Otherwise, wikis lifespan for different dates which are not
         #  contained in the lifespan of the oldest wiki would be lost
-        """unified_datetime_index = functools.reduce(
-                                lambda index_1, index_2: index_1.union(index_2),
-                                map(lambda wiki: wiki.index, list_of_selected_wikis))"""
 
-        unified_datetime_index = list_of_selected_wikis[0].index.get_level_values(0)
+        if(list_of_selected_wikis[len(list_of_selected_wikis) - 1] == MetricCategory.HEATMAPS):
+            unified_datetime_index = list_of_selected_wikis[0]
+        else:
+            unified_datetime_index = list_of_selected_wikis[0].index.get_level_values(0)
+
         if relative_time:
             time_axis = list(range(0, len(unified_datetime_index)))
         else:

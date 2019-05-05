@@ -62,8 +62,14 @@ def generate_metrics():
     metrics.append(Metric('number_of_edits_category', 'editions per user category', MetricCategory.BAR, stats.number_of_edits_by_category, 'number of editions done by each one of the following user categories: 1) users that have done between 1 and 4 editions in all the history of the wiki. 2) users that have done between 5 and 24 editions in all the history of the wiki. 3) users that have done between 25 and 99 editions in all the history of the wiki. 4) users that have done a number greater or equal to 100 editions in all the history of the wiki. 5) New users each month.'))
 
     metrics.append(Metric('percentage_of_edits_category', '% of edits/user category', MetricCategory.BAR, stats.percentage_of_edits_by_category, '% of editions done by each one of the following user categories: 1) users that have done between 1 and 4 editions in all the history of the wiki. 2) users that have done between 5 and 24 editions in all the history of the wiki. 3) users that have done between 25 and 99 editions in all the history of the wiki. 4) users that have done a number greater or equal to 100 editions in all the history of the wiki. 5) New users each month.'))
-    metrics.append(Metric('number_of_persons_per_contributions', 'num persons per contributions', MetricCategory.HEATMAPS, stats.numer_of_persons_per_contributions, 'Number of persons per contributions(y=num contributions and z=num persons)'))
-   
+    
+# area chart metrics
+    metrics.append(Metric('contributorPctg_per_contributionPctg', 'editor% per contribution%', MetricCategory.AREACHART, stats.contributor_pctg_per_contributions_pctg, 'editor % contributing to do a %Y of the total editions of the wiki until that month, with Y ∈ {50, 80, 90, 99}'))
+
+# heatmap metrics
+    metrics.append(Metric('number_of_editors_per_contributions', 'num editors per contributions', MetricCategory.HEATMAPS, stats.number_of_editors_per_contributions, 'Heatmap that shows the number of editors per contributions(y axis = number of contributions and z axis = number of editors)'))
+    metrics.append(Metric('changes_in_absolute_size_of_classes', 'changes in size of editor classes', MetricCategory.HEATMAPS, stats.changes_in_absolute_size_of_editor_classes, 'Heatmap that shows the changes in absolute size of editor classes: darker color means there are less users than the previous month, and a lighter color means the number of users of a class has increased.'))
+    
     # keep this order when plotting graphs inserting 'index_' at the beginning
     #  for every metric code.
     # NOTE: Possibly, It'll be changed in the future by an specifc attr: "order"

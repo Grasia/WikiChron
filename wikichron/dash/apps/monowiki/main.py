@@ -43,7 +43,8 @@ def extract_metrics_objs_from_metrics_codes(metric_codes):
 
 
 def generate_graphs(data, metrics, wikis, relative_time):
-    """ Turn over data[] into plotly graphs objects and store it in graphs[] """
+    """ Turn over data[] into plotly graphs objects, which can be: 1) bar graphs,
+    2) heatmaps, 3) filled-area graphs,  and store them in graphs[] """
     graphs_list = []
     category = []
     for metric_idx in range(len(metrics)):
@@ -51,13 +52,12 @@ def generate_graphs(data, metrics, wikis, relative_time):
         #print(data[metric_idx])
         category.append(data[metric_idx].pop(-1))
         #print(data[metric_idx])
-        if category[metric_idx].value == "Bar":
+        if ((category[metric_idx].value == "Bar") or (category[metric_idx].value == "Areachart")):
             num_submetrics = len(data[metric_idx])
             for submetric in range(num_submetrics):
                 graphs_list[metric_idx].append(None)
         else:
             graphs_list[metric_idx].append(None)
-
 
     for metric_idx in range(len(metrics)):
         if category[metric_idx].value == "Bar":
@@ -73,8 +73,8 @@ def generate_graphs(data, metrics, wikis, relative_time):
                                     y=metric_data,
                                     name=metric_data.name
                                     )
-        else:
-            anterior = None
+        elif category[metric_idx].value == "Heatmaps":
+            """anterior = None
             j = -1
             max = data[metric_idx][1]
             months = data[metric_idx][0].index.get_level_values(0)
@@ -93,17 +93,39 @@ def generate_graphs(data, metrics, wikis, relative_time):
             for metric_id in range(max+1):
                 metric_row = [g_list[wiki_idx].pop(0) for wiki_idx in range(len(g_list))]
                 wiki_by_metrics.append(metric_row)  
-            #months = months.size()
-            graphs_list[metric_idx][0] = go.Heatmap(z=wiki_by_metrics,
-                               x=months,
-                               y=list(range(max)))
-                               #name=metric_data.name)
-            '''graphs_list[metric_idx][0] = go.Heatmap(
-                            y=['Morning', 'Afternoon', 'Evening'],
-                            x=['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-                            z=[[1, 20, 30, 50, 1], [20, 1, 60, 80, 30], [30, 60, 1, -10, 20]]
-                            #name=metric_data.name
-                            )'''
+            #months = months.size()"""
+            if relative_time:
+                x_axis = list(range(len(data[metric_idx][0]))) # relative to the age of the wiki in months
+            else:
+                x_axis = data[metric_idx][0] # natural months
+
+            y_axis = data[metric_idx][1]
+            z_axis = data[metric_idx][2]
+            graphs_list[metric_idx][0] = go.Heatmap(z=z_axis,
+                               x=x_axis,
+                               y=y_axis,
+                               colorscale= 'Viridis'
+                               )
+            
+        elif category[metric_idx].value == "Areachart":
+            num_traces = len(data[metric_idx])
+            for trace in range(num_traces):
+                metric_data = data[metric_idx][trace]
+                if relative_time:
+                    x_axis = list(range(len(metric_data.index))) # relative to the age of the wiki in months
+                else:
+                    x_axis = metric_data.index # natural months
+
+                graphs_list[metric_idx][trace] = go.Scatter(
+                                x=x_axis,
+                                y=metric_data,
+                                hoverinfo = 'x+y',
+                                mode = 'lines',
+                                line=dict(width=0.5),
+                                stackgroup='one',
+                                name=metric_data.name
+                                )
+                    
     return graphs_list
 
 

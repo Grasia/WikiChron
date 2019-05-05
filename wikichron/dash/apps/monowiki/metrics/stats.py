@@ -28,6 +28,10 @@ def calculate_index_all_months(data):
 
 ###### Helper Functions ######
 
+def filter_anonymous(data):
+    data = data[data['contributor_name'] != 'Anonymous']
+    return data
+
 #### Helper metric users active ####
 
 def users_active_more_than_x_editions(data, index, x):
@@ -511,11 +515,137 @@ def percentage_of_edits_by_category(data, index):
 
     return [pctage_category1, pctage_category2, pctage_category3, pctage_category4, pctage_category5]
 
-def numer_of_persons_per_contributions(data, index):
+############################# HEATMAP METRICS ##############################################
+
+def number_of_editors_per_contributions(data, index):
+    """
+    Function which calculates the number X of editors making the same number of editions.
+    it returns the months of the wiki, a list of the number of contributions until the maximum number,
+    and at last, a matrix with the number of contributors doing the same number of contributions on each month.
+
+    """
     users_registered = data[data['contributor_name']!='Anonymous']
     mothly = users_registered.groupby([pd.Grouper(key ='timestamp', freq='MS'),'contributor_id']).size()
     max_contributions = max(mothly)
     mothly = mothly.to_frame('num_contributions').reset_index()
     num_person = mothly.groupby([pd.Grouper(key ='timestamp', freq='MS'),'num_contributions']).size()
     max_persons = max(num_person)
-    return [num_person, max_contributions, max_persons]
+    months = data.groupby(pd.Grouper(key ='timestamp', freq='MS'))
+    months = months.size()
+    graphs_list = [[0 for j in range(max_contributions+1)] for i in range(len(months))]
+    anterior = None
+    j = -1
+    for i, v in num_person.iteritems(): 
+        i = list(i)
+        actual = i[0]
+        num = i[1]
+        if (anterior != actual):
+            j = j +1
+            anterior = actual
+        if(j <= len(months)):
+            graphs_list[j][num] = v
+        
+    wiki_by_metrics = []
+    for metric_idx in range(max_contributions+1):
+            metric_row = [graphs_list[wiki_idx].pop(0) for wiki_idx in range(len(graphs_list))]
+            wiki_by_metrics.append(metric_row)  
+    return [months.index,list(range(max_contributions)), wiki_by_metrics]
+
+def changes_in_absolute_size_of_editor_classes(data, index):
+    class1 = users_number_of_edits_between_1_and_4(data, index).to_frame('one_four')
+    class2 = users_number_of_edits_between_5_and_24(data, index).to_frame('5_24')
+    class3 = users_number_of_edits_between_25_and_99(data, index).to_frame('25_99')
+    class4 = users_number_of_edits_highEq_100(data, index).to_frame('highEq_100')
+    concatenate = pd.concat([class1, class2, class3, class4], axis = 1)
+    concatenate['suma'] = concatenate[['one_four', '5_24', '25_99', 'highEq_100']].sum(axis=1)
+    concatenate = concatenate.transpose()
+    # With this data, we can start calculating the heatmap axises:
+    months = data.groupby(pd.Grouper(key ='timestamp', freq='MS'))
+    months = months.size()
+    classes = ['between 1 and 4 edits', 'between 5 and 24 edits', 'between 25 and 99 edits', '>= 100 edits' ]
+    graphs_list = [[0 for j in range(len(index))] for i in range(len(classes))]
+    print(concatenate)
+
+    for i in range(len(classes)):
+        
+        for j in range(len(index)):
+            
+            if (j == 0):
+                graphs_list[i][j] = concatenate.iloc[i, j]
+                
+            else:
+                
+                if (concatenate.iloc[i, j] == concatenate.iloc[i, j - 1]):
+                        graphs_list[i][j] = 0
+
+                elif (concatenate.iloc[i, j] < concatenate.iloc[i, j - 1]):
+                    graphs_list[i][j] = -(concatenate.iloc[i, j - 1] - concatenate.iloc[i, j])
+                        
+                elif (concatenate.iloc[i, j] > concatenate.iloc[i, j - 1]):
+                        graphs_list[i][j] = concatenate.iloc[i, j] - concatenate.iloc[i, j - 1]
+    return[months.index, classes, graphs_list]
+
+########################### FILLED-AREA CHART METRICS ###########################################
+
+def contributor_pctg_per_contributions_pctg(data, index):
+    """
+    Function which calculates which % of contributors has contributed
+    to the creation of a 50%, 80%, 90% and 99% of the total wiki contributions
+    until each month.
+    returns an array of pandas Series, one per category to visualize.
+
+    """
+    data = filter_anonymous(data)
+    new_index = data.groupby(pd.Grouper(key='timestamp', freq='MS')).size().to_frame('months').index
+
+    users_month_edits =data.groupby(['contributor_id']).apply(lambda x: x.groupby(pd.Grouper(key='timestamp', freq='MS')).size().to_frame('nEdits_cumulative').reindex(new_index, fill_value=0).cumsum()).reset_index()
+
+# 2) Add a new column which contains the total number of edits on each month (this value is cumulative aswell)
+    users_month_edits = users_month_edits.groupby([pd.Grouper(key='timestamp', freq='MS'),'contributor_id']).sum().reset_index()
+    users_month_edits['nEdits_month'] = users_month_edits.groupby(pd.Grouper(key='timestamp', freq='MS'))['nEdits_cumulative'].transform('sum')
+
+# 3) Now, we want to calculate the percentage of edits that each user has done on each month: add a new column, 'edits_pctg'
+    users_month_edits['edits%'] = (users_month_edits['nEdits_cumulative']/users_month_edits['nEdits_month'])*100
+
+# 4) Order the dataframe in ascending order according to the column 'edit_pctg' and according to the timestamp, as we want to keep the order inside each group:
+    users_month_edits = users_month_edits.sort_values(['timestamp', 'edits%'], ascending=[True, False])
+
+# 5) calculate the cumulative percentage per month, in a new column: 'edit_cumulative_pctg'
+    users_month_edits['edits%_accum'] = users_month_edits.groupby(pd.Grouper(key='timestamp', freq='MS'))['edits%'].cumsum()
+
+# 6) traverse the dataframe: we want to calculate the %X of contributors that does a %Y of contributions (being Y = 50%, 80%, 90% and 99%) PER MONTH.
+# 6.1) Note: final is the final dataframe, of shape: timestamp, category50, category80, category90, category99. These columns contain the %X of contributors that have contributed each month to create 50, 80, 90 and 99% of editions
+
+    users_month_edits = users_month_edits.set_index('timestamp')
+    lst_dict = []
+    cols = ['timestamp', 'category50%', 'category80%', 'category90%', 'category99%']
+
+    for idx in users_month_edits.index.unique():
+        group = users_month_edits.loc[idx]
+        #on each month, for the total contributors we don't count the contributors whose collaboration is 0%.
+        num_contributors = group[group['edits%'] > 0].shape[0]
+        category50 = group[(group['edits%_accum'] <= 50) & (group['edits%_accum'] > 0)].shape[0]
+        category80 = group[(group['edits%_accum'] <= 80) & (group['edits%_accum'] > 0)].shape[0]
+        category90 = group[(group['edits%_accum'] <= 90) & (group['edits%_accum'] > 0)].shape[0]
+        category99 = group[(group['edits%_accum'] <= 99) & (group['edits%_accum'] > 0)].shape[0]
+        daux = {'timestamp':idx, 'category50%':(category50/num_contributors)*100, 'category80%':(category80/num_contributors) * 100, 'category90%':(category90/num_contributors) * 100,'category99%':(category99/num_contributors) * 100}
+        lst_dict.append(daux)
+        
+    final_df = pd.DataFrame(columns = cols, data = lst_dict)
+    # 9.1) get the maximum value of the sum of all classes
+    final_df['sum_of_classes'] = final_df.sum(axis='columns')
+    max_value = max(final_df['sum_of_classes'])
+    # 9.2) the upper area plus the values of the other classes' Y axis' values needs to be equal to the maximum of the sum of all y axises:
+    final_df['upper_area'] = max_value - final_df['sum_of_classes']
+    upper_area = pd.Series(index=final_df['timestamp'], data=final_df['upper_area'].values)
+    category_50 = pd.Series(index=final_df['timestamp'], data=final_df['category50%'].values)
+    category_80 = pd.Series(index=final_df['timestamp'], data=final_df['category80%'].values)
+    category_90 = pd.Series(index=final_df['timestamp'], data=final_df['category90%'].values)
+    category_99 = pd.Series(index=final_df['timestamp'], data=final_df['category99%'].values)
+    category_50.name = "50% of editions"
+    category_80.name = "80% of editions"
+    category_90.name = "90% of editions"
+    category_99.name = "99% of editions"
+    upper_area.name = "upper area"
+
+    return[category_50, category_80, category_90, category_99, upper_area]
