@@ -391,17 +391,35 @@ def users_usertalk_page(data,index):
 
 def users_other_page(data,index):
     category_list = [-2, -1, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 110, 111]
-
-    return filter_users_pageNS(data, index, 3)
+    lst_dict = [None] * len(category_list)
+    aux = pd.DataFrame()
+    aux['timestamp'] = index
+    
+    for i in range(len(category_list)):
+        print(category_list[i])
+        serie = filter_users_pageNS(data, new_index, category_list[i])
+        serie = pd.DataFrame(serie).reset_index()
+        aux['page_ns_' + str(category_list[i])] = serie['contributor_id']
+    
+    aux['final_result'] = aux.sum(axis=1)
+    series = pd.Series(index=aux['timestamp'], data=aux['final_result'].values)
+    return series
 
 def type_page_users_edit(data, index):
     main_page = users_article_page(data, index)
+    articletalk_page = users_articletalk_page(data, index)
+    user_page = users_user_page(data, index)
     template_page = users_template_page(data, index)
-    talk_page = users_usertalk_page(data,index)
-    main_page.name = 'main_page'
-    template_page.name = 'template_page'
-    talk_page.name = 'talk_page'
-    return [main_page, template_page, talk_page]
+    usertalk_page = users_usertalk_page(data,index)
+    other_page = users_other_page(data,index)
+    main_page.name = 'Article pages'
+    articletalk_page.name = 'Article talk pages'
+    user_page.name = 'User pages'
+    template_page.name = 'Template pages'
+    usertalk_page.name = 'User talk pages'
+    other_page.name = 'Other pages'
+
+    return [main_page, articletalk_page, user_page, template_page, usertalk_page, other_page]
 
 ############################ METRICS TO CALCULATE THE PARTICIPATION LEVEL OF DIFFERENT USER CATEGORIES #########################################
 
