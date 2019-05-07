@@ -509,7 +509,7 @@ def number_of_edits_by_category(data, index):
     nEdits_category4.name = "n_edits_highly_experimented"
     nEdits_category5.name = "n_edits_new"
 
-    return [nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5]
+    return [nEdits_category5, nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4]
 
 
 ### 2) PERCENTAGE OF EDITIONS PER USER CATEGORY EACH MONTH ###
@@ -548,7 +548,7 @@ def percentage_of_edits_by_category(data, index):
     pctage_category4.name = "pctage_highly_experimented"
     pctage_category5.name = "pctage_new"
 
-    return [pctage_category1, pctage_category2, pctage_category3, pctage_category4, pctage_category5]
+    return [pctage_category5, pctage_category1, pctage_category2, pctage_category3, pctage_category4]
 
 ############################# HEATMAP METRICS ##############################################
 
