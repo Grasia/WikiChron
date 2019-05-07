@@ -253,10 +253,10 @@ def current_streak(data, index):
     two_three_months = current_streak_2_or_3_months_in_a_row(data, index)
     four_six_months = current_streak_4_or_6_months_in_a_row(data, index)
     more_six = current_streak_more_than_six_months_in_a_row(data, index)
-    this_month.name = 'this months'
-    two_three_months.name = 'between two and three months in a row'
-    four_six_months.name = 'between four and six months in a row'
-    more_six.name = 'more than six months in a row'
+    this_month.name = '1 month editing'
+    two_three_months.name = 'btw. 2 and 3 consecutive months'
+    four_six_months.name = 'btw. 4 and 6 consecutive months'
+    more_six.name = 'more than 6 consecutive months'
     return [this_month, two_three_months, four_six_months, more_six]
 
 ############################ METRIC 3 #################################################################################################
@@ -269,20 +269,26 @@ def users_first_edit_between_1_3_months_ago(data, index):
 def users_first_edit_between_4_6_months_ago(data, index):
     return filter_users_first_edition(data, index, 5, 7)
 
-# this metric counts the users whose first edition is more than 6 months old:
-def users_first_edit_more_than_6_months_ago(data, index):
-    return filter_users_first_edition(data, index, 7, 0)
+# this metric counts the users whose first edition was between 6 and 12 months ago:
+def users_first_edit_between_6_12_months_ago(data, index):
+    return filter_users_first_edition(data, index, 7, 13)
+
+# this metric counts the users whose first edition was than 12 months ago:
+def users_first_edit_more_than_12_months_ago(data, index):
+    return filter_users_first_edition(data, index, 13, 0)
 
 def users_first_edit(data, index):
     this_month = users_new(data, index)
     one_three = users_first_edit_between_1_3_months_ago(data, index)
     four_six = users_first_edit_between_4_6_months_ago(data, index)
-    more_six = users_first_edit_more_than_6_months_ago(data, index)
-    this_month.name ='this month'
-    one_three.name = 'between 1 and 3 months ago'
-    four_six.name = 'between 4 and 6 months ago'
-    more_six.name = 'more than 6 months ago'
-    return [this_month, one_three, four_six, more_six]
+    six_twelve = users_first_edit_between_6_12_months_ago(data, index)
+    more_twelve = sers_first_edit_more_than_12_months_ago(data, index)
+    this_month.name ='1st edit this month'
+    one_three.name = '1st edit btw. 1 and 3 months ago'
+    four_six.name = '1st edit btw. 4 and 6 months ago'
+    six_twelve.name = '1st edit btw. 6 and 12 months ago'
+    more_twelve.name = "1st edit more than 12 months ago"
+    return [this_month, one_three, four_six, six_twelve, more_twelve]
 ############################ METRIC 4 #################################################################################################
 
 # This metric counts, among the users that have edited in that month X, the ones that have edited the last time in month X-1
@@ -307,11 +313,11 @@ def users_last_edit(data, index):
     two_three_months = users_last_edit_2_or_3_months_ago(data, index)
     four_six_months = users_last_edit_4_or_5_or_6_months_ago(data, index)
     more_six_months = users_last_edit_more_than_6_months_ago(data, index)
-    this_month.name = 'this month'
-    one_month.name = '1 month ago'
-    two_three_months.name = 'between 2 and 3 months ago'
-    four_six_months.name = 'between 4 and 6 months ago'
-    more_six_months.name = 'more than six months ago'
+    this_month.name = 'new users'
+    one_month.name = 'last edit made 1 month ago'
+    two_three_months.name = 'last edit made btw. 2 and 3 months ago'
+    four_six_months.name = 'last edit made btw. 4 and 6 months ago'
+    more_six_months.name = 'last edit made more than six months ago'
     return [this_month, one_month, two_three_months, four_six_months, more_six_months]
 
 ############################ METRIC 5 #################################################################################################
@@ -366,21 +372,32 @@ def users_number_of_edits_abs(data, index):
 ############################ METRICS 9 and 10 #################################################################################################
 
 #this metric filters how many users have edited a main page
-def users_main_page(data, index):
+def users_article_page(data, index):
   return filter_users_pageNS(data, index, 0)
+
+def users_articletalk_page(data, index):
+  return filter_users_pageNS(data, index, 1)
+
+def users_user_page(data, index):
+  return filter_users_pageNS(data, index, 2)
 
 #this metric filters how many users have edited a template page
 def users_template_page(data, index):
    return filter_users_pageNS(data, index, 10)
 
 #this metric filters how many users have edited a talk page
-def talk_page_users(data,index):
+def users_usertalk_page(data,index):
+    return filter_users_pageNS(data, index, 3)
+
+def users_other_page(data,index):
+    category_list = [-2, -1, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 110, 111]
+
     return filter_users_pageNS(data, index, 3)
 
 def type_page_users_edit(data, index):
-    main_page = users_main_page(data, index)
+    main_page = users_article_page(data, index)
     template_page = users_template_page(data, index)
-    talk_page = talk_page_users(data,index)
+    talk_page = users_usertalk_page(data,index)
     main_page.name = 'main_page'
     template_page.name = 'template_page'
     talk_page.name = 'talk_page'
