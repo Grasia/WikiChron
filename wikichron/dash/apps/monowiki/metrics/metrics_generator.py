@@ -45,8 +45,8 @@ def generate_metrics():
     #metrics.append(Metric('users_edits_between_5_24', 'users #edits 2', MetricCategory.USERS, stats.users_number_of_edits_between_5_and_24, 'Users that have completed between 5 and 24 editions until month X-1 (included)'))
     #metrics.append(Metric('users_edits_between_25_99', 'users #edits 3', MetricCategory.USERS, stats.users_number_of_edits_between_25_and_99, 'Users that have completed between 25 and 99 editions until month X-1 (included)'))
     #metrics.append(Metric('users_edits_highEq_100', 'users #edits 4', MetricCategory.USERS, stats.users_number_of_edits_highEq_100, 'Users that have completed >= 100 editions until month X-1 (included)'))
-    metrics.append(Metric('users_edits_number_of_edits', 'Active editors by experience (relative)', MetricCategory.BAR, stats.users_number_of_edits, 'Users whose number of editions in a month is: 1) Between 1 and 4 editions. 2) Between 5 and 24 editions. 3) Between 25 and 99 editions. 4) Higher than 99.'))
-    metrics.append(Metric('users_edits_number_of_edits_abs', 'Active editors by experience (absolute)', MetricCategory.BAR, stats.users_number_of_edits_abs, ''))
+    metrics.append(Metric('users_edits_number_of_edits', 'Active editors by experience', MetricCategory.BAR, stats.users_number_of_edits, 'Users whose number of editions in a month is: 1) Between 1 and 4 editions. 2) Between 5 and 24 editions. 3) Between 25 and 99 editions. 4) Higher than 99.'))
+    metrics.append(Metric('users_edits_number_of_edits_abs', 'Active editors by experience (relative)', MetricCategory.BAR, stats.users_number_of_edits_abs, ''))
 
 # metric 6: wikimedia
 # metric 7
@@ -56,7 +56,7 @@ def generate_metrics():
     #metrics.append(Metric('users_main_page', 'Users main page', MetricCategory.USERS, stats.users_main_page, 'Users who have edited a main page'))
     #metrics.append(Metric('users_template_page', 'Users template page', MetricCategory.USERS, stats.users_template_page, 'Users who have edited a template page'))
     #metrics.append(Metric('talk_page_users', 'Users talk page', MetricCategory.USERS, stats.talk_page_users, 'Users that have edited a talk page.'))
-    metrics.append(Metric('type_page_users_edit', 'Active editors in namespaces', MetricCategory.BAR, stats.type_page_users_edit, 'Users who have edited: 1) A main page. 2) A template page. 3) A talk page.'))
+    metrics.append(Metric('type_page_users_edit', 'Active editors in namespaces', MetricCategory.BAR, stats.type_page_users_edit, 'Users who have edited: 1) A main page. 2) A template page. 3) Article talk.'))
 
 #metric to measure level of participation among different user categories
     metrics.append(Metric('number_of_edits_category', 'editions per user category', MetricCategory.BAR, stats.number_of_edits_by_category, 'number of editions done by each one of the following user categories: 1) users that have done between 1 and 4 editions in all the history of the wiki. 2) users that have done between 5 and 24 editions in all the history of the wiki. 3) users that have done between 25 and 99 editions in all the history of the wiki. 4) users that have done a number greater or equal to 100 editions in all the history of the wiki. 5) New users each month.'))
