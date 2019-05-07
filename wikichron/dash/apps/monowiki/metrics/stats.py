@@ -397,7 +397,7 @@ def users_other_page(data,index):
     
     for i in range(len(category_list)):
         print(category_list[i])
-        serie = filter_users_pageNS(data, new_index, category_list[i])
+        serie = filter_users_pageNS(data, index, category_list[i])
         serie = pd.DataFrame(serie).reset_index()
         aux['page_ns_' + str(category_list[i])] = serie['contributor_id']
     
@@ -419,7 +419,7 @@ def type_page_users_edit(data, index):
     usertalk_page.name = 'User talk pages'
     other_page.name = 'Other pages'
 
-    return [main_page, articletalk_page, user_page, template_page, usertalk_page, other_page]
+    return [other_page, main_page, articletalk_page, user_page, template_page, usertalk_page]
 
 ############################ METRICS TO CALCULATE THE PARTICIPATION LEVEL OF DIFFERENT USER CATEGORIES #########################################
 
@@ -673,14 +673,14 @@ def contributor_pctg_per_contributions_pctg(data, index):
     # 9.2) the upper area plus the values of the other classes' Y axis' values needs to be equal to the maximum of the sum of all y axises:
     final_df['upper_area'] = max_value - final_df['sum_of_classes']
     upper_area = pd.Series(index=final_df['timestamp'], data=final_df['upper_area'].values)
-    category_50 = pd.Series(index=final_df['timestamp'], data=final_df['category50%'].values)
+    category_50 = pd.Series(index=final_df['timestamp'], data=final_df['category50%'].valslues)
     category_80 = pd.Series(index=final_df['timestamp'], data=final_df['category80%'].values)
     category_90 = pd.Series(index=final_df['timestamp'], data=final_df['category90%'].values)
     category_99 = pd.Series(index=final_df['timestamp'], data=final_df['category99%'].values)
-    category_50.name = "50% of editions"
-    category_80.name = "80% of editions"
-    category_90.name = "90% of editions"
-    category_99.name = "99% of editions"
-    upper_area.name = "upper area"
+    category_50.name = "50% of edits"
+    category_80.name = "80% of edits"
+    category_90.name = "90% of edits"
+    category_99.name = "99% of edits"
+    upper_area.name = "100% of edits"
 
     return[category_50, category_80, category_90, category_99, upper_area]
