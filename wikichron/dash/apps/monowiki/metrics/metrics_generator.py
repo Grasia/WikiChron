@@ -68,7 +68,7 @@ def generate_metrics():
 
 # heatmap metrics
     metrics.append(Metric('number_of_editors_per_contributions', 'num editors per contributions', MetricCategory.HEATMAPS, stats.number_of_editors_per_contributions, 'Heatmap that shows the number of editors per contributions(y axis = number of contributions and z axis = number of editors)'))
-    metrics.append(Metric('changes_in_absolute_size_of_classes', 'changes in active editors by experience classes', MetricCategory.HEATMAPS, stats.changes_in_absolute_size_of_editor_classes, 'Heatmap that shows the changes in absolute size of active editor by experience classes: a darker color means there are less users than the previous month, and a lighter color means the number of users of a class has increased.'))
+    metrics.append(Metric('changes_in_absolute_size_of_classes', 'changes in classes of active editors by experience', MetricCategory.HEATMAPS, stats.changes_in_absolute_size_of_editor_classes, 'Heatmap that shows the changes in absolute size of active editor by experience classes: a darker color means there are less users than the previous month, and a lighter color means the number of users of a class has increased.'))
     
     # keep this order when plotting graphs inserting 'index_' at the beginning
     #  for every metric code.
