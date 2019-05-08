@@ -545,7 +545,8 @@ def bind_callbacks(app):
                             'layout': {
                                 'title': metric.text,
                                 'barmode': 'stack',
-                                'xaxis': {'range': new_timerange }
+                                'xaxis': dict(tickangle=-60)
+                                #'xaxis': {'range': new_timerange }
                             }
                         },
                         config={
