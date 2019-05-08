@@ -673,7 +673,7 @@ def contributor_pctg_per_contributions_pctg(data, index):
     # 9.2) the upper area plus the values of the other classes' Y axis' values needs to be equal to the maximum of the sum of all y axises:
     final_df['upper_area'] = max_value - final_df['sum_of_classes']
     upper_area = pd.Series(index=final_df['timestamp'], data=final_df['upper_area'].values)
-    category_50 = pd.Series(index=final_df['timestamp'], data=final_df['category50%'].valslues)
+    category_50 = pd.Series(index=final_df['timestamp'], data=final_df['category50%'].values)
     category_80 = pd.Series(index=final_df['timestamp'], data=final_df['category80%'].values)
     category_90 = pd.Series(index=final_df['timestamp'], data=final_df['category90%'].values)
     category_99 = pd.Series(index=final_df['timestamp'], data=final_df['category99%'].values)
