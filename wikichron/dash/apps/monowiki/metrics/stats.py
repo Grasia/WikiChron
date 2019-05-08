@@ -282,7 +282,7 @@ def users_first_edit(data, index):
     one_three = users_first_edit_between_1_3_months_ago(data, index)
     four_six = users_first_edit_between_4_6_months_ago(data, index)
     six_twelve = users_first_edit_between_6_12_months_ago(data, index)
-    more_twelve = sers_first_edit_more_than_12_months_ago(data, index)
+    more_twelve = users_first_edit_more_than_12_months_ago(data, index)
     this_month.name ='1st edit this month'
     one_three.name = '1st edit btw. 1 and 3 months ago'
     four_six.name = '1st edit btw. 4 and 6 months ago'
