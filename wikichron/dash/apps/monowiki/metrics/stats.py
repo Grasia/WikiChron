@@ -257,7 +257,7 @@ def current_streak(data, index):
     two_three_months.name = 'btw. 2 and 3 consecutive months'
     four_six_months.name = 'btw. 4 and 6 consecutive months'
     more_six.name = 'more than 6 consecutive months'
-    return [this_month, two_three_months, four_six_months, more_six]
+    return [this_month, two_three_months, four_six_months, more_six, 'Bar']
 
 ############################ METRIC 3 #################################################################################################
 
@@ -288,7 +288,7 @@ def users_first_edit(data, index):
     four_six.name = '1st edit btw. 4 and 6 months ago'
     six_twelve.name = '1st edit btw. 6 and 12 months ago'
     more_twelve.name = "1st edit more than 12 months ago"
-    return [this_month, one_three, four_six, six_twelve, more_twelve]
+    return [this_month, one_three, four_six, six_twelve, more_twelve, 'Bar']
 ############################ METRIC 4 #################################################################################################
 
 # This metric counts, among the users that have edited in that month X, the ones that have edited the last time in month X-1
@@ -318,7 +318,7 @@ def users_last_edit(data, index):
     two_three_months.name = 'last edit made btw. 2 and 3 months ago'
     four_six_months.name = 'last edit made btw. 4 and 6 months ago'
     more_six_months.name = 'last edit made more than six months ago'
-    return [this_month, one_month, two_three_months, four_six_months, more_six_months]
+    return [this_month, one_month, two_three_months, four_six_months, more_six_months, 'Bar']
 
 ############################ METRIC 5 #################################################################################################
 
@@ -347,7 +347,7 @@ def users_number_of_edits(data, index):
     between_5_24.name = 'between 5 and 24'
     between_25_99.name = 'between 25 and 99'
     highEq_100.name = 'more than 100'
-    return [one_four, between_5_24, between_25_99, highEq_100]
+    return [one_four, between_5_24, between_25_99, highEq_100, 'Bar']
 
 def users_number_of_edits_abs(data, index):
     one_four = users_number_of_edits_between_1_and_4(data, index).to_frame('one_four')
@@ -368,7 +368,7 @@ def users_number_of_edits_abs(data, index):
     between_5_24.name = 'between 5 and 24'
     between_25_99.name = 'between 25 and 99'
     highEq_100.name = 'more than 100'
-    return [one_four, between_5_24, between_25_99, highEq_100]
+    return [one_four, between_5_24, between_25_99, highEq_100, 'Bar']
 ############################ METRICS 9 and 10 #################################################################################################
 
 #this metric filters how many users have edited a main page
@@ -419,7 +419,7 @@ def type_page_users_edit(data, index):
     usertalk_page.name = 'User talk pages'
     other_page.name = 'Other pages'
 
-    return [other_page, main_page, articletalk_page, user_page, template_page, usertalk_page]
+    return [other_page, main_page, articletalk_page, user_page, template_page, usertalk_page, 'Bar']
 
 ############################ METRICS TO CALCULATE THE PARTICIPATION LEVEL OF DIFFERENT USER CATEGORIES #########################################
 
@@ -509,7 +509,7 @@ def number_of_edits_by_category(data, index):
     nEdits_category4.name = "n_edits_highly_experimented"
     nEdits_category5.name = "n_edits_new"
 
-    return [nEdits_category5, nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4]
+    return [nEdits_category5, nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, 'Bar']
 
 
 ### 2) PERCENTAGE OF EDITIONS PER USER CATEGORY EACH MONTH ###
@@ -548,7 +548,7 @@ def percentage_of_edits_by_category(data, index):
     pctage_category4.name = "pctage_highly_experimented"
     pctage_category5.name = "pctage_new"
 
-    return [pctage_category5, pctage_category1, pctage_category2, pctage_category3, pctage_category4]
+    return [pctage_category5, pctage_category1, pctage_category2, pctage_category3, pctage_category4, 'Bar']
 
 ############################# HEATMAP METRICS ##############################################
 
@@ -584,7 +584,7 @@ def number_of_editors_per_contributions(data, index):
     for metric_idx in range(max_contributions+1):
             metric_row = [graphs_list[wiki_idx].pop(0) for wiki_idx in range(len(graphs_list))]
             wiki_by_metrics.append(metric_row)  
-    return [months.index,list(range(max_contributions)), wiki_by_metrics]
+    return [months.index,list(range(max_contributions)), wiki_by_metrics, 'Heatmap']
 
 def changes_in_absolute_size_of_editor_classes(data, index):
     class1 = users_number_of_edits_between_1_and_4(data, index).to_frame('one_four')
@@ -618,7 +618,7 @@ def changes_in_absolute_size_of_editor_classes(data, index):
                         
                 elif (concatenate.iloc[i, j] > concatenate.iloc[i, j - 1]):
                         graphs_list[i][j] = concatenate.iloc[i, j] - concatenate.iloc[i, j - 1]
-    return[months.index, classes, graphs_list]
+    return[months.index, classes, graphs_list, 'Heatmap']
 
 ########################### FILLED-AREA CHART METRICS ###########################################
 
@@ -673,7 +673,7 @@ def contributor_pctg_per_contributions_pctg(data, index):
     # 9.2) the upper area plus the values of the other classes' Y axis' values needs to be equal to the maximum of the sum of all y axises:
     final_df['upper_area'] = max_value - final_df['sum_of_classes']
     upper_area = pd.Series(index=final_df['timestamp'], data=final_df['upper_area'].values)
-    category_50 = pd.Series(index=final_df['timestamp'], data=final_df['category50%'].valslues)
+    category_50 = pd.Series(index=final_df['timestamp'], data=final_df['category50%'].values)
     category_80 = pd.Series(index=final_df['timestamp'], data=final_df['category80%'].values)
     category_90 = pd.Series(index=final_df['timestamp'], data=final_df['category90%'].values)
     category_99 = pd.Series(index=final_df['timestamp'], data=final_df['category99%'].values)
@@ -683,4 +683,4 @@ def contributor_pctg_per_contributions_pctg(data, index):
     category_99.name = "99% of edits"
     upper_area.name = "100% of edits"
 
-    return[category_50, category_80, category_90, category_99, upper_area]
+    return[category_50, category_80, category_90, category_99, upper_area, 'Areachart']

@@ -95,7 +95,6 @@ def monowiki_app():
     for (cat_obj, cat_metrics) in metrics_by_category_backend.items():
         cat_name = cat_obj.value
         categories_frontend[cat_name] = [transform_metric_obj_in_metric_frontend(metric) for metric in cat_metrics]
-
     return flask.render_template("monowiki/selection/selection.html",
                                 title = 'WikiChron Monowiki - selection',
                                 development = config["DEBUG"],

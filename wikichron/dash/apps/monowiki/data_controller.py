@@ -82,7 +82,7 @@ def set_cache(cache):
         # Otherwise, wikis lifespan for different dates which are not
         #  contained in the lifespan of the oldest wiki would be lost
 
-        if(list_of_selected_wikis[len(list_of_selected_wikis) - 1] == MetricCategory.HEATMAPS):
+        if(list_of_selected_wikis[len(list_of_selected_wikis) - 1] == 'Heatmap'):
             unified_datetime_index = list_of_selected_wikis[0]
         else:
             unified_datetime_index = list_of_selected_wikis[0].index.get_level_values(0)

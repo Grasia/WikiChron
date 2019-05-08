@@ -52,7 +52,7 @@ def generate_graphs(data, metrics, wikis, relative_time):
         #print(data[metric_idx])
         category.append(data[metric_idx].pop(-1))
         #print(data[metric_idx])
-        if ((category[metric_idx].value == "Bar") or (category[metric_idx].value == "Areachart")):
+        if ((category[metric_idx] == "Bar") or (category[metric_idx] == "Areachart")):
             num_submetrics = len(data[metric_idx])
             for submetric in range(num_submetrics):
                 graphs_list[metric_idx].append(None)
@@ -60,7 +60,7 @@ def generate_graphs(data, metrics, wikis, relative_time):
             graphs_list[metric_idx].append(None)
 
     for metric_idx in range(len(metrics)):
-        if category[metric_idx].value == "Bar":
+        if category[metric_idx] == "Bar":
             num_submetrics = len(data[metric_idx])
             for submetric in range(num_submetrics):
                 metric_data = data[metric_idx][submetric]
@@ -73,7 +73,7 @@ def generate_graphs(data, metrics, wikis, relative_time):
                                     y=metric_data,
                                     name=metric_data.name
                                     )
-        elif category[metric_idx].value == "Heatmaps":
+        elif category[metric_idx] == "Heatmap":
             """anterior = None
             j = -1
             max = data[metric_idx][1]
@@ -107,7 +107,7 @@ def generate_graphs(data, metrics, wikis, relative_time):
                                colorscale= 'Viridis'
                                )
             
-        elif category[metric_idx].value == "Areachart":
+        elif category[metric_idx] == "Areachart":
             num_traces = len(data[metric_idx])
             for trace in range(num_traces):
                 metric_data = data[metric_idx][trace]

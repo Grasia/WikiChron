@@ -13,9 +13,9 @@
 from enum import Enum, unique
 @unique
 class MetricCategory(Enum):
-    BAR = 'Bar'
-    HEATMAPS = 'Heatmaps'
-    AREACHART = 'Areachart'
+    ACTIVE_EDITORS_ANALYSIS = 'Active editors analysis'
+    EDITS_ANALYSIS = 'Edits analysis'
+
 
 
 class Metric:

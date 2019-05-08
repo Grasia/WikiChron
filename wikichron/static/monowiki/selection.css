@@ -54,44 +54,6 @@ p {
 
 /* Header */
 
-header {
-    width: 100%;
-    background-color: #BAD8EC;
-    padding: 10px 60px 20px 60px;
-}
-
-.sticky-header {
-    position: sticky;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    background-color: inherit;
-    height: fit-content;
-}
-
-#logo-container {
-    padding: 25px 0 25px 0;
-}
-
-.intro-container {
-    background-color: #BAD8EC;
-}
-
-
-#selection-header-welcome {
-    font-weight: 300;
-    font-size: 30px;
-    color: #232C48;
-}
-
-#selection-header-paragraph {
-    font-family: Roboto;
-    color: #232C48;
-    font-size: 20px;
-    line-height: 27px;
-    width: 300px;
-}
-
 
 /* Main */
 

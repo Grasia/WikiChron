@@ -35,13 +35,13 @@
       <a href="/monowiki" class="link-unstyled">
         <div class="card">
             <div class="card-img-top">
-              <img src={{url_for('static', filename='monowiki/assets/line_graph.svg')}} class="mode-image" alt="Graph image classic">
+              <img src={{url_for('static', filename='monowiki/assets/line_graph.svg')}} class="mode-image" alt="Graph image monowiki">
               <img src={{url_for('static', filename='monowiki/assets/logo_monowiki_text.svg')}} alt="Logo title monowiki">
             </div>
             <div class="card-body">
               <div class="d-flex flex-row align-items-center">
                 <p class="card-text">Choose among a big set of metrics and compare its evolution in one wiki</p>
-                <div><img height="30px" src={{url_for('static', filename='assets/arrow.svg')}} class="btn btn-link to-app-link"></img></div>
+                <div class="arrow-container"><img height="30px" src={{url_for('static', filename='assets/arrow.svg')}} class="btn btn-link to-app-link"></img></div>
               </div>
             </div>
         </div>
@@ -64,15 +64,7 @@
       </div>
     </section>
 
-    <section class="container">
-      <div id="coming-soon">
-        <div class="coming-soon-img-container">
-          <img src={{url_for('static', filename='monowiki/assets/logo_monowiki_text.svg')}} alt="Logo title monowiki">
-        </div>
 
-        <p>Coming soon</p>
-      </div>
-    </section>
 
   </main>
 
