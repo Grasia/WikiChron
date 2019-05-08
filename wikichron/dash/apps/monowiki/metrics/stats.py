@@ -343,10 +343,10 @@ def users_number_of_edits(data, index):
     between_5_24 = users_number_of_edits_between_5_and_24(data, index)
     between_25_99 = users_number_of_edits_between_25_and_99(data, index)
     highEq_100 = users_number_of_edits_highEq_100(data, index)
-    one_four.name = 'between 1 and 4'
-    between_5_24.name = 'between 5 and 24'
-    between_25_99.name = 'between 25 and 99'
-    highEq_100.name = 'more than 100'
+    one_four.name = 'Btw. 1 and 4 edits'
+    between_5_24.name = 'Btw. 5 and 24 edits'
+    between_25_99.name = 'Btw. 25 and 99 edits'
+    highEq_100.name = 'More than 99 edits'
     return [one_four, between_5_24, between_25_99, highEq_100, 'Bar']
 
 def users_number_of_edits_abs(data, index):
@@ -364,10 +364,10 @@ def users_number_of_edits_abs(data, index):
     between_5_24 = pd.Series(concatenate['5_24'], index = concatenate.index)
     between_25_99 = pd.Series(concatenate['25_99'], index = concatenate.index)
     highEq_100 = pd.Series(concatenate['highEq_100'], index = concatenate.index)
-    one_four.name = 'between 1 and 4'
-    between_5_24.name = 'between 5 and 24'
-    between_25_99.name = 'between 25 and 99'
-    highEq_100.name = 'more than 100'
+    one_four.name = 'Btw. 1 and 4 edits'
+    between_5_24.name = 'Btw. 5 and 24 edits'
+    between_25_99.name = 'Btw. 25 and 99 edits'
+    highEq_100.name = 'More than 99 edits'
     return [one_four, between_5_24, between_25_99, highEq_100, 'Bar']
 ############################ METRICS 9 and 10 #################################################################################################
 
@@ -503,11 +503,11 @@ def number_of_edits_by_category(data, index):
     nEdits_category4 = number_of_edits_by_highly_experimented_users(data, index)
     nEdits_category5 = number_of_edits_by_new_users(data, index)
 
-    nEdits_category1.name = "n_edits_beginners"
-    nEdits_category2.name = "n_edits_advanced"
-    nEdits_category3.name = "n_edits_experimented"
-    nEdits_category4.name = "n_edits_highly_experimented"
-    nEdits_category5.name = "n_edits_new"
+    nEdits_category1.name = "Edits by beginners (btw. 1 and 4 edits)"
+    nEdits_category2.name = "Edits by advanced (btw. 5 and 24 edits)"
+    nEdits_category3.name = "Edits by experimented (btw. 24 and 99 edits)"
+    nEdits_category4.name = "Edits by highly experimented (more than 99 edits)"
+    nEdits_category5.name = "Edits by new users"
 
     return [nEdits_category5, nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, 'Bar']
 
@@ -542,11 +542,11 @@ def percentage_of_edits_by_category(data, index):
     pctage_category4 = percentage_of_edits_by_highly_experimented_users(data, index)
     pctage_category5 = percentage_of_edits_by_new_users(data, index)
 
-    pctage_category1.name = "pctage_beginners"
-    pctage_category2.name = "pctage_advanced"
-    pctage_category3.name = "pctage_experimented"
-    pctage_category4.name = "pctage_highly_experimented"
-    pctage_category5.name = "pctage_new"
+    pctage_category1.name = "% of edits by beginners (btw. 1 and 4 edits)"
+    pctage_category2.name = "% of edits by advanced (btw. 5 and 24 edits)"
+    pctage_category3.name = "% of edits by experimented (btw. 24 and 99 edits)"
+    pctage_category4.name = "% of edits by highly experimented (more than 99 edits)"
+    pctage_category5.name = "% of edits by new users"
 
     return [pctage_category5, pctage_category1, pctage_category2, pctage_category3, pctage_category4, 'Bar']
 
