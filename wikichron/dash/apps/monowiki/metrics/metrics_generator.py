@@ -57,10 +57,10 @@ def generate_metrics():
     #metrics.append(Metric('users_template_page', 'Users template page', MetricCategory.USERS, stats.users_template_page, 'Users who have edited a template page'))
     #metrics.append(Metric('talk_page_users', 'Users talk page', MetricCategory.USERS, stats.talk_page_users, 'Users that have edited a talk page.'))
     metrics.append(Metric('type_page_users_edit', 'Active editors in namespaces', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.type_page_users_edit, 'BAR GRAPH: Users by the namespaces they have edited in a month.'))
-
+    
+    metrics.append(Metric('returning new editor', 'Returning new editor', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.returning_new_editor, 'SCATTER GRAPH: New editor who completes at least two edit sessions within 7 days afte registering.'))
 #metric to measure level of participation among different user categories
     metrics.append(Metric('number_of_edits_category', 'Edits by editor experience', MetricCategory.EDITS_ANALYSIS, stats.number_of_edits_by_category, 'BAR GRAPH: number of editions per categories of active editors by experience.'))
-
     metrics.append(Metric('percentage_of_edits_category', 'Edits by editor experience (relative)', MetricCategory.EDITS_ANALYSIS, stats.percentage_of_edits_by_category, 'BAR GRAPH: number of editions per categories of active editors by experience (relative).'))
     
 # area chart metrics

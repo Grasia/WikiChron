@@ -13,6 +13,7 @@
 import pandas as pd
 import numpy as np
 import math
+import datetime as d
 from dateutil.relativedelta import relativedelta
 
 
@@ -51,6 +52,7 @@ def displace_x_months_per_user(data, months):
     return data.shift(months)
 
 def current_streak_x_or_y_months_in_a_row(data, index, z, y):
+    data = filter_anonymous(data)
     mothly = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('prueba').reset_index()
     mothly['add_months'] = add_x_months(mothly, z)
     lista = ['contributor_id']
@@ -549,6 +551,41 @@ def percentage_of_edits_by_category(data, index):
     pctage_category5.name = "% of edits by new users"
 
     return [pctage_category5, pctage_category1, pctage_category2, pctage_category3, pctage_category4, 'Bar']
+
+def returning_new_editor(data, index):
+    data.reset_index(drop=True, inplace=True)
+    #remove anonymous users
+    registered_users = data[data['contributor_name'] != 'Anonymous']
+    #add up 7 days to the date on which each user registered
+    seven_days_after_registration = registered_users.groupby(['contributor_id']).agg({'timestamp':'first'}).apply(lambda x: x+d.timedelta(days=7)).reset_index()
+    #change the name to the timestamp column
+    seven_days_after_registration=seven_days_after_registration.rename(columns = {'timestamp':'seven_days_after'})
+    #merge two dataframes by contributor_id
+    registered_users = pd.merge(registered_users, seven_days_after_registration, on ='contributor_id')
+    #edits of each user within 7 days of being registered
+    registered_users = registered_users[registered_users['timestamp'] <=registered_users['seven_days_after']]
+    #to order by date
+    registered_users = registered_users.sort_values(['timestamp'])
+    #get the timestamp and contributor_id and group by contributor_id
+    timestamp_and_contributor_id = registered_users[['timestamp', 'contributor_id']].groupby(['contributor_id'])
+    #displace the timestamp a position 
+    displace_timestamp = timestamp_and_contributor_id.apply(lambda x: x.shift())
+    registered_users['displace_timestamp'] = displace_timestamp['timestamp']
+    #compare the origin timestamp with the displace_timestamp
+    registered_users['comp'] = (registered_users.timestamp-registered_users.displace_timestamp)
+    #convert to seconds and replace the NAT for 31 because the NAT indicate the first edition
+    registered_users['comp'] = registered_users['comp'].apply(lambda y: y.total_seconds()/60).fillna(61)
+    #take the edit sessions
+    edits_sessions = registered_users[(registered_users['comp']>60) ]
+    num_edits_sessions = edits_sessions.groupby([pd.Grouper(key='timestamp', freq='MS'), 'contributor_id']).size()
+    #users with at least two editions
+    returning_users = num_edits_sessions[num_edits_sessions >1].to_frame('returning_users').reset_index()
+    #minimum month in which each user has made two editions
+    returning_new_users = returning_users.groupby(['contributor_id'])['timestamp'].min().reset_index()
+    returning_new_users = returning_new_users.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
+    if index is not None:
+        returning_new_users = returning_new_users.reindex(index, fill_value=0)
+    return [returning_new_users, 'Scatter']
 
 ############################# HEATMAP METRICS ##############################################
 
