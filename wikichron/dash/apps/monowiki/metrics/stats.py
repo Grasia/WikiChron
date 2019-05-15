@@ -555,7 +555,7 @@ def percentage_of_edits_by_category(data, index):
 def returning_new_editor(data, index):
     data.reset_index(drop=True, inplace=True)
     #remove anonymous users
-    registered_users = data[data['contributor_name'] != 'Anonymous']
+    registered_users = filter_anonymous(data)
     #add up 7 days to the date on which each user registered
     seven_days_after_registration = registered_users.groupby(['contributor_id']).agg({'timestamp':'first'}).apply(lambda x: x+d.timedelta(days=7)).reset_index()
     #change the name to the timestamp column
@@ -586,6 +586,23 @@ def returning_new_editor(data, index):
     if index is not None:
         returning_new_users = returning_new_users.reindex(index, fill_value=0)
     return [returning_new_users, 'Scatter']
+	
+def surviving_new_editor(data, index):
+    data.reset_index(drop=True, inplace=True)
+    registered_users = filter_anonymous(data)
+    #add up 30 days to the date on which each user registered
+    thirty_days_after_registration = registered_users.groupby(['contributor_id']).agg({'timestamp':'first'}).apply(lambda x: x+d.timedelta(days=30)).reset_index()
+    thirty_days_after_registration=thirty_days_after_registration.rename(columns = {'timestamp':'thirty_days_after'})
+    registered_users = pd.merge(registered_users, thirty_days_after_registration, on ='contributor_id')
+    registered_users['survival period'] = registered_users['thirty_days_after'].apply(lambda x: x+d.timedelta(days=30))
+    registered_users['edits_in_survival_period'] =(registered_users['timestamp'] >= registered_users['thirty_days_after']) & (registered_users['timestamp'] <= registered_users['survival period'])
+    survival_users = registered_users[registered_users['edits_in_survival_period'] == True]
+    survival_users = survival_users.groupby([pd.Grouper(key='timestamp', freq='MS'), 'contributor_id']).size().to_frame('num_editions_in_survival_period').reset_index()
+    survival_new_users = survival_users.groupby(['contributor_id'])['timestamp'].max().reset_index()
+    survival_new_users = survival_new_users.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
+    if index is not None:
+        survival_new_users = survival_new_users.reindex(index, fill_value=0)
+    return [survival_new_users, 'Scatter']
 
 ############################# HEATMAP METRICS ##############################################
 
