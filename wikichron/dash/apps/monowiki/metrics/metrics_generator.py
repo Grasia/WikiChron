@@ -68,7 +68,7 @@ def generate_metrics():
     metrics.append(Metric('contributorPctg_per_contributionPctg', 'editor% per contribution%', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.contributor_pctg_per_contributions_pctg, 'FILLED-AREA CHART: % editors per %editions (fixed to 50%, 80%, 90% and 99%)'))
 
 # heatmap metrics
-    metrics.append(Metric('number_of_editors_per_contributions', 'num editors per contributions', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.number_of_editors_per_contributions, 'HEATMAP: contributors (z axis) per contributions (y axis).'))
+    metrics.append(Metric('edit_distributions_across_editors', 'Edit distributions across editors', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.edit_distributions_across_editors, 'HEATMAP: contributors (z axis) per contributions (y axis).'))
     metrics.append(Metric('changes_in_absolute_size_of_classes', 'changes in categories of active editors by experience', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.changes_in_absolute_size_of_editor_classes, 'HEATMAP: increment or decrement (z axis) of an active editor category (y axis).'))
     
     # keep this order when plotting graphs inserting 'index_' at the beginning

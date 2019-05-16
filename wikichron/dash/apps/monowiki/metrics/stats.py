@@ -606,39 +606,50 @@ def surviving_new_editor(data, index):
 
 ############################# HEATMAP METRICS ##############################################
 
-def number_of_editors_per_contributions(data, index):
+def edit_distributions_across_editors(data, index):
     """
     Function which calculates the number X of editors making the same number of editions.
     it returns the months of the wiki, a list of the number of contributions until the maximum number,
     and at last, a matrix with the number of contributors doing the same number of contributions on each month.
 
     """
-    users_registered = data[data['contributor_name']!='Anonymous']
+    users_registered = filter_anonymous(data)
     mothly = users_registered.groupby([pd.Grouper(key ='timestamp', freq='MS'),'contributor_id']).size()
     max_contributions = max(mothly)
     mothly = mothly.to_frame('num_contributions').reset_index()
-    num_person = mothly.groupby([pd.Grouper(key ='timestamp', freq='MS'),'num_contributions']).size()
-    max_persons = max(num_person)
-    months = data.groupby(pd.Grouper(key ='timestamp', freq='MS'))
-    months = months.size()
-    graphs_list = [[0 for j in range(max_contributions+1)] for i in range(len(months))]
-    anterior = None
+    mothly = mothly.groupby([pd.Grouper(key ='timestamp', freq='MS'),'num_contributions']).size().to_frame('num_editors').reset_index()
+    max_persons = max(mothly['num_editors'])
+    round_max = round((max_contributions+5), -1)
+    list_range = list(range(0, round_max+1, 10))
+    max_range = max(list_range)
+    mothly['range'] = pd.cut(mothly['num_contributions'], bins = list_range).astype(str)
+    months_range = mothly.groupby([pd.Grouper(key ='timestamp', freq='MS'), 'range']).size()
+    graphs_list = [[0 for j in range(max_range+1)] for i in range(len(index))]
+    before = None
     j = -1
-    for i, v in num_person.iteritems(): 
+    for i, v in months_range.iteritems(): 
         i = list(i)
-        actual = i[0]
-        num = i[1]
-        if (anterior != actual):
+        current = i[0]
+        p = i[1]
+        p = p.split(']')[0]
+        p = p.split('(')[1]
+        p = p.split(',')
+        num_min = int(float(p[0]))
+        num_max = int(float(p[1]))
+        num_min = (num_min+1) 
+        num_max = (num_max) 
+        if (before != current):
             j = j +1
-            anterior = actual
-        if(j <= len(months)):
+            before = current
+        for num in range(num_min,num_max+1):
             graphs_list[j][num] = v
-        
+    
+    
     wiki_by_metrics = []
     for metric_idx in range(max_contributions+1):
-            metric_row = [graphs_list[wiki_idx].pop(0) for wiki_idx in range(len(graphs_list))]
-            wiki_by_metrics.append(metric_row)  
-    return [months.index,list(range(max_contributions)), wiki_by_metrics, 'Heatmap']
+        metric_row = [graphs_list[wiki_idx].pop(0) for wiki_idx in range(len(graphs_list))]
+        wiki_by_metrics.append(metric_row) 
+    return [index,list(range(max_contributions)), wiki_by_metrics, 'Heatmap']
 
 def changes_in_absolute_size_of_editor_classes(data, index):
     class1 = users_number_of_edits_between_1_and_4(data, index).to_frame('one_four')
