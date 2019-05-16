@@ -81,6 +81,7 @@ def current_streak_x_or_y_months_in_a_row(data, index, z, y):
 
 # this function is a helper for the functions in the metric 3 section: it filters the editors according to a condition which depends on the numbers x and y, passed as parameters by the caller functions.
 def filter_users_first_edition(data, index, x, y):
+    data = filter_anonymous(data)
 # 1) Get the index of the dataframe to analyze: it must include all the months recorded in the history of the wiki.
     new_index = data.groupby(pd.Grouper(key='timestamp', freq='MS')).size().to_frame('months').index
 # 2) create a dataframe in which we have the cumulative sum of the editions the user has made all along the history of the wiki.
@@ -106,6 +107,7 @@ def filter_users_first_edition(data, index, x, y):
 
 # this function is a helper for the functions in the metric 4 section: it filters the editors according to a condition which depends on the number x , passed as parameter by the caller functions.
 def filter_users_last_edition(data, index, x):
+    data = filter_anonymous(data)
 # 1) Get the index of the dataframe to analyze: it must include all the months recorded in the history of the wiki.
     new_index = data.groupby(pd.Grouper(key='timestamp', freq='MS')).size().to_frame('months').index
 # 2) create a dataframe in which we have the cumulative sum of the editions the user has made all along the history of the wiki.
@@ -156,6 +158,7 @@ def filter_users_number_of_edits(data, index, x, y):
 
 # this helper function gets the number of users that have edited a particular kind of page, specified by the parameter page_ns
 def filter_users_pageNS(data, index, page_ns):
+    data = filter_anonymous(data)
     edits_page = data[data['page_ns'] == page_ns]
     series = edits_page.groupby(pd.Grouper(key = 'timestamp', freq = 'MS'))['contributor_id'].nunique()
     if index is not None:
@@ -167,6 +170,7 @@ def filter_users_pageNS(data, index, page_ns):
 
 #this function calculates the number of editions done on each month by each user category (users that are new to the wiki, users that have done between 1 and 4, 5 and 24, 25 and 99 and more or equal to 100 editions in all the history of the wiki)
 def number_of_edits_by_user_category(data, index, x, y):
+    data = filter_anonymous(data)
 # 1) Get the index of the dataframe to analyze: it must include all the months recorded in the history of the wiki.
     new_index = data.groupby(pd.Grouper(key='timestamp', freq='MS')).size().to_frame('months').index
 # 2) create a dataframe in which we have the cumulative sum of the editions the user has made all along the history of the wiki.
@@ -407,7 +411,7 @@ def users_usertalk_page(data,index):
 
 def users_other_page(data,index):
     category_list = [-2, -1, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 110, 111]
-    lst_dict = [None] * len(category_list)
+    
     aux = pd.DataFrame()
     aux['timestamp'] = index
     
