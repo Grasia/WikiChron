@@ -13,6 +13,7 @@
 import pandas as pd
 import numpy as np
 import math
+import datetime as d
 from dateutil.relativedelta import relativedelta
 
 
@@ -51,6 +52,7 @@ def displace_x_months_per_user(data, months):
     return data.shift(months)
 
 def current_streak_x_or_y_months_in_a_row(data, index, z, y):
+    data = filter_anonymous(data)
     mothly = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('prueba').reset_index()
     mothly['add_months'] = add_x_months(mothly, z)
     lista = ['contributor_id']
@@ -552,41 +554,104 @@ def percentage_of_edits_by_category(data, index):
 
     return [pctage_category5, pctage_category1, pctage_category2, pctage_category3, pctage_category4, 'Bar']
 
+def returning_new_editor(data, index):
+    data.reset_index(drop=True, inplace=True)
+    #remove anonymous users
+    registered_users = filter_anonymous(data)
+    #add up 7 days to the date on which each user registered
+    seven_days_after_registration = registered_users.groupby(['contributor_id']).agg({'timestamp':'first'}).apply(lambda x: x+d.timedelta(days=7)).reset_index()
+    #change the name to the timestamp column
+    seven_days_after_registration=seven_days_after_registration.rename(columns = {'timestamp':'seven_days_after'})
+    #merge two dataframes by contributor_id
+    registered_users = pd.merge(registered_users, seven_days_after_registration, on ='contributor_id')
+    #edits of each user within 7 days of being registered
+    registered_users = registered_users[registered_users['timestamp'] <=registered_users['seven_days_after']]
+    #to order by date
+    registered_users = registered_users.sort_values(['timestamp'])
+    #get the timestamp and contributor_id and group by contributor_id
+    timestamp_and_contributor_id = registered_users[['timestamp', 'contributor_id']].groupby(['contributor_id'])
+    #displace the timestamp a position 
+    displace_timestamp = timestamp_and_contributor_id.apply(lambda x: x.shift())
+    registered_users['displace_timestamp'] = displace_timestamp['timestamp']
+    #compare the origin timestamp with the displace_timestamp
+    registered_users['comp'] = (registered_users.timestamp-registered_users.displace_timestamp)
+    #convert to seconds and replace the NAT for 31 because the NAT indicate the first edition
+    registered_users['comp'] = registered_users['comp'].apply(lambda y: y.total_seconds()/60).fillna(61)
+    #take the edit sessions
+    edits_sessions = registered_users[(registered_users['comp']>60) ]
+    num_edits_sessions = edits_sessions.groupby([pd.Grouper(key='timestamp', freq='MS'), 'contributor_id']).size()
+    #users with at least two editions
+    returning_users = num_edits_sessions[num_edits_sessions >1].to_frame('returning_users').reset_index()
+    #minimum month in which each user has made two editions
+    returning_new_users = returning_users.groupby(['contributor_id'])['timestamp'].min().reset_index()
+    returning_new_users = returning_new_users.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
+    if index is not None:
+        returning_new_users = returning_new_users.reindex(index, fill_value=0)
+    return [returning_new_users, 'Scatter']
+	
+def surviving_new_editor(data, index):
+    data.reset_index(drop=True, inplace=True)
+    registered_users = filter_anonymous(data)
+    #add up 30 days to the date on which each user registered
+    thirty_days_after_registration = registered_users.groupby(['contributor_id']).agg({'timestamp':'first'}).apply(lambda x: x+d.timedelta(days=30)).reset_index()
+    thirty_days_after_registration=thirty_days_after_registration.rename(columns = {'timestamp':'thirty_days_after'})
+    registered_users = pd.merge(registered_users, thirty_days_after_registration, on ='contributor_id')
+    registered_users['survival period'] = registered_users['thirty_days_after'].apply(lambda x: x+d.timedelta(days=30))
+    registered_users['edits_in_survival_period'] =(registered_users['timestamp'] >= registered_users['thirty_days_after']) & (registered_users['timestamp'] <= registered_users['survival period'])
+    survival_users = registered_users[registered_users['edits_in_survival_period'] == True]
+    survival_users = survival_users.groupby([pd.Grouper(key='timestamp', freq='MS'), 'contributor_id']).size().to_frame('num_editions_in_survival_period').reset_index()
+    survival_new_users = survival_users.groupby(['contributor_id'])['timestamp'].max().reset_index()
+    survival_new_users = survival_new_users.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
+    if index is not None:
+        survival_new_users = survival_new_users.reindex(index, fill_value=0)
+    return [survival_new_users, 'Scatter']
+
 ############################# HEATMAP METRICS ##############################################
 
-def number_of_editors_per_contributions(data, index):
+def edit_distributions_across_editors(data, index):
     """
     Function which calculates the number X of editors making the same number of editions.
     it returns the months of the wiki, a list of the number of contributions until the maximum number,
     and at last, a matrix with the number of contributors doing the same number of contributions on each month.
 
     """
-    users_registered = data[data['contributor_name']!='Anonymous']
+    users_registered = filter_anonymous(data)
     mothly = users_registered.groupby([pd.Grouper(key ='timestamp', freq='MS'),'contributor_id']).size()
     max_contributions = max(mothly)
     mothly = mothly.to_frame('num_contributions').reset_index()
-    num_person = mothly.groupby([pd.Grouper(key ='timestamp', freq='MS'),'num_contributions']).size()
-    max_persons = max(num_person)
-    months = data.groupby(pd.Grouper(key ='timestamp', freq='MS'))
-    months = months.size()
-    graphs_list = [[0 for j in range(max_contributions+1)] for i in range(len(months))]
-    anterior = None
+    mothly = mothly.groupby([pd.Grouper(key ='timestamp', freq='MS'),'num_contributions']).size().to_frame('num_editors').reset_index()
+    max_persons = max(mothly['num_editors'])
+    round_max = round((max_contributions+5), -1)
+    list_range = list(range(0, round_max+1, 10))
+    max_range = max(list_range)
+    mothly['range'] = pd.cut(mothly['num_contributions'], bins = list_range).astype(str)
+    months_range = mothly.groupby([pd.Grouper(key ='timestamp', freq='MS'), 'range']).size()
+    graphs_list = [[0 for j in range(max_range+1)] for i in range(len(index))]
+    before = None
     j = -1
-    for i, v in num_person.iteritems(): 
+    for i, v in months_range.iteritems(): 
         i = list(i)
-        actual = i[0]
-        num = i[1]
-        if (anterior != actual):
+        current = i[0]
+        p = i[1]
+        p = p.split(']')[0]
+        p = p.split('(')[1]
+        p = p.split(',')
+        num_min = int(float(p[0]))
+        num_max = int(float(p[1]))
+        num_min = (num_min+1) 
+        num_max = (num_max) 
+        if (before != current):
             j = j +1
-            anterior = actual
-        if(j <= len(months)):
+            before = current
+        for num in range(num_min,num_max+1):
             graphs_list[j][num] = v
-        
+    
+    
     wiki_by_metrics = []
     for metric_idx in range(max_contributions+1):
-            metric_row = [graphs_list[wiki_idx].pop(0) for wiki_idx in range(len(graphs_list))]
-            wiki_by_metrics.append(metric_row)  
-    return [months.index,list(range(max_contributions)), wiki_by_metrics, 'Heatmap']
+        metric_row = [graphs_list[wiki_idx].pop(0) for wiki_idx in range(len(graphs_list))]
+        wiki_by_metrics.append(metric_row) 
+    return [index,list(range(max_contributions)), wiki_by_metrics, 'Heatmap']
 
 def changes_in_absolute_size_of_editor_classes(data, index):
     class1 = users_number_of_edits_between_1_and_4(data, index).to_frame('one_four')

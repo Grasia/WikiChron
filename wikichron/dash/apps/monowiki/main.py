@@ -74,26 +74,6 @@ def generate_graphs(data, metrics, wikis, relative_time):
                                     name=metric_data.name
                                     )
         elif category[metric_idx] == "Heatmap":
-            """anterior = None
-            j = -1
-            max = data[metric_idx][1]
-            months = data[metric_idx][0].index.get_level_values(0)
-            g_list = [[0 for j in range(max+1)] for i in range(len(months))]
-            for i, v in data[metric_idx][0].iteritems(): 
-                i = list(i)
-                actual = i[0]
-                num = i[1]
-                if (anterior != actual):
-                    j = j +1
-                    anterior = actual
-                if(j <= len(months)):
-                    g_list[j][num] = v
-    
-            wiki_by_metrics = []
-            for metric_id in range(max+1):
-                metric_row = [g_list[wiki_idx].pop(0) for wiki_idx in range(len(g_list))]
-                wiki_by_metrics.append(metric_row)  
-            #months = months.size()"""
             if relative_time:
                 x_axis = list(range(len(data[metric_idx][0]))) # relative to the age of the wiki in months
             else:
@@ -125,6 +105,19 @@ def generate_graphs(data, metrics, wikis, relative_time):
                                 stackgroup='one',
                                 name=metric_data.name
                                 )
+        if category[metric_idx] == "Scatter":
+            num_submetrics = len(data[metric_idx])
+            for submetric in range(num_submetrics):
+                metric_data = data[metric_idx][submetric]
+                if relative_time:
+                    x_axis = list(range(len(metric_data.index))) # relative to the age of the wiki in months
+                else:
+                    x_axis = metric_data.index # natural months
+                graphs_list[metric_idx][submetric] = go.Scatter(
+                                    x=x_axis,
+                                    y=metric_data,
+                                    name=metric_data.name
+                                    )
                     
     return graphs_list
 
