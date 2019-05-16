@@ -720,37 +720,34 @@ def contributor_pctg_per_contributions_pctg(data, index):
 
     users_month_edits = users_month_edits.set_index('timestamp')
     lst_dict = []
-    cols = ['timestamp', 'category50%', 'category80%', 'category90%', 'category99%']
+    cols = ['timestamp', 'category50%', 'category80%', 'category90%', 'category99%', 'category_upper']
 
     for idx in users_month_edits.index.unique():
         group = users_month_edits.loc[idx]
         #on each month, for the total contributors we don't count the contributors whose collaboration is 0%.
-        num_contributors = group[group['edits%'] > 0].shape[0]
+        group = group[group['edits%'] > 0]
+        num_contributors = group.shape[0]
         category50 = group[(group['edits%_accum'] <= 50) & (group['edits%_accum'] > 0)].shape[0]
         category80 = group[(group['edits%_accum'] <= 80) & (group['edits%_accum'] > 50)].shape[0]
         category90 = group[(group['edits%_accum'] <= 90) & (group['edits%_accum'] > 80)].shape[0]
         category99 = group[(group['edits%_accum'] <= 99) & (group['edits%_accum'] > 90)].shape[0]
-        daux = {'timestamp':idx, 'category50%':(category50/num_contributors)*100, 'category80%':(category80/num_contributors) * 100, 'category90%':(category90/num_contributors) * 100,'category99%':(category99/num_contributors) * 100}
+        cat_upper = group[group['edits%_accum'] > 99].shape[0]
+        daux = {'timestamp':idx, 'category50%':(category50/num_contributors)*100, 'category80%':(category80/num_contributors) * 100, 'category90%':(category90/num_contributors) * 100,'category99%':(category99/num_contributors) * 100, 'category_upper':(cat_upper/num_contributors) * 100}
         lst_dict.append(daux)
         
     final_df = pd.DataFrame(columns = cols, data = lst_dict)
-    # 9.1) get the maximum value of the sum of all classes
-    final_df['sum_of_classes'] = final_df.sum(axis='columns')
-    max_value = max(final_df['sum_of_classes'])
-    # 9.2) the upper area plus the values of the other classes' Y axis' values needs to be equal to the maximum of the sum of all y axises:
-    final_df['upper_area'] = max_value - final_df['sum_of_classes']
-    upper_area = pd.Series(index=final_df['timestamp'], data=final_df['upper_area'].values)
     category_50 = pd.Series(index=final_df['timestamp'], data=final_df['category50%'].values)
     category_80 = pd.Series(index=final_df['timestamp'], data=final_df['category80%'].values)
     category_90 = pd.Series(index=final_df['timestamp'], data=final_df['category90%'].values)
     category_99 = pd.Series(index=final_df['timestamp'], data=final_df['category99%'].values)
+    category_upper = pd.Series(index=final_df['timestamp'], data=final_df['category_upper'].values)
     category_50.name = "50% of edits"
     category_80.name = "80% of edits"
     category_90.name = "90% of edits"
     category_99.name = "99% of edits"
-    upper_area.name = "100% of edits"
+    category_upper.name = "100% of edits"
 
-    return[category_50, category_80, category_90, category_99, upper_area, 'Areachart']
+    return[category_50, category_80, category_90, category_99, category_upper, 'Areachart']
 
 def contributor_pctg_per_contributions_pctg_per_month(data, index):
     data = filter_anonymous(data)
@@ -779,7 +776,7 @@ def contributor_pctg_per_contributions_pctg_per_month(data, index):
     # 6.1) Note: final is the final dataframe, of shape: timestamp, category50, category80, category90, category99. These columns contain the %X of contributors that have contributed each month to create 50, 80, 90 and 99% of editions
     users_month_edits = users_month_edits.set_index('timestamp')
     lst_dict = []
-    cols = ['timestamp', 'category50%', 'category80%', 'category90%', 'category99%']
+    cols = ['timestamp', 'category50%', 'category80%', 'category90%', 'category99%', 'category_upper']
     for idx in users_month_edits.index.unique():
         group = users_month_edits.loc[idx]
         #on each month, for the total contributors we don't count the contributors whose collaboration is 0%.    
@@ -790,23 +787,21 @@ def contributor_pctg_per_contributions_pctg_per_month(data, index):
             category80 = group[(group['edits%_accum'] <= 80) & (group['edits%_accum'] > 50)].shape[0]
             category90 = group[(group['edits%_accum'] <= 90) & (group['edits%_accum'] > 80)].shape[0]
             category99 = group[(group['edits%_accum'] <= 99) & (group['edits%_accum'] > 90)].shape[0]
-            daux = {'timestamp':idx, 'category50%':(category50/num_contributors)*100, 'category80%':(category80/num_contributors) * 100, 'category90%':(category90/num_contributors) * 100,'category99%':(category99/num_contributors) * 100}
+            cat_upper = group[group['edits%_accum'] > 99].shape[0]
+            daux = {'timestamp':idx, 'category50%':(category50/num_contributors)*100, 'category80%':(category80/num_contributors) * 100, 'category90%':(category90/num_contributors) * 100,'category99%':(category99/num_contributors) * 100, 'category_upper':(cat_upper/num_contributors) * 100}
             lst_dict.append(daux)
         
     final = pd.DataFrame(columns = cols, data = lst_dict)
-    final['sum_of_classes'] = final.sum(axis='columns')
-    max_value = max(final['sum_of_classes'])
-    # 9.2) the upper area plus the values of the other classes' Y axis' values needs to be equal to the maximum of the sum of all y axises:
-    final['upper_area'] = max_value - final['sum_of_classes']
-    upper_area = pd.Series(index=final['timestamp'], data=final['upper_area'].values)
+
     category_50 = pd.Series(index=final['timestamp'], data=final['category50%'].values)
     category_80 = pd.Series(index=final['timestamp'], data=final['category80%'].values)
     category_90 = pd.Series(index=final['timestamp'], data=final['category90%'].values)
     category_99 = pd.Series(index=final['timestamp'], data=final['category99%'].values)
+    category_upper = pd.Series(index=final['timestamp'], data=final['category_upper'].values)
     category_50.name = "50% of edits"
     category_80.name = "80% of edits"
     category_90.name = "90% of edits"
     category_99.name = "99% of edits"
-    upper_area.name = "100% of edits"
+    category_upper.name = "100% of edits"
 
-    return[category_50, category_80, category_90, category_99, upper_area, 'Areachart']
+    return[category_50, category_80, category_90, category_99, category_upper, 'Areachart']
