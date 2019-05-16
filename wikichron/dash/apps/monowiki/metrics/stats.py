@@ -261,6 +261,18 @@ def current_streak(data, index):
     more_six.name = 'more than 6 consecutive months'
     return [this_month, two_three_months, four_six_months, more_six, 'Bar']
 
+def current_streak_only_mains(data, index):
+    data = data[data['page_ns']==0]
+    this_month = current_streak_this_month(data, index)
+    two_three_months = current_streak_2_or_3_months_in_a_row(data, index)
+    four_six_months = current_streak_4_or_6_months_in_a_row(data, index)
+    more_six = current_streak_more_than_six_months_in_a_row(data, index)
+    this_month.name = '1 month editing'
+    two_three_months.name = 'btw. 2 and 3 consecutive months'
+    four_six_months.name = 'btw. 4 and 6 consecutive months'
+    more_six.name = 'more than 6 consecutive months'
+    return [this_month, two_three_months, four_six_months, more_six, 'Bar']
+
 ############################ METRIC 3 #################################################################################################
 
 # this metric counts the users whose first edition was between 1 and 3 months ago:
@@ -653,6 +665,52 @@ def edit_distributions_across_editors(data, index):
         wiki_by_metrics.append(metric_row) 
     return [index,list(range(max_contributions)), wiki_by_metrics, 'Heatmap']
 
+def bytes_difference_across_articles(data, index):
+    data.set_index(data['timestamp'], inplace=True)
+    users_registered = filter_anonymous(data)
+    mains = users_registered[users_registered['page_ns'] == 0]
+    order = mains.sort_index()
+    group_by_page_id = order.groupby(['page_id'])
+    frame_bytes = group_by_page_id.apply(lambda x: x.bytes).to_frame('bytes')
+    frame_bytes['dif'] = group_by_page_id.apply(lambda x: x.bytes-x.bytes.shift())
+    frame_bytes['dif'] = frame_bytes['dif'].fillna(frame_bytes['bytes'])
+    frame_bytes['dif'] = frame_bytes['dif'].apply(lambda x: int(x))
+    frame_bytes = frame_bytes.reset_index()
+    max_dif_bytes = int(max(frame_bytes['dif']))
+    min_dif_bytes = int(min(frame_bytes['dif'])-1)
+    round_max = round((max_dif_bytes+50), -2)
+    list_range = list(range(min_dif_bytes, round_max+1, 100))
+    max_range = max(list_range)
+    frame_bytes['range'] = pd.cut(frame_bytes['dif'], bins = list_range).astype(str)
+    months_range = frame_bytes.groupby([pd.Grouper(key ='timestamp', freq='MS'), 'range']).size()
+    min_dif_bytes_a = abs(min_dif_bytes+1)
+    max_range = max_range + min_dif_bytes_a
+    graphs_list = [[0 for j in range(max_range)] for i in range(len(index))]
+    before = None
+    j = -1
+    for i, v in months_range.iteritems(): 
+        i = list(i)
+        current = i[0]
+        p = i[1]
+        p = p.split(']')[0]
+        p = p.split('(')[1]
+        p = p.split(',')
+        num_min = int(float(p[0]))
+        num_max = int(float(p[1]))
+        num_min = (num_min+1) 
+        num_max = (num_max) 
+        if (before != current):
+            j = j +1
+            before = current
+        for num in range(num_min,num_max):
+            graphs_list[j][num] = v
+    
+    wiki_by_metrics = []
+    for metric_idx in range(max_dif_bytes+1):
+        metric_row = [graphs_list[wiki_idx].pop(0) for wiki_idx in range(len(graphs_list))]
+        wiki_by_metrics.append(metric_row) 
+    return [index, list(range(min_dif_bytes, max_dif_bytes)), wiki_by_metrics, 'Heatmap']
+	
 def changes_in_absolute_size_of_editor_classes(data, index):
     class1 = users_number_of_edits_between_1_and_4(data, index).to_frame('one_four')
     class2 = users_number_of_edits_between_5_and_24(data, index).to_frame('5_24')
