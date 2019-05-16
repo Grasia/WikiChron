@@ -339,15 +339,17 @@ def users_number_of_edits_highEq_100(data, index):
     return filter_users_number_of_edits(data, index, 100, 0)
 
 def users_number_of_edits(data, index):
+    new_users = users_new(data, index)
     one_four = users_number_of_edits_between_1_and_4(data, index)
     between_5_24 = users_number_of_edits_between_5_and_24(data, index)
     between_25_99 = users_number_of_edits_between_25_and_99(data, index)
     highEq_100 = users_number_of_edits_highEq_100(data, index)
+    new_users.name = 'New users'
     one_four.name = 'Btw. 1 and 4 edits'
     between_5_24.name = 'Btw. 5 and 24 edits'
     between_25_99.name = 'Btw. 25 and 99 edits'
     highEq_100.name = 'More than 99 edits'
-    return [one_four, between_5_24, between_25_99, highEq_100, 'Bar']
+    return [new_users, one_four, between_5_24, between_25_99, highEq_100, 'Bar']
 
 def users_number_of_edits_abs(data, index):
     one_four = users_number_of_edits_between_1_and_4(data, index).to_frame('one_four')
@@ -660,9 +662,9 @@ def contributor_pctg_per_contributions_pctg(data, index):
         #on each month, for the total contributors we don't count the contributors whose collaboration is 0%.
         num_contributors = group[group['edits%'] > 0].shape[0]
         category50 = group[(group['edits%_accum'] <= 50) & (group['edits%_accum'] > 0)].shape[0]
-        category80 = group[(group['edits%_accum'] <= 80) & (group['edits%_accum'] > 0)].shape[0]
-        category90 = group[(group['edits%_accum'] <= 90) & (group['edits%_accum'] > 0)].shape[0]
-        category99 = group[(group['edits%_accum'] <= 99) & (group['edits%_accum'] > 0)].shape[0]
+        category80 = group[(group['edits%_accum'] <= 80) & (group['edits%_accum'] > 50)].shape[0]
+        category90 = group[(group['edits%_accum'] <= 90) & (group['edits%_accum'] > 80)].shape[0]
+        category99 = group[(group['edits%_accum'] <= 99) & (group['edits%_accum'] > 90)].shape[0]
         daux = {'timestamp':idx, 'category50%':(category50/num_contributors)*100, 'category80%':(category80/num_contributors) * 100, 'category90%':(category90/num_contributors) * 100,'category99%':(category99/num_contributors) * 100}
         lst_dict.append(daux)
         
@@ -677,6 +679,65 @@ def contributor_pctg_per_contributions_pctg(data, index):
     category_80 = pd.Series(index=final_df['timestamp'], data=final_df['category80%'].values)
     category_90 = pd.Series(index=final_df['timestamp'], data=final_df['category90%'].values)
     category_99 = pd.Series(index=final_df['timestamp'], data=final_df['category99%'].values)
+    category_50.name = "50% of edits"
+    category_80.name = "80% of edits"
+    category_90.name = "90% of edits"
+    category_99.name = "99% of edits"
+    upper_area.name = "100% of edits"
+
+    return[category_50, category_80, category_90, category_99, upper_area, 'Areachart']
+
+def contributor_pctg_per_contributions_pctg_per_month(data, index):
+    data = filter_anonymous(data)
+    new_index = data.groupby(pd.Grouper(key='timestamp', freq='MS')).size().to_frame('months').index
+
+    users_month_edits =data.groupby(['contributor_id']).apply(lambda x: x.groupby(pd.Grouper(key='timestamp', freq='MS')).size().to_frame('nEdits_cumulative').reindex(new_index, fill_value=0).cumsum()).reset_index()
+    
+    # 2.1) Get the non accum value of edits
+    cond = (users_month_edits['contributor_id'] == users_month_edits['contributor_id'].shift())
+    users_month_edits['nEdits_non_accum'] = np.where(cond, users_month_edits['nEdits_cumulative'] - users_month_edits['nEdits_cumulative'].shift(), users_month_edits['nEdits_cumulative'])
+
+    # 2) Add a new column which contains the total number of edits on each month (this value is NOT accumulated)
+    users_month_edits = users_month_edits.groupby([pd.Grouper(key='timestamp', freq='MS'),'contributor_id']).sum().reset_index()
+    users_month_edits['nEdits_month'] = users_month_edits.groupby(pd.Grouper(key='timestamp', freq='MS'))['nEdits_non_accum'].transform('sum')
+    
+    # 3) Now, we want to calculate the percentage of edits that each user has done on each month: add a new column, 'edits_pctg'
+    users_month_edits['edits%'] = (users_month_edits['nEdits_non_accum']/users_month_edits['nEdits_month'])*100
+
+    # 4) Order the dataframe in ascending order according to the column 'edit_pctg' and according to the timestamp, as we want to keep the order inside each group:
+    users_month_edits = users_month_edits.sort_values(['timestamp', 'edits%'], ascending=[True, False])
+
+    # 5) calculate the cumulative percentage per month, in a new column: 'edit_cumulative_pctg'
+    users_month_edits['edits%_accum'] = users_month_edits.groupby(pd.Grouper(key='timestamp', freq='MS'))['edits%'].cumsum()
+
+    # 6) traverse the dataframe: we want to calculate the %X of contributors that does a %Y of contributions (being Y = 50%, 80%, 90% and 99%) PER MONTH.
+    # 6.1) Note: final is the final dataframe, of shape: timestamp, category50, category80, category90, category99. These columns contain the %X of contributors that have contributed each month to create 50, 80, 90 and 99% of editions
+    users_month_edits = users_month_edits.set_index('timestamp')
+    lst_dict = []
+    cols = ['timestamp', 'category50%', 'category80%', 'category90%', 'category99%']
+    for idx in users_month_edits.index.unique():
+        group = users_month_edits.loc[idx]
+        #on each month, for the total contributors we don't count the contributors whose collaboration is 0%.    
+        group = group[group['edits%'] > 0]
+        num_contributors = group.shape[0]
+        if (num_contributors > 0):
+            category50 = group[(group['edits%_accum'] <= 50) & (group['edits%_accum'] > 0)].shape[0]
+            category80 = group[(group['edits%_accum'] <= 80) & (group['edits%_accum'] > 50)].shape[0]
+            category90 = group[(group['edits%_accum'] <= 90) & (group['edits%_accum'] > 80)].shape[0]
+            category99 = group[(group['edits%_accum'] <= 99) & (group['edits%_accum'] > 90)].shape[0]
+            daux = {'timestamp':idx, 'category50%':(category50/num_contributors)*100, 'category80%':(category80/num_contributors) * 100, 'category90%':(category90/num_contributors) * 100,'category99%':(category99/num_contributors) * 100}
+            lst_dict.append(daux)
+        
+    final = pd.DataFrame(columns = cols, data = lst_dict)
+    final['sum_of_classes'] = final.sum(axis='columns')
+    max_value = max(final['sum_of_classes'])
+    # 9.2) the upper area plus the values of the other classes' Y axis' values needs to be equal to the maximum of the sum of all y axises:
+    final['upper_area'] = max_value - final['sum_of_classes']
+    upper_area = pd.Series(index=final['timestamp'], data=final['upper_area'].values)
+    category_50 = pd.Series(index=final['timestamp'], data=final['category50%'].values)
+    category_80 = pd.Series(index=final['timestamp'], data=final['category80%'].values)
+    category_90 = pd.Series(index=final['timestamp'], data=final['category90%'].values)
+    category_99 = pd.Series(index=final['timestamp'], data=final['category99%'].values)
     category_50.name = "50% of edits"
     category_80.name = "80% of edits"
     category_90.name = "90% of edits"

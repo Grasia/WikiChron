@@ -64,7 +64,8 @@ def generate_metrics():
     metrics.append(Metric('percentage_of_edits_category', 'Edits by editor experience (relative)', MetricCategory.EDITS_ANALYSIS, stats.percentage_of_edits_by_category, 'BAR GRAPH: number of editions per categories of active editors by experience (relative).'))
     
 # area chart metrics
-    metrics.append(Metric('contributorPctg_per_contributionPctg', 'editor% per contribution%', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.contributor_pctg_per_contributions_pctg, 'FILLED-AREA CHART: % editors per %editions (fixed to 50%, 80%, 90% and 99%)'))
+    metrics.append(Metric('contributorPctg_per_contributionPctg', 'editor% per contribution%', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.contributor_pctg_per_contributions_pctg, 'FILLED-AREA CHART: % editors per %editions (% editions fixed to 50%, 80%, 90% and 99%)'))
+    metrics.append(Metric('contributorPctg_per_contributionPctg_month', 'monthly editor% per contribution%', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.contributor_pctg_per_contributions_pctg_per_month, 'FILLED-AREA CHART: monthly % editors per %editions (%editions fixed to 50%, 80%, 90% and 99%)'))
 
 # heatmap metrics
     metrics.append(Metric('number_of_editors_per_contributions', 'num editors per contributions', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.number_of_editors_per_contributions, 'HEATMAP: contributors (z axis) per contributions (y axis).'))
