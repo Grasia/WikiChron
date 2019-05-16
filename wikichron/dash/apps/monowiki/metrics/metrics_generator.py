@@ -25,7 +25,8 @@ def generate_metrics():
     #metrics.append(Metric('Activity_streak_2_3', 'Activity streak 2', MetricCategory.USERS, stats.current_streak_2_or_3_months_in_a_row, 'Users editing the wiki for 2 or 3 months in a row'))
     #metrics.append(Metric('Activity_streak_4_6', 'Activity streak 3', MetricCategory.USERS, stats.current_streak_4_or_6_months_in_a_row, 'Users editing the wiki for 4 or 6 months in a row'))
     #metrics.append(Metric('Activity_streak_6', 'Activity streak 4', MetricCategory.USERS, stats.current_streak_more_than_six_months_in_a_row, 'Users editing the wiki for more than 6 months in a row'))
-    metrics.append(Metric('Current_streak', 'Active users by edit-streak', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.current_streak, 'BAR GRAPH: Users by the number of consecutive months they have made at least one edit in the wiki.'))
+    metrics.append(Metric('Current_streak', 'Active users by activity-streak', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.current_streak, 'BAR GRAPH: Users by the number of consecutive months they have made at least one edit in the wiki.'))
+    metrics.append(Metric('Current_streak_only_mains', 'Active users by edit-streak', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.current_streak_only_mains, 'BAR GRAPH: Users by the number of consecutive months they have made at least one edit in the main of the wiki.'))
 
     # metric 3
     #metrics.append(Metric('users_first_edit_between_1_3_months_ago', 'Users first edit 1', MetricCategory.USERS, stats.users_first_edit_between_1_3_months_ago, 'Users whose first edition was between 1 and 3 months ago'))
@@ -70,7 +71,9 @@ def generate_metrics():
 
 # heatmap metrics
     metrics.append(Metric('edit_distributions_across_editors', 'Edit distributions across editors', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.edit_distributions_across_editors, 'HEATMAP: contributors (z axis) per contributions (y axis).'))
+    metrics.append(Metric('bytes_difference_across_articles', 'Bytes difference across articles', MetricCategory.EDITS_ANALYSIS, stats.bytes_difference_across_articles, 'HEATMAP: number of articles (z axis) than contain these bytes (y axis).'))
     metrics.append(Metric('changes_in_absolute_size_of_classes', 'changes in categories of active editors by experience', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.changes_in_absolute_size_of_editor_classes, 'HEATMAP: increment or decrement (z axis) of an active editor category (y axis).'))
+
     
     # keep this order when plotting graphs inserting 'index_' at the beginning
     #  for every metric code.
