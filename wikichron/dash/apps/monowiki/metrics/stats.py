@@ -695,7 +695,7 @@ def bytes_difference_across_articles(data, index):
     min_dif_bytes_a = abs(min_dif_bytes+1)
     max_range = max_range + min_dif_bytes_a
     graphs_list = [[0 for j in range(max_range)] for i in range(len(index))]
-    before = None
+    before = pd.to_datetime(0)
     j = -1
     for i, v in months_range.iteritems(): 
         i = list(i)
@@ -708,6 +708,11 @@ def bytes_difference_across_articles(data, index):
         num_max = int(float(p[1]))
         num_min = (num_min+1) 
         num_max = (num_max) 
+        resta = current - before
+        resta = int(resta / np.timedelta64(1, 'D'))
+        while (resta > 31 and before != pd.to_datetime(0)):
+            j = j+1
+            resta = resta-31
         if (before != current):
             j = j +1
             before = current
