@@ -360,23 +360,24 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
         style={'width': '100%'},
         children=[
 
-            html.A('Go back to selection', href=selection_url),
+            #html.A('Go back to selection', href=selection_url),
 
             main_header(),
 
-            html.Hr(),
+            #html.Hr(),
 
             html.Div(id='selection-div',
                 className='container',
                 children=[
                     select_wikis_and_metrics_control(wikis_dropdown_options, metrics_dropdown_options),
-                    select_time_axis_control('relative' if relative_time else 'absolute')
+                    select_time_axis_control('relative' if relative_time else 'absolute'),
+					date_slider_control(),
                 ]
              ),
 
-            date_slider_control(),
+            #date_slider_control(),
 
-            html.Hr(),
+            #html.Hr(),
 
             html.Div(id='graphs'),
 
@@ -538,8 +539,8 @@ def bind_callbacks(app):
                             'layout': {
                                 'title': metric.text,
                                 'barmode': 'stack',
-                                'xaxis': dict(tickangle=-60)
-                                #'xaxis': {'range': new_timerange }
+                                #'xaxis': dict(tickangle=-60)
+                                'xaxis': {'range': new_timerange }
                             }
                         },
                         config={
