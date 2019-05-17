@@ -643,7 +643,7 @@ def edit_distributions_across_editors(data, index):
     mothly['range'] = pd.cut(mothly['num_contributions'], bins = list_range).astype(str)
     months_range = mothly.groupby([pd.Grouper(key ='timestamp', freq='MS'), 'range']).size()
     graphs_list = [[0 for j in range(max_range+1)] for i in range(len(index))]
-    before = None
+    before = pd.to_datetime(0)
     j = -1
     for i, v in months_range.iteritems(): 
         i = list(i)
@@ -656,6 +656,11 @@ def edit_distributions_across_editors(data, index):
         num_max = int(float(p[1]))
         num_min = (num_min+1) 
         num_max = (num_max) 
+        resta = current - before
+        resta = int(resta / np.timedelta64(1, 'D'))
+        while (resta > 31 and before != pd.to_datetime(0)):
+            j = j+1
+            resta = resta-31
         if (before != current):
             j = j +1
             before = current
