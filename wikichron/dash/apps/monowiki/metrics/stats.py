@@ -76,6 +76,20 @@ def current_streak_x_or_y_months_in_a_row(data, index, z, y):
         series = series.reindex(index, fill_value=0)
     return series
 
+def edition_concrete(data, index, pagType):
+    filterData = data[data['page_ns'] == pagType]
+    series = filterData.groupby([pd.Grouper(key ='timestamp', freq='MS')]).size()
+    if index is not None:
+        series = series.reindex(index, fill_value=0)
+    return series
+def rest_edition(data, index, listP):
+    filterData = data
+    for i in listP:
+        filterData= filterData[filterData['page_ns'] != listP[i]]
+    series = filterData.groupby([pd.Grouper(key ='timestamp', freq='MS')]).size()
+    if index is not None:
+        series = series.reindex(index, fill_value=0)
+    return series
 
 #### Helper metric 3 ####
 
@@ -276,6 +290,21 @@ def current_streak_only_mains(data, index):
     four_six_months.name = 'btw. 4 and 6 consecutive months'
     more_six.name = 'more than 6 consecutive months'
     return [this_month, two_three_months, four_six_months, more_six, 'Bar']
+
+
+def edition_on_type_pages(data, index):
+    data=filter_anonymous(data)
+    articles=edition_concrete(data, index, 0)
+    talkPA=edition_concrete(data, index, 1)
+    userP=edition_concrete(data, index, 2)
+    talkPU=edition_concrete(data, index, 3)
+    rest=rest_edition(data, index, [0,1,2,3])
+    articles.name= 'Articles'
+    talkPA.name='Talk Pages of Articles'
+    userP.name='User Pages'
+    talkPU.name='Talk pages Users'
+    rest.name='Rest type pages'
+    return [articles,talkPA,userP,talkPU,rest,'Bar']
 
 ############################ METRIC 3 #################################################################################################
 
