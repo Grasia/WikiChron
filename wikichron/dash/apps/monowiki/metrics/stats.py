@@ -642,8 +642,7 @@ def surviving_new_editor(data, index):
     thirty_days_after_registration=thirty_days_after_registration.rename(columns = {'timestamp':'thirty_days_after'})
     registered_users = pd.merge(registered_users, thirty_days_after_registration, on ='contributor_id')
     registered_users['survival period'] = registered_users['thirty_days_after'].apply(lambda x: x+d.timedelta(days=30))
-    registered_users['edits_in_survival_period'] =(registered_users['timestamp'] >= registered_users['thirty_days_after']) & (registered_users['timestamp'] <= registered_users['survival period'])
-    survival_users = registered_users[registered_users['edits_in_survival_period'] == True]
+    survival_users = registered_users[(registered_users['timestamp'] >= registered_users['thirty_days_after']) & (registered_users['timestamp'] <= registered_users['survival period'])]
     survival_users = survival_users.groupby([pd.Grouper(key='timestamp', freq='MS'), 'contributor_id']).size().to_frame('num_editions_in_survival_period').reset_index()
     survival_new_users = survival_users.groupby(['contributor_id'])['timestamp'].max().reset_index()
     survival_new_users = survival_new_users.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
