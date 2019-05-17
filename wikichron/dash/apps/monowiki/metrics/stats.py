@@ -724,7 +724,127 @@ def bytes_difference_across_articles(data, index):
         metric_row = [graphs_list[wiki_idx].pop(0) for wiki_idx in range(len(graphs_list))]
         wiki_by_metrics.append(metric_row) 
     return [index, list(range(min_dif_bytes, max_dif_bytes)), wiki_by_metrics, 'Heatmap']
-	
+
+def edition_on_pages(data, index):
+    groupTP=data.groupby([pd.Grouper(key ='timestamp', freq='MS'),'page_id']).size().to_frame('ediciones').reset_index()
+    maxEditors=max(groupTP['ediciones'])
+    round_max = (maxEditors+5)
+    list_range = list(range(0, round_max+1, 5))
+    max_range = max(list_range)
+    groupTP['range'] = pd.cut(groupTP['ediciones'], bins = list_range).astype(str)
+    z = groupTP.groupby([pd.Grouper(key ='timestamp', freq='MS'), 'range']).size()
+    graphs_list = [[0 for j in range(max_range+1)] for i in range(len(index))]
+    before = pd.to_datetime(0)
+    j = -1
+    for i, v in z.iteritems(): 
+        i = list(i)
+        current = i[0]
+        p = i[1]
+        p = p.split(']')[0]
+        p = p.split('(')[1]
+        p = p.split(',')
+        num_min = int(float(p[0]))
+        num_max = int(float(p[1]))
+        num_min = (num_min+1) 
+        num_max = (num_max) 
+        resta = current - before
+        resta = int(resta / np.timedelta64(1, 'D'))
+        while (resta > 31 and before != pd.to_datetime(0)):
+            j = j+1
+            resta = resta-31
+        if (before != current):
+            j = j +1
+            before = current
+        for num in range(num_min,num_max+1):
+            graphs_list[j][num] = v
+    wiki_by_metrics = []
+    for metric_idx in range(maxEditors+1):
+            metric_row = [graphs_list[wiki_idx].pop(0) for wiki_idx in range(len(graphs_list))]
+            wiki_by_metrics.append(metric_row) 
+    return [index,list(range(maxEditors)),wiki_by_metrics,'Heatmap']
+
+def revision_on_pages(data, index):
+    without_first_edition = data.groupby([pd.Grouper(key ='timestamp', freq='MS'),'page_id']).apply(lambda x:x.iloc[1:,1:])
+    z=without_first_edition.groupby([pd.Grouper(key ='timestamp', freq='MS'),'page_id']).size().to_frame('revisiones').reset_index()
+    maxRevision= max(z['revisiones'])
+    round_max = (maxRevision+5)
+    list_range = list(range(0, round_max+1, 5))
+    max_range = max(list_range)
+    z['range'] = pd.cut(z['revisiones'], bins = list_range).astype(str)
+    z = z.groupby([pd.Grouper(key ='timestamp', freq='MS'), 'range']).size()
+    graphs_list = [[0 for j in range(max_range+1)] for i in range(len(index))]
+    before = pd.to_datetime(0)
+    j = -1
+    for i, v in z.iteritems(): 
+        i = list(i)
+        current = i[0]
+        p = i[1]
+        p = p.split(']')[0]
+        p = p.split('(')[1]
+        p = p.split(',')
+        num_min = int(float(p[0]))
+        num_max = int(float(p[1]))
+        num_min = (num_min+1) 
+        num_max = (num_max) 
+        resta = current - before
+        resta = int(resta / np.timedelta64(1, 'D'))
+        while (resta > 31 and before != pd.to_datetime(0)):
+            j = j+1
+            resta = resta-31
+        if (before != current):
+            j = j +1
+            before = current
+        for num in range(num_min,num_max+1):
+            graphs_list[j][num] = v
+    wiki_by_metrics = []
+    for metric_idx in range(maxRevision+1):
+            metric_row = [graphs_list[wiki_idx].pop(0) for wiki_idx in range(len(graphs_list))]
+            wiki_by_metrics.append(metric_row)
+    return [index,list(range(maxRevision)),wiki_by_metrics,'Heatmap']
+
+def  distribution_editors_between_articles_edited_each_month(data, index):
+    users_registered = filter_anonymous(data)
+    #main namespace
+    users_registered = users_registered[users_registered['page_ns']==0]
+
+    users_per_article = users_registered.groupby([pd.Grouper(key ='timestamp', freq='MS'),'page_id'])['contributor_id'].nunique().reset_index(name='editor_count')
+
+    max_editors = max(users_per_article['editor_count'])
+    
+    z_articles_by_y_editors = users_per_article.groupby([pd.Grouper(key ='timestamp', freq='MS'),'editor_count']).size()
+
+
+    #y parameter
+    y_param = list(range(max_editors))
+
+    #z parameter
+    graphs_list = [[0 for j in range(max_editors+1)] for i in range(len(index))]
+    anterior = pd.to_datetime(0)
+    j = -1
+    print('first for starts')
+    for i, v in z_articles_by_y_editors.iteritems(): 
+        i = list(i)
+        actual = i[0]
+        num = i[1]
+        resta = actual - anterior
+        resta = int(resta / np.timedelta64(1, 'D'))
+        while (resta > 31 and anterior != pd.to_datetime(0)):
+            j = j+1
+            resta = resta-31
+        if (anterior != actual):   
+            j = j +1
+            anterior = actual
+        if(j <= len(index)):
+            graphs_list[j][num] = v
+
+  
+    print('second for starts')
+    z_param = []
+    for i in range(max_editors+1):
+            row = [graphs_list[j].pop(0) for j in range(len(graphs_list))]
+            z_param.append(row)  
+    return [index,y_param,z_param,'Heatmap']
+
 def changes_in_absolute_size_of_editor_classes(data, index):
     class1 = users_number_of_edits_between_1_and_4(data, index).to_frame('one_four')
     class2 = users_number_of_edits_between_5_and_24(data, index).to_frame('5_24')
