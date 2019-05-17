@@ -726,7 +726,8 @@ def bytes_difference_across_articles(data, index):
     return [index, list(range(min_dif_bytes, max_dif_bytes)), wiki_by_metrics, 'Heatmap']
 
 def edition_on_pages(data, index):
-    groupTP=data.groupby([pd.Grouper(key ='timestamp', freq='MS'),'page_id']).size().to_frame('ediciones').reset_index()
+    users_registered = filter_anonymous(data)
+    groupTP=users_registered.groupby([pd.Grouper(key ='timestamp', freq='MS'),'page_id']).size().to_frame('ediciones').reset_index()
     maxEditors=max(groupTP['ediciones'])
     round_max = (maxEditors+5)
     list_range = list(range(0, round_max+1, 5))
@@ -764,7 +765,8 @@ def edition_on_pages(data, index):
     return [index,list(range(maxEditors)),wiki_by_metrics,'Heatmap']
 
 def revision_on_pages(data, index):
-    without_first_edition = data.groupby([pd.Grouper(key ='timestamp', freq='MS'),'page_id']).apply(lambda x:x.iloc[1:,1:])
+    users_registered = filter_anonymous(data)
+    without_first_edition = users_registered.groupby([pd.Grouper(key ='timestamp', freq='MS'),'page_id']).apply(lambda x:x.iloc[1:,1:])
     z=without_first_edition.groupby([pd.Grouper(key ='timestamp', freq='MS'),'page_id']).size().to_frame('revisiones').reset_index()
     maxRevision= max(z['revisiones'])
     round_max = (maxRevision+5)
