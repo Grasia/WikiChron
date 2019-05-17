@@ -360,11 +360,11 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
         style={'width': '100%'},
         children=[
 
-            #html.A('Go back to selection', href=selection_url),
+            html.A('Go back to selection', href=selection_url),
 
             main_header(),
 
-            #html.Hr(),
+            html.Hr(),
 
             html.Div(id='selection-div',
                 className='container',
@@ -375,9 +375,9 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
                 ]
              ),
 
-            #date_slider_control(),
+            date_slider_control(),
 
-            #html.Hr(),
+            html.Hr(),
 
             html.Div(id='graphs'),
 
