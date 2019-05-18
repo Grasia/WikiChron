@@ -428,15 +428,13 @@ def build_foot(assets_url_path):
                 className='icon',
                 title='Github repo'
             ),
-            html.P('GitHub'),
             html.A(
                 html.Img(src='{}/documentation.svg'.format(assets_url_path)),
                 href='https://github.com/Grasia/WikiChron/wiki/',
                 target='_blank',
                 className='icon',
                 title='Documentation'
-            ),
-            html.P('Docs'),
+            )
         ], className='foot-container')
     ], className='foot')
 

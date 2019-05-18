@@ -39,7 +39,7 @@ class CoEditingNetwork(BaseNetwork):
 
     USER_INFO = {
         #'User ID': 'id',
-        'Birth': 'birth',
+        'Registered since': 'birth',
         'Cluster #': 'cluster',
     }
 

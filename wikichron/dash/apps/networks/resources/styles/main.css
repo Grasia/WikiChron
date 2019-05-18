@@ -597,11 +597,9 @@ th.dash-header > div > span {
     display: flex;
     justify-content: space-around;
     align-items: center;
+    margin-right: 2rem;
 }
 
-.foot-container > p{
-    margin-left: 1rem;
-}
  /*****************************************************************/
 
   /*****************************************************************

@@ -25,7 +25,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
 # CHANGE NAME
     NODE_METRICS_TO_PLOT = {
-        'Tenure': {
+        'Tenure in the wiki': {
             'key': 'birth_value',
             'max': 'max_birth_value',
             'min': 'min_birth_value'
