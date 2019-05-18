@@ -1,5 +1,20 @@
 # Change Log for WikiChron
 
+## 2.0.1-beta - 2019-05-18
+
+### Added
+- legend text changes on metric select
+- a drop down to select a metric and re-size nodes
+- a hint pops up when ranking filter is focus
+- all the metrics are available to plot and to rank
+
+### Changed
+- slide window buttons look
+- re-ordered network stats
+
+### Fixed
+- Networks -> url sharing
+
 ## 2.0.0-beta - 2019-04-11
 Launched stable release of WikiChron v2!!! :tada: :tada:
 
