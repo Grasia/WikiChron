@@ -152,7 +152,7 @@ def date_slider_control(assets_url_path):
                 ),
 
                 html.Div(children=[
-                    html.Span('Time interval (months):'),
+                    html.Span('Slide the time window:'),
                     html.Div(children=[
                         html.A(
                             html.Img(src=f"{assets_url_path}/arrow-left.svg", className="arrow"),

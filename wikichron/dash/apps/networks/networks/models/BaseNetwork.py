@@ -79,16 +79,15 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
     NETWORK_STATS = {
         'Nodes': 'num_nodes',
-        'Diameter': 'diameter',
         'Edges': 'num_edges',
-        'Density': 'density',
-        'Connected components': 'components',
+        'Connected comp.': 'components',
         'Clusters': 'n_communities',
-        'Assortativity degree': 'assortativity_degree',
-        'Gini of betweenness': 'gini_betweenness',
-        'Gini of degree': 'gini_degree',
-        'Gini of in-degree': 'gini_indegree',
-        'Gini of out-degree': 'gini_outdegree',
+        'Density': 'density',
+        'Assortativity': 'assortativity_degree',
+        'Gini of betwee.': 'gini_betweenness',
+        'Gini of deg.': 'gini_degree',
+        'Gini of in-deg.': 'gini_indegree',
+        'Gini of out-deg.': 'gini_outdegree',
     }
 
 
@@ -324,7 +323,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             gini = ineq.gini_corrected(self.graph.vs['betweenness'])
             value = 'nan'
             if gini is not np.nan:
-                value = f"{gini:.4f}"
+                value = f"{gini:.2f}"
 
             self.graph['gini_betweenness'] = value
 
@@ -344,19 +343,19 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             gini = ineq.gini_corrected(self.graph.vs['indegree'])
             value = 'nan'
             if gini is not np.nan:
-                value = value = f"{gini:.4f}"
+                value = value = f"{gini:.2f}"
             self.graph['gini_indegree'] = value
             gini = ineq.gini_corrected(self.graph.vs['outdegree'])
             value = 'nan'
             if gini is not np.nan:
-                value = value = f"{gini:.4f}"
+                value = value = f"{gini:.2f}"
             self.graph['gini_outdegree'] = value
 
         elif 'gini_degree' not in self.graph.attributes():
             gini = ineq.gini_corrected(self.graph.vs['degree'])
             value = 'nan'
             if gini is not np.nan:
-                value = value = f"{gini:.4f}"
+                value = value = f"{gini:.2f}"
             self.graph['gini_degree'] = value
 
 
@@ -391,21 +390,15 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         if not 'assortativity_degree' in self.graph.attributes():
             assortativity = self.graph.assortativity_degree(self.graph.is_directed())
             if assortativity:
-                assortativity = f"{assortativity:.4f}"
+                assortativity = f"{assortativity:.2f}"
 
             self.graph['assortativity_degree'] = assortativity
 
 
     def calculate_density(self):
         if not 'density' in self.graph.attributes():
-            density = f'{self.graph.density():.4f}'
+            density = f'{self.graph.density():.2f}'
             self.graph['density'] = density
-
-
-    def calculate_diameter(self):
-        if not 'diameter' in self.graph.attributes():
-            diameter = self.graph.diameter(directed=self.graph.is_directed(), unconn=False)
-            self.graph['diameter'] = diameter
 
 
     def calculate_components(self):
@@ -436,7 +429,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         self.calculate_assortativity_degree()
         self.calculate_communities()
         self.calculate_density()
-        self.calculate_diameter()
         self.calculate_components()
         self.calculate_closeness()
 
