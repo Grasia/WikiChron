@@ -620,7 +620,11 @@ def bind_callbacks(app):
 
             server_config = current_app.config
             mode_config = get_mode_config(current_app)
-            url = f'{server_config["APP_HOSTNAME"]}'
+            if debug:
+                url = f'{server_config["PREFERRED_URL_SCHEME"]}://'
+                url = f'{url}{server_config["APP_HOSTNAME"]}'
+            else:
+                url = f'{server_config["APP_HOSTNAME"]}'
             url = f'{url}{mode_config["DASH_BASE_PATHNAME"]}?{new_query}'
 
             child = []
