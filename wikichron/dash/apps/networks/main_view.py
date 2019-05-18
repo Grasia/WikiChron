@@ -140,7 +140,7 @@ def build_dilog():
     ])
 
 
-def date_slider_control():
+def date_slider_control(assets_url_path):
     return html.Div(id='date-slider-div', className='container',
             children=[
                 html.Div(id='date-slider-container',
@@ -154,10 +154,16 @@ def date_slider_control():
                 html.Div(children=[
                     html.Span('Time interval (months):'),
                     html.Div(children=[
-                        html.Button("<<", id="bt-back"),
+                        html.A(
+                            html.Img(src=f"{assets_url_path}/arrow-left.svg", className="arrow"),
+                            id="bt-back"
+                        ),
                         dcc.Input(id="in-step-slider" , type='number',
                             placeholder='MM', min='1', max='999'),
-                        html.Button(">>", id="bt-forward"),
+                        html.A(
+                            html.Img(src=f"{assets_url_path}/arrow-right.svg", className="arrow"),
+                            id="bt-forward"
+                        ),
                     ], className='slider-controls-pane'),
                 ], className='slider-add-on'),
             ],
@@ -165,12 +171,12 @@ def date_slider_control():
             )
 
 
-def build_slider_pane(selected_wiki_name, selected_network_name):
+def build_slider_pane(selected_wiki_name, selected_network_name, assets_url_path):
     header = html.Div(children=[
         selection_title(selected_wiki_name, selected_network_name)
         ], className='header-pane main-header-pane')
     body = html.Div(children=[
-        date_slider_control()
+        date_slider_control(assets_url_path)
     ], className='body-pane')
 
     return html.Div(children=[header, body], className='pane main-pane')
@@ -472,7 +478,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
             id='main',
             className='control-text',
             children=[
-                build_slider_pane(selected_wiki_name, selected_network_name),
+                build_slider_pane(selected_wiki_name, selected_network_name, assets_url_path),
                 build_dilog(),
                 html.Div(id='initial-selection', style={'display': 'none'},
                             children=args_selection),

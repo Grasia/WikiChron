@@ -216,14 +216,13 @@ a{
 
 .slider-controls-pane{
     margin-left: 2rem;
+    display: flex;
+    align-items: end;
 }
 
-#bt-back, #bt-forward {
-    height: 3rem;
-    width: 3rem;
-    line-height: 0;
-    padding: 0;
-    letter-spacing: 0;
+.arrow {
+    height: 2rem;
+    width: 2.5rem;
 }
 
 #in-step-slider{
