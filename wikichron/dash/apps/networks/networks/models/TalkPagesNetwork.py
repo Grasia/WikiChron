@@ -197,17 +197,3 @@ class TalkPagesNetwork(BaseNetwork):
         desc['min_edge_size'] = 'A weak communication'
         desc['max_edge_size'] = 'A strong communication'
         return desc
-
-
-    @classmethod
-    def get_main_class_metric(cls) -> str:
-        if 'Talk page edits' in cls.NODE_METRICS_TO_PLOT:
-            return cls.NODE_METRICS_TO_PLOT['Talk page edits']
-        else:
-            return ''
-
-
-    @classmethod
-    def get_main_class_key(cls) -> str:
-        metric = cls.get_main_class_metric()
-        return metric['log'] if metric and 'log' in metric else ''

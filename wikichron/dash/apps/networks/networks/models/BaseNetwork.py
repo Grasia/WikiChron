@@ -177,19 +177,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
 
     @abc.abstractclassmethod
-    def get_main_class_metric(cls) -> str:
-        """
-        This method should retrun a main class metric (e.g. article edits) 
-        """
-        pass
-
-
-    @abc.abstractclassmethod
-    def get_main_class_key(cls) -> str:
-        pass
-
-
-    @abc.abstractclassmethod
     def get_network_stats(cls) -> dict:
         pass
 
@@ -284,10 +271,10 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         _max = 0
         _min = 0
         for metric in metrics_to_plot:
-            if metric['key'] in self.graph.vs.attributes():
+            if metric['key'] in self.graph.vs.attributes() and len(self.graph.vs[metric['key']]):
                 _max = max(self.graph.vs[metric['key']])
                 _min = min(self.graph.vs[metric['key']])
-            elif metric['key'] in self.graph.es.attributes():
+            elif metric['key'] in self.graph.es.attributes() and len(self.graph.es[metric['key']]):
                 _max = max(self.graph.es[metric['key']])
                 _min = min(self.graph.es[metric['key']])
 
@@ -298,11 +285,8 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             di_net[metric['max']] = _max
             di_net[metric['min']] = _min
 
-        metric_size = self.get_main_class_key()
-        if metric_size:
-            di_net['size'] = metric_size
-        di_net['network'] = network
 
+        di_net['network'] = network
         return di_net
 
 

@@ -105,12 +105,13 @@ def bind_callbacks(app):
         Input('highlight-node', 'value'),
         Input('tg-show-clusters', 'on'),
         Input('dd-color-metric', 'value'),
+        Input('dd-size-metric', 'value'),
         Input('cytoscape', 'tapEdgeData')],
         [State('network-ready', 'value'),
         State('initial-selection', 'children')]
     )
-    def update_stylesheet(_, lb_switch, nodes_selc, clus_switch, dd_val,
-        edge, cy_network, selection_json):
+    def update_stylesheet(_, lb_switch, nodes_selc, clus_switch, dd_color,
+        dd_size, edge, cy_network, selection_json):
 
         if not cy_network:
             raise PreventUpdate()
@@ -123,14 +124,16 @@ def bind_callbacks(app):
 
         directed = net_factory.is_directed(network_code)
         stylesheet = CytoscapeStylesheet(directed=directed)
-        selected_metric = {}
-        size_metric = net_factory.get_main_class_metric(network_code)
+        color_metric = {}
+        size_metric = {}
 
-        if dd_val:
-            selected_metric = net_factory.get_node_metrics(network_code)[dd_val]
+        if dd_color:
+            color_metric = net_factory.get_node_metrics(network_code)[dd_color]
+        if dd_size:
+            size_metric = net_factory.get_node_metrics(network_code)[dd_size]
 
         if not nodes_selc:
-            stylesheet.all_transformations(cy_network, selected_metric, size_metric)
+            stylesheet.all_transformations(cy_network, color_metric, size_metric)
         else:
             stylesheet.highlight_nodes(cy_network, nodes_selc, size_metric)
 
@@ -148,15 +151,15 @@ def bind_callbacks(app):
         if trigger == 'tg-show-clusters' and clus_switch:
             stylesheet.color_nodes_by_cluster()
             color = True
-        elif trigger == 'dd-color-metric' and selected_metric:
-                stylesheet.color_nodes(cy_network, selected_metric)
+        elif trigger == 'dd-color-metric' and color_metric:
+                stylesheet.color_nodes(cy_network, color_metric)
                 color = True
 
         # if neither of those was launch the trigger
         if not color and clus_switch:
             stylesheet.color_nodes_by_cluster()
         elif not color:
-            stylesheet.color_nodes(cy_network, selected_metric)
+            stylesheet.color_nodes(cy_network, color_metric)
 
         return stylesheet.cy_stylesheet
 

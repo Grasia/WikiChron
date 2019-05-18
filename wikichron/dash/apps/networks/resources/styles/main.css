@@ -464,7 +464,7 @@ div.user-container-stat > p:nth-child(2){
 .net-control {
     display: flex;
     justify-content: left;
-    margin-right: 3.5rem;
+    margin-right: 2rem;
     display: flex;
     align-items: center;
 }
@@ -493,8 +493,18 @@ div.user-container-stat > p:nth-child(2){
     text-transform: initial;
 }
 
-#dd-color-metric{
-    width: 20rem;
+.controls-right {
+    display: flex;
+    align-items: center;
+}
+
+.controls-right-spacer {
+    margin-right: 2rem;
+}
+
+.metric-selector{
+    width: 12rem;
+    margin-left: 0.5rem;
 }
 /*****************************************************************/
 
@@ -550,7 +560,7 @@ div.user-container-stat > p:nth-child(2){
 th.dash-header > div {
     display: flex;
     align-items: baseline;
-    white-space: nowrap;
+    white-space: normal;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -611,11 +621,11 @@ th.dash-header > div > span {
      border: 2px #7bc8ff solid;
      position: absolute; 
      top: -3.3rem;
-     left: 0rem;
+     left: 4rem;
  }
 
  .hint-2 {
-    left: 5rem;
+    left: 0rem;
  }
 
  .hint > p{

@@ -198,14 +198,44 @@ def build_network_controls(network_code):
         html.P('Show legend')
     ], className='net-control')
 
-    left = html.Div(children=[togg1, togg2, togg3], className='toggle-container')
+    left = html.Div(children=[togg3, togg1, togg2], className='toggle-container')
 
     center = html.Div(children=[
         html.P('Reset View:'),
         html.Button('Reset', id='reset_cyto')
     ], className='net-control')
 
-    right = dropdown_color_metric_selector(network_code)
+    # metrics to fill dropdowns
+    dict_metrics = net_factory.get_metrics_to_plot(network_code)
+    options = []
+    for k in dict_metrics.keys():
+        options.append({
+            'label': k,
+            'value': k
+        })
+    
+    right = html.Div(children=[
+        html.Div(children=[
+            'Color:',
+            dcc.Dropdown(
+                id='dd-color-metric',
+                options=options,
+                placeholder='Select a metric',
+                className='metric-selector'
+            )
+        ], className='controls-right controls-right-spacer'),
+
+        html.Div(children=[
+            'Size:',
+            dcc.Dropdown(
+                id='dd-size-metric',
+                options=options,
+                placeholder='Select a metric',
+                className='metric-selector'
+            )
+        ], className='controls-right'),
+    ], className='controls-right')
+
     return html.Div(children=[left, center, right], className='controls-container')
 
 
@@ -298,22 +328,6 @@ def build_distribution_pane() -> html.Div:
     body = dcc.Graph(id='distribution-graph')
 
     return html.Div(children=[left, body], className='pane distribution-pane')
-
-
-def dropdown_color_metric_selector(network_code):
-    dict_metrics = net_factory.get_metrics_to_plot(network_code)
-    options = []
-    for k in dict_metrics.keys():
-        options.append({
-            'label': k,
-            'value': k
-        })
-
-    return dcc.Dropdown(
-        id='dd-color-metric',
-        options=options,
-        placeholder='Select a metric to color'
-    )
 
 
 def build_network_stats(network_code: str) -> html.Div:

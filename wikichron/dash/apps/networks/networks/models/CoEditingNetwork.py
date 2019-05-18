@@ -191,17 +191,3 @@ class CoEditingNetwork(BaseNetwork):
         desc['min_edge_size'] = 'A weak interaction in the wiki'
         desc['max_edge_size'] = 'A strong interaction in the wiki'
         return desc
-
-
-    @classmethod
-    def get_main_class_metric(cls) -> str:
-        if 'Article edits' in cls.NODE_METRICS_TO_PLOT:
-            return cls.NODE_METRICS_TO_PLOT['Article edits']
-        else:
-            return ''
-
-
-    @classmethod
-    def get_main_class_key(cls) -> str:
-        metric = cls.get_main_class_metric()
-        return metric['log'] if metric and 'log' in metric else ''

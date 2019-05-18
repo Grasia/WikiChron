@@ -242,17 +242,3 @@ class UserTalkNetwork(BaseNetwork):
         desc['min_edge_size'] = 'A weak friendship'
         desc['max_edge_size'] = 'A strong friendship'
         return desc
-
-
-    @classmethod
-    def get_main_class_metric(cls) -> str:
-        if 'Edits in its own page' in cls.NODE_METRICS_TO_PLOT:
-            return cls.NODE_METRICS_TO_PLOT['Edits in its own page']
-        else:
-            return ''
-
-
-    @classmethod
-    def get_main_class_key(cls) -> str:
-        metric = cls.get_main_class_metric()
-        return metric['key'] if metric and 'key' in metric else ''
