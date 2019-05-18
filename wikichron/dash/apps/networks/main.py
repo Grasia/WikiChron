@@ -127,7 +127,7 @@ def bind_callbacks(app):
         size_metric = net_factory.get_main_class_metric(network_code)
 
         if dd_val:
-            selected_metric = net_factory.get_metrics_to_plot(network_code)[dd_val]
+            selected_metric = net_factory.get_node_metrics(network_code)[dd_val]
 
         if not nodes_selc:
             stylesheet.all_transformations(cy_network, selected_metric, size_metric)
@@ -556,7 +556,7 @@ def bind_callbacks(app):
         network_code = selection['network']
         dict_header = net_factory.get_node_name(network_code)
         dic_info = net_factory.get_user_info(network_code)
-        dic_metrics = net_factory.get_available_metrics(network_code)
+        dic_metrics = net_factory.get_metrics_to_show(network_code)
 
         header_key = list(dict_header.keys())[0]
         header = f'{header_key}: {user_info[dict_header[header_key]]}'

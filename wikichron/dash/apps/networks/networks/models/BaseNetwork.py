@@ -25,11 +25,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
 # CHANGE NAME
     NODE_METRICS_TO_PLOT = {
-        'Tenure in the wiki': {
-            'key': 'birth_value',
-            'max': 'max_birth_value',
-            'min': 'min_birth_value'
-        },
         'Edited articles': {
             'key': 'articles',
             'log': 'articles_log',
@@ -53,20 +48,41 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             'max': 'max_talk_edits',
             'min': 'min_talk_edits'
         },
-    }
-# TO FIX
-# This param will be removed, u should use NODE_METRICS_TO_PLOT
-    AVAILABLE_METRICS = {
-        'Degree': 'degree',
-        'In-degree': 'indegree',
-        'Out-degree': 'outdegree',
-        'Closeness': 'closeness',
-        'Betweenness': 'betweenness',
-        'Page rank': 'page_rank',
-        'Edited articles': 'articles',
-        'Article edits': 'article_edits',
-        'Edited talk pages': 'talks',
-        'Talk page edits': 'talk_edits',
+        'Tenure in the wiki': {
+            'key': 'birth_value',
+            'max': 'max_birth_value',
+            'min': 'min_birth_value'
+        },
+        'Degree': {
+            'key': 'degree',
+            'max': 'max_degree',
+            'min': 'min_degree'
+        },
+        'In-degree': {
+            'key': 'indegree',
+            'max': 'max_indegree',
+            'min': 'min_indegree'
+        },
+        'Out-degree': {
+            'key': 'outdegree',
+            'max': 'max_outdegree',
+            'min': 'min_outdegree'
+        },
+        'Closeness': {
+            'key': 'closeness',
+            'max': 'max_closeness',
+            'min': 'min_closeness'
+        },
+        'Betweenness': {
+            'key': 'betweenness',
+            'max': 'max_betweenness',
+            'min': 'min_betweenness'
+        },
+        'Page rank': {
+            'key': 'page_rank',
+            'max': 'max_page_rank',
+            'min': 'min_page_rank'
+        }
     }
 
     EDGE_METRICS_TO_PLOT = {
@@ -178,31 +194,39 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         pass
 
 
-    @classmethod
-    def get_available_metrics(cls, directed) -> dict:
-        """
-        Return a dict with the metrics
-        """
-        metrics = cls.AVAILABLE_METRICS.copy()
-        if directed:
-            del metrics['Degree']
-        else:
-            del metrics['In-degree']
-            del metrics['Out-degree']
-
-        return metrics
-
-
-    @classmethod
+    @abc.abstractclassmethod
     def get_metrics_to_plot(cls) -> dict:
         """
-        Returns a dict with the metrics, the dict must get the following structure:
-            dict = {
-                'Metric name well formatted': 'a vertex key'
-            }
+        This is used to clean NODE_METRICS_TO_PLOT
         """
-        return cls.NODE_METRICS_TO_PLOT
+        pass
 
+
+    @abc.abstractclassmethod
+    def get_metrics_to_show(cls) -> dict:
+        """
+        This is used to clean and prepare NODE_METRICS_TO_PLOT in order to show the data
+        """
+        pass
+
+
+    @classmethod
+    def remove_non_directed_node_metrics(cls, metrics):
+        if 'Degree' in metrics:
+            del metrics['Degree']
+
+
+    @classmethod
+    def remove_directed_node_metrics(cls, metrics):
+        if 'In-degree' in metrics:
+            del metrics['In-degree']
+        if 'Out-degree' in metrics:
+            del metrics['Out-degree']
+
+
+    @classmethod
+    def get_node_metrics(cls):
+        return cls.NODE_METRICS_TO_PLOT
 
 
     def add_graph_attrs(self):
@@ -225,15 +249,14 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         network = []
         metrics_to_plot = [val for key, val in self.NODE_METRICS_TO_PLOT.items()]
         metrics_to_plot = metrics_to_plot + [val for key, val in self.EDGE_METRICS_TO_PLOT.items()]
-        keys_to_plot = {metric['key'] for metric in metrics_to_plot if 'log' in metric.keys()}
+        log_keys = {metric['key'] for metric in metrics_to_plot if 'log' in metric.keys()}
 
         # node attrs
         for node in self.graph.vs:
             data = {'data': {}}
             for attr in self.graph.vs.attributes():
                 val = node[attr]
-                
-                if attr in keys_to_plot:
+                if attr in log_keys:
                     data['data'][f'{attr}_log'] = int(log(val)*100)
 
                 data['data'][attr] = val
@@ -247,7 +270,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
                 val = edge[attr]
                 if attr == 'id':
                     continue
-                if attr in keys_to_plot:
+                if attr in log_keys:
                     data['data'][f'{attr}_log'] = int(log(val)*100)
 
                 data['data'][attr] = val
@@ -301,7 +324,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             p_r = self.graph.pagerank(directed=self.graph.is_directed(), 
                     weights = weight)
 
-            self.graph.vs['page_rank'] = list(map(lambda x: f"{x:.4f}", p_r))
+            self.graph.vs['page_rank'] = list(map(lambda x: float(f"{x:.4f}"), p_r))
 
 
     def calculate_betweenness(self):
@@ -411,7 +434,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         if 'closeness' not in self.graph.vs.attributes() and 'weight'\
             in self.graph.es.attributes():
 
-            rounder = lambda x: f"{x:.4f}"
+            rounder = lambda x: float(f"{x:.4f}")
             closeness = self.graph.closeness(weights='weight')
             closeness = list(map(rounder, closeness))
             self.graph.vs['closeness'] = closeness

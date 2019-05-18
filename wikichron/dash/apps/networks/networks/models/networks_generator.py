@@ -53,24 +53,35 @@ def get_node_name(network_code):
         raise Exception("Something went bad. Missing network type selection.")
 
 
-def get_available_metrics(network_code):
+def get_metrics_to_plot(network_code):
     if network_code == CoEditingNetwork.CODE:
-        return BaseNetwork.get_available_metrics(CoEditingNetwork.DIRECTED)
+        return CoEditingNetwork.get_metrics_to_plot()
     elif network_code == TalkPagesNetwork.CODE:
-        return BaseNetwork.get_available_metrics(TalkPagesNetwork.DIRECTED)
+        return TalkPagesNetwork.get_metrics_to_plot()
     elif network_code == UserTalkNetwork.CODE:
-        return UserTalkNetwork.get_available_metrics(UserTalkNetwork.DIRECTED)
+        return UserTalkNetwork.get_metrics_to_plot()
     else:
         raise Exception("Something went bad. Missing network type selection.")
 
 
-def get_metrics_to_plot(network_code):
+def get_node_metrics(network_code):
     if network_code == CoEditingNetwork.CODE:
-        return BaseNetwork.get_metrics_to_plot()
+        return BaseNetwork.get_node_metrics()
     elif network_code == TalkPagesNetwork.CODE:
-        return BaseNetwork.get_metrics_to_plot()
+        return BaseNetwork.get_node_metrics()
     elif network_code == UserTalkNetwork.CODE:
-        return UserTalkNetwork.get_metrics_to_plot()
+        return UserTalkNetwork.get_node_metrics()
+    else:
+        raise Exception("Something went bad. Missing network type selection.")
+
+
+def get_metrics_to_show(network_code):
+    if network_code == CoEditingNetwork.CODE:
+        return CoEditingNetwork.get_metrics_to_show()
+    elif network_code == TalkPagesNetwork.CODE:
+        return TalkPagesNetwork.get_metrics_to_show()
+    elif network_code == UserTalkNetwork.CODE:
+        return UserTalkNetwork.get_metrics_to_show()
     else:
         raise Exception("Something went bad. Missing network type selection.")
 

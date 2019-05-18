@@ -345,7 +345,7 @@ def build_network_stats(network_code: str) -> html.Div:
 
 
 def build_ranking(network_code) -> html.Div:
-    dict_metrics = net_factory.get_available_metrics(network_code)
+    dict_metrics = net_factory.get_metrics_to_show(network_code)
     options = []
     for k in dict_metrics.keys():
         options.append({

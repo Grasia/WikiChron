@@ -121,12 +121,14 @@ class TalkPagesNetwork(BaseNetwork):
     
 
     def get_metric_dataframe(self, metric):
-        if self.AVAILABLE_METRICS[metric] in self.graph.vs.attributes()\
+        metrics = TalkPagesNetwork.get_metrics_to_plot()
+
+        if metrics[metric] in self.graph.vs.attributes()\
             and 'label' in self.graph.vs.attributes():
 
             df = pd.DataFrame({
                     'User': self.graph.vs['label'],
-                    metric: self.graph.vs[self.AVAILABLE_METRICS[metric]]
+                    metric: self.graph.vs[metrics[metric]]
                     })
             return df
 
@@ -138,9 +140,27 @@ class TalkPagesNetwork(BaseNetwork):
 
 
     @classmethod
+    def get_metrics_to_plot(cls) -> dict:
+        cls.remove_directed_node_metrics(cls.NODE_METRICS_TO_PLOT)
+        metrics = dict()
+
+        for k in cls.NODE_METRICS_TO_PLOT.keys():
+            metrics[k] = cls.NODE_METRICS_TO_PLOT[k]['key']
+        return metrics
+
+
+    @classmethod
+    def get_metrics_to_show(cls) -> dict:
+        metrics = cls.get_metrics_to_plot().copy()
+        del metrics['Tenure in the wiki']
+        return metrics
+        
+
+    @classmethod
     def get_metric_header(cls, metric: str) -> list:
+        metrics = cls.get_metrics_to_plot()
         header = list()
-        if metric in cls.AVAILABLE_METRICS:
+        if metric in metrics:
             header = [{'name': 'Editor', 'id': 'User'}, 
                 {'name': metric, 'id': metric}]
 

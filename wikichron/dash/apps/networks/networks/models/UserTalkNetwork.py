@@ -43,10 +43,6 @@ class UserTalkNetwork(BaseNetwork):
     NETWORK_STATS = BaseNetwork.NETWORK_STATS.copy()
     NETWORK_STATS['User talk edits'] = 'wiki_user_talk_edits'
 
-    AVAILABLE_METRICS = BaseNetwork.get_available_metrics(DIRECTED)
-    AVAILABLE_METRICS['Edits in its own page'] = 'own_u_edits'
-    AVAILABLE_METRICS['Edited user talks'] = 'user_talks'
-
     NODE_METRICS_TO_PLOT = BaseNetwork.NODE_METRICS_TO_PLOT.copy()
     NODE_METRICS_TO_PLOT['Edits in its own page'] = \
         {
@@ -163,12 +159,14 @@ class UserTalkNetwork(BaseNetwork):
 
 
     def get_metric_dataframe(self, metric):
-        if self.AVAILABLE_METRICS[metric] in self.graph.vs.attributes()\
+        metrics = UserTalkNetwork.get_metrics_to_plot()
+
+        if metrics[metric] in self.graph.vs.attributes()\
             and 'label' in self.graph.vs.attributes():
 
             df = pd.DataFrame({
                     'User': self.graph.vs['label'],
-                    metric: self.graph.vs[self.AVAILABLE_METRICS[metric]]
+                    metric: self.graph.vs[metrics[metric]]
                     })
             return df
 
@@ -182,12 +180,36 @@ class UserTalkNetwork(BaseNetwork):
 
     @classmethod
     def get_metric_header(cls, metric: str) -> list:
+        metrics = cls.get_metrics_to_plot()
         header = list()
-        if metric in cls.AVAILABLE_METRICS:
+
+        if metric in metrics:
             header = [{'name': 'Editor', 'id': 'User'}, 
                 {'name': metric, 'id': metric}]
 
         return header
+
+
+    @classmethod
+    def get_metrics_to_plot(cls) -> dict:
+        cls.remove_non_directed_node_metrics(cls.NODE_METRICS_TO_PLOT)
+        metrics = dict()
+
+        for k in cls.NODE_METRICS_TO_PLOT.keys():
+            metrics[k] = cls.NODE_METRICS_TO_PLOT[k]['key']
+        return metrics
+
+        
+    @classmethod
+    def get_metrics_to_show(cls) -> dict:
+        metrics = cls.get_metrics_to_plot().copy()
+        del metrics['Tenure in the wiki']
+        return metrics
+
+
+    @classmethod
+    def get_node_metrics(cls):
+        return cls.NODE_METRICS_TO_PLOT
 
 
     @classmethod
@@ -234,13 +256,3 @@ class UserTalkNetwork(BaseNetwork):
     def get_main_class_key(cls) -> str:
         metric = cls.get_main_class_metric()
         return metric['key'] if metric and 'key' in metric else ''
-
-
-    @classmethod
-    def get_available_metrics(cls, _) -> dict:
-        return cls.AVAILABLE_METRICS
-
-
-    @classmethod
-    def get_metrics_to_plot(cls) -> dict:
-        return cls.NODE_METRICS_TO_PLOT
