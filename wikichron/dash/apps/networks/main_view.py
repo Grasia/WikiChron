@@ -507,5 +507,6 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     ], className='body')
 
     foot = build_foot(assets_url_path)
-    script = gdc.Import(src='/js/sliderHandlerLabels.js')
-    return html.Div(children = [header, body, foot, script])
+    labels_script = gdc.Import(src='/js/sliderHandlerLabels.js')
+    filter_script = gdc.Import(src='/js/filterInfo.js')
+    return html.Div(children = [header, body, foot, labels_script, filter_script])

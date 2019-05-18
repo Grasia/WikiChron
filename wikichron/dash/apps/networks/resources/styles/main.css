@@ -602,3 +602,24 @@ th.dash-header > div > span {
 .foot-container > p{
     margin-left: 1rem;
 }
+ /*****************************************************************/
+
+  /*****************************************************************
+ * Others
+ *****************************************************************/
+ .hint {
+     background-color: #fff;
+     border-radius: 0.5rem;
+     border: 2px #7bc8ff solid;
+     position: absolute; 
+     top: -3.3rem;
+     left: 0rem;
+ }
+
+ .hint-2 {
+    left: 5rem;
+ }
+
+ .hint > p{
+     margin: 0.5rem !important;
+ }
