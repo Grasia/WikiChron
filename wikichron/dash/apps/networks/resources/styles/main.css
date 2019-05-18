@@ -549,9 +549,14 @@ div.user-container-stat > p:nth-child(2){
 
 th.dash-header > div {
     display: flex;
-    justify-content: space-around;
     align-items: baseline;
-    flex-wrap: wrap;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+th.dash-header > div > span {
+    margin-left: 0.5rem;
 }
 
 .cell-1-1 > table > tbody > tr > td {

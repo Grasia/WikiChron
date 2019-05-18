@@ -44,7 +44,7 @@ class CoEditingNetwork(BaseNetwork):
     }
 
     NODE_NAME = {
-        'User': 'label'
+        'Editor': 'label'
     }
 
 
@@ -135,7 +135,7 @@ class CoEditingNetwork(BaseNetwork):
     def get_metric_header(cls, metric: str) -> list:
         header = list()
         if metric in cls.AVAILABLE_METRICS:
-            header = [{'name': 'User', 'id': 'User'}, 
+            header = [{'name': 'Editor', 'id': 'User'}, 
                 {'name': metric, 'id': metric}]
 
         return header

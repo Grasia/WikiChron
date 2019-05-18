@@ -32,8 +32,8 @@ from .networks.models import networks_generator as net_factory
 from .networks.CytoscapeStylesheet import CytoscapeStylesheet
 from .networks.models.BaseNetwork import BaseNetwork
 from .main_view import RANKING_EMPTY_DATA, RANKING_EMPTY_HEADER, PAGE_SIZE, \
-    inflate_switch_network_dialog, inflate_share_dialog, NO_DATA_USER_STATS_HEADER, \
-    NO_DATA_USER_STATS_BODY
+    inflate_switch_network_dialog, inflate_share_dialog, NO_DATA_NODE_STATS_HEADER, \
+    NO_DATA_NODE_STATS_BODY
 
 
 selection_params = {'wikis', 'network', 'lower_bound', 'upper_bound'}
@@ -550,7 +550,7 @@ def bind_callbacks(app):
             raise PreventUpdate()
 
         if old_click and int(old_click) == int(node["timeStamp"]):
-            return NO_DATA_USER_STATS_HEADER, NO_DATA_USER_STATS_BODY, old_click
+            return NO_DATA_NODE_STATS_HEADER, NO_DATA_NODE_STATS_BODY, old_click
 
         selection = json.loads(selection_json)
         network_code = selection['network']

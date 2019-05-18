@@ -28,13 +28,13 @@ from .networks.models import networks_generator as net_factory
 from .networks.models.BaseNetwork import BaseNetwork
 from . import data_controller
 
-RANKING_EMPTY_HEADER = [{'name': 'User', 'id': 'name'},
+RANKING_EMPTY_HEADER = [{'name': 'Editor', 'id': 'name'},
                         {'name': 'Metric', 'id': 'metric'}]
 RANKING_EMPTY_DATA = pd.DataFrame(columns=[RANKING_EMPTY_HEADER[0]['id'],
     RANKING_EMPTY_HEADER[1]['id']])
 PAGE_SIZE = 10
-NO_DATA_USER_STATS_HEADER = 'User Stats'
-NO_DATA_USER_STATS_BODY = 'Please, click on a node to show its info'
+NO_DATA_NODE_STATS_HEADER = 'Editor Stats'
+NO_DATA_NODE_STATS_BODY = 'Please, click on a node to show its info'
 
 
 global debug
@@ -394,14 +394,14 @@ def build_ranking(network_code) -> html.Div:
     return html.Div(children=[header, body], className='pane side-pane')
 
 
-def build_user_stats() -> html.Div:
+def build_node_stats() -> html.Div:
     header = html.Div(children=[
-        html.Span(NO_DATA_USER_STATS_HEADER, id='user-stats-title'),
+        html.Span(NO_DATA_NODE_STATS_HEADER, id='user-stats-title'),
         html.Hr(className='pane-hr')
     ],
     className='header-pane sidebar-header-pane')
 
-    body = html.Div(id='user-stats', children=[NO_DATA_USER_STATS_BODY],
+    body = html.Div(id='user-stats', children=[NO_DATA_NODE_STATS_BODY],
         className='body-pane')
     return html.Div(children=[header, body], className='pane side-pane')
 
@@ -413,7 +413,7 @@ def build_sidebar(network_code) -> html.Div:
     return html.Div(className='sidebar', children=[
         build_network_stats(network_code),
         build_ranking(network_code),
-        build_user_stats()
+        build_node_stats()
     ])
 
 
