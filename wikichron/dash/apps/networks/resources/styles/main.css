@@ -619,13 +619,14 @@ th.dash-header > div > span {
      background-color: #fff;
      border-radius: 0.5rem;
      border: 2px #7bc8ff solid;
-     position: absolute; 
+     position: absolute;
+     float: left;
      top: -3.3rem;
-     left: 1rem;
+     left: 0rem;
  }
 
  .hint-2 {
-    left: 6rem;
+    left: 5rem;
  }
 
  .hint > p{
