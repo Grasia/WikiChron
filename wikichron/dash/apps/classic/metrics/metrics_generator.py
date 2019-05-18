@@ -30,6 +30,7 @@ def generate_metrics():
     metrics.append(Metric('edits_user_talk', 'Edits in user talk', MetricCategory.EDITIONS, stats.edits_user_talk, 'Editions to user discussion pages'))
     metrics.append(Metric('edits_accum', 'Total edits in pages', MetricCategory.EDITIONS, stats.edits_accum, 'Total editions to any part of the wiki accumulated at every month'))
     metrics.append(Metric('edits_main_content_accum', 'Total edits in articles', MetricCategory.EDITIONS, stats.edits_main_content_accum, 'Editions to articles accumulated at every month'))
+    metrics.append(Metric('dormantWiki', 'Active or dormant wiki', MetricCategory.EDITIONS, stats.dormantWiki, 'The metric allows you to see the months in which a wiki is inactive'))    
 
     # Users
     metrics.append(Metric('users_new', 'New users', MetricCategory.USERS, stats.users_new, 'Users who have made at least one edition grouped by the month they did their first edit.'))
