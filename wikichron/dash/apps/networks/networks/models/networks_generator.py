@@ -108,17 +108,6 @@ def get_metric_header(network_code, metric) -> bool:
         raise Exception("Something went bad. Missing network type selection.")
 
 
-def get_network_description(network_code: str) -> dict:
-    if network_code == CoEditingNetwork.CODE:
-        return CoEditingNetwork.get_network_description()
-    elif network_code == TalkPagesNetwork.CODE:
-        return TalkPagesNetwork.get_network_description()
-    elif network_code == UserTalkNetwork.CODE:
-        return UserTalkNetwork.get_network_description()
-    else:
-        raise Exception("Something went bad. Missing network type selection.")
-
-
 def get_network_stats(network_code: str) -> dict:
     if network_code == CoEditingNetwork.CODE:
         return CoEditingNetwork.get_network_stats()

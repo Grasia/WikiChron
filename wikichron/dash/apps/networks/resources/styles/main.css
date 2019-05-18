@@ -621,11 +621,11 @@ th.dash-header > div > span {
      border: 2px #7bc8ff solid;
      position: absolute; 
      top: -3.3rem;
-     left: 4rem;
+     left: 1rem;
  }
 
  .hint-2 {
-    left: 0rem;
+    left: 6rem;
  }
 
  .hint > p{

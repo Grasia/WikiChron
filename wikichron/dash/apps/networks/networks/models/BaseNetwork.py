@@ -163,15 +163,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
 
     @abc.abstractclassmethod
-    def get_network_description(cls) -> dict:
-        """
-        Returns a dict with the network components description
-        (e.g. nodes, color, edge)
-        """
-        pass
-
-
-    @abc.abstractclassmethod
     def is_directed(cls) -> bool:
         pass
 

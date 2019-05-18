@@ -230,15 +230,3 @@ class UserTalkNetwork(BaseNetwork):
     @classmethod
     def is_directed(cls):
         return cls.DIRECTED
-
-
-    @classmethod
-    def get_network_description(cls) -> dict:
-        desc = {}
-        desc['min_node_color'] = 'Lowest value in selected metric'
-        desc['max_node_color'] = 'Highest value in selected metric'
-        desc['min_node_size'] = 'Low edits in its own page'
-        desc['max_node_size'] = 'High edits in its own page'
-        desc['min_edge_size'] = 'A weak friendship'
-        desc['max_edge_size'] = 'A strong friendship'
-        return desc

@@ -179,15 +179,3 @@ class CoEditingNetwork(BaseNetwork):
     @classmethod
     def is_directed(cls):
         return cls.DIRECTED
-
-
-    @classmethod
-    def get_network_description(cls) -> dict:
-        desc = {}
-        desc['min_node_color'] = 'Lowest value in selected metric'
-        desc['max_node_color'] = 'Highest value in selected metric'
-        desc['min_node_size'] = 'A low edition in articles'
-        desc['max_node_size'] = 'A high edition in articles'
-        desc['min_edge_size'] = 'A weak interaction in the wiki'
-        desc['max_edge_size'] = 'A strong interaction in the wiki'
-        return desc

@@ -33,7 +33,7 @@ from .networks.CytoscapeStylesheet import CytoscapeStylesheet
 from .networks.models.BaseNetwork import BaseNetwork
 from .main_view import RANKING_EMPTY_DATA, RANKING_EMPTY_HEADER, PAGE_SIZE, \
     inflate_switch_network_dialog, inflate_share_dialog, NO_DATA_NODE_STATS_HEADER, \
-    NO_DATA_NODE_STATS_BODY
+    NO_DATA_NODE_STATS_BODY, DEFAULT_LEGEND_TEXT
 
 
 selection_params = {'wikis', 'network', 'lower_bound', 'upper_bound'}
@@ -662,3 +662,25 @@ def bind_callbacks(app):
         new_link = f'{link_splited[0]}?{new_link}'
 
         return new_link, new_link
+
+
+    @app.callback(
+        [Output('legend-min-node-color', 'children'),
+        Output('legend-max-node-color', 'children'),
+        Output('legend-min-node-size', 'children'),
+        Output('legend-max-node-size', 'children')],
+        [Input('dd-color-metric', 'value'),
+        Input('dd-size-metric', 'value')]
+    )
+    def update_legend(color, size):
+        min_color = DEFAULT_LEGEND_TEXT['min_node_color']
+        max_color = DEFAULT_LEGEND_TEXT['max_node_color']
+        min_size = DEFAULT_LEGEND_TEXT['min_node_size']
+        max_size = DEFAULT_LEGEND_TEXT['max_node_size']
+        if color:
+            min_color = f"Lowest \"{color}\" value"
+            max_color = f"Highest \"{color}\" value"
+        if size:
+            min_size = f"Lowest \"{size}\" value"
+            max_size = f"Highest \"{size}\" value"
+        return min_color, max_color, min_size, max_size

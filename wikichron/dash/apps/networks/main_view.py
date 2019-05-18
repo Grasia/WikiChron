@@ -36,6 +36,13 @@ PAGE_SIZE = 10
 NO_DATA_NODE_STATS_HEADER = 'Editor Stats'
 NO_DATA_NODE_STATS_BODY = 'Please, click on a node to show its info'
 
+DEFAULT_LEGEND_TEXT = {}
+DEFAULT_LEGEND_TEXT['min_node_color'] = 'Select a metric to color'
+DEFAULT_LEGEND_TEXT['max_node_color'] = 'Select a metric to color'
+DEFAULT_LEGEND_TEXT['min_node_size'] = 'Select a metric to size'
+DEFAULT_LEGEND_TEXT['max_node_size'] = 'Select a metric to size'
+DEFAULT_LEGEND_TEXT['min_edge_size'] = 'A weak interaction in the wiki'
+DEFAULT_LEGEND_TEXT['max_edge_size'] = 'A strong interaction in the wiki'
 
 global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
@@ -273,7 +280,6 @@ def cytoscape_component():
 
 
 def build_legend(network_code: str) -> html.Div:
-    text = net_factory.get_network_description(network_code)
     return html.Div([
         html.Div(children=[
             html.Div(children=[], className='legend-node',
@@ -285,9 +291,9 @@ def build_legend(network_code: str) -> html.Div:
         ], className='legend-col col1-legend'),
 
         html.Div(children=[
-            html.P(text['min_node_color']),
-            html.P(text['min_node_size']),
-            html.P(text['min_edge_size'])
+            html.P(DEFAULT_LEGEND_TEXT['min_node_color'], id='legend-min-node-color'),
+            html.P(DEFAULT_LEGEND_TEXT['min_node_size'], id='legend-min-node-size'),
+            html.P(DEFAULT_LEGEND_TEXT['min_edge_size'], id='legend-min-edge-edge')
         ], className='legend-col col2-legend'),
 
         html.Div(children=[
@@ -300,9 +306,9 @@ def build_legend(network_code: str) -> html.Div:
         ], className='legend-col col3-legend'),
 
         html.Div(children=[
-            html.P(text['max_node_color']),
-            html.P(text['max_node_size']),
-            html.P(text['max_edge_size'])
+            html.P(DEFAULT_LEGEND_TEXT['max_node_color'], id='legend-max-node-color'),
+            html.P(DEFAULT_LEGEND_TEXT['max_node_size'], id='legend-max-node-size'),
+            html.P(DEFAULT_LEGEND_TEXT['max_edge_size'], id='legend-max-edge-size')
         ], className='legend-col col4-legend'),
 
     ], id='legend', className='pane')
