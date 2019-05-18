@@ -194,7 +194,7 @@ def build_network_controls(network_code):
     ], className='net-control')
 
     togg3 = html.Div(children=[
-        daq.BooleanSwitch(id='tg-hide-legend', className='toggle', on=False),
+        daq.BooleanSwitch(id='tg-hide-legend', className='toggle', on=True),
         html.P('Show legend')
     ], className='net-control')
 
@@ -275,7 +275,7 @@ def build_legend(network_code: str) -> html.Div:
             html.P(text['max_edge_size'])
         ], className='legend-col col4-legend'),
 
-    ], id='legend', className='pane non-show')
+    ], id='legend', className='pane')
 
 
 def build_distribution_pane() -> html.Div:

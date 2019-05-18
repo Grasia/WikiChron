@@ -359,7 +359,7 @@ a{
  *****************************************************************/
 .legend-cls {
     position: absolute;
-    margin: 37rem 0 0 2rem;
+    margin: 2rem 0 0 2rem;
     height: 18rem;
     width: 32rem;
     z-index: 99;
