@@ -63,6 +63,7 @@ def current_streak_x_or_y_months_in_a_row(data, index, z, y):
     group_users = mothly[lista].groupby(['contributor_id'])
     displace_z_month = displace_x_months_per_user(group_users['add_months'], z)
     mothly['displace']= displace_z_month
+    print(mothly)
     if y > 0:
       displace_y_month = displace_x_months_per_user(group_users['add_y_months'], y)
       mothly['displace_y_month']= displace_y_month
