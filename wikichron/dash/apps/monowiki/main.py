@@ -56,6 +56,9 @@ def generate_graphs(data, metrics, wikis, relative_time):
             num_submetrics = len(data[metric_idx])
             for submetric in range(num_submetrics):
                 graphs_list[metric_idx].append(None)
+        elif (category[metric_idx] == "Heatmap"):
+            data[metric_idx].pop(-1)
+            graphs_list[metric_idx].append(None)
         else:
             graphs_list[metric_idx].append(None)
 
@@ -78,7 +81,6 @@ def generate_graphs(data, metrics, wikis, relative_time):
                 x_axis = list(range(len(data[metric_idx][0]))) # relative to the age of the wiki in months
             else:
                 x_axis = data[metric_idx][0] # natural months
-
             y_axis = data[metric_idx][1]
             z_axis = data[metric_idx][2]
             graphs_list[metric_idx][0] = go.Heatmap(z=z_axis,
@@ -105,7 +107,7 @@ def generate_graphs(data, metrics, wikis, relative_time):
                                 stackgroup='one',
                                 name=metric_data.name
                                 )
-        if category[metric_idx] == "Scatter":
+        elif category[metric_idx] == "Scatter":
             num_submetrics = len(data[metric_idx])
             for submetric in range(num_submetrics):
                 metric_data = data[metric_idx][submetric]

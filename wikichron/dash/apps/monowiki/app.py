@@ -319,10 +319,12 @@ def start_download_data_server(app, download_pathname):
             metric_df = pd.DataFrame()
             for submetric in metric:
                 # assign the name of the metric as the name of the column for its data:
-                metric_df[submetric.name] = submetric
-            print(metric_df)
+                if type(submetric) != str and type(submetric) != 'pandas.core.indexes.datetimes.DatetimeIndex' and type(submetric) != list:
+                    if metric[-1] == 'Heatmap':
+                        metric_df= submetric
+                    else: 
+                        metric_df[submetric.name] = submetric
             csv_str = metric_df.to_csv()
-            print(csv_str)
             # append dataframe csv to zip file with name of the wiki:
             zipfile_ob.writestr('{}.csv'.format(metric_name.text), csv_str)
 

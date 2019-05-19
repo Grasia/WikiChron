@@ -63,7 +63,6 @@ def current_streak_x_or_y_months_in_a_row(data, index, z, y):
     group_users = mothly[lista].groupby(['contributor_id'])
     displace_z_month = displace_x_months_per_user(group_users['add_months'], z)
     mothly['displace']= displace_z_month
-    print(mothly)
     if y > 0:
       displace_y_month = displace_x_months_per_user(group_users['add_y_months'], y)
       mothly['displace_y_month']= displace_y_month
@@ -701,7 +700,7 @@ def edit_distributions_across_editors(data, index):
     for metric_idx in range(max_contributions+1):
         metric_row = [graphs_list[wiki_idx].pop(0) for wiki_idx in range(len(graphs_list))]
         wiki_by_metrics.append(metric_row) 
-    return [index,list(range(max_contributions)), wiki_by_metrics, 'Heatmap']
+    return [index,list(range(max_contributions)), wiki_by_metrics, months_range, 'Heatmap']
 
 def bytes_difference_across_articles(data, index):
     data.set_index(data['timestamp'], inplace=True)
@@ -752,7 +751,7 @@ def bytes_difference_across_articles(data, index):
     for metric_idx in range(max_dif_bytes+1):
         metric_row = [graphs_list[wiki_idx].pop(0) for wiki_idx in range(len(graphs_list))]
         wiki_by_metrics.append(metric_row) 
-    return [index, list(range(min_dif_bytes, max_dif_bytes)), wiki_by_metrics, 'Heatmap']
+    return [index, list(range(min_dif_bytes, max_dif_bytes)), wiki_by_metrics, months_range, 'Heatmap']
 
 def edition_on_pages(data, index):
     users_registered = filter_anonymous(data)
@@ -791,7 +790,7 @@ def edition_on_pages(data, index):
     for metric_idx in range(maxEditors+1):
             metric_row = [graphs_list[wiki_idx].pop(0) for wiki_idx in range(len(graphs_list))]
             wiki_by_metrics.append(metric_row) 
-    return [index,list(range(maxEditors)),wiki_by_metrics,'Heatmap']
+    return [index,list(range(maxEditors)),wiki_by_metrics, z, 'Heatmap']
 
 def revision_on_pages(data, index):
     users_registered = filter_anonymous(data)
@@ -831,7 +830,7 @@ def revision_on_pages(data, index):
     for metric_idx in range(maxRevision+1):
             metric_row = [graphs_list[wiki_idx].pop(0) for wiki_idx in range(len(graphs_list))]
             wiki_by_metrics.append(metric_row)
-    return [index,list(range(maxRevision)),wiki_by_metrics,'Heatmap']
+    return [index,list(range(maxRevision)),wiki_by_metrics, z, 'Heatmap']
 
 def  distribution_editors_between_articles_edited_each_month(data, index):
     users_registered = filter_anonymous(data)
@@ -874,7 +873,7 @@ def  distribution_editors_between_articles_edited_each_month(data, index):
     for i in range(max_editors+1):
             row = [graphs_list[j].pop(0) for j in range(len(graphs_list))]
             z_param.append(row)  
-    return [index,y_param,z_param,'Heatmap']
+    return [index,y_param,z_param, z_articles_by_y_editors, 'Heatmap']
 
 def changes_in_absolute_size_of_editor_classes(data, index):
     class1 = users_number_of_edits_between_1_and_4(data, index).to_frame('one_four')
@@ -908,7 +907,7 @@ def changes_in_absolute_size_of_editor_classes(data, index):
                         
                 elif (concatenate.iloc[i, j] > concatenate.iloc[i, j - 1]):
                         graphs_list[i][j] = concatenate.iloc[i, j] - concatenate.iloc[i, j - 1]
-    return[months.index, classes, graphs_list, 'Heatmap']
+    return[months.index, classes, graphs_list, concatenate, 'Heatmap']
 
 ########################### FILLED-AREA CHART METRICS ###########################################
 
