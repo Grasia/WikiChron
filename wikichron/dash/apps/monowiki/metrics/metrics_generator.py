@@ -74,7 +74,7 @@ def generate_metrics():
     metrics.append(Metric('edit_distributions_across_editors', 'Edit distribution across editors', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.edit_distributions_across_editors, 'HEATMAP: contributors (z axis) per contributions (y axis).'))
     metrics.append(Metric('bytes_difference_across_articles', 'Bytes difference across articles', MetricCategory.EDITS_ANALYSIS, stats.bytes_difference_across_articles, 'HEATMAP: number of articles (z axis) than contain these bytes (y axis).'))
     metrics.append(Metric('changes_in_absolute_size_of_classes', 'changes in categories of active editors by experience', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.changes_in_absolute_size_of_editor_classes, 'HEATMAP: increment or decrement (z axis) of an active editor category (y axis).'))
-    metrics.append(Metric('distribution_editors_between_articles_edited_each_month', 'The distribution of the editors between the articles edited each month', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.distribution_editors_between_articles_edited_each_month, 'HEATMAP:.'))
+    metrics.append(Metric('distribution_editors_between_articles_edited_each_month', 'Monthly distribution of editors across articles', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.distribution_editors_between_articles_edited_each_month, 'HEATMAP:.'))
     metrics.append(Metric('edition_on_pages', 'Edits on pages', MetricCategory.EDITS_ANALYSIS, stats.edition_on_pages, 'HEATMAP:'))
     metrics.append(Metric('revision_on_pages', 'Revisions on pages', MetricCategory.EDITS_ANALYSIS, stats.revision_on_pages, 'HEATMAP:'))
 
