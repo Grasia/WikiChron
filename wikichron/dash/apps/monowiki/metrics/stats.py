@@ -399,25 +399,29 @@ def users_number_of_edits(data, index):
     return [new_users, one_four, between_5_24, between_25_99, highEq_100, 'Bar']
 
 def users_number_of_edits_abs(data, index):
+    new_users = users_new(data, index).to_frame('new_users')
     one_four = users_number_of_edits_between_1_and_4(data, index).to_frame('one_four')
     between_5_24 = users_number_of_edits_between_5_and_24(data, index).to_frame('5_24')
     between_25_99 = users_number_of_edits_between_25_and_99(data, index).to_frame('25_99')
     highEq_100 = users_number_of_edits_highEq_100(data, index).to_frame('highEq_100')
-    concatenate = pd.concat([one_four, between_5_24, between_25_99, highEq_100], axis = 1)
-    concatenate['suma'] = concatenate[['one_four', '5_24', '25_99', 'highEq_100']].sum(axis=1)
+    concatenate = pd.concat([new_users, one_four, between_5_24, between_25_99, highEq_100], axis = 1)
+    concatenate['suma'] = concatenate[['new_users', 'one_four', '5_24', '25_99', 'highEq_100']].sum(axis=1)
+    concatenate['new_users'] = (concatenate['new_users']/concatenate['suma'])*100
     concatenate['one_four'] = (concatenate['one_four']/concatenate['suma'])*100
     concatenate['5_24'] = (concatenate['5_24']/concatenate['suma'])*100
     concatenate['25_99'] = (concatenate['25_99']/concatenate['suma'])*100
     concatenate['highEq_100'] = (concatenate['highEq_100']/concatenate['suma'])*100
+    new_users = pd.Series(concatenate['new_users'], index = concatenate.index)
     one_four = pd.Series(concatenate['one_four'], index = concatenate.index)
     between_5_24 = pd.Series(concatenate['5_24'], index = concatenate.index)
     between_25_99 = pd.Series(concatenate['25_99'], index = concatenate.index)
     highEq_100 = pd.Series(concatenate['highEq_100'], index = concatenate.index)
+    new_users.name = 'New users'
     one_four.name = 'Btw. 1 and 4 edits'
     between_5_24.name = 'Btw. 5 and 24 edits'
     between_25_99.name = 'Btw. 25 and 99 edits'
     highEq_100.name = 'More than 99 edits'
-    return [one_four, between_5_24, between_25_99, highEq_100, 'Bar']
+    return [new_users, one_four, between_5_24, between_25_99, highEq_100, 'Bar']
 ############################ METRICS 9 and 10 #################################################################################################
 
 #this metric filters how many users have edited a main page
