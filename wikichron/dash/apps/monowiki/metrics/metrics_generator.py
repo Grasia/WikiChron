@@ -28,7 +28,8 @@ def generate_metrics():
     metrics.append(Metric('Current_streak', 'Active users by activity-streak', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.current_streak, 'BAR GRAPH: Users by the number of consecutive months they have made at least one edit in the wiki.'))
     metrics.append(Metric('Current_streak_only_mains', 'Active users by edit-streak', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.current_streak_only_mains, 'BAR GRAPH: Users by the number of consecutive months they have made at least one edit in the main of the wiki.'))
     metrics.append(Metric('edition_on_type_pages', 'Edition on different type pages', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.edition_on_type_pages, 'BAR GRAPH:'))
-
+    metrics.append(Metric('edition_on_type_pages_extends_rest', 'Edition on different type pages rest', MetricCategory.ACTIVE_EDITORS_ANALYSIS, stats.edition_on_type_pages_extends_rest, 'BAR GRAPH:'))
+    
     # metric 3
     #metrics.append(Metric('users_first_edit_between_1_3_months_ago', 'Users first edit 1', MetricCategory.USERS, stats.users_first_edit_between_1_3_months_ago, 'Users whose first edition was between 1 and 3 months ago'))
     #metrics.append(Metric('users_first_edit_between_4_6_months_ago', 'Users first edit 2', MetricCategory.USERS, stats.users_first_edit_between_4_6_months_ago, 'Users whose first edition was between 4 and 6 months ago'))

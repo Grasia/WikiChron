@@ -85,7 +85,7 @@ def edition_concrete(data, index, pagType):
 def rest_edition(data, index, listP):
     filterData = data
     for i in listP:
-        filterData= filterData[filterData['page_ns'] != listP[i]]
+        filterData= filterData[filterData['page_ns'] != i]
     series = filterData.groupby([pd.Grouper(key ='timestamp', freq='MS')]).size()
     if index is not None:
         series = series.reindex(index, fill_value=0)
@@ -305,6 +305,21 @@ def edition_on_type_pages(data, index):
     talkPU.name='Talk pages Users'
     rest.name='Rest type pages'
     return [articles,talkPA,userP,talkPU,rest,'Bar']
+
+def edition_on_type_pages_extends_rest(data, index):
+    data=filter_anonymous(data)
+    #filt=rest_edition(data,index,[0,1,2,3])
+    file=edition_concrete(data,index,6)
+    mediaWiki=edition_concrete(data,index,8)
+    template=edition_concrete(data,index,10)
+    category=edition_concrete(data,index,14)
+    rest=rest_edition(data,index,[0,1,2,3,6,8,10,14])
+    file.name= 'File'
+    mediaWiki.name='Media wiki'
+    template.name='Template'
+    category.name='Category'
+    rest.name='Rest type pages'
+    return [file,mediaWiki,template,category,rest,'Bar']
 
 ############################ METRIC 3 #################################################################################################
 
