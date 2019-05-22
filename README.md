@@ -13,7 +13,7 @@ It analyzes the history dump of a wiki and give you nice graphs plotting that da
 * [Grasia Dash Components](https://github.com/Grasia/grasia-dash-components)
 * [pandas](pandas.pydata.org)
 * (Production only) [Redis Cache](https://redis.io/)
-* [python-igraph] (https://igraph.org/python/) -> it's a c package so it depends on your OS
+* [python-igraph](https://igraph.org/python/) -> it's a c package so it depends on your OS
 
 ### Install instructions
 The dependency `python-igraph` needs to compile some C code, so, in order to install it, you priorly need some dev libraries for python, xml, zlib and C compiler utilities.
