@@ -385,7 +385,7 @@ def bind_callbacks(app):
         x_scale = 'linear'
         y_scale = 'linear'
         if scale_type == 'Log':
-            y_scale = 'log'    
+            y_scale = 'log'
         elif scale_type == 'Log-Log':
             x_scale = 'log'
             y_scale = 'log'
@@ -429,7 +429,7 @@ def bind_callbacks(app):
         for k, val in stats.items():
             if val not in cy_network:
                 continue
-                
+
             group.append(html.Div(children=[
                 html.P(f'{k}:'),
                 html.P(cy_network[val])
@@ -623,12 +623,9 @@ def bind_callbacks(app):
 
             server_config = current_app.config
             mode_config = get_mode_config(current_app)
-            if debug:
-                url = f'{server_config["PREFERRED_URL_SCHEME"]}://'
-                url = f'{url}{server_config["APP_HOSTNAME"]}'
-            else:
-                url = f'{server_config["APP_HOSTNAME"]}'
-            url = f'{url}{mode_config["DASH_BASE_PATHNAME"]}?{new_query}'
+
+            schema_and_hostname = f'{server_config["PREFERRED_URL_SCHEME"]}://{server_config["APP_HOSTNAME"]}'
+            url = f'{schema_and_hostname}{mode_config["DASH_BASE_PATHNAME"]}?{new_query}'
 
             child = []
             if trigger == 'share-button':
