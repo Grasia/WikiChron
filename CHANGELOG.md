@@ -1,5 +1,12 @@
 # Change Log for WikiChron
 
+## 2.1.1 - 2019-05-22
+### Fixed
+- Fixed url sharing generation issue. See Grasia/WikiChron-networks#52
+
+### Removed
+- Removed unused run_standalone_dashapp.sh script
+
 ## 2.1.0 - 2019-05-22
 
 ### Added
