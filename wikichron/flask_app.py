@@ -110,6 +110,13 @@ def upload():
                                 title = 'WikiChron - Upload a wiki')
 
 
+@server_bp.route('/csv-upload', methods = ['POST'])
+def upload_post():
+    data = request.form
+
+    return f'data is {data}'
+
+
 @server_bp.route('/wikisTimelifes.json')
 def serve_wikis_time_lifes():
 

@@ -12,38 +12,42 @@
     <main>
         <div id="upload-dialog-inner-div" class="container">
             <h1>Add your wiki to Wikichron</h1>
-            <form action="/file-upload" class="dropzone" id="my-awesome-dropzone">
+            <form action="/csv-upload" method="post">
                 <p><strong>(link to the docs)</strong></p>
                 <div class="row">
-                    <p class="col-3"><strong>wiki name*:</strong></p>
-                    <div class="col-9" style="display: inline-flex;">
-                        <input type="text" id="wiki-name-input" placeholder="Write a descriptive name of the wiki">
-                    </div>
+                    <label for="input-wiki-name" class="col-3"><strong>wiki name*:</strong></label>
+                    <input id="input-wiki-name" name="name" class="col-6" type="text" placeholder="Write a descriptive name of the wiki" required>
                 </div>
                 <div class="row">
-                    <p class="col-3"><strong>wiki url*:</strong></p>
-                    <div class="col-9" style="display: inline-flex;">
-                        <input type="url" id="wiki-url-input" placeholder="Write the url of the wiki">
+                    <label for="input-wiki-url" class="col-3"><strong>wiki url*:</strong></label>
+                    <input id="input-wiki-url" name="url" class="col-6" type="url" placeholder="Write the url of the wiki" required>
+                </div>
+
+                <div class="row">
+                    <label for="input-wiki-file" class="col-3"><strong>csv file*:</strong></label>
+<!--
+                    <div class="col-6"><div><div id="upload-data"><div class="" aria-disabled="false" style="min-width: 300px; height: 130px; border-width: 1px; border-style: dashed; border-radius: 5px; text-align: center; margin: 10px;"><img src="/assets/upload-drag.svg" style="margin-top: 20px;">
+-->
+<!--
+                        <p>Drag and Drop or <a>Choose a file</a></p>
+-->
+
+                        <input id="input-wiki-file" type="file" name="file" autocomplete="off">
                     </div>
                 </div>
-                <p>
-                    <div class="row" style="display: flex;">
-                        <p class="col-3"><strong>csv file*:</strong></p>
-                        <div class="col-9"><div><div id="upload-data"><div class="" aria-disabled="false" style="min-width: 300px; height: 130px; border-width: 1px; border-style: dashed; border-radius: 5px; text-align: center; margin: 10px;"><img src="/assets/upload-drag.svg" style="margin-top: 20px;">
-                            <p>Drag and Drop or <a>Choose a file</a></p>
 
-                            <input type="file" autocomplete="off">
-                        </div>
-                    </div>
+                <div id="output-data-upload"></div>
 
-                    <div id="output-data-upload"></div></div></div></div></p>
+<!--
+                </div></div></div>
+-->
 
-                    <div id="csv-buttons-container">
-                        <button id="upload-csv-button" type="button" class="button action-button">UPLOAD</button>
-                        <button id="cancel-csv-button" type="button" class="button cancel-button">CANCEL</button>
-                    </div>
+                <div id="csv-buttons-container">
+                    <input type="submit" value="UPLOAD" id="upload-csv-button" type="button" class="button action-button" required></input>
+                    <button id="cancel-csv-button" type="button" class="button cancel-button">CANCEL</button>
+                </div>
 
-                </form>
+            </form>
         </div>
     </main>
 {% endblock %}

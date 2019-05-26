@@ -4,7 +4,7 @@ body {
 }
 
 main {
-    font-size: 16px; padding: 24px; box-sizing: border-box; overflow-y: hidden; border-top: none; border-bottom: none; max-height: 676px;
+    padding: 24px;
     color: rgba(0, 0, 0, 0.6);
 }
 
