@@ -101,6 +101,15 @@ def networks_app():
                                 )
 
 
+@server_bp.route('/upload.html')
+def upload():
+    config = current_app.config;
+
+    return flask.render_template("upload.html",
+                                development = config["DEBUG"],
+                                title = 'WikiChron - Upload a wiki')
+
+
 @server_bp.route('/wikisTimelifes.json')
 def serve_wikis_time_lifes():
 

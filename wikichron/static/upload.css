@@ -1,0 +1,62 @@
+/* General */
+body {
+    background-color: white;
+}
+
+main {
+    font-size: 16px; padding: 24px; box-sizing: border-box; overflow-y: hidden; border-top: none; border-bottom: none; max-height: 676px;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+h1 {
+    margin-bottom: 2.5rem;
+    font-weight: 900;
+}
+
+#csv-buttons-container {
+    display: flex;
+    flex-direction: row-reverse;
+    flex-wrap: nowrap;
+    margin: 5px;
+    justify-content: space-between;
+}
+
+
+/* Buttons */
+
+.button {
+    border: None;
+    height: 57px;
+    width: 256px;
+    border-radius: 4px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 28px;
+}
+
+.action-button {
+    background-color: #49A5E6;
+    color : white;
+}
+
+.action-button:hover {
+    color: white;
+    background-color: #2DCCCD;
+}
+
+.action-button:disabled {
+    background-color: #D1D1D1;
+    cursor: default;
+    color: #9B9B9B;
+}
+
+.cancel-button {
+    background-color: darkred;
+    color : white;
+}
+
+.cancel-button:hover {
+    background-color: red;
+    color : white;
+}

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+
+{% block dependencies %}
+    <!-- Specific js and css files for this screen -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='upload.css') }}">
+
+{% endblock %}
+
+
+{% block content %}
+    <main>
+        <div id="upload-dialog-inner-div" class="container">
+            <h1>Add your wiki to Wikichron</h1>
+            <form action="/file-upload" class="dropzone" id="my-awesome-dropzone">
+                <p><strong>(link to the docs)</strong></p>
+                <div class="row">
+                    <p class="col-3"><strong>wiki name*:</strong></p>
+                    <div class="col-9" style="display: inline-flex;">
+                        <input type="text" id="wiki-name-input" placeholder="Write a descriptive name of the wiki">
+                    </div>
+                </div>
+                <div class="row">
+                    <p class="col-3"><strong>wiki url*:</strong></p>
+                    <div class="col-9" style="display: inline-flex;">
+                        <input type="url" id="wiki-url-input" placeholder="Write the url of the wiki">
+                    </div>
+                </div>
+                <p>
+                    <div class="row" style="display: flex;">
+                        <p class="col-3"><strong>csv file*:</strong></p>
+                        <div class="col-9"><div><div id="upload-data"><div class="" aria-disabled="false" style="min-width: 300px; height: 130px; border-width: 1px; border-style: dashed; border-radius: 5px; text-align: center; margin: 10px;"><img src="/assets/upload-drag.svg" style="margin-top: 20px;">
+                            <p>Drag and Drop or <a>Choose a file</a></p>
+
+                            <input type="file" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div id="output-data-upload"></div></div></div></div></p>
+
+                    <div id="csv-buttons-container">
+                        <button id="upload-csv-button" type="button" class="button action-button">UPLOAD</button>
+                        <button id="cancel-csv-button" type="button" class="button cancel-button">CANCEL</button>
+                    </div>
+
+                </form>
+        </div>
+    </main>
+{% endblock %}
