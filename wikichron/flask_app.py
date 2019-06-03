@@ -177,30 +177,38 @@ def upload_post():
         # sanitize filename
         filename = secure_filename(file.filename)
 
+        # check if about to overwrite an already existing filename. Rename in that case.
+
+        # store file in FS
+        file.save(os.path.join(config['UPLOAD_FOLDER'], filename))
+
         # process csv, check for errors generate wikis.json metadata
+        try:
+            wiki_df = data_manager.load_dataframe_from_csv(filename)
+        except:
+            return upload_error('The provided csv file has an invalid format. Please, use our parser to parse the xml dump file.')
 
-        # show stats and if overwriting, ask first user. Wait for user confirmation
+        wiki_stats = data_manager.get_stats(wiki_df)
 
-        # check if about to overwrite an existing file. Rename in that case.
-
-
-        # update wikis.json
+        # show previous stats and if overwriting, ask first user. Wait for user confirmation
         wiki_name = request.form['name']
-        wikis.append(
-            {"url": wiki_url,
+        new_wiki = {
+            "url": wiki_url,
             "data": filename,
             "name": wiki_name,
             "lastUpdated": str(datetime.date.today()),
             "verified": False}
-        )
-        print(wikis)
+        new_wiki.update(wiki_stats)
+
+        print(new_wiki)
+
+        # update wikis.json
+        wikis.append(new_wiki)
 
         if not data_manager.update_wikis_metadata(wikis):
-            upload_error('Error updating wiki metadata')
+            return upload_error('Error updating wiki metadata')
 
 
-        # store file in FS
-        file.save(os.path.join(config['UPLOAD_FOLDER'], filename))
 
 
         # Redirect to upload-success
