@@ -112,7 +112,7 @@ def main():
             wiki.update(result_stats)
         else:
             raise Exception(f'Wiki {wiki["url"]} is not reacheable. Possibly moved or deleted. Check, whether its url is correct.')
-        
+
         try:
             wiki['bots'] = get_bots(wiki['url'])
         except:
@@ -157,6 +157,7 @@ def main():
             # append to wikis.json
             wikis_json.append(wiki)
 
+    # TOCHANGE and use data_manager
     output_wikis = open(output_wikis_fn, 'w')
     json.dump(wikis_json, output_wikis, indent='\t')
     output_wikis.close()

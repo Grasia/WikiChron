@@ -10,19 +10,25 @@
     Copyright 2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
 
+# built-in imports
 import os
+import datetime
 from urllib.parse import urljoin
 import flask
-from flask import Blueprint, current_app, request, jsonify
+from flask import Blueprint, current_app, request, jsonify, url_for, redirect
+from werkzeug.utils import secure_filename
+
+# local imports
+import wikichron.utils.data_manager as data_manager
 
 # Imports from dash apps
 # classic
 import wikichron.dash.apps.classic.metrics.interface as classic_interface
-import wikichron.dash.apps.classic.data_controller as classic_data_controller
 # networks
 import wikichron.dash.apps.networks.networks.interface as networks_interface
-import wikichron.dash.apps.networks.data_controller as networks_data_controller
 
+# upload config variables
+ALLOWED_EXTENSIONS = set(['csv'])
 
 server_bp = Blueprint('main', __name__)
 
@@ -49,7 +55,7 @@ def classic_app():
 
     config = current_app.config;
 
-    wikis = classic_data_controller.get_available_wikis()
+    wikis = data_manager.get_available_wikis()
 
     metrics_by_category_backend = classic_interface.get_available_metrics_by_category()
     # transform metric objects to a dict with the info we need for metrics:
@@ -79,7 +85,7 @@ def networks_app():
 
     config = current_app.config;
 
-    wikis = networks_data_controller.get_available_wikis()
+    wikis = data_manager.get_available_wikis()
 
     network_backend_objects = networks_interface.get_available_networks()
     networks_frontend = []
@@ -101,6 +107,7 @@ def networks_app():
                                 )
 
 
+@server_bp.route('/upload')
 @server_bp.route('/upload.html')
 def upload():
     config = current_app.config;
@@ -110,17 +117,124 @@ def upload():
                                 title = 'WikiChron - Upload a wiki')
 
 
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 @server_bp.route('/csv-upload', methods = ['POST'])
 def upload_post():
-    data = request.form
 
-    return f'data is {data}'
+    def upload_error(msg):
+        print(msg)
+        html = msg + '<p><a href="/upload.html">Go back</a></p>'
+        return html, 400
+
+    config = current_app.config;
+
+    if request.method == 'POST':
+
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            #~ flash('Missing file part')
+            msg = 'Missing file part'
+            #~ return redirect(url_for('.upload'))
+            return upload_error(msg)
+
+        file = request.files['file']
+
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            #~ flash('No selected file')
+            #~ return redirect(url_for('.upload'))
+            msg = 'No selected file'
+            return upload_error(msg)
+
+        if not allowed_file(file.filename):
+            msg = 'File extension not supported.'
+            #~ flash('File extension not supported.')
+            #~ return redirect(url_for('.upload'))
+            return upload_error(msg)
+
+        wikis = data_manager.get_available_wikis()
+
+        # check wiki url if wiki is already there. if what's there is "verified" then cancel.
+        wiki_url = request.form['url']
+        urls = [wiki['url'] for wiki in wikis]
+
+        if wiki_url in urls:
+
+            existing_wiki = wikis[urls.index(wiki_url)]
+
+            if 'verified' in existing_wiki and existing_wiki['verified']:
+                return upload_error('Verified data cannot be overwritten by guest users')
+
+            else:
+                return upload_error('Caution! overwriting existing wiki!')
+                overwriting_existing = True
+
+        # sanitize filename
+        filename = secure_filename(file.filename)
+
+        # process csv, check for errors generate wikis.json metadata
+
+        # show stats and if overwriting, ask first user. Wait for user confirmation
+
+        # check if about to overwrite an existing file. Rename in that case.
+
+
+        # update wikis.json
+        wiki_name = request.form['name']
+        wikis.append(
+            {"url": wiki_url,
+            "data": filename,
+            "name": wiki_name,
+            "lastUpdated": str(datetime.date.today()),
+            "verified": False}
+        )
+        print(wikis)
+
+        if not data_manager.update_wikis_metadata(wikis):
+            upload_error('Error updating wiki metadata')
+
+
+        # store file in FS
+        file.save(os.path.join(config['UPLOAD_FOLDER'], filename))
+
+
+        # Redirect to upload-success
+        return redirect(url_for('.list_data'))
+
+
+
+    else:
+        msg = 'HTTP method not expected'
+        #~ flash('HTTP method not expected')
+        #~ return redirect(url_for('.upload'))
+        return upload_error(msg)
+
+
+    return flask.render_template("upload-success.html",
+                                development = config["DEBUG"],
+                                title = 'WikiChron - Successful upload!')
+
+    return flask.render_template("upload-error.html",
+                                development = config["DEBUG"],
+                                title = 'WikiChron - Upload error!')
+
+
+@server_bp.route('/data')
+@server_bp.route('/list_data')
+def list_data():
+    ls = os.listdir(current_app.config['DATA_DIR'])
+    return str(ls)
 
 
 @server_bp.route('/wikisTimelifes.json')
 def serve_wikis_time_lifes():
 
-    wikis = networks_data_controller.get_available_wikis()
+    wikis = data_manager.get_available_wikis()
 
     time_spans = { wiki['url']: {'first_date': wiki['first_edit']['date'], 'last_date': wiki['last_edit']['date']}
                                 for wiki in wikis

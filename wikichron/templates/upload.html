@@ -12,7 +12,7 @@
     <main>
         <div id="upload-dialog-inner-div" class="container">
             <h1>Add your wiki to Wikichron</h1>
-            <form action="/csv-upload" method="post">
+            <form action="/csv-upload" method="post" enctype=multipart/form-data>
                 <p><strong>(link to the docs)</strong></p>
                 <div class="row">
                     <label for="input-wiki-name" class="col-3"><strong>wiki name*:</strong></label>
