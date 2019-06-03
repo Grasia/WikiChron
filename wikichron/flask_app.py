@@ -130,7 +130,7 @@ def upload_post():
         html = msg + '<p><a href="/upload.html">Go back</a></p>'
         return html, 400
 
-    config = current_app.config;
+    config = current_app.config
 
     if request.method == 'POST':
 
@@ -227,8 +227,15 @@ def upload_post():
 @server_bp.route('/data')
 @server_bp.route('/list_data')
 def list_data():
-    ls = os.listdir(current_app.config['DATA_DIR'])
-    return str(ls)
+    wikis = data_manager.get_available_wikis()
+
+    config = current_app.config
+
+    return flask.render_template("data.html",
+                            title = 'WikiChron - available wikis',
+                            development = config["DEBUG"],
+                            wikis = wikis
+                            )
 
 
 @server_bp.route('/wikisTimelifes.json')
