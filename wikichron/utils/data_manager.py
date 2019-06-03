@@ -15,6 +15,7 @@ import pandas as pd
 import csv
 import json
 import os
+import zc.lockfile
 
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 
@@ -28,7 +29,9 @@ def get_available_wikis():
 def update_wikis_metadata(new_metadata):
     # if file is not locked, open it and lock it
     try:
-        wikis_json_file = open(os.path.join(data_dir, 'wikis.json'), 'w')
+        filename = os.path.join(data_dir, 'wikis.json')
+        lock = zc.lockfile.LockFile(filename)
+        wikis_json_file = open(filename, 'w')
     except:
         return False
 
@@ -41,6 +44,7 @@ def update_wikis_metadata(new_metadata):
     finally:
         # release lock if got it
         wikis_json_file.close()
+        lock.close()
 
 
 def load_dataframe_from_csv(csv: str):
@@ -73,5 +77,4 @@ def get_stats(data : pd.DataFrame) -> dict:
                     }
 
     return stats
-
 
