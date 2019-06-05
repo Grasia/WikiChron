@@ -17,10 +17,12 @@ import csv
 import requests
 import json
 import os
-import re
 import base64
 import shutil
 from bs4 import BeautifulSoup
+
+
+from is_wikia_wiki import is_wikia_wiki
 
 
 if 'WIKICHRON_DATA_DIR' in os.environ:
@@ -60,8 +62,8 @@ def get_wikia_wordmark_api(domain): # doesn't work properly :(
     return None
 
 
-def get_wikia_wordmark_file(domain):
-    url = 'https://' + domain + '/wiki/File:Wiki-wordmark.png'
+def get_wikia_wordmark_file(url):
+    url = url + '/wiki/File:Wiki-wordmark.png'
     res = requests.get(url)
     status_code = res.status_code
     if status_code == 200:
@@ -83,10 +85,6 @@ def get_wikia_wordmark_file(domain):
     else:
         print (status_code)
         return None
-
-
-def is_wikia_wiki(url):
-    return (re.search('.*\.(fandom|wikia)\.com.*', url) != None)
 
 
 def main():

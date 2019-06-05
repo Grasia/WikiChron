@@ -18,13 +18,13 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import os
-import re
 import pandas as pd
 from datetime import date
 import sys
 
 from query_bot_users import get_bots
 from get_wikia_images_base64 import get_wikia_wordmark_file
+from is_wikia_wiki import is_wikia_wiki
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../wikichron'))
 from utils.data_manager import update_wikis_metadata, get_stats
@@ -40,9 +40,7 @@ row_selector = "tr.mw-statistics-"
 stats = ['articles','pages','edits']
 
 
-def get_name(base_url):
-
-    url = 'http://' + base_url
+def get_name(url):
 
     req = requests.get(url)
     if req.status_code != 200:
@@ -59,34 +57,6 @@ def get_name(base_url):
         return 'Unknown'
 
     return name
-
-
-def is_wikia_wiki(url):
-    return (re.search('.*\.(fandom|wikia)\.com.*', url) != None)
-
-
-def get_stats(data : pd.DataFrame) -> dict:
-    stats = {}
-
-    stats['edits'] = data['revision_id'].nunique()
-    stats['pages'] = data['page_id'].nunique()
-    stats['users'] = data['contributor_id'].nunique()
-    stats['articles'] = data[data['page_ns'] == 0]['page_id'].nunique()
-
-    data = data.sort_values(by = 'timestamp')
-    first_edit = data.head(1)
-    stats['first_edit'] = {
-                    'revision_id': int(first_edit['revision_id'].values[0]),
-                    'date': str(first_edit['timestamp'].values[0])
-                    }
-
-    last_edit = data.tail(1)
-    stats['last_edit'] = {
-                    'revision_id': int(last_edit['revision_id'].values[0]),
-                    'date': str(last_edit['timestamp'].values[0])
-                    }
-
-    return stats
 
 
 def load_dataframe_from_csv(csv: str):
