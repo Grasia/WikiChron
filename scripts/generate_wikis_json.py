@@ -21,9 +21,13 @@ import os
 import re
 import pandas as pd
 from datetime import date
+import sys
 
 from query_bot_users import get_bots
 from get_wikia_images_base64 import get_wikia_wordmark_file
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../wikichron'))
+from utils.data_manager import update_wikis_metadata, get_stats
 
 if 'WIKICHRON_DATA_DIR' in os.environ:
     data_dir = os.environ['WIKICHRON_DATA_DIR']
@@ -158,10 +162,7 @@ def main():
             # append to wikis.json
             wikis_json.append(wiki)
 
-    # TOCHANGE and use data_manager
-    output_wikis = open(output_wikis_fn, 'w')
-    json.dump(wikis_json, output_wikis, indent='\t')
-    output_wikis.close()
+    update_wikis_metadata(wikis_json)
 
     print(f'\nWikis updated: {[wiki["url"] for wiki in wikis]}')
 
