@@ -197,6 +197,7 @@ def upload_post():
             "data": filename,
             "name": wiki_name,
             "lastUpdated": str(datetime.date.today()),
+            "uploadedBy": request.remote_addr,
             "verified": False}
         new_wiki.update(wiki_stats)
 

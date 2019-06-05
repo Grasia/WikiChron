@@ -120,7 +120,8 @@ def main():
 
         wiki['lastUpdated'] = row['lastUpdated']
 
-        wiki['verified'] = True # Our own provided wikis are "verified"
+        wiki['verified'] = True # Wikis provided by us are "verified"
+        wiki['uploadedBy'] = 'script' # How the wiki was added
 
         print(wiki)
 
