@@ -135,6 +135,8 @@ def upload_post():
 
     config = current_app.config
 
+    data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
+
     if request.method == 'POST':
 
         # check if the post request has the file part
@@ -182,7 +184,7 @@ def upload_post():
 
             else:
                 overwriting_existing = True
-                return upload_error('Caution! overwriting existing wiki!') # confirm overwriting
+                #~ return upload_error('Caution! overwriting existing wiki!') # confirm overwriting
 
         # Set filename
         filename = wiki_domain + '.csv'
@@ -190,14 +192,17 @@ def upload_post():
 
         # If overwriting existing wiki, move old data to old/date/filename.
         if overwriting_existing:
-            backup_dir = os.path.join('old', existing_wiki['lastUpdated'])
+            backup_dir = os.path.join(data_dir, 'old', existing_wiki['lastUpdated'])
             if not os.path.exists(backup_dir):
                 os.makedirs(backup_dir)
-            shutil.move(existing_wiki['data'], backup_dir)
+
+            old_data_path = os.path.join(data_dir, existing_wiki['data'])
+
+            shutil.move(old_data_path, os.path.join(backup_dir, existing_wiki['data']) )
 
 
         # store file in FS
-        file.save(os.path.join(config['UPLOAD_FOLDER'], filename))
+        file.save(os.path.join(data_dir, filename))
 
         # process csv, check for errors generate wikis.json metadata
         try:

@@ -9,5 +9,3 @@ class DevelopmentConfig(object):
     APP_HOSTNAME = f'localhost:{PORT}'
     DEBUG = True
     VERSION = __version__
-    DATA_DIR = DATA_DIR
-    UPLOAD_FOLDER = DATA_DIR
