@@ -25,6 +25,14 @@ input {
     margin-bottom: 10px;
 }
 
+.card {
+    box-shadow: 10px 10px 20px 0px grey
+}
+
+.jumbotron {
+    margin: 0;
+}
+
 
 /* Buttons */
 

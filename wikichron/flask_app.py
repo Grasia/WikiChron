@@ -129,8 +129,9 @@ def upload_post():
 
     def upload_error(msg):
         print(msg)
-        html = msg + '<p><a href="/upload.html">Go back</a></p>'
+        html = 'Error: ' + msg + '<p><a href="/upload.html">Go back</a></p>'
         return html, 400
+
 
     config = current_app.config
 
@@ -225,20 +226,11 @@ def upload_post():
         }
         new_wiki.update(wiki_stats)
 
-        print(new_wiki)
-
         # update wikis.json
         wikis.append(new_wiki)
 
         if not data_manager.update_wikis_metadata(wikis):
-            return upload_error('Error updating wiki metadata. Please, try again.')
-
-
-
-
-        # Redirect to upload-success
-        return redirect(url_for('.list_data'))
-
+            return upload_error('Error updating wikis metadata. Please, try again.')
 
 
     else:
@@ -250,11 +242,9 @@ def upload_post():
 
     return flask.render_template("upload-success.html",
                                 development = config["DEBUG"],
+                                overwritten = overwriting_existing,
+                                wiki = new_wiki,
                                 title = 'WikiChron - Successful upload!')
-
-    return flask.render_template("upload-error.html",
-                                development = config["DEBUG"],
-                                title = 'WikiChron - Upload error!')
 
 
 @server_bp.route('/data')
