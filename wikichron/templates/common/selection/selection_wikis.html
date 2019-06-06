@@ -26,8 +26,8 @@
                   <div class="card-body">
                     <h4 class="card-title">
                         <div class="custom-control custom-checkbox">
-                            <input class="custom-control-input wiki-input" type="checkbox" id="checkbox-{{wiki.url}}" value="{{wiki.url}}" data-name="{{wiki.name}}" name="wikis" {{"checked" if wiki.url in pre_selected_wikis}}>
-                            <label class="custom-control-label wiki-name" for="checkbox-{{wiki.url}}">{{wiki.name}}</label>
+                            <input class="custom-control-input wiki-input" type="checkbox" id="checkbox-{{wiki.domain}}" value="{{wiki.domain}}" data-name="{{wiki.name}}" name="wikis" {{"checked" if wiki.domain in pre_selected_wikis}}>
+                            <label class="custom-control-label wiki-name" for="checkbox-{{wiki.domain}}">{{wiki.name}}</label>
                         </div>
                     </h4>
                     <div class="card-image-container" style="background-color: {{wiki.color or 'white'}};">
@@ -63,8 +63,8 @@
                             <span class="wiki-lastUpdated"><em>{{wiki.lastUpdated or "NA"}}</em></span>
                         </div>
                     </p>
-                    <p class="wiki-url font-weight-bold">
-                        <a href="{{wiki.url}}" class="card-link" target="_blank">
+                    <p class="wiki.domain font-weight-bold">
+                        <a href="{{wiki.domain}}" class="card-link" target="_blank">
                             {{wiki.domain}}
                         </a>
                     </p>
