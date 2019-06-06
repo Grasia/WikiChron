@@ -120,7 +120,8 @@
 			"date": "2019-01-07T21:12:42.000000000"
 		},
 		"lastUpdated": "2019-01-01",
-		"uploadedBy": "script"
+		"uploadedBy": "script",
+		"domain": "cocktails.fandom.com"
 	},
 	{
 		"url": "https://200movies.fandom.com",
@@ -226,7 +227,8 @@
 			"date": "2019-01-27T17:19:43.000000000"
 		},
 		"lastUpdated": "2019-01-01",
-		"uploadedBy": "script"
+		"uploadedBy": "script",
+		"domain": "200movies.fandom.com"
 	},
 	{
 		"url": "https://lagunanegra.fandom.com/es",
@@ -345,7 +347,8 @@
 			"date": "2019-01-05T02:25:01.000000000"
 		},
 		"lastUpdated": "2019-01-01",
-		"uploadedBy": "script"
+		"uploadedBy": "script",
+		"domain": "lagunanegra.fandom.com/es"
 	},
 	{
 		"url": "https://shamanking.fandom.com/es",
@@ -464,7 +467,8 @@
 			"date": "2019-01-17T21:46:42.000000000"
 		},
 		"lastUpdated": "2019-01-01",
-		"uploadedBy": "script"
+		"uploadedBy": "script",
+		"domain": "shamanking.fandom.com/es"
 	},
 	{
 		"url": "https://proteins.fandom.com",
@@ -582,7 +586,8 @@
 			"date": "2019-01-03T20:33:19.000000000"
 		},
 		"lastUpdated": "2019-01-01",
-		"uploadedBy": "script"
+		"uploadedBy": "script",
+		"domain": "proteins.fandom.com"
 	},
 	{
 		"url": "https://zelda.fandom.com",
@@ -717,7 +722,8 @@
 			"date": "2019-01-23T08:02:22.000000000"
 		},
 		"lastUpdated": "2019-01-01",
-		"uploadedBy": "script"
+		"uploadedBy": "script",
+		"domain": "zelda.fandom.com"
 	},
 	{
 		"url": "https://undertale.fandom.com/de",
@@ -824,7 +830,8 @@
 			"date": "2019-02-01T14:21:01.000000000"
 		},
 		"lastUpdated": "2019-01-01",
-		"uploadedBy": "script"
+		"uploadedBy": "script",
+		"domain": "undertale.fandom.com/de"
 	},
 	{
 		"url": "https://psychology.wikia.org",
@@ -951,6 +958,7 @@
 				"id": "34480145",
 				"name": "I make userpages"
 			}
-		]
+		],
+		"domain": "psychology.wikia.org"
 	}
 ]

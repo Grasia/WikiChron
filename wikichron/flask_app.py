@@ -17,9 +17,11 @@ from urllib.parse import urljoin
 import flask
 from flask import Blueprint, current_app, request, jsonify, url_for, redirect
 from werkzeug.utils import secure_filename
+import shutil
 
 # local imports
 import wikichron.utils.data_manager as data_manager
+import wikichron.utils.utils as utils
 
 # Imports from dash apps
 # classic
@@ -161,23 +163,35 @@ def upload_post():
 
         # check wiki url if wiki is already there. if what's there is "verified" then cancel.
         wiki_url = request.form['url']
-        urls = [wiki['url'] for wiki in wikis]
+        try:
+            wiki_domain = utils.get_domain_from_url(wiki_url)
+        except:
+            return upload_error('Unrecognized format for url. Please, prepend the url with http:// or https://')
 
-        if wiki_url in urls:
+        domains = [wiki['domain'] for wiki in wikis]
 
-            existing_wiki = wikis[urls.index(wiki_url)]
+        if wiki_domain in domains:
+
+            existing_wiki = wikis[domains.index(wiki_domain)]
 
             if 'verified' in existing_wiki and existing_wiki['verified']:
-                return upload_error('Verified data cannot be overwritten by guest users')
+                return upload_error(f'Wiki {wiki_domain} is verified. Verified data cannot be overwritten by guest users.')
 
             else:
-                return upload_error('Caution! overwriting existing wiki!')
+                return upload_error('Caution! overwriting existing wiki!') # confirm overwriting
                 overwriting_existing = True
 
-        # sanitize filename
-        filename = secure_filename(file.filename)
+        # Set filename
+        filename = wiki_domain + '.csv'
+        filename = secure_filename(filename)
 
-        # check if about to overwrite an already existing filename. Rename in that case.
+        # If overwriting existing wiki, move old data to old/date/filename.
+        if overwriting_existing:
+            backup_dir = os.path.join('old', existing_wiki['lastUpdated'])
+            if not os.path.exists(backup_dir):
+                os.makedirs(backup_dir)
+            shutil.move(existing_wiki['data'], backup_dir)
+
 
         # store file in FS
         file.save(os.path.join(config['UPLOAD_FOLDER'], filename))
@@ -187,6 +201,7 @@ def upload_post():
             wiki_df = data_manager.load_dataframe_from_csv(filename)
             wiki_stats = data_manager.get_stats(wiki_df)
         except:
+            os.remove(os.path.join(config['UPLOAD_FOLDER'], filename))
             return upload_error('The provided csv file has an invalid format. Please, use our parser to parse the xml dump file.')
 
 
@@ -194,11 +209,13 @@ def upload_post():
         wiki_name = request.form['name']
         new_wiki = {
             "url": wiki_url,
+            "domain": wiki_domain,
             "data": filename,
             "name": wiki_name,
             "lastUpdated": str(datetime.date.today()),
             "uploadedBy": request.remote_addr,
-            "verified": False}
+            "verified": False
+        }
         new_wiki.update(wiki_stats)
 
         print(new_wiki)

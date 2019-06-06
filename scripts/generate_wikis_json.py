@@ -28,6 +28,7 @@ from is_wikia_wiki import is_wikia_wiki
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../wikichron'))
 from utils.data_manager import update_wikis_metadata, get_stats
+from utils.utils import get_domain_from_url
 
 if 'WIKICHRON_DATA_DIR' in os.environ:
     data_dir = os.environ['WIKICHRON_DATA_DIR']
@@ -77,6 +78,7 @@ def main():
         print(row['url'], row['csvfile'])
         wiki = {}
         wiki['url'] = row['url']
+        wiki['domain'] = get_domain_from_url(row['url'])
         wiki['data'] = row['csvfile']
 
         wiki_df = load_dataframe_from_csv(wiki['data'])
