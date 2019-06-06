@@ -4,8 +4,9 @@ body {
 }
 
 main {
-    padding: 24px;
     color: rgba(0, 0, 0, 0.6);
+    background-color: #e9ecef;
+    height: 100vh;
 }
 
 h1 {
@@ -13,21 +14,23 @@ h1 {
     font-weight: 900;
 }
 
-#csv-buttons-container {
+#buttons-container {
     display: flex;
-    flex-direction: row-reverse;
     flex-wrap: nowrap;
-    margin: 5px;
-    justify-content: space-between;
+    margin: 20px 0px 20px 0px;
+    justify-content: flex-start;
+}
+
+input {
+    margin-bottom: 10px;
 }
 
 
 /* Buttons */
 
 .button {
-    border: None;
     height: 57px;
-    width: 256px;
+    width: 100%;
     border-radius: 4px;
     font-family: 'Roboto', sans-serif;
     font-size: 24px;
