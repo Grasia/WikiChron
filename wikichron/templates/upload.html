@@ -5,6 +5,16 @@
     <!-- Specific js and css files for this screen -->
     <link rel="stylesheet" href="{{ url_for('static', filename='upload.css') }}">
 
+    <script>
+        $( function() {
+            $( "#input-date" ).datepicker({
+                dateFormat: "yy-mm-dd",
+                maxDate: 0
+            })
+
+        });
+    </script>
+
 {% endblock %}
 
 
@@ -21,6 +31,10 @@
                 <div class="row">
                     <label for="input-wiki-url" class="col-3"><strong>wiki url*:</strong></label>
                     <input id="input-wiki-url" name="url" class="col-6" type="url" placeholder="Write the url of the wiki" required>
+                </div>
+                <div class="row">
+                    <label for="input-date" class="col-3"><strong>Date of data retrieval:</strong></label>
+                    <input id="input-date" name="date" class="col-6" type="text" placeholder="Provide when the data of the wiki was obtained">
                 </div>
 
                 <div class="row">

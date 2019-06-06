@@ -170,6 +170,8 @@ def upload_post():
 
         domains = [wiki['domain'] for wiki in wikis]
 
+        overwriting_existing = False
+
         if wiki_domain in domains:
 
             existing_wiki = wikis[domains.index(wiki_domain)]
@@ -178,8 +180,8 @@ def upload_post():
                 return upload_error(f'Wiki {wiki_domain} is verified. Verified data cannot be overwritten by guest users.')
 
             else:
-                return upload_error('Caution! overwriting existing wiki!') # confirm overwriting
                 overwriting_existing = True
+                return upload_error('Caution! overwriting existing wiki!') # confirm overwriting
 
         # Set filename
         filename = wiki_domain + '.csv'
@@ -204,15 +206,20 @@ def upload_post():
             os.remove(os.path.join(config['UPLOAD_FOLDER'], filename))
             return upload_error('The provided csv file has an invalid format. Please, use our parser to parse the xml dump file.')
 
+        # Set lastUpdated value
+        if 'date' in request.form and request.form['date'] <= str(datetime.date.today()):
+            date = request.form['date']
+        else: # If invalid or not provided, just set it to 'NA'
+            date = 'NA'
 
-        # show previous stats and if overwriting, ask first user. Wait for user confirmation
+        # show previous stats and ask confirmation to the user. Wait for user confirmation
         wiki_name = request.form['name']
         new_wiki = {
             "url": wiki_url,
             "domain": wiki_domain,
             "data": filename,
             "name": wiki_name,
-            "lastUpdated": str(datetime.date.today()),
+            "lastUpdated": date,
             "uploadedBy": request.remote_addr,
             "verified": False
         }
