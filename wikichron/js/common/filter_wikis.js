@@ -4,7 +4,7 @@ var wikisList;
 init_list_js = function() {
     var options = {
         valueNames: [ 'wiki-name', 'wiki-url',  'wiki-lastUpdated', 'wiki-users',
-                    'wiki-edits']
+                    'wiki-edits', 'wiki-pages']
     };
 
     wikisList = new List('wiki-cards-container', options);
@@ -41,35 +41,31 @@ setSortBy = function() {
 
 
 /* Filters */
-createUsersSlider = function() {
+createSlider = function(property, maxValue) {
     var lower;
     var upper;
     var handle_lower, handle_upper;
 
-    maxUsers = 1000;
-
-    $( "#users-slider" ).slider({
+    let sliderVar = $( `#${property}-slider` ).slider({
         range: true,
         min: 0,
-        max: maxUsers, // zero-indexed
-        values: [ 0, maxUsers],
-        step : 100,
+        max: maxValue, // zero-indexed
+        values: [ 0, maxValue],
+        step : 100, // number of marks
         slide: function( event, ui ) {
             lower = ui.values[ 0 ]
             upper = ui.values[ 1 ]
 
             // Update display numbers
-            handle_lower = $( "#users-handle-lower" );
-            handle_upper = $( "#users-handle-upper" );
-            console.log(lower, upper);
+            handle_lower = $( `#${property}-handle-lower` );
+            handle_upper = $( `#${property}-handle-upper` );
             handle_lower.text( lower );
             handle_upper.text( upper );
 
-            // Filter wikis by this numbers
+            // Filter wikis by those numbers
             wikisList.filter(function(item) {
-                console.log(item.values()['wiki-users']);
-                if (item.values()['wiki-users'] >= lower
-                    && item.values()['wiki-users'] <= upper) {
+                if (item.values()[`wiki-${property}`] >= lower
+                    && item.values()[`wiki-${property}`] <= upper) {
                    return true;
                 } else {
                    return false;
@@ -78,13 +74,12 @@ createUsersSlider = function() {
         }
     });
 
-    // Init display numbers
-    lower = $( "#users-slider" ).slider( "values", 0 )
-    upper = $( "#users-slider" ).slider( "values", 1 )
+    // Init display numbers with min and max values
+    lower = sliderVar.slider( "values", 0 )
+    upper = sliderVar.slider( "values", 1 )
 
-    handle_lower = $( "#users-handle-lower" );
-    handle_upper = $( "#users-handle-upper" );
-
+    handle_lower = $( `#${property}-handle-lower` );
+    handle_upper = $( `#${property}-handle-upper` );
     handle_lower.text( lower );
     handle_upper.text( upper );
 
@@ -94,7 +89,8 @@ createUsersSlider = function() {
 // functions to run when DOM is ready
 $(function()  {
     init_list_js();
-    createUsersSlider();
+    createSlider('users', 20000);
+    createSlider('pages', 20000);
     setSortBy();
 });
 
