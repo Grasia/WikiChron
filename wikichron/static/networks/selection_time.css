@@ -1,17 +1,17 @@
 /* Custom CSS*/
 
-.slider-container {
+#select-time .slider-container {
     width: 100%;
 }
 
-.slider {
+#select-time .slider {
     width: 100%;
     height: 14px;
     background: #D7D7D7 !important;
     outline: none;
 }
 
-.slider-handle {
+#select-time .slider-handle {
     width: 25px !important;
     height: 25px !important;
     border-radius: 50% !important;
@@ -21,20 +21,20 @@
     cursor: pointer !important;
 }
 
-.ui-widget-header {
+#select-time .ui-widget-header {
     background: none;
     background-color: #4FB6FF !important;
 }
 
-.ui-widget.ui-widget-content {
+#select-time .ui-widget.ui-widget-content {
     border: none;
 }
 
-.ui-state-hover {
+#select-time .ui-state-hover {
     width: 27px !important;
     height: 27px !important;
 }
 
-.ui-state-active {
+#select-time .ui-state-active {
     background: #3D71AE !important;
 }

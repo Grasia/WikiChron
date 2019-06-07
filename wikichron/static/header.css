@@ -39,9 +39,8 @@ header {
 
 #selection-header-paragraph {
     font-family: Roboto;
-    font-size: 20px;
+    font-size: 16px;
     line-height: 27px;
-    width: 300px;
 }
 
 #header-modes-available {
