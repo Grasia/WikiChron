@@ -13,26 +13,30 @@
 
 {% block content %}
 
-    <!-- include header -->
-    {% with %}
-        {% set logo_src = url_for('static', filename='networks/assets/logo_networks_white.svg') %}
-        {% set header_paragraph = "Select one wiki, one network and press generate to start" %}
-        {% include "header.html" %}
-    {% endwith %}
+    <div id="header-background">
 
-    <div class="tabs-bar-container">
-        <ul class="nav nav-tabs" id="tabs" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" id="wikis-tab" data-toggle="tab" href="#wikis" role="tab" aria-controls="home" aria-selected="true">Wikis</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="networks-tab" data-toggle="tab" href="#networks" role="tab" aria-controls="networks" aria-selected="false">Networks</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link disabled" id="time-tab" data-toggle="tab" href="#time" role="tab" aria-controls="time" aria-selected="false">Time</a>
-            </li>
-        </ul>
+        <!-- include common header -->
+        {% with %}
+            {% set logo_src = url_for('static', filename='networks/assets/logo_networks_white.svg') %}
+            {% set header_paragraph = "Select one wiki, one network and press generate to start" %}
+            {% include "header.html" %}
+        {% endwith %}
+
+        <div class="tabs-bar-container">
+            <ul class="nav nav-tabs" id="tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="wikis-tab" data-toggle="tab" href="#wikis" role="tab" aria-controls="home" aria-selected="true">Wikis</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="networks-tab" data-toggle="tab" href="#networks" role="tab" aria-controls="networks" aria-selected="false">Networks</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" id="time-tab" data-toggle="tab" href="#time" role="tab" aria-controls="time" aria-selected="false">Time</a>
+                </li>
+            </ul>
+        </div>
     </div>
+
     <main>
         <section class="selection-content">
             <div class="tab-content">

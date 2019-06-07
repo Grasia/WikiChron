@@ -12,22 +12,27 @@
 
 {% block content %}
 
-    {% with %}
-        {% set logo_src = url_for('static', filename='classic/assets/logo_classic_white.svg') %}
-        {% set header_paragraph = "Select some wikis, some metrics and press compare to start" %}
-        {% include "header.html" %}
-    {% endwith %}
+    <div id="header-background">
 
-    <div class="tabs-bar-container">
-        <ul class="nav nav-tabs" id="tabs" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" id="wikis-tab" data-toggle="tab" href="#wikis" role="tab" aria-controls="home" aria-selected="true">Wikis</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="metrics-tab" data-toggle="tab" href="#metrics" role="tab" aria-controls="metrics" aria-selected="false">Metrics</a>
-            </li>
-        </ul>
+        <!-- include common header -->
+        {% with %}
+            {% set logo_src = url_for('static', filename='classic/assets/logo_classic_white.svg') %}
+            {% set header_paragraph = "Select some wikis, some metrics and press compare to start" %}
+            {% include "header.html" %}
+        {% endwith %}
+
+        <div class="tabs-bar-container">
+            <ul class="nav nav-tabs" id="tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="wikis-tab" data-toggle="tab" href="#wikis" role="tab" aria-controls="home" aria-selected="true">Wikis</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="metrics-tab" data-toggle="tab" href="#metrics" role="tab" aria-controls="metrics" aria-selected="false">Metrics</a>
+                </li>
+            </ul>
+        </div>
     </div>
+
     <main>
         <section class="selection-content">
 
