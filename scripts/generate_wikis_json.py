@@ -77,8 +77,8 @@ def main():
     for row in wikisreader:
         print(row['url'], row['csvfile'])
         wiki = {}
-        wiki['url'] = row['url']
         wiki['domain'] = get_domain_from_url(row['url'])
+        wiki['url'] = row['url']
         wiki['data'] = row['csvfile']
 
         wiki_df = load_dataframe_from_csv(wiki['data'])
@@ -87,7 +87,7 @@ def main():
         if result_stats:
             wiki.update(result_stats)
         else:
-            raise Exception(f'Wiki {wiki["url"]} is not reacheable. Possibly moved or deleted. Check, whether its url is correct.')
+            raise Exception(f'Unable to get stats for wiki: {wiki["domain"]}.')
 
         try:
             wiki['bots'] = get_bots(wiki['url'])
@@ -111,7 +111,7 @@ def main():
     try:
         output_wikis = open(output_wikis_fn)
         wikis_json = json.load(output_wikis)
-        current_wikis_positions = { wiki['url']:pos for (pos, wiki) in enumerate(wikis_json) }
+        current_wikis_positions = { wiki['domain']:pos for (pos, wiki) in enumerate(wikis_json) }
         print(f'\nWe already had these wikis: {list(current_wikis_positions.keys())}')
         output_wikis.close()
     except FileNotFoundError:
@@ -119,8 +119,8 @@ def main():
         wikis_json = []
 
     for wiki in wikis:
-        if wiki['url'] in current_wikis_positions: # already in wikis.json
-            position = current_wikis_positions[wiki['url']]
+        if wiki['domain'] in current_wikis_positions: # already in wikis.json
+            position = current_wikis_positions[wiki['domain']]
             wikis_json[position].update(wiki)
         else:                                      # new wiki for wikis.json
             # get name and image only for new wiki entries
@@ -136,7 +136,7 @@ def main():
 
     update_wikis_metadata(wikis_json)
 
-    print(f'\nWikis updated: {[wiki["url"] for wiki in wikis]}')
+    print(f'\nWikis updated: {[wiki["domain"] for wiki in wikis]}')
 
     return 0
 
