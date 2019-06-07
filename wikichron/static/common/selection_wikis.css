@@ -1,0 +1,49 @@
+/* Custom CSS*/
+
+.slider-container {
+    width: 100px;
+    display: inline-block;
+}
+
+
+.slider {
+    width: 100%;
+    height: 2px;
+    background: #D7D7D7 !important;
+    outline: none;
+}
+
+.slider-handle {
+    width: 15px !important;
+    height: 15px !important;
+    border-radius: 50% !important;
+    border: 2px solid #FFFFFF !important;
+    box-sizing: border-box !important;
+    background: #4FB6FF !important;
+    cursor: pointer !important;
+}
+
+.handler-text {
+    color: white;
+    margin-top: 20px;
+    font-size: 10px;
+    text-align: center;
+}
+
+.ui-widget-header {
+    background: none;
+    background-color: #4FB6FF !important;
+}
+
+.ui-widget.ui-widget-content {
+    border: none;
+}
+
+.ui-state-hover {
+    width: 16px !important;
+    height: 16px !important;
+}
+
+.ui-state-active {
+    background: #3D71AE !important;
+}

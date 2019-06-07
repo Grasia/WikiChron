@@ -34,8 +34,6 @@ setSortBy = function() {
         wikisList.sort(`wiki-${by}`, {
             order: order
         })
-
-
     })
 
 }
@@ -46,31 +44,49 @@ setSortBy = function() {
 createUsersSlider = function() {
     var lower;
     var upper;
+    var handle_lower, handle_upper;
 
-    monthsNo = dateIndex.length
-    months10Percentage = Math.round(monthsNo * 0.1)
+    maxUsers = 1000;
 
-    $( "#time-slider" ).slider({
+    $( "#users-slider" ).slider({
         range: true,
         min: 0,
-        max: monthsNo - 1, // zero-indexed
-        values: [ 0, months10Percentage],
-        step : 1,
+        max: maxUsers, // zero-indexed
+        values: [ 0, maxUsers],
+        step : 100,
         slide: function( event, ui ) {
             lower = ui.values[ 0 ]
             upper = ui.values[ 1 ]
-            $( "#time-axis-selection" ).html(formatDate(getDateFromSlider(lower)) + " - " + formatDate(getDateFromSlider(upper)));
-      }
+
+            // Update display numbers
+            handle_lower = $( "#users-handle-lower" );
+            handle_upper = $( "#users-handle-upper" );
+            console.log(lower, upper);
+            handle_lower.text( lower );
+            handle_upper.text( upper );
+
+            // Filter wikis by this numbers
+            wikisList.filter(function(item) {
+                console.log(item.values()['wiki-users']);
+                if (item.values()['wiki-users'] >= lower
+                    && item.values()['wiki-users'] <= upper) {
+                   return true;
+                } else {
+                   return false;
+                }
+            });
+        }
     });
 
     // Init display numbers
-    lower = $( "#time-slider" ).slider( "values", 0 )
-    upper = $( "#time-slider" ).slider( "values", 1 )
-    $( "#time-axis-selection" ).html(
-        formatDate(getDateFromSlider(lower)) +
-        " - " +
-        formatDate(getDateFromSlider(upper))
-    )
+    lower = $( "#users-slider" ).slider( "values", 0 )
+    upper = $( "#users-slider" ).slider( "values", 1 )
+
+    handle_lower = $( "#users-handle-lower" );
+    handle_upper = $( "#users-handle-upper" );
+
+    handle_lower.text( lower );
+    handle_upper.text( upper );
 
   }
 
@@ -78,7 +94,7 @@ createUsersSlider = function() {
 // functions to run when DOM is ready
 $(function()  {
     init_list_js();
-    //~ createUsersSlider();
+    createUsersSlider();
     setSortBy();
 });
 

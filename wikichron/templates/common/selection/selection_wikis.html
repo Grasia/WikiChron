@@ -1,6 +1,7 @@
 {% block dependencies %}
 
     <script src="/js/common/filter_wikis.js" defer="defer"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='common/selection_wikis.css') }}">
 
 {% endblock %}
 
@@ -9,18 +10,38 @@
 
     <div id="selection-wikis-controls" class="d-flex align-items-center justify-content-between my-4">
 
-        <div class="d-inline-block">
-            <img height="px" src={{url_for('static', filename='assets/ico_filter.svg')}}></img>
-            <span>FILTERS:</span>
-        </div>
+        <section class="d-flex justify-content-between" style="width: 350px">
 
-        <div id="users-filter" class="d-inline-block">
+            <div class="d-inline-block">
+                <img height="px" src={{url_for('static', filename='assets/ico_filter.svg')}}></img>
+                <span>FILTERS:</span>
+            </div>
 
-        </div>
+            <div class="range-slider slider-container">
+                <div id="users-slider" class="slider">
+                    <div class="ui-slider-handle slider-handle">
+                        <p id="users-handle-lower" class="handler-text"></p>
+                    </div>
+                    <div class="ui-slider-handle slider-handle">
+                        <p id="users-handle-upper" class="handler-text"></p>
+                    </div>
+                </div>
+            </div>
 
-        <div id="pages-filter" class="d-inline-block">
+            <div class="range-slider slider-container">
+                <div id="pages-slider" class="slider">
+                    <div class="ui-slider-handle slider-handle">
+                        <p id="pages-handle-lower" class="handler-text"></p>
+                    </div>
+                    <div class="ui-slider-handle slider-handle">
+                        <p id="pages-handle-upper" class="handler-text"></p>
+                    </div>
+                </div>
+            </div>
 
-        </div>
+        </section>
+
+
 
         <div id="sort-wikis-by" class="dropdown">
             <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
