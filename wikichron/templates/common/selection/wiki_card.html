@@ -40,9 +40,13 @@
         </div>
     </p>
     <p class="wiki.domain font-weight-bold">
-        <a href="{{wiki.url}}" class="card-link" target="_blank">
+    {% if wiki.url %}
+    	<a href="{{wiki.url}}" class="card-link" target="_blank">
             {{wiki.domain}}
         </a>
+    {% else %}
+    	{{wiki.domain}}
+    {% endif %}
     </p>
   </div>
 </div>
