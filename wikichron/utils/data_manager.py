@@ -26,6 +26,14 @@ def get_available_wikis():
     return wikis
 
 
+def get_max_wiki_stats():
+    wikis = get_available_wikis()
+    max_stats = {}
+    max_stats['edits'] = []
+
+    return max_stats
+
+
 def update_wikis_metadata(new_metadata):
     # if file is not locked, open it and lock it
     try:
