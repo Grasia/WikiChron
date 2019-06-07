@@ -389,7 +389,7 @@ def _init_global_vars():
     available_metrics = interface.get_available_metrics()
     available_metrics_dict = interface.get_available_metrics_dict()
     available_wikis = data_controller.get_available_wikis()
-    available_wikis_dict = {wiki['url']: wiki for wiki in available_wikis}
+    available_wikis_dict = {wiki['domain']: wiki for wiki in available_wikis}
 
 
 def _init_app_callbacks(app):

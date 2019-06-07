@@ -17,6 +17,9 @@ import sys
 import json
 import re
 
+from is_wikia_wiki import is_wikia_wiki
+
+
 wikia_api_endpoint = 'api.php?action=query&list=groupmembers&gmgroups=bot|bot-global&gmlimit=500&format=json'
 mediawiki_api_endpoint = 'api.php?action=query&list=allusers&augroup=bot&aulimit=500&auprop=groups&format=json'
 
@@ -93,16 +96,10 @@ def write_outputfile(filename, bots):
    np.array(bots).tofile(filename, sep=',')
 
 
-def is_wikia_wiki(url):
-   return (re.search('.*\.(fandom|wikia)\.com.*', url) != None)
-
-
 def get_bots(url):
    if is_wikia_wiki(url): # detect Wikia wikis
-      url = 'https://' + url
       return wikia_get_bots(url)
    else:
-      url = 'http://' + url
       return mediawiki_get_bots(url)
 
 

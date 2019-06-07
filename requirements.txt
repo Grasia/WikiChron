@@ -51,7 +51,6 @@ Pygments==2.3.1
 pyparsing==2.3.1
 pyrsistent==0.14.11
 python-dateutil==2.7.3
-python-igraph==0.7.1.post6
 pytz==2018.5
 redis==2.10.6
 requests==2.22.0
@@ -67,3 +66,4 @@ urllib3==1.25.2
 wcwidth==0.1.7
 Werkzeug==0.14.1
 wiki-dump-parser==2.0.0
+zc.lockfile==1.4

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block dependencies %}
+    <!-- Specific js and css files for this screen -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='upload.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='classic/selection.css') }}">
+
+{% endblock %}
+
+
+
+{% block content %}
+    <main>
+        <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+                <h1 class="display-4">Successful upload! <span style="color: green"><i class="fa fa-check-circle"></i></span></h1>
+                <p class="lead">The data for wiki: "{{wiki.name}}" was uploaded and successfully added to WikiChron.</p>
+
+
+                <div class="d-flex justify-content-center mt-4">
+                    {% include "common/selection/wiki_card.html" %}
+                </div>
+
+
+                {% if overwritten %}
+                    <p>
+                        <i class="fas fa-exclamation-circle"></i> Previous data for this wiki has been replaced by your recent upload.
+                    </p>
+                {% endif %}
+
+
+                <hr class="my-3">
+
+                <p class="lead">Now you can close this tab and reload the tab were you had WikiChron opened. You should find your wiki within the available wikis.</p>
+
+
+                <div class="d-flex justify-content-around w-100">
+                    <a class="btn btn-secondary btn-lg" href="/list_data" role="button">List available wikis</a>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

@@ -1,21 +1,5 @@
 'use strict';
 
-var wikisList
-
-/* List.js */
-function init_list_js() {
-    var options = {
-    valueNames: [ 'wiki-name', 'wiki-url' ]
-    };
-
-    wikisList = new List('wiki-cards-container', options);
-
-    $('#search-wiki-input').on('keyup', function() {
-        let searchString = $(this).val();
-        wikisList.search(searchString);
-    });
-}
-
 
 /* enable action button */
 function check_enable_action_button() {
@@ -173,6 +157,5 @@ $('#selection-footer-button').on ("click", function() {
 
 // functions to run when DOM is ready
 $(function()  {
-    init_list_js();
     init_current_selection();
 });

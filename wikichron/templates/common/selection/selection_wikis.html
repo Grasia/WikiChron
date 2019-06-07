@@ -1,3 +1,10 @@
+{% block dependencies %}
+
+    <script src="/js/common/filter_wikis.js" defer="defer"></script>
+
+{% endblock %}
+
+
 <div>
 
     <div id="tab-header" class="d-flex justify-content-between mx-2">
@@ -15,54 +22,7 @@
 
         <div id="wiki-cards-list" class="d-flex flex-row flex-wrap justify-content-center list">
             {% for wiki in wikis %}
-                <div class="card m-2 mb-5" style="width: 18rem;">
-                  <div class="card-body">
-                    <h4 class="card-title">
-                        <div class="custom-control custom-checkbox">
-                            <input class="custom-control-input wiki-input" type="checkbox" id="checkbox-{{wiki.url}}" value="{{wiki.url}}" data-name="{{wiki.name}}" name="wikis" {{"checked" if wiki.url in pre_selected_wikis}}>
-                            <label class="custom-control-label wiki-name" for="checkbox-{{wiki.url}}">{{wiki.name}}</label>
-                        </div>
-                    </h4>
-                    <div class="card-image-container" style="background-color: {{wiki.color or 'white'}};">
-                        <div class="card-image-wrapper">
-                            {% if wiki.imageSrc %}
-                            <img src="{{wiki.imageSrc}}" alt="Wiki image" />
-                            {% else %}
-                            <img src="/static/assets/wiki_img_fallback.png" alt="Wiki image" />
-                            {% endif %}
-                        </div>
-                    </div>
-                    <p class="card-text">
-                        <div class="wiki-item">
-                            <span>Users:</span>
-                            <span class="font-weight-bold">{{wiki.users or "NA"}}</span>
-                        </div>
-                        <div class="wiki-item">
-                            <span>Articles:</span>
-                            <span class="font-weight-bold">{{wiki.articles or "NA"}}</span>
-                        </div>
-                        <div class="wiki-item">
-                            <span>Pages:</span>
-                            <span class="font-weight-bold">{{wiki.pages or "NA"}}</span>
-                        </div>
-                        <div class="wiki-item">
-                            <span>Edits:</span>
-                            <span class="font-weight-bold">{{wiki.edits or "NA"}}</span>
-                        </div>
-                    </p>
-                    <p class="card-text">
-                        <div class="wiki-item">
-                            <span><em>Last updated:</em></span>
-                            <em>{{wiki.lastUpdated or "NA"}}</em>
-                        </div>
-                    </p>
-                    <p class="wiki-url font-weight-bold">
-                        <a href="https://{{wiki.url}}" class="card-link" target="_blank">
-                            {{wiki.url}}
-                        </a>
-                    </p>
-                  </div>
-                </div>
+                {% include "common/selection/wiki_card.html" %}
             {% endfor %}
         </div>
     </div>
