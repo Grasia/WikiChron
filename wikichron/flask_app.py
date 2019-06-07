@@ -276,15 +276,6 @@ def serve_wikis_time_lifes():
     return jsonify(time_spans)
 
 
-@server_bp.route('/maxStats.json')
-def serve_max_stats():
-
-    max_stats = data_manager.get_max_wiki_stats()
-
-    return jsonify(max_stats)
-
-
-
 @server_bp.route('/app/')
 def redirect_app_to_classic():
     print('Redirecting user from old endpoint "/app" to /classic/app...')
