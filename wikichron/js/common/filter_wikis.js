@@ -52,7 +52,7 @@ updateHandleLabels = function(property, lower, upper, maxValue) {
 
 
 /* Filters */
-createSlider = function(property, maxValue) {
+createFilterSlider = function(property, maxValue) {
     var lower;
     var upper;
     var handle_lower, handle_upper;
@@ -97,8 +97,8 @@ createSlider = function(property, maxValue) {
 // functions to run when DOM is ready
 $(function()  {
     init_list_js();
-    createSlider('users', 20000);
-    createSlider('pages', 50000);
+    createFilterSlider('users', 20000);
+    createFilterSlider('pages', 50000);
     setSortBy();
 });
 
