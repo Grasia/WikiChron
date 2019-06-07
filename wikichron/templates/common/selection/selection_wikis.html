@@ -8,33 +8,39 @@
 
 <div class="container-fluid px-5" style="color: white">
 
-    <div id="selection-wikis-controls" class="d-flex align-items-center justify-content-between my-4">
+    <div id="selection-wikis-controls" class="d-flex my-4 justify-space-between">
 
-        <section id="controls-section" class="d-flex justify-content-between">
+        <section id="filters-section" class="d-flex align-items-center">
 
-            <div class="d-inline-block">
+            <div class="d-inline-block my-auto">
                 <img height="px" src={{url_for('static', filename='assets/ico_filter.svg')}}></img>
                 <span>FILTERS:</span>
             </div>
 
-            <div class="range-slider slider-container">
-                <div id="users-slider" class="slider">
-                    <div class="ui-slider-handle slider-handle">
-                        <p id="users-handle-lower" class="handler-text"></p>
-                    </div>
-                    <div class="ui-slider-handle slider-handle">
-                        <p id="users-handle-upper" class="handler-text"></p>
+            <div class="slider-container">
+                <p class="filter-title">Users number</p>
+                <div class="range-slider">
+                    <div id="users-slider" class="slider">
+                        <div class="ui-slider-handle slider-handle">
+                            <p id="users-handle-lower" class="handler-text"></p>
+                        </div>
+                        <div class="ui-slider-handle slider-handle">
+                            <p id="users-handle-upper" class="handler-text"></p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="range-slider slider-container">
-                <div id="pages-slider" class="slider">
-                    <div class="ui-slider-handle slider-handle">
-                        <p id="pages-handle-lower" class="handler-text"></p>
-                    </div>
-                    <div class="ui-slider-handle slider-handle">
-                        <p id="pages-handle-upper" class="handler-text"></p>
+            <div class="slider-container">
+                <p class="filter-title">Pages number</p>
+                <div class="range-slider">
+                    <div id="pages-slider" class="slider">
+                        <div class="ui-slider-handle slider-handle">
+                            <p id="pages-handle-lower" class="handler-text"></p>
+                        </div>
+                        <div class="ui-slider-handle slider-handle">
+                            <p id="pages-handle-upper" class="handler-text"></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -42,29 +48,33 @@
         </section>
 
 
+        <section id="right-controls" class="d-flex ml-auto my-auto">
 
-        <div id="sort-wikis-by" class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <img height="15px" src={{url_for('static', filename='assets/ico_sort.svg')}}></img>
-                SORT BY
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" href="#" data-by="lastUpdated" data-order="desc">Last Updated</a>
-                <a class="dropdown-item" href="#" data-by="name" data-order="asc">Alphabetical (A->Z)</a>
-                <a class="dropdown-item" href="#" data-by="name" data-order="desc">Alphabetical (Z->A)</a>
-                <a class="dropdown-item" href="#" data-by="edits" data-order="desc">Number of Edits ↘</a>
-                <a class="dropdown-item" href="#" data-by="users" data-order="desc">Number of Users ↘</a>
+
+            <div id="sort-wikis-by" class="dropdown mr-3">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img height="15px" src={{url_for('static', filename='assets/ico_sort.svg')}}></img>
+                    SORT BY
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="#" data-by="lastUpdated" data-order="desc">Last Updated</a>
+                    <a class="dropdown-item" href="#" data-by="name" data-order="asc">Alphabetical (A->Z)</a>
+                    <a class="dropdown-item" href="#" data-by="name" data-order="desc">Alphabetical (Z->A)</a>
+                    <a class="dropdown-item" href="#" data-by="edits" data-order="desc">Number of Edits ↘</a>
+                    <a class="dropdown-item" href="#" data-by="users" data-order="desc">Number of Users ↘</a>
+                </div>
             </div>
-        </div>
 
 
-        <form class="form-inline">
-            <label class="sr-only" for="search-wiki-input">Wiki keywords</label>
-            <input id="search-wiki-input" class="form-control h-100" type="text" placeholder="Search wiki" autofocus/>
-        </form>
+            <form class="form-inline">
+                <label class="sr-only" for="search-wiki-input">Wiki keywords</label>
+                <input id="search-wiki-input" class="form-control h-100" type="text" placeholder="Search wiki" autofocus/>
+            </form>
+
+        </section>
     </div>
 
-    <hr class="my-2 line"/>
+    <hr class="line"/>
 
     <div id="wiki-cards-container" class="w-100 mx-auto d-flex">
 

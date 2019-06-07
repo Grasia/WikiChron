@@ -39,6 +39,17 @@ setSortBy = function() {
 }
 
 
+updateHandleLabels = function(property, lower, upper, maxValue) {
+    handle_lower = $( `#${property}-handle-lower` );
+    handle_upper = $( `#${property}-handle-upper` );
+    handle_lower.text( lower );
+    if (upper == maxValue) {
+        handle_upper.text( upper + '+');
+    } else {
+        handle_upper.text( upper );
+    }
+}
+
 
 /* Filters */
 createSlider = function(property, maxValue) {
@@ -51,20 +62,20 @@ createSlider = function(property, maxValue) {
         min: 0,
         max: maxValue, // zero-indexed
         values: [ 0, maxValue],
-        step : 100, // number of marks
+        step : maxValue / 200, // number of marks
         slide: function( event, ui ) {
             lower = ui.values[ 0 ]
             upper = ui.values[ 1 ]
 
             // Update display numbers
-            handle_lower = $( `#${property}-handle-lower` );
-            handle_upper = $( `#${property}-handle-upper` );
-            handle_lower.text( lower );
-            handle_upper.text( upper );
+            updateHandleLabels(property, lower, upper, maxValue);
 
             // Filter wikis by those numbers
             wikisList.filter(function(item) {
-                if (item.values()[`wiki-${property}`] >= lower
+
+                if (upper == maxValue && item.values()[`wiki-${property}`] >= lower) {
+                    return true;
+                } else if (item.values()[`wiki-${property}`] >= lower
                     && item.values()[`wiki-${property}`] <= upper) {
                    return true;
                 } else {
@@ -78,10 +89,7 @@ createSlider = function(property, maxValue) {
     lower = sliderVar.slider( "values", 0 )
     upper = sliderVar.slider( "values", 1 )
 
-    handle_lower = $( `#${property}-handle-lower` );
-    handle_upper = $( `#${property}-handle-upper` );
-    handle_lower.text( lower );
-    handle_upper.text( upper );
+    updateHandleLabels(property, lower, upper, maxValue);
 
   }
 
@@ -90,7 +98,7 @@ createSlider = function(property, maxValue) {
 $(function()  {
     init_list_js();
     createSlider('users', 20000);
-    createSlider('pages', 20000);
+    createSlider('pages', 50000);
     setSortBy();
 });
 

@@ -1,19 +1,27 @@
 /* Custom CSS*/
 
-#controls-section {
-    width: 60%;
+#filters-section {
+    max-width: 60%;
+    min-height: 50px;
 }
 
 .slider-container {
-    width: 400px;
-    display: inline-block;
+    display: inline-flex;
+    flex-direction: column;
+    margin-left: 4rem;
+    min-height: 50px;
+}
+
+.range-slider {
+    width: 100%;
 }
 
 .slider {
-    width: 100%;
+    width: 400px;
     height: 2px;
     background: #D7D7D7 !important;
     outline: none;
+    box-sizing: border-box;
 }
 
 .slider-handle {
@@ -24,6 +32,13 @@
     box-sizing: border-box !important;
     background: #4FB6FF !important;
     cursor: pointer !important;
+}
+
+.filter-title {
+    color: white;
+    font-size: 12px;
+    margin-bottom: 12px;
+    margin-left: -10px
 }
 
 .handler-text {
