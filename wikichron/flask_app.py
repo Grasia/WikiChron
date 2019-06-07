@@ -36,7 +36,7 @@ server_bp = Blueprint('main', __name__)
 
 
 @server_bp.route('/')
-@server_bp.route('/welcome.html')
+@server_bp.route('/welcome')
 def index():
     config = current_app.config;
 
@@ -110,7 +110,6 @@ def networks_app():
 
 
 @server_bp.route('/upload')
-@server_bp.route('/upload.html')
 def upload():
     config = current_app.config;
 
@@ -129,7 +128,7 @@ def upload_post():
 
     def upload_error(msg):
         print(msg)
-        html = 'Error: ' + msg + '<p><a href="/upload.html">Go back</a></p>'
+        html = 'Error: ' + msg + '<p><a href="/upload">Go back</a></p>'
         return html, 400
 
 
