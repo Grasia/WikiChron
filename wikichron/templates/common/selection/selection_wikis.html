@@ -8,38 +8,44 @@
 
 <div class="container-fluid px-5" style="color: white">
 
-    <div id="selection-wikis-controls" class="d-flex my-4 justify-space-between">
+    <div id="selection-wikis-controls" class="d-flex justify-space-between">
 
-        <section id="filters-section" class="d-flex align-items-center">
+        <section id="filters-section" class="d-flex align-items-center justify-space-between float-left row">
 
-            <div class="d-inline-block my-auto">
-                <img height="px" src={{url_for('static', filename='assets/ico_filter.svg')}}></img>
-                <span>FILTERS:</span>
+            <div class="d-inline-block my-auto col-2">
+                <img height="12px" src={{url_for('static', filename='assets/ico_filter.svg')}}></img>
+                <span style="font-size: 12px">FILTERS:</span>
             </div>
 
-            <div class="slider-container">
-                <p class="filter-title">Users number</p>
-                <div class="range-slider">
-                    <div id="users-slider" class="slider">
-                        <div class="ui-slider-handle slider-handle">
-                            <p id="users-handle-lower" class="handler-text"></p>
-                        </div>
-                        <div class="ui-slider-handle slider-handle">
-                            <p id="users-handle-upper" class="handler-text"></p>
+            <div class="col-xl-10">
+                <div class="slider-container">
+                    <p class="filter-title">Users number</p>
+                    <div class="range-slider">
+                        <div id="users-slider" class="slider">
+                            <div class="ui-slider-handle slider-handle">
+                                <p id="users-handle-lower" class="handler-text"></p>
+                            </div>
+                            <div class="ui-slider-handle slider-handle">
+                                <p id="users-handle-upper" class="handler-text"></p>
+                            </div>
                         </div>
                     </div>
                 </div>
+<!--
             </div>
 
-            <div class="slider-container">
-                <p class="filter-title">Pages number</p>
-                <div class="range-slider">
-                    <div id="pages-slider" class="slider">
-                        <div class="ui-slider-handle slider-handle">
-                            <p id="pages-handle-lower" class="handler-text"></p>
-                        </div>
-                        <div class="ui-slider-handle slider-handle">
-                            <p id="pages-handle-upper" class="handler-text"></p>
+            <div class="col-xl-10 offset-xl-2 mt-2">
+-->
+                <div class="slider-container mt-2">
+                    <p class="filter-title">Pages number</p>
+                    <div class="range-slider">
+                        <div id="pages-slider" class="slider">
+                            <div class="ui-slider-handle slider-handle">
+                                <p id="pages-handle-lower" class="handler-text"></p>
+                            </div>
+                            <div class="ui-slider-handle slider-handle">
+                                <p id="pages-handle-upper" class="handler-text"></p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -48,7 +54,7 @@
         </section>
 
 
-        <section id="right-controls" class="d-flex ml-auto my-auto">
+        <section id="right-controls" class="d-flex ml-auto my-auto float-right">
 
 
             <div id="sort-wikis-by" class="dropdown mr-3">
@@ -66,7 +72,7 @@
             </div>
 
 
-            <form class="form-inline">
+            <form>
                 <label class="sr-only" for="search-wiki-input">Wiki keywords</label>
                 <input id="search-wiki-input" class="form-control h-100" type="text" placeholder="Search wiki" autofocus/>
             </form>

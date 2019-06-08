@@ -1,7 +1,6 @@
 /* Custom CSS*/
 
 #filters-section {
-    max-width: 60%;
     min-height: 50px;
 }
 
@@ -10,8 +9,8 @@
 .slider-container {
     display: inline-flex;
     flex-direction: column;
-    margin-left: 4rem;
     min-height: 50px;
+    width: 450px;
 }
 
 .range-slider {
