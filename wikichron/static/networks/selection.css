@@ -147,15 +147,6 @@ section.selection-content p {
     line-height: 18px;
 }
 
-.wiki-item {
-    display: flex;
-    justify-content: space-between;
-}
-
-.wiki-url {
-    margin-bottom: 0 !important;
-}
-
 /* Footer */
 
 /* footer - button */

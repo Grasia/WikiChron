@@ -11,42 +11,49 @@
             {% if wiki.imageSrc %}
             <img src="{{wiki.imageSrc}}" alt="Wiki image" />
             {% else %}
-            <img src="/static/assets/wiki_img_fallback.svg" alt="Wiki image" />
+            <img src={{url_for('static', filename='assets/wiki_img_fallback.svg')}} alt="Wiki image" />
             {% endif %}
         </div>
     </div>
-    <p class="card-text">
-        <div class="wiki-item">
+    <p class="card-text mt-0">
+        <span class="wiki-item">
             <span>Users:</span>
             <span class="font-weight-bold wiki-users">{{wiki.users or "NA"}}</span>
-        </div>
-        <div class="wiki-item">
+        </span>
+        <span class="wiki-item">
             <span>Articles:</span>
             <span class="font-weight-bold wiki-articles">{{wiki.articles or "NA"}}</span>
-        </div>
-        <div class="wiki-item">
+        </span>
+        <span class="wiki-item">
             <span>Pages:</span>
             <span class="font-weight-bold wiki-pages">{{wiki.pages or "NA"}}</span>
-        </div>
-        <div class="wiki-item">
+        </span>
+        <span class="wiki-item">
             <span>Edits:</span>
             <span class="font-weight-bold wiki-edits">{{wiki.edits or "NA"}}</span>
-        </div>
-    </p>
-    <p class="card-text">
-        <div class="wiki-item">
-            <span><em>Last updated:</em></span>
+        </span>
+        <span class="wiki-item">
+            <span><em>Data last updated:</em></span>
             <span class="wiki-lastUpdated"><em>{{wiki.lastUpdated or "NA"}}</em></span>
-        </div>
+        </span>
     </p>
-    <p class="wiki.domain font-weight-bold">
-    {% if wiki.url %}
-    	<a href="{{wiki.url}}" class="card-link" target="_blank">
+    <p class="card-text font-weight-bold mb-0" >
+        {% if wiki.url %}
+            <a href="{{wiki.url}}" class="card-link" target="_blank">
+                <span class="wiki-domain">{{wiki.domain}}</span>
+            </a>
+        {% else %}
             {{wiki.domain}}
-        </a>
-    {% else %}
-    	{{wiki.domain}}
-    {% endif %}
+        {% endif %}
     </p>
+    {% if wiki.verified %}
+        <div>
+            <span class="card-text card-verified-text">
+                <img height="16px" src={{url_for('static', filename='assets/ico_verified.svg')}} alt="verified icon"></img>
+                &nbsp;
+                <em>Verified</em>
+            </span>
+        </div>
+    {% endif %}
   </div>
 </div>

@@ -5,6 +5,8 @@
     min-height: 50px;
 }
 
+/* Sliders */
+
 .slider-container {
     display: inline-flex;
     flex-direction: column;
@@ -64,4 +66,27 @@
 
 .ui-state-active {
     background: #3D71AE !important;
+}
+
+/* Wiki Card */
+
+p.card-text {
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.wiki-item {
+    display: flex;
+    justify-content: space-between;
+}
+
+.wiki-url {
+    margin-bottom: 0 !important;
+}
+
+.card-verified-text {
+    font-size: 12px;
+    float: right;
+    display: flex;
+    align-items: center;
 }
