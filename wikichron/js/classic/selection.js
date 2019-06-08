@@ -34,7 +34,7 @@ function unselect_badge(target) {
 // aux function
 function generate_badge({code, name, type}) {
     return `
-        <div id="badge-${type}-${code}" class="badge badge-secondary p-2 current-selected-${type}" data-code="${code}">
+        <div id="badge-${type}-${code}" class="badge badge-secondary current-selected-${type}" data-code="${code}">
             <span class="mr-2 align-middle">${name}</span>
             <button type="button" class="close close-wiki-badge align-middle" aria-label="Close" onclick="unselect_badge(this)">
                 <span aria-hidden="true">&times;</span>

@@ -26,8 +26,8 @@ function check_enable_action_button() {
 // aux function
 function generate_wiki_badge(wikiCode, wikiName) {
     return `
-        <div id="current-selected-${wikiCode}" class="badge badge-secondary p-2 current-selected-wiki" data-code="${wikiCode}">
-            <span class="mr-2 align-middle">${wikiName}</span>
+        <div id="current-selected-${wikiCode}" class="badge badge-secondary current-selected-wiki align-middle" data-code="${wikiCode}">
+            <span>${wikiName}</span>
         </div>
     `;
 }
@@ -36,9 +36,9 @@ function generate_wiki_badge(wikiCode, wikiName) {
 // aux function
 function generate_network_badge(networkCode, networkName) {
     return `
-        <span id="" class="badge badge-secondary p-2 align-middle current-selected-network" data-code="${networkCode}">
-            ${networkName}
-        </span>
+        <div id="" class="badge badge-secondary align-middle current-selected-network" data-code="${networkCode}">
+            <span>${networkName}</span>
+        </div>
     `;
 }
 

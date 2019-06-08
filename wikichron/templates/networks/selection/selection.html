@@ -22,27 +22,31 @@
             {% include "header.html" %}
         {% endwith %}
 
-        <div class="tabs-bar-container">
-            <ul class="nav nav-tabs" id="tabs" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active" id="wikis-tab" data-toggle="tab" href="#wikis" role="tab" aria-controls="home" aria-selected="true">Wikis</a>
+        <div class="tabs-bar-container fluid-container">
+            <ul class="nav nav-tabs row" id="tabs" role="tablist">
+                <li class="nav-item col-5">
+                    <a class="nav-link row active" id="wikis-tab" data-toggle="tab" href="#wikis" role="tab" aria-controls="home" aria-selected="true">
+                            <span class="col-2">Wikis</span>
+                            <span id="wiki-badges-container" class="d-inline-block align-middle current-selection-paragraph col-10"></span>
+                    </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="networks-tab" data-toggle="tab" href="#networks" role="tab" aria-controls="networks" aria-selected="false">Networks</a>
+                <li class="nav-item col-5">
+                    <a class="nav-link row" id="networks-tab" data-toggle="tab" href="#networks" role="tab" aria-controls="networks" aria-selected="false">
+                            <span class="col-3">Networks</span>
+                            <span id="network-badges-container" class="d-inline-block align-middle current-selection-paragraph col-9"></span>
+                    </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" id="time-tab" data-toggle="tab" href="#time" role="tab" aria-controls="time" aria-selected="false">Time</a>
+                <li class="nav-item col-2">
+                    <a class="nav-link row disabled" id="time-tab" data-toggle="tab" href="#time" role="tab" aria-controls="time" aria-selected="false">Time</a>
                 </li>
             </ul>
         </div>
+
     </div>
 
     <main>
         <section class="selection-content">
             <div class="tab-content">
-                <div class="current-selection-container">
-                    {% include 'networks/selection/current_selection.html' %}
-                </div>
                 <div class="tab-pane fade show active" id="wikis" role="tabpanel" aria-labelledby="wikis-tab">
                     {% include 'common/selection/selection_wikis.html' %}
                 </div>
