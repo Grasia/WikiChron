@@ -133,6 +133,65 @@ input:checked {
     margin-left: 5px;
 }
 
+
+/******************************************************************/
+
+/*****************************************************************
+ * Slider conf and its content ()
+ *****************************************************************/
+.handler-label {
+    font-size: 11px;
+    background-color: #9B9B9B;
+    border: 1px solid black;
+    color: white;
+    height: 2rem;
+    width: 6rem;
+    top: -2.5rem;
+    left: -2.5rem;
+    position: absolute;
+    text-align: center;
+}
+
+.handler-label-left {
+    left: -5rem;
+}
+
+.handler-label-right {
+    left: 0;
+}
+
+.handler-label > p {
+    margin: 0;
+}
+
+
+.slider-add-on {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+    margin-left: -0.5rem;
+    font-size: 12px;
+}
+
+.slider-controls-pane{
+    margin-left: 1rem;
+    display: flex;
+    align-items: end;
+}
+
+.arrow {
+    height: 2rem;
+    width: 2.5rem;
+}
+
+#in-step-slider{
+    height: 3rem;
+    width: 7rem;
+    margin: 0 0.6rem 0 0.6rem;
+    padding: 0.5rem 1rem;
+}
+
+
 /* Header */
 
 #header {

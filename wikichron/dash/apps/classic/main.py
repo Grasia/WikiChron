@@ -338,8 +338,9 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
 
             html.Div(id='initial-selection', style={'display': 'none'}, children=args_selection),
             html.Div(id='signal-data', style={'display': 'none'}),
-            html.Div(id='time-axis', style={'display': 'none'}),
-            html.Div(id='ready', style={'display': 'none'})
+            html.Div(id='time-axis', className='time-index', style={'display': 'none'}),
+            html.Div(id='ready', style={'display': 'none'}),
+            gdc.Import(src='/js/sliderHandlerLabels.js')
         ]
     );
 
@@ -576,36 +577,6 @@ def bind_callbacks(app):
                         marks=range_slider_marks,
                     )
                 )
-
-    @app.callback(
-        Output('display-slider-selection', 'children'),
-        [Input('dates-slider', 'value')],
-        [State('time-axis-selection', 'value'),
-        State('time-axis', 'children')]
-    )
-    def display_slider_selection(slider_selection, selected_timeaxis, time_axis_json):
-        """
-        Shows the selected time range from the slider in a text block.
-        slider_selection -- Selection of the Range Slider.
-        """
-
-        if not slider_selection or not time_axis_json:
-            return;
-
-        relative_time = selected_timeaxis == 'relative'
-
-        if relative_time:
-            return('From month {} to month {} after the birthdate of the oldest wiki.'.
-                format(slider_selection[0], slider_selection[1]))
-
-        # In case we are displaying calendar dates, then we have to do a
-        # conversion from "relative dates" to the actual 'natural' date.
-        else:
-            new_timerange = [0,0]
-            time_axis = pd.DatetimeIndex(json.loads(time_axis_json))
-            new_timerange[0] = time_axis[slider_selection[0]].strftime('%b %Y')
-            new_timerange[1] = time_axis[slider_selection[1]].strftime('%b %Y')
-            return('From {} to {} '.format(new_timerange[0], new_timerange[1]))
 
 
     @app.callback(
