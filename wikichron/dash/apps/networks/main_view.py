@@ -131,7 +131,7 @@ def inflate_share_dialog(share_link):
                     ])
                     ]),
                 ]),
-                gdc.Import(src='/js/main.share_modal.js')
+                gdc.Import(src='/js/common/dash/main.share_modal.js')
                 ],
                 className='dialog-content')
 
@@ -220,7 +220,7 @@ def build_network_controls(network_code):
             'label': k,
             'value': k
         })
-    
+
     right = html.Div(children=[
         html.Div(children=[
             'Color:',
@@ -525,6 +525,6 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     ], className='body')
 
     foot = build_foot(assets_url_path)
-    labels_script = gdc.Import(src='/js/sliderHandlerLabels.js')
-    filter_script = gdc.Import(src='/js/filterInfo.js')
+    labels_script = gdc.Import(src='/js/common/dash/sliderHandlerLabels.js')
+    filter_script = gdc.Import(src='/js/networks/dash/filterInfo.js')
     return html.Div(children = [header, body, foot, labels_script, filter_script])

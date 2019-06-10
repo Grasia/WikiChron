@@ -183,7 +183,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
                         className='share-modal-paragraph-info-cn'
                       )
                     ]),
-                    gdc.Import(src='/js/main.share_modal.js')
+                    gdc.Import(src='/js/common/dash/main.share_modal.js')
                     ],
                     id='share-dialog-inner-div'
                 ),
@@ -340,7 +340,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
             html.Div(id='signal-data', style={'display': 'none'}),
             html.Div(id='time-axis', className='time-index', style={'display': 'none'}),
             html.Div(id='ready', style={'display': 'none'}),
-            gdc.Import(src='/js/sliderHandlerLabels.js')
+            gdc.Import(src='/js/common/dash/sliderHandlerLabels.js')
         ]
     );
 
