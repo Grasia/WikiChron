@@ -1,14 +1,14 @@
 'use strict';
-//var wikisList
 
+var wikisList;
 
 /* List.js */
 function init_list_js() {
     var options = {
-    valueNames: [ 'wiki-name', 'wiki-url' ]
+        valueNames: [ 'wiki-name', 'wiki-url' ]
     };
 
-    var wikisList = new List('wiki-cards-container', options);
+    wikisList = new List('wiki-cards-container', options);
 
     $('#search-wiki-input').on('keyup', function() {
         let searchString = $(this).val();
@@ -21,11 +21,6 @@ function init_list_js() {
 function check_enable_action_button() {
     var selectedWikisNo = $('#wikis-badges-container')[0].children.length
     var selectedMetricsNo = $('#metrics-badges-container')[0].children.length
-    if (selectedWikisNo > 0) { // enable Time selection tab
-        $('#time-tab').removeClass('disabled');
-    } else {
-        $('#time-tab').addClass('disabled');
-    }
     if (selectedWikisNo > 0 && selectedMetricsNo > 0) {
         $('#selection-footer-button')[0].disabled = false;
     } else {
@@ -40,20 +35,18 @@ function check_enable_action_button() {
 function unselect_badge(target) {
     var target_badge = target.parentNode;
     var code = target_badge.dataset.code;
+
+    // Clear search in order to uncheck a wiki card
+    // Because of https://github.com/javve/list.js/issues/380
+    wikisList.search('')
+    document.getElementById('search-wiki-input').value = "";
+
     $(`input[id="checkbox-${code}"]`)[0].checked = false;
     target_badge.remove();
     check_enable_action_button();
 }
 
-// aux function
-/*function generate_wiki_badge(wikiCode, wikiName) {
-    return `
-        <div id="current-selected-${wikiCode}" class="badge badge-secondary p-2 current-selected-wiki" data-code="${wikiCode}">
-            <span class="mr-2 align-middle">${wikiName}</span>
-        </div>
-    `;
-}
-*/
+
 // aux function
 function generate_badge({code, name, type}) {
     return `
@@ -104,39 +97,7 @@ $('.wiki-input').click(function(event) {
     var checked = $(this).is(':checked');
     check_input({"input": event.target, "checked": checked, "type": 'wiki'});
 });
-// onclick for wikis checkboxes input
-/*$('.wiki-input').on( "click", function({target}) {
-    var wikiCode = target.value;
-    var badgesContainer = $('#wiki-badges-container');
-    var sameWiki = false;
 
-    if (badgesContainer[0].children.length) { // If there is already a selection
-        var currentBadge = badgesContainer[0].children[0];
-        var currentWikiCode = currentBadge.dataset.code;
-        sameWiki = currentWikiCode === target.value;
-        if (sameWiki) { // if same as previous selected, clean current selection
-           badgesContainer.html('');
-        } else { // if different, unselect previous wiki
-            // Clear search in order to uncheck a wiki card
-            // Because of https://github.com/javve/list.js/issues/380
-            wikisList.search('')
-            document.getElementById('search-wiki-input').value = "";
-
-            $(`input[id="checkbox-${currentWikiCode}"]`)[0].checked = false;
-        }
-    }
-
-    if (!sameWiki) {
-        // Add badge of last selected wiki
-        var wikiName = target.dataset.name;
-        var badgeSelectedWiki = generate_wiki_badge(wikiCode, wikiName);
-
-        badgesContainer.html(badgeSelectedWiki);
-    }
-
-    check_enable_action_button();
-
-});*/
 
 function create_badges_in_container(inputs, container, type) {
     for (let input of inputs) {
@@ -146,6 +107,11 @@ function create_badges_in_container(inputs, container, type) {
         container.append(newBadge);
     }
 
+}
+
+
+function unfoldCategoryMetrics(catName) {
+    document.getElementById(catName).classList.add('show');
 }
 
 
@@ -160,13 +126,7 @@ function init_current_selection() {
                         })
     badgesContainer = $('#wikis-badges-container');
     create_badges_in_container(checkedBoxes, badgesContainer, 'wiki');
-     /*if (checkedBoxes.length > 0) {
-        var badgesContainer = $('#wiki-badges-container');
-        var wikiCode = checkedBoxes[0].value;
-        var wikiName = checkedBoxes[0].dataset.name;
-        var badgeSelectedWiki = generate_wiki_badge(wikiCode, wikiName);
-        badgesContainer.html(badgeSelectedWiki);
-    }*/
+
 
     /* init metrics current selection */
     checkedBoxes = $('.metric-input').
@@ -176,6 +136,9 @@ function init_current_selection() {
 
     badgesContainer = $('#metrics-badges-container');
     create_badges_in_container(checkedBoxes, badgesContainer, 'metric');
+    for (let metric of checkedBoxes) {
+        unfoldCategoryMetrics(metric.dataset.catName);
+    }
 
     check_enable_action_button();
 
@@ -197,7 +160,6 @@ $('#selection-footer-button').on ("click", function() {
     for (let wiki of selectedWikis) {
         selection += `wikis=${wiki.dataset.code}&`
     }
-    //selection = `?wikis=${selectedWiki.dataset.code}`
 
     for (let metric of selectedMetrics) {
         selection += `metrics=${metric.dataset.code}&`
