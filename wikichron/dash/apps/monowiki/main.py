@@ -153,46 +153,105 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
         """
         href_download_button = f'{mode_config["DASH_DOWNLOAD_PATHNAME"]}{query_string}'
         return (html.Div(id='header',
-                className='container',
-                style={'display': 'flex', 'align-items': 'center', \
-                        'justify-content': 'space-between'},
-                children=[
-                    html.Span(
-                        html.Img(src='{}/logo_wikichron.svg'.format(assets_url_path)),
-                        id='tool-title'),
-                    html.Div([
-                        html.A(
-                            html.Img(src='{}/share.svg'.format(assets_url_path)),
-                            id='share-button',
-                            className='icon',
-                            title='Share current selection'
-                        ),
-                        html.A(
-                            html.Img(src='{}/cloud_download.svg'.format(assets_url_path)),
-                            href=href_download_button,
-                            id='download-button',
-                            target='_blank',
-                            className='icon',
-                            title='Download data'
-                        ),
-                        html.A(
-                            html.Img(src='{}/documentation.svg'.format(assets_url_path)),
-                            href='https://github.com/Grasia/WikiChron/wiki/',
-                            target='_blank',
-                            className='icon',
-                            title='Documentation'
-                        ),
-                        html.A(
-                            html.Img(src='{}/ico-github.svg'.format(assets_url_path)),
-                            href='https://github.com/Grasia/WikiChron',
-                            target='_blank',
-                            className='icon',
-                            title='Github repo'
-                        ),
-                    ],
-                    id='icons-bar')
-            ])
+                className='main-root-header',
+                children = [
+                    html.Div(
+                        id='header-container',
+                        children=[
+                            html.Div(
+                                html.Img(src='{}/logo_classic_white.svg'.format(assets_url_path),
+                                    id='title-img'),
+                            ),
+                            html.Hr(),
+                            html.Div(
+                                style={'display': 'flex', 'align-items': 'center', \
+                                        'justify-content': 'space-between'},
+                                children=[
+                                    html.Div([
+                                        html.Strong(
+                                            html.A('< Go back to selection', href=selection_url)
+                                        )
+                                    ]),
+
+                                    html.Div([
+                                        html.A(
+                                            html.Img(src='{}/share.svg'.format(assets_url_path)),
+                                            id='share-button',
+                                            className='icon',
+                                            title='Share current selection'
+                                        ),
+                                        html.A(
+                                            html.Img(src='{}/cloud_download.svg'.format(assets_url_path)),
+                                            href=href_download_button,
+                                            id='download-button',
+                                            target='_blank',
+                                            className='icon',
+                                            title='Download data'
+                                        ),
+                                        html.A(
+                                            html.Img(src='{}/documentation.svg'.format(assets_url_path)),
+                                            href='https://github.com/Grasia/WikiChron/wiki/',
+                                            target='_blank',
+                                            className='icon',
+                                            title='Documentation'
+                                        ),
+                                        html.A(
+                                            html.Img(src='{}/ico-github.svg'.format(assets_url_path)),
+                                            href='https://github.com/wikichron-tfg/WikiChron',
+                                            target='_blank',
+                                            className='icon',
+                                            title='Github repo'
+                                        ),
+                                    ],
+                                    id='icons-bar')
+                                ]
+                            )
+                        ]
+                    )
+                ]
+            )
         );
+
+
+    def share_modal(share_link, download_link):
+        return html.Div([
+            sd_material_ui.Dialog(
+                html.Div(children=[
+                    html.H3('Share WikiChron with others or save your work!'),
+                    html.P([
+                      html.Strong('Link with your current selection:'),
+                      html.Div(className='share-modal-link-and-button-cn', children=[
+                        dcc.Input(value=share_link, id='share-link-input', readOnly=True, className='share-modal-input-cn', type='url'),
+                        html.Div(className='tooltip', children=[
+                          html.Button('Copy!', id='share-link', className='share-modal-button-cn'),
+                        ])
+                      ]),
+                    ]),
+                    html.P([
+                      html.Strong('Link to download the data of your current selection:'),
+                      html.Div(className='share-modal-link-and-button-cn', children=[
+                        dcc.Input(value=download_link, id='share-download-input', readOnly=True, className='share-modal-input-cn', type='url'),
+                        html.Div(className='tooltip', children=[
+                          html.Button('Copy!', id='share-download', className='share-modal-button-cn'),
+                        ])
+                      ]),
+
+                      html.Div([
+                        html.Span('You can find more info about working with the data downloaded in '),
+                        html.A('this page of our wiki.', href='https://github.com/Grasia/WikiChron/wiki/Downloading-and-working-with-the-data')
+                        ],
+                        className='share-modal-paragraph-info-cn'
+                      )
+                    ]),
+                    gdc.Import(src='/js/main.share_modal.js')
+                    ],
+                    id='share-dialog-inner-div'
+                ),
+                id='share-dialog',
+                modal=False,
+                open=False
+            )
+        ])
 
 
     def share_modal(share_link, download_link):
@@ -362,23 +421,19 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
         style={'width': '100%'},
         children=[
 
-            html.A('Go back to selection', href=selection_url),
 
             main_header(),
 
-            html.Hr(),
 
             html.Div(id='selection-div',
                 className='container',
                 children=[
                     select_wikis_and_metrics_control(wikis_dropdown_options, metrics_dropdown_options),
-                    select_time_axis_control('relative' if relative_time else 'absolute')
-                ]
+                    select_time_axis_control('relative' if relative_time else 'absolute'),
+                    date_slider_control(),
+			   ]
              ),
 
-            date_slider_control(),
-
-            html.Hr(),
 
             html.Div(id='graphs'),
 
