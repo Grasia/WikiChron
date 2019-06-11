@@ -10,24 +10,15 @@
 {% endblock %}
 
 
+
 {% block content %}
 
-    <header>
-        <div id='logo-container' class="sticky-header">
-<!--
-            <img height="40px" src={{url_for('static', filename='monowiki/assets/logo_classic.svg')}} />
--->
-            <img height="40px" src={{url_for('static', filename='monowiki/assets/logo_wikichron.svg')}} />
-        </div>
-
-            <div class='intro-container'>
-                <p id='selection-header-welcome'>Welcome to WikiChron <em>Monowiki</em></p>
-                <div id='selection-header-paragraph-div'>
-                    <img />
-                    <p id="selection-header-paragraph">Select some wikis, some metrics and press compare to start</p>
-                </div>
-            </div>
-    </header>
+    {% with %}
+        {% set logo_src = url_for('static', filename='monowiki/assets/logo_classic_white.svg') %}
+        {% set header_paragraph = "Select a wiki, some metrics and press compare to start" %}
+		{% set mode = "monowiki" %}
+        {% include "header.html" %}
+    {% endwith %}
 
     <div class="tabs-bar-container">
         <ul class="nav nav-tabs" id="tabs" role="tablist">
@@ -45,13 +36,13 @@
 
             <div class="tab-content">
                 <div class="current-selection-container">
-                    {% include 'monowiki/selection/current_selection.html' %}
+                    {% include "monowiki/selection/current_selection.html" %}
                 </div>
                 <div class="tab-pane fade show active" id="wikis" role="tabpanel" aria-labelledby="wikis-tab">
-                    {% include 'common/selection/selection_wikis.html' %}
+                    {% include "common/selection/selection_wikis.html" %}
                 </div>
                 <div class="tab-pane fade" id="metrics" role="tabpanel" aria-labelledby="metrics-tab">
-                    {% include 'monowiki/selection/selection_metrics.html' %}
+                    {% include "monowiki/selection/selection_metrics.html" %}
                 </div>
             </div>
         </section>
