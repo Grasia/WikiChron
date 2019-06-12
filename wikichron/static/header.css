@@ -21,6 +21,21 @@ header {
     display: inline;
 }
 
+.add-wiki-anchor {
+    color: white;
+    text-decoration: none;
+    height: 50px;
+    color: white;
+    vertical-align: unset;
+    margin-left: 3rem;
+}
+
+.add-wiki-anchor:hover {
+    text-decoration: none;
+    height: 50px;
+    color: #4FB6FF;
+}
+
 #logo-container {
     height: 50px;
 }
