@@ -53,7 +53,7 @@ def displace_x_months_per_user(data, months):
 
 def current_streak_x_or_y_months_in_a_row(data, index, z, y):
     data = filter_anonymous(data)
-    mothly = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('prueba').reset_index()
+    mothly = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('size').reset_index()
     mothly['add_months'] = add_x_months(mothly, z)
     lista = ['contributor_id']
     lista.append('add_months')
@@ -726,10 +726,10 @@ def bytes_difference_across_articles(data, index):
     users_registered = filter_anonymous(data)
     mains = users_registered[users_registered['page_ns'] == 0]
     order = mains.sort_index()
-    group_by_page_id = order.groupby(['page_id'])
-    frame_bytes = group_by_page_id.apply(lambda x: x.bytes).to_frame('bytes')
-    frame_bytes['dif'] = group_by_page_id.apply(lambda x: x.bytes-x.bytes.shift())
-    frame_bytes['dif'] = frame_bytes['dif'].fillna(frame_bytes['bytes'])
+    group_by_page_id = order[['page_id', 'bytes']].groupby(['page_id'])
+    frame_bytes = group_by_page_id.apply(lambda x: (x.bytes-x.bytes.shift()).fillna(x.bytes)).to_frame('dif')
+    #frame_bytes['dif'] = group_by_page_id.apply(lambda x: x.bytes-x.bytes.shift())
+    #frame_bytes['dif'] = frame_bytes['dif'].fillna(frame_bytes['bytes'])
     frame_bytes['dif'] = frame_bytes['dif'].apply(lambda x: int(x))
     frame_bytes = frame_bytes.reset_index()
     max_dif_bytes = int(max(frame_bytes['dif']))

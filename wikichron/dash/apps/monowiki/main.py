@@ -593,6 +593,7 @@ def bind_callbacks(app):
                         figure={
                             'data': new_graphs[i],
                             'layout': {
+                                'legend': dict(x=.8, y=1.3),
                                 'title': metric.text,
                                 'barmode': 'stack',
                                 'xaxis': {'range': new_timerange, 'tickangle': -60}

@@ -46,6 +46,14 @@ function unselect_badge(target) {
     check_enable_action_button();
 }
 
+// aux function
+function generate_wiki_badge(wikiCode, wikiName) {
+    return `
+        <div id="current-selected-${wikiCode}" class="badge badge-secondary p-2 current-selected-wiki" data-code="${wikiCode}">
+            <span class="mr-2 align-middle">${wikiName}</span>
+        </div>
+    `;
+}
 
 // aux function
 function generate_badge({code, name, type}) {
@@ -92,11 +100,40 @@ $('.metric-input').click(function(event) {
 });
 
 
-// onclick for wikis checkboxes inputs
-$('.wiki-input').click(function(event) {
-    var checked = $(this).is(':checked');
-    check_input({"input": event.target, "checked": checked, "type": 'wiki'});
+$('.wiki-input').on( "click", function({target}) {
+    var wikiCode = target.value;
+    var badgesContainer = $('#wikis-badges-container');
+    var sameWiki = false;
+
+    if (badgesContainer[0].children.length) { // If there is already a selection
+        var currentBadge = badgesContainer[0].children[0];
+        var currentWikiCode = currentBadge.dataset.code;
+        sameWiki = currentWikiCode === target.value;
+        if (sameWiki) { // if same as previous selected, clean current selection
+           badgesContainer.html('');
+        } else { // if different, unselect previous wiki
+            // Clear search in order to uncheck a wiki card
+            // Because of https://github.com/javve/list.js/issues/380
+            wikisList.search('')
+            document.getElementById('search-wiki-input').value = "";
+
+            $(`input[id="checkbox-${currentWikiCode}"]`)[0].checked = false;
+        }
+    }
+
+    if (!sameWiki) {
+        // Add badge of last selected wiki
+        var wikiName = target.dataset.name;
+        var badgeSelectedWiki = generate_wiki_badge(wikiCode, wikiName);
+
+        badgesContainer.html(badgeSelectedWiki);
+    }
+
+    check_enable_action_button();
+
 });
+
+
 
 
 function create_badges_in_container(inputs, container, type) {
@@ -126,7 +163,13 @@ function init_current_selection() {
                         })
     badgesContainer = $('#wikis-badges-container');
     create_badges_in_container(checkedBoxes, badgesContainer, 'wiki');
-
+    /*if (checkedBoxes.length > 0) {
+        var badgesContainer = $('#wiki-badges-container');
+        var wikiCode = checkedBoxes[0].value;
+        var wikiName = checkedBoxes[0].dataset.name;
+        var badgeSelectedWiki = generate_wiki_badge(wikiCode, wikiName);
+        badgesContainer.html(badgeSelectedWiki);
+    }*/
 
     /* init metrics current selection */
     checkedBoxes = $('.metric-input').
@@ -160,6 +203,7 @@ $('#selection-footer-button').on ("click", function() {
     for (let wiki of selectedWikis) {
         selection += `wikis=${wiki.dataset.code}&`
     }
+	//selection = `?wikis=${selectedWiki.dataset.code}`
 
     for (let metric of selectedMetrics) {
         selection += `metrics=${metric.dataset.code}&`
