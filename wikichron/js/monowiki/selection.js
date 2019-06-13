@@ -163,13 +163,6 @@ function init_current_selection() {
                         })
     badgesContainer = $('#wikis-badges-container');
     create_badges_in_container(checkedBoxes, badgesContainer, 'wiki');
-    /*if (checkedBoxes.length > 0) {
-        var badgesContainer = $('#wiki-badges-container');
-        var wikiCode = checkedBoxes[0].value;
-        var wikiName = checkedBoxes[0].dataset.name;
-        var badgeSelectedWiki = generate_wiki_badge(wikiCode, wikiName);
-        badgesContainer.html(badgeSelectedWiki);
-    }*/
 
     /* init metrics current selection */
     checkedBoxes = $('.metric-input').
@@ -203,7 +196,6 @@ $('#selection-footer-button').on ("click", function() {
     for (let wiki of selectedWikis) {
         selection += `wikis=${wiki.dataset.code}&`
     }
-	//selection = `?wikis=${selectedWiki.dataset.code}`
 
     for (let metric of selectedMetrics) {
         selection += `metrics=${metric.dataset.code}&`
