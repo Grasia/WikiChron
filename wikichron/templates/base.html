@@ -38,6 +38,8 @@
             <link rel="shortcut icon" href="{{ url_for('static', filename='networks/favicon.ico') }}">
         {% elif mode == 'classic' %}
             <link rel="shortcut icon" href="{{ url_for('static', filename='classic/favicon.ico') }}">
+        {% elif mode == 'monowiki' %}
+            <link rel="shortcut icon" href="{{ url_for('static', filename='monowiki/favicon.ico') }}">
         {% else %}
             <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
         {% endif %}
