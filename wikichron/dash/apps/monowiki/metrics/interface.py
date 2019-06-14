@@ -14,7 +14,7 @@ import numpy as np
 import time
 import os
 
-from . import stats
+from . import classic_stats
 from . import metrics_generator
 
 print('Generating available metrics...')
@@ -52,7 +52,7 @@ def compute_metrics_on_dataframe(metrics, df):
         df -- Dataframe to compute and calculate the metrics on.
         Return a list of panda series corresponding to the provided metrics.
     """
-    index = stats.calculate_index_all_months(df) #TOIMPROVE
+    index = classic_stats.calculate_index_all_months(df) #TOIMPROVE
     metrics_data = []
     for metric in metrics:
         metric_series = metric.calculate(df, index)

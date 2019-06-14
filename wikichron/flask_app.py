@@ -28,6 +28,8 @@ import wikichron.utils.utils as utils
 import wikichron.dash.apps.classic.metrics.interface as classic_interface
 # networks
 import wikichron.dash.apps.networks.networks.interface as networks_interface
+# monowiki
+import wikichron.dash.apps.monowiki.metrics.interface as monowiki_interface
 
 # upload config variables
 ALLOWED_EXTENSIONS = set(['csv'])
@@ -125,7 +127,7 @@ def monowiki_app():
 
     wikis = data_manager.get_available_wikis()
 
-    metrics_by_category_backend = classic_interface.get_available_metrics_by_category()
+    metrics_by_category_backend = monowiki_interface.get_available_metrics_by_category()
     # transform metric objects to a dict with the info we need for metrics:
     categories_frontend = {}
     for (cat_obj, cat_metrics) in metrics_by_category_backend.items():
