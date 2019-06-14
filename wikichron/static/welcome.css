@@ -96,6 +96,10 @@ h1 {
     padding: 20px;
 }
 
+.logo-text {
+    height: 63px;
+}
+
 .to-app-link {
     font-size: 1.5rem;
     padding-left: 20px;

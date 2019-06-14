@@ -45,9 +45,11 @@ def index():
                                 title = 'WikiChron - Welcome')
 
 
-@server_bp.route('/classic/') #TOMOVE to BP # will be wizard screen
-@server_bp.route('/classic/selection') #TOMOVE to BP
-def classic_app():
+@server_bp.route('/compare/') # will be wizard screen
+@server_bp.route('/compare/selection')
+@server_bp.route('/classic/') # will be wizard screen
+@server_bp.route('/classic/selection')
+def compare_app():
 
     def transform_metric_obj_in_metric_frontend(metric):
         return {'name': metric.text,
@@ -71,7 +73,7 @@ def classic_app():
     selected_metrics = set(request.args.getlist('metrics'))
 
     return flask.render_template("classic/selection/selection.html",
-                                title = 'WikiChron Classic - selection',
+                                title = 'WikiChron Compare - selection',
                                 mode = 'classic',
                                 development = config["DEBUG"],
                                 wikis = wikis,
@@ -81,8 +83,8 @@ def classic_app():
                                 )
 
 
-@server_bp.route('/networks/') #TOMOVE to BP # will be wizard screen
-@server_bp.route('/networks/selection') #TOMOVE to BP
+@server_bp.route('/networks/') # will be wizard screen
+@server_bp.route('/networks/selection')
 def networks_app():
 
     config = current_app.config;
@@ -278,8 +280,8 @@ def serve_wikis_time_lifes():
 
 @server_bp.route('/app/')
 def redirect_app_to_classic():
-    print('Redirecting user from old endpoint "/app" to /classic/app...')
-    return flask.redirect('/classic/app/?{}'.format(bytes.decode(request.query_string)), code=302)
+    print('Redirecting user from old endpoint "/app" to /compare/app...')
+    return flask.redirect('/compare/app/?{}'.format(bytes.decode(request.query_string)), code=302)
 
 
 #--------- BEGIN AUX SERVERS (non pure flask / jinja / html / http servers) ---#

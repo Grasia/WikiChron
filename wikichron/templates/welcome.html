@@ -18,11 +18,11 @@
     <section id="welcome-content" class="container">
       <div id="mode-options">
 
-      <a href="/classic" class="link-unstyled">
+      <a href="/compare" class="link-unstyled">
         <div class="card">
             <div class="card-img-top">
               <img src={{url_for('static', filename='classic/assets/line_graph.svg')}} class="mode-image" alt="Graph image classic">
-              <img src={{url_for('static', filename='classic/assets/logo_classic_text.svg')}} alt="Logo title classic">
+              <img class="logo-text" src={{url_for('static', filename='classic/assets/logo_compare_text.svg')}} alt="Logo title compare">
             </div>
             <div class="card-body">
               <div class="d-flex flex-row align-items-center">
@@ -37,7 +37,7 @@
         <div class="card">
           <div class="card-img-top">
               <img src={{url_for('static', filename='networks/assets/network_graph.svg')}} class="mode-image" alt="Graph image networks">
-              <img src={{url_for('static', filename='networks/assets/logo_networks_text.svg')}} alt="Logo title networks">
+              <img class="logo-text" src={{url_for('static', filename='networks/assets/logo_networks_text.svg')}} alt="Logo title networks">
             </div>
             <div class="card-body">
               <div class="d-flex flex-row align-items-center">

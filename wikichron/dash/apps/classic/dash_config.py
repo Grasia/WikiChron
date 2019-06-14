@@ -2,7 +2,7 @@ from flask import Config
 
 from . import WIKICHRON_APP_NAME
 
-HOME_MODE_PATHNAME = '/classic/'
+HOME_MODE_PATHNAME = '/compare/'
 DASH_STATIC_FOLDER = 'resources'
 
 classic_config = {
