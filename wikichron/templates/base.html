@@ -36,6 +36,8 @@
         <!-- Favicon -->
         {% if mode == 'networks' %}
             <link rel="shortcut icon" href="{{ url_for('static', filename='networks/favicon.ico') }}">
+        {% elif mode == 'classic' %}
+            <link rel="shortcut icon" href="{{ url_for('static', filename='classic/favicon.ico') }}">
         {% else %}
             <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
         {% endif %}
