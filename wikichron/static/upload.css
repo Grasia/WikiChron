@@ -40,6 +40,17 @@ h1 {
 
 #add-wiki-title {
     font-size: 40px;
+    margin-bottom: 3rem;
+}
+
+#add-wiki-info {
+    font-size: 20px;
+    vertical-align: super;
+    color: #4A4A4A;
+}
+
+#add-wiki-info:hover {
+    color: #007bff;
 }
 
 #buttons-container {

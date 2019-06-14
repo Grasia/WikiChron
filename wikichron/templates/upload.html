@@ -24,10 +24,14 @@
             <div id="form-screen" class="container">
                 <div class="row">
                     <div class="col-3"></div>
-                    <h1 id="add-wiki-title" class="col-6 display-4">Add your wiki</h1>
+                    <h1 id="add-wiki-title" class="col-6 display-4">
+                        Add your wiki
+                        <a target="_blank" href="https://github.com/Grasia/WikiChron/wiki/How-to-add-a-new-wiki">
+                            <span id="add-wiki-info"><i class="fas fa-info-circle"></i></span>
+                        </a>
+                    </h1>
                 </div>
                 <form action="/csv-upload" method="post" enctype=multipart/form-data>
-                    <p><strong>(link to the docs)</strong></p>
                     <div class="row input-row">
                         <label for="input-wiki-name" class="col-3 input-label">Wiki name*</label>
                         <span class="col-6">
