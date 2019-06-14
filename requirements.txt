@@ -40,7 +40,6 @@ mpmath==1.0.0
 nbformat==4.4.0
 numpy==1.15.1
 pandas==0.24.2
-parso==0.4.0
 pexpect==4.6.0
 pickleshare==0.7.5
 plotly==3.3.0
@@ -51,6 +50,7 @@ Pygments==2.3.1
 pyparsing==2.3.1
 pyrsistent==0.14.11
 python-dateutil==2.7.3
+python-igraph==0.7.1.post6
 pytz==2018.5
 redis==2.10.6
 requests==2.22.0
