@@ -1,17 +1,42 @@
 /* General */
-body {
+.form-screen {
     background-color: white;
+    padding: 46px;
 }
 
 main {
-    color: rgba(0, 0, 0, 0.6);
-    background-color: #e9ecef;
+    color: #4A4A4A;
     height: 100vh;
 }
 
+input {
+    height: 40px;
+    padding: 15px;
+    width: 100%;
+}
+
+#input-wiki-file {
+    padding: 0px;
+}
+
+.input-label {
+    padding-right: 25px;
+}
+
+.input-row {
+    text-align: right;
+    margin-bottom: 24px;
+    align-items: center;
+}
+
 h1 {
-    margin-bottom: 2.5rem;
-    font-weight: 900;
+	font-size: 36px;
+	font-weight: 300;
+	line-height: 36px;
+}
+
+#add-wiki-title {
+    font-size: 40px;
 }
 
 #buttons-container {
@@ -48,7 +73,7 @@ input {
 
 .action-button {
     background-color: #49A5E6;
-    color : white;
+    color: white;
 }
 
 .action-button:hover {
@@ -63,11 +88,13 @@ input {
 }
 
 .cancel-button {
-    background-color: darkred;
-    color : white;
+    background-color: white;
+    color: #49A5E6;
+    border: 1px solid #4FB6FF;
 }
 
 .cancel-button:hover {
     background-color: red;
     color : white;
+    border: none;
 }
