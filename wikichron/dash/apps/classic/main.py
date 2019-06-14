@@ -99,7 +99,7 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
                         id='header-container',
                         children=[
                             html.Div(
-                                html.Img(src='{}/logo_classic_white.svg'.format(assets_url_path),
+                                html.Img(src='{}/logo_compare_white.svg'.format(assets_url_path),
                                     id='title-img'),
                             ),
                             html.Hr(),
