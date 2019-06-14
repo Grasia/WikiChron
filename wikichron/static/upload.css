@@ -1,17 +1,55 @@
 /* General */
-body {
+#form-screen {
     background-color: white;
+    padding: 46px;
+    box-shadow: 0 0 4px 0 #092049;
+    border-radius: 4px;
+    border: 1px solid #E8E8E8;
 }
 
 main {
-    color: rgba(0, 0, 0, 0.6);
-    background-color: #e9ecef;
-    height: 100vh;
+    color: #4A4A4A;
+}
+
+input {
+    height: 40px;
+    padding: 15px;
+    width: 100%;
+}
+
+#input-wiki-file {
+    padding: 0px;
+}
+
+.input-label {
+    padding-right: 25px;
+}
+
+.input-row {
+    text-align: right;
+    margin-bottom: 24px;
+    align-items: center;
 }
 
 h1 {
-    margin-bottom: 2.5rem;
-    font-weight: 900;
+	font-size: 36px;
+	font-weight: 300;
+	line-height: 36px;
+}
+
+#add-wiki-title {
+    font-size: 40px;
+    margin-bottom: 3rem;
+}
+
+#add-wiki-info {
+    font-size: 20px;
+    vertical-align: super;
+    color: #4A4A4A;
+}
+
+#add-wiki-info:hover {
+    color: #007bff;
 }
 
 #buttons-container {
@@ -25,12 +63,8 @@ input {
     margin-bottom: 10px;
 }
 
-.card {
-    box-shadow: 10px 10px 20px 0px grey
-}
-
 .jumbotron {
-    margin: 0;
+    background: unset;
 }
 
 
@@ -48,7 +82,7 @@ input {
 
 .action-button {
     background-color: #49A5E6;
-    color : white;
+    color: white;
 }
 
 .action-button:hover {
@@ -63,11 +97,37 @@ input {
 }
 
 .cancel-button {
-    background-color: darkred;
-    color : white;
+    background-color: white;
+    color: #49A5E6;
+    border: 1px solid #4FB6FF;
 }
 
 .cancel-button:hover {
     background-color: red;
     color : white;
+    border: none;
+}
+
+/* Background */
+body {
+    background-color: #21446D;
+    background-size: cover;
+}
+
+@media all {
+    body {
+        background-image: url("/static/assets/header_background.png");
+    }
+}
+
+@media all and (min-width: 1441px) {
+    body {
+        background-image: url("/static/assets/header_background_1x.png");
+    }
+}
+
+@media all and (min-width: 1921px){
+    body {
+        background-image: url("/static/assets/header_background_2x.png");
+    }
 }
