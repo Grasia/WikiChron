@@ -1,0 +1,246 @@
+/* Main */
+
+#main {
+    background-color: #F3F3F3;
+}
+
+#graphs {
+    margin-top: 3rem;
+}
+
+#icons-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-left: auto;
+}
+
+.icon {
+    opacity: 0.8;
+}
+
+.icon:hover {
+    opacity: 1;
+}
+
+.icon:not(:first-child) {
+    margin-left: 18px;
+}
+
+#header a {
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.wikis-selection-dropdown-cls {
+    padding-right: 30px;
+}
+
+.comparing-label {
+    padding-top: 6px;
+}
+
+.dropdown-label {
+    margin-right: 1rem;
+    padding-top: 6px;
+}
+
+
+#time-axis-selection {
+    vertical-align: top;
+    display: inline-block;
+}
+
+.time-axis-label:first-child {
+    margin-left: 0rem;
+}
+
+.time-axis-label {
+    margin-left: 4rem;
+}
+
+.time-axis-input {
+    -ms-transform: scale(1.5); /* IE 9 */
+    -webkit-transform: scale(1.5); /* Chrome, Safari, Opera */
+    transform: scale(1.5);
+    margin-right: 5px;
+}
+
+input:checked {
+    border: 6px solid black;
+}
+
+.selector {
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.share-modal-link-and-button-cn {
+    display: flex;
+}
+
+
+.share-modal-input-cn {
+    flex-grow: 2;
+    height: auto;
+    margin: 5px;
+}
+
+.share-modal-button-cn {
+    margin: 5px;
+}
+
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 140px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%;
+    left: 50%;
+    margin-left: -75px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+.share-modal-paragraph-info-cn {
+    margin-left: 5px;
+}
+
+
+/******************************************************************/
+
+/*****************************************************************
+ * Slider conf and its content ()
+ *****************************************************************/
+.handler-label {
+    font-size: 11px;
+    background-color: #9B9B9B;
+    border: 1px solid black;
+    color: white;
+    height: 2rem;
+    width: 6rem;
+    top: -2.5rem;
+    left: -2.5rem;
+    position: absolute;
+    text-align: center;
+}
+
+.handler-label-left {
+    left: -5rem;
+}
+
+.handler-label-right {
+    left: 0;
+}
+
+.handler-label > p {
+    margin: 0;
+}
+
+
+.slider-add-on {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+    margin-left: -0.5rem;
+    font-size: 12px;
+}
+
+.slider-controls-pane{
+    margin-left: 1rem;
+    display: flex;
+    align-items: end;
+}
+
+.arrow {
+    height: 2rem;
+    width: 2.5rem;
+}
+
+#in-step-slider{
+    height: 3rem;
+    width: 7rem;
+    margin: 0 0.6rem 0 0.6rem;
+    padding: 0.5rem 1rem;
+}
+
+
+/* Header */
+
+#header {
+    height: 135px;
+    background-size: cover;
+    padding: 22px 20px 20px 20px;
+}
+
+#header-container {
+    margin: 0 25px 0 25px;
+}
+
+#selection-div hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+#header hr {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+#selection-div {
+    margin-top: -3rem;
+    border: 1px solid #E8E8E8;
+    border-radius: 8px;
+    padding: 20px 20px 20px 20px;
+    background-color: white;
+    min-width: 95%;
+}
+
+#title-img {
+    height: 5rem;
+}
+
+@media all {
+    .main-root-header {
+        background-image: url("/static/assets/header_background.png");
+    }
+}
+
+@media all and (min-width: 1441px) {
+    .main-root-header {
+        background-image: url("/static/assets/header_background_1x.png");
+    }
+}
+
+@media all and (min-width: 1921px){
+    .main-root-header {
+        background-image: url("/static/assets/header_background_2x.png");
+    }
+}

@@ -1,0 +1,33 @@
+
+@keyframes loadingfadein {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 0.5;
+	}
+}
+
+._dash-loading-callback {
+  font-family: sans-serif;
+  padding-top: 50px;
+  color: rgb(90, 90, 90);
+  
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  cursor: progress;
+
+  opacity: 0;
+  background-color: rgb(250, 250, 250);
+  /* Delay animation by 1s to prevent flashing 
+     and smoothly transition the animation over 0.5s 
+   */
+  -moz-animation: loadingfadein 0.5s ease-in 1s forwards; /* Firefox */
+  -webkit-animation: loadingfadein 0.5s ease-in 1s forwards; /* Safari and Chrome */
+  -o-animation: loadingfadein 0.5s ease-in 1s forwards; /* Opera */
+	animation: loadingfadein 0.5s ease-in 1s forwards;
+}

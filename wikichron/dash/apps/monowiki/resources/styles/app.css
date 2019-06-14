@@ -1,0 +1,38 @@
+@import 'https://fonts.googleapis.com/css?family=Roboto';
+@import 'https://fonts.googleapis.com/css?family=Roboto+Mono';
+
+
+/* General */
+
+body {
+  margin: 0px;
+  font-family: 'Roboto', sans-serif;
+}
+
+p {
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+#tool-title {
+    margin-top: 22px;
+}
+
+input[type=checkbox] {
+  transform: scale(1.5);
+  margin-right: 12px;
+}
+
+/* Dash */
+
+._dash-undo-redo {
+    display: none;
+}
+
+#welcome-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 15%;
+}
