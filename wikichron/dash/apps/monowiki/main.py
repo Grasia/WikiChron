@@ -8,7 +8,7 @@ Title, plots and filter elements.
 
    Created on: 01-nov-2017
 
-   Copyright 2017-2018 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
+   Copyright 2017-2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
 
 import os
@@ -43,23 +43,89 @@ def extract_metrics_objs_from_metrics_codes(metric_codes):
 
 
 def generate_graphs(data, metrics, wikis, relative_time):
+    """ Turn over data[] into plotly graphs objects, which can be: 1) bar graphs,
+    2) heatmaps, 3) filled-area graphs,  and store them in graphs[] """
+    graphs_list = []
+    category = []
+    for metric_idx in range(len(metrics)):
+        graphs_list.append([])
+        #print(data[metric_idx])
+        category.append(data[metric_idx].pop(-1))
+        #print(data[metric_idx])
+        if ((category[metric_idx] == "Bar") or (category[metric_idx] == "Areachart")):
+            num_submetrics = len(data[metric_idx])
+            for submetric in range(num_submetrics):
+                graphs_list[metric_idx].append(None)
+        elif (category[metric_idx] == "Heatmap"):
+            data[metric_idx].pop(-1)
     """ Turn over data[] into plotly graphs objects and store it in graphs[] """
 
     graphs_list = [[None for j in range(len(wikis))] for i in range(len(metrics))]
 
     for metric_idx in range(len(metrics)):
-        for wiki_idx in range(len(wikis)):
-            metric_data = data[metric_idx][wiki_idx]
-            if relative_time:
-                x_axis = list(range(len(metric_data.index))) # relative to the age of the wiki in months
-            else:
-                x_axis = metric_data.index # natural months
+        if category[metric_idx] == "Bar":
+            num_submetrics = len(data[metric_idx])
+            for submetric in range(num_submetrics):
+                metric_data = data[metric_idx][submetric]
+                if relative_time:
+                    x_axis = list(range(len(metric_data.index))) # relative to the age of the wiki in months
+                else:
+                    x_axis = metric_data.index # natural months
 
-            graphs_list[metric_idx][wiki_idx] = go.Scatter(
+                print(metrics)
+                print(metric_idx)
+                print(submetric)
+
+
+                graphs_list[metric_idx][submetric] = go.Bar(
+                                    x=x_axis,
+                                    y=metric_data,
+                                    name=metric_data.name
+                                    )
+        elif category[metric_idx] == "Heatmap":
+            if relative_time:
+                x_axis = list(range(len(data[metric_idx][0]))) # relative to the age of the wiki in months
+            else:
+                x_axis = data[metric_idx][0] # natural months
+            y_axis = data[metric_idx][1]
+            z_axis = data[metric_idx][2]
+            graphs_list[metric_idx][0] = go.Heatmap(z=z_axis,
+                               x=x_axis,
+                               y=y_axis,
+                               colorscale= 'Viridis'
+                               )
+
+        elif category[metric_idx] == "Areachart":
+            num_traces = len(data[metric_idx])
+            for trace in range(num_traces):
+                metric_data = data[metric_idx][trace]
+                if relative_time:
+                    x_axis = list(range(len(metric_data.index))) # relative to the age of the wiki in months
+                else:
+                    x_axis = metric_data.index # natural months
+
+                graphs_list[metric_idx][trace] = go.Scatter(
                                 x=x_axis,
                                 y=metric_data,
-                                name=wikis[wiki_idx]['name']
+                                hoverinfo = 'x+y',
+                                mode = 'lines',
+                                line=dict(width=0.5),
+                                stackgroup='one',
+                                name=metric_data.name
                                 )
+        elif category[metric_idx] == "Scatter":
+            num_submetrics = len(data[metric_idx])
+            for submetric in range(num_submetrics):
+                metric_data = data[metric_idx][submetric]
+                if relative_time:
+                    x_axis = list(range(len(metric_data.index))) # relative to the age of the wiki in months
+                else:
+                    x_axis = metric_data.index # natural months
+                graphs_list[metric_idx][submetric] = go.Scatter(
+                                    x=x_axis,
+                                    y=metric_data,
+                                    name=metric_data.name
+                                    )
 
     return graphs_list
 
@@ -491,8 +557,10 @@ def bind_callbacks(app):
                         figure={
                             'data': new_graphs[i],
                             'layout': {
+                                'legend': dict(x=.8, y=1.3),
                                 'title': metric.text,
-                                'xaxis': {'range': new_timerange }
+                                'barmode': 'stack',
+                                'xaxis': {'range': new_timerange, 'tickangle': -60}
                             }
                         },
                         config={
