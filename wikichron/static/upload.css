@@ -1,7 +1,10 @@
 /* General */
-.form-screen {
+#form-screen {
     background-color: white;
     padding: 46px;
+    box-shadow: 0 0 4px 0 #092049;
+    border-radius: 4px;
+    border: 1px solid #E8E8E8;
 }
 
 main {
@@ -50,12 +53,8 @@ input {
     margin-bottom: 10px;
 }
 
-.card {
-    box-shadow: 10px 10px 20px 0px grey
-}
-
 .jumbotron {
-    margin: 0;
+    background: unset;
 }
 
 
@@ -97,4 +96,28 @@ input {
     background-color: red;
     color : white;
     border: none;
+}
+
+/* Background */
+body {
+    background-color: #21446D;
+    background-size: cover;
+}
+
+@media all {
+    body {
+        background-image: url("/static/assets/header_background.png");
+    }
+}
+
+@media all and (min-width: 1441px) {
+    body {
+        background-image: url("/static/assets/header_background_1x.png");
+    }
+}
+
+@media all and (min-width: 1921px){
+    body {
+        background-image: url("/static/assets/header_background_2x.png");
+    }
 }
