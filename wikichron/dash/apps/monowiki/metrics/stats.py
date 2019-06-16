@@ -299,11 +299,11 @@ def edition_on_type_pages(data, index):
     userP=edition_concrete(data, index, 2)
     talkPU=edition_concrete(data, index, 3)
     rest=rest_edition(data, index, [0,1,2,3])
-    articles.name= 'Articles'
-    talkPA.name='Talk Pages of Articles'
-    userP.name='User Pages'
-    talkPU.name='Talk pages Users'
-    rest.name='Rest type pages'
+    articles.name= 'Article pages'
+    talkPA.name='Article talk pages'
+    userP.name='User pages'
+    talkPU.name='User talk pages'
+    rest.name='Other pages'
     return [articles,talkPA,userP,talkPU,rest,'Bar']
 
 def edition_on_type_pages_extends_rest(data, index):
@@ -314,11 +314,11 @@ def edition_on_type_pages_extends_rest(data, index):
     template=edition_concrete(data,index,10)
     category=edition_concrete(data,index,14)
     rest=rest_edition(data,index,[0,1,2,3,6,8,10,14])
-    file.name= 'File'
-    mediaWiki.name='Media wiki'
-    template.name='Template'
-    category.name='Category'
-    rest.name='Rest type pages'
+    file.name= 'File pages'
+    mediaWiki.name='Media wiki pages'
+    template.name='Template pages'
+    category.name='Category pages'
+    rest.name='Other pages'
     return [file,mediaWiki,template,category,rest,'Bar']
 
 ############################ METRIC 3 #################################################################################################
