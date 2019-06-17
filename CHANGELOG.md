@@ -1,5 +1,13 @@
 # Change Log for WikiChron
 
+## 2.2.1 - 2019-06-17
+### Changed
+- Selected a subset of validated and useful monowiki metrics.
+- Renamed monowiki metric categories
+
+### Fixed
+- Bug in sliderHandlerLabels.js script
+
 ## 2.2.0 - 2019-06-17
 ### Added
 - New mode: Monowiki!!! :tada: :tada:
