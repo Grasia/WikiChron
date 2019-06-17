@@ -28,6 +28,8 @@ import wikichron.utils.utils as utils
 import wikichron.dash.apps.classic.metrics.interface as classic_interface
 # networks
 import wikichron.dash.apps.networks.networks.interface as networks_interface
+# monowiki
+import wikichron.dash.apps.monowiki.metrics.interface as monowiki_interface
 
 # upload config variables
 ALLOWED_EXTENSIONS = set(['csv'])
@@ -111,6 +113,40 @@ def networks_app():
                                 )
 
 
+@server_bp.route('/monowiki/') # will be wizard screen
+@server_bp.route('/monowiki/selection')
+def monowiki_app():
+
+    def transform_metric_obj_in_metric_frontend(metric):
+        return {'name': metric.text,
+                'code': metric.code,
+                'descp': metric.descp,
+                'category': metric.category}
+
+    config = current_app.config;
+
+    wikis = data_manager.get_available_wikis()
+
+    metrics_by_category_backend = monowiki_interface.get_available_metrics_by_category()
+    # transform metric objects to a dict with the info we need for metrics:
+    categories_frontend = {}
+    for (cat_obj, cat_metrics) in metrics_by_category_backend.items():
+        cat_name = cat_obj.value
+        categories_frontend[cat_name] = [transform_metric_obj_in_metric_frontend(metric) for metric in cat_metrics]
+
+    # take all wikis and metrics in query string
+    selected_wikis   = set(request.args.getlist('wikis'))
+    selected_metrics = set(request.args.getlist('metrics'))
+
+    return flask.render_template("monowiki/selection/selection.html",
+                                title = 'WikiChron Monowiki - selection',
+                                mode = 'monowiki',
+                                development = config["DEBUG"],
+                                wikis = wikis,
+                                categories = categories_frontend,
+                                pre_selected_wikis = selected_wikis,
+                                pre_selected_metrics = selected_metrics,
+                                )
 @server_bp.route('/upload')
 def upload():
     config = current_app.config;
