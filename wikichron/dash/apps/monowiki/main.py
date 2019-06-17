@@ -58,9 +58,10 @@ def generate_graphs(data, metrics, wikis, relative_time):
                 graphs_list[metric_idx].append(None)
         elif (category[metric_idx] == "Heatmap"):
             data[metric_idx].pop(-1)
+            graphs_list[metric_idx].append(None)
+        else:
+            graphs_list[metric_idx].append(None)
     """ Turn over data[] into plotly graphs objects and store it in graphs[] """
-
-    graphs_list = [[None for j in range(len(wikis))] for i in range(len(metrics))]
 
     for metric_idx in range(len(metrics)):
         if category[metric_idx] == "Bar":
@@ -71,12 +72,7 @@ def generate_graphs(data, metrics, wikis, relative_time):
                     x_axis = list(range(len(metric_data.index))) # relative to the age of the wiki in months
                 else:
                     x_axis = metric_data.index # natural months
-
-                print(metrics)
-                print(metric_idx)
-                print(submetric)
-
-
+                
                 graphs_list[metric_idx][submetric] = go.Bar(
                                     x=x_axis,
                                     y=metric_data,
@@ -512,7 +508,7 @@ def bind_callbacks(app):
         relative_time = selected_timeaxis == 'relative'
 
         time_start_generating_graphs = time.perf_counter()
-        new_graphs = generate_graphs(data, metrics, wikis, relative_time);
+        new_graphs = generate_graphs(data, metrics, wikis, relative_time)
         time_end_generating_graphs = time.perf_counter() - time_start_generating_graphs
         print(' * [Timing] Generating graphs : {} seconds'.format(time_end_generating_graphs) )
 
