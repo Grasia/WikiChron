@@ -27,7 +27,6 @@ init_list_js = function() {
 setSortBy = function() {
 
     $('.dropdown-item').on('click', function () {
-        console.log( $( this ).data()['order'] )
         by = $( this ).data()['by']
         order = $( this ).data()['order']
 
