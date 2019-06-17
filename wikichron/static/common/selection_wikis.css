@@ -8,7 +8,7 @@
 }
 
 input#search-wiki-input::placeholder {
-    text-align: right;
+    text-align: left;
 }
 
 #filters-section {
