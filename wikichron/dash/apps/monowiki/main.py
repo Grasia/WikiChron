@@ -71,10 +71,12 @@ def generate_graphs(data, metrics, wikis, relative_time):
                     x_axis = list(range(len(metric_data.index))) # relative to the age of the wiki in months
                 else:
                     x_axis = metric_data.index # natural months
-
+                print('Here starts the print')
+                print(len(data[metric_idx]))
                 print(metrics)
                 print(metric_idx)
                 print(submetric)
+                print(metric_data.name)
 
 
                 graphs_list[metric_idx][submetric] = go.Bar(
@@ -512,7 +514,7 @@ def bind_callbacks(app):
         relative_time = selected_timeaxis == 'relative'
 
         time_start_generating_graphs = time.perf_counter()
-        new_graphs = generate_graphs(data, metrics, wikis, relative_time);
+        new_graphs = generate_graphs(data, metrics, wikis, relative_time)
         time_end_generating_graphs = time.perf_counter() - time_start_generating_graphs
         print(' * [Timing] Generating graphs : {} seconds'.format(time_end_generating_graphs) )
 
