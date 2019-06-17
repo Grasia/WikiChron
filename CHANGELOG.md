@@ -1,5 +1,24 @@
 # Change Log for WikiChron
 
+## 2.2.0 - 2019-06-17
+### Added
+- New mode: Monowiki!!! :tada: :tada:
+- New feature: upload data of your own wiki
+- New design of selection screen
+- Added Filters and sort controls for wiki selection
+
+### Fixed
+- Renamed WikiChron _classic_ by WikiChron _compare_
+- Improvements in code. Code more reusable
+- Removed automatically added url schema in selection wikis screen.
+- Some code re-organization
+
+### Removed
+- Removed unused assets
+
+
+And many other small improvements.
+
 ## 2.1.1 - 2019-05-22
 ### Fixed
 - Fixed url sharing generation issue. See Grasia/WikiChron-networks#52
