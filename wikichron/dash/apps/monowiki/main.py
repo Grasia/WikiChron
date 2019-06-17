@@ -58,9 +58,11 @@ def generate_graphs(data, metrics, wikis, relative_time):
                 graphs_list[metric_idx].append(None)
         elif (category[metric_idx] == "Heatmap"):
             data[metric_idx].pop(-1)
+            graphs_list[metric_idx].append(None)
+        else:
+            graphs_list[metric_idx].append(None)
     """ Turn over data[] into plotly graphs objects and store it in graphs[] """
-
-    graphs_list = [[None for j in range(len(wikis))] for i in range(len(metrics))]
+    #graphs_list = [[None for j in range(len(wikis))] for i in range(len(metrics))]
 
     for metric_idx in range(len(metrics)):
         if category[metric_idx] == "Bar":
@@ -71,14 +73,7 @@ def generate_graphs(data, metrics, wikis, relative_time):
                     x_axis = list(range(len(metric_data.index))) # relative to the age of the wiki in months
                 else:
                     x_axis = metric_data.index # natural months
-                print('Here starts the print')
-                print(len(data[metric_idx]))
-                print(metrics)
-                print(metric_idx)
-                print(submetric)
-                print(metric_data.name)
-
-
+                
                 graphs_list[metric_idx][submetric] = go.Bar(
                                     x=x_axis,
                                     y=metric_data,
@@ -116,6 +111,7 @@ def generate_graphs(data, metrics, wikis, relative_time):
                                 name=metric_data.name
                                 )
         elif category[metric_idx] == "Scatter":
+            #print('a scatter will be displayed')
             num_submetrics = len(data[metric_idx])
             for submetric in range(num_submetrics):
                 metric_data = data[metric_idx][submetric]
