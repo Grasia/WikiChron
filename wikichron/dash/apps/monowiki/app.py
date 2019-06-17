@@ -191,8 +191,10 @@ def app_bind_callbacks(app):
     )
     def write_query_string_in_hidden_selection_div(query_string):
 
-        #~ if not (query_string): # check query string is not empty
-            #~ return None
+        #TOLOOKAT: This if shouldn't be neccesary from WikiChron v2 onwards.
+        # But removing it, it thwros a TypeError, while it does not in WCh compare.
+        if not (query_string): # check query string is not empty
+            return None
 
         # Attention! query_string includes heading ? symbol
         query_string_dict = parse_qs(query_string[1:])
