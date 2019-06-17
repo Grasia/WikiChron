@@ -16,6 +16,7 @@ from . import monowiki_stats
 
 def generate_classic_metrics():
     metrics = []
+
     # Pages
     metrics.append(Metric('pages_new', 'New pages', MetricCategory.PAGES, classic_stats.pages_new, 'Number of new pages created per month'))
     metrics.append(Metric('pages_main_new', 'New articles', MetricCategory.PAGES, classic_stats.pages_main_new, 'Number of new articles (main content) created per month'))
@@ -71,14 +72,13 @@ def generate_monowiki_metrics():
     metrics = []
 
     # Activity streak
-
     metrics.append(Metric('Current_streak', 'Active users by activity-streak', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.current_streak, 'BAR GRAPH: Users by the number of consecutive months they have made at least one edit in the wiki.'))
-    metrics.append(Metric('Current_streak_only_mains', 'Active users by edit-streak', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.current_streak_only_mains, 'BAR GRAPH: Users by the number of consecutive months they have made at least one edit in the main of the wiki.'))
-    metrics.append(Metric('edition_on_type_pages', 'Edition on different type pages', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.edition_on_type_pages, 'BAR GRAPH:'))
-    metrics.append(Metric('edition_on_type_pages_extends_rest', 'Edition on different type pages rest', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.edition_on_type_pages_extends_rest, 'BAR GRAPH:'))
+    metrics.append(Metric('Current_streak_only_mains', 'Active users by edit-streak', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.current_streak_only_mains, 'BAR GRAPH: Users by the number of consecutive months they have made at least one edit in the main namespace of the wiki.'))
+    metrics.append(Metric('edition_on_type_pages', 'Edits in popular namespaces', MetricCategory.EDITS_ANALYSIS, monowiki_stats.edition_on_type_pages, 'BAR GRAPH: number of edits in the most popular namespaces of a wiki.'))
+    metrics.append(Metric('edition_on_type_pages_extends_rest', 'Edits in other namespaces', MetricCategory.EDITS_ANALYSIS, monowiki_stats.edition_on_type_pages_extends_rest, 'BAR GRAPH: number of edits in less popular namespaces of the wiki.'))
 
 
-    metrics.append(Metric('users_first_edit', 'Users by antiquity', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.users_first_edit, 'BAR GRAPH: Users by the number of months since their first edit in the wiki.'))
+    metrics.append(Metric('users_first_edit', 'Users by tenure', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.users_first_edit, 'BAR GRAPH: Users by the number of months since their first edit in the wiki.'))
 
     metrics.append(Metric('users_last_edit', 'Returning active editors', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.users_last_edit, 'BAR GRAPH: Users by the number of months since their last edit in the wiki.'))
 

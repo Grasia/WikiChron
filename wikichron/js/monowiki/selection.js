@@ -20,11 +20,6 @@ function unselect_badge(target) {
     var target_badge = target.parentNode;
     var code = target_badge.dataset.code;
 
-    // Clear search in order to uncheck a wiki card
-    // Because of https://github.com/javve/list.js/issues/380
-    wikisList.search('')
-    document.getElementById('search-wiki-input').value = "";
-
     $(`input[id="checkbox-${code}"]`)[0].checked = false;
     target_badge.remove();
     check_enable_action_button();
@@ -36,14 +31,22 @@ function unselect_badge(target) {
 
 // aux function
 function generate_badge({code, name, type}) {
-    return `
-        <div id="badge-${type}-${code}" class="badge badge-secondary current-selected-${type}" data-code="${code}">
-            <span class="mr-2 align-middle">${name}</span>
-            <button type="button" class="close close-wiki-badge align-middle" aria-label="Close" onclick="return unselect_badge(this)">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    `;
+    if (type === 'metric') {
+        return `
+            <div id="badge-${type}-${code}" class="badge badge-secondary current-selected-${type}" data-code="${code}">
+                <span class="mr-2 align-middle">${name}</span>
+                <button type="button" class="close close-wiki-badge align-middle" aria-label="Close" onclick="return unselect_badge(this)">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        `;
+    } else {
+        return `
+            <div id="badge-${type}-${code}" class="badge badge-secondary current-selected-${type}" data-code="${code}">
+                <span class="mr-2 align-middle">${name}</span>
+            </div>
+        `;
+    }
 }
 
 // create badge or remove it
@@ -75,14 +78,61 @@ function check_input({input, checked, type}) {
 // onclick for metrics checkboxes inputs
 $('.metric-input').click(function(event) {
     var checked = $(this).is(':checked');
-    check_input({"input": event.target, "checked": checked, "type": 'metric'});
+    var input = event.target
+    var code = input.value;
+    var name = input.dataset.name;
+    var targetBadge;
+    var newBadge;
+    var badgesContainer;
+    var type = 'metric';
+
+    if (checked) {
+        newBadge = generate_badge({"code": code, "name": name, "type": type});
+        badgesContainer = $('#metrics-badges-container');
+        badgesContainer.append(newBadge);
+    } else {
+        targetBadge = document.getElementById(`badge-${type}-${code}`);
+        targetBadge.remove();
+    }
+
+    check_enable_action_button();
 });
 
 
-// onclick for wikis checkboxes inputs
-$('.wiki-input').click(function(event) {
-    var checked = $(this).is(':checked');
-    check_input({"input": event.target, "checked": checked, "type": 'wiki'});
+// onclick for wikis checkboxes input
+$('.wiki-input').on( "click", function({target}) {
+    var wikiCode = target.value;
+    var badgesContainer = $('#wikis-badges-container');
+    var sameWiki = false;
+
+    if (badgesContainer[0].children.length) { // If there is already a selection
+        var currentBadge = badgesContainer[0].children[0];
+        var currentWikiCode = currentBadge.dataset.code;
+        sameWiki = currentWikiCode === target.value;
+        if (sameWiki) { // if same as previous selected, clean current selection
+           badgesContainer.html('');
+        } else { // if different, unselect previous wiki
+            // Clear search in order to uncheck a wiki card
+            // Because of https://github.com/javve/list.js/issues/380
+            wikisList.search('')
+            document.getElementById('search-wiki-input').value = "";
+
+            $(`input[id="checkbox-${currentWikiCode}"]`)[0].checked = false;
+        }
+    }
+
+    if (!sameWiki) {
+        // Add badge of last selected wiki
+        var wikiName = target.dataset.name;
+        var badgeSelectedWiki = generate_badge({"code": wikiCode,
+                                                "name": wikiName,
+                                                "type": "wiki"});
+
+        badgesContainer.html(badgeSelectedWiki);
+    }
+
+    check_enable_action_button();
+
 });
 
 
