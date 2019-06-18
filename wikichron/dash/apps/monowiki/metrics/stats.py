@@ -159,8 +159,8 @@ def filter_users_number_of_edits(data, index, x, y):
 
 #### Helper metrics 9 and 10 ####
 
-# this helper function gets the number of users that have edited a particular kind of page, specified by the parameter page_ns
 def filter_users_pageNS(data, index, page_ns):
+    '''this helper function gets the number of users that have edited a particular kind of page, specified by the parameter page_ns'''
     data = filter_anonymous(data)
     edits_page = data[data['page_ns'] == page_ns]
     series = edits_page.groupby(pd.Grouper(key = 'timestamp', freq = 'MS'))['contributor_id'].nunique()
