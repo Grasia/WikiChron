@@ -14,7 +14,7 @@ import numpy as np
 import time
 import os
 
-from . import stats
+from .monowiki_stats import calculate_index_all_months
 from . import metrics_generator
 
 print('Generating available metrics...')
@@ -52,33 +52,21 @@ def compute_metrics_on_dataframe(metrics, df):
         df -- Dataframe to compute and calculate the metrics on.
         Return a list of panda series corresponding to the provided metrics.
     """
-    index = stats.calculate_index_all_months(df) #TOIMPROVE
+    index = calculate_index_all_months(df) #TOIMPROVE
     metrics_data = []
     for metric in metrics:
         metric_series = metric.calculate(df, index)
-        #category = metric.category
-        #metric_series.append(category)
-        #metric_series.name = '{}<>{}'.format(df.index.name,metric.code)
+        #~ metric_series.name = '{}<>{}'.format(df.index.name,metric.code) #TOFIX for monowiki metrics
         metrics_data.append(metric_series)
     return metrics_data
 
 
 def compute_data(dataframes, metrics):
-    """ Load analyzed data by every metric for every dataframe and return it in two dimensional array """
-
-    """metrics_by_wiki = []
-    for df in dataframes:
-        metrics_by_wiki.append(compute_metrics_on_dataframe(metrics, df))
-
-    # transposing matrix row=>wikis, column=>metrics to row=>metrics, column=>wikis
-    wiki_by_metrics = []
-    for metric_idx in range(len(metrics)):
-        metric_row = [metrics_by_wiki[wiki_idx].pop(0) for wiki_idx in range(len(metrics_by_wiki))]
-        wiki_by_metrics.append(metric_row)"""
-
-    wiki_by_metrics = compute_metrics_on_dataframe(metrics, dataframes)
-
-    return wiki_by_metrics
+    """
+        One wiki only, so one dimensional array where every element
+        is a pandas dataframe with the computed metric.
+    """
+    return compute_metrics_on_dataframe(metrics, dataframes)
 
 
 # Too inefficient with the current implementation

@@ -28,14 +28,21 @@ from .networks.models import networks_generator as net_factory
 from .networks.models.BaseNetwork import BaseNetwork
 from . import data_controller
 
-RANKING_EMPTY_HEADER = [{'name': 'User', 'id': 'name'},
+RANKING_EMPTY_HEADER = [{'name': 'Editor', 'id': 'name'},
                         {'name': 'Metric', 'id': 'metric'}]
 RANKING_EMPTY_DATA = pd.DataFrame(columns=[RANKING_EMPTY_HEADER[0]['id'],
     RANKING_EMPTY_HEADER[1]['id']])
 PAGE_SIZE = 10
-NO_DATA_USER_STATS_HEADER = 'User Stats'
-NO_DATA_USER_STATS_BODY = 'Please, click on a node to show its info'
+NO_DATA_NODE_STATS_HEADER = 'Editor Stats'
+NO_DATA_NODE_STATS_BODY = 'Please, click on a node to show its info'
 
+DEFAULT_LEGEND_TEXT = {}
+DEFAULT_LEGEND_TEXT['min_node_color'] = 'Select a metric to color'
+DEFAULT_LEGEND_TEXT['max_node_color'] = 'Select a metric to color'
+DEFAULT_LEGEND_TEXT['min_node_size'] = 'Select a metric to size'
+DEFAULT_LEGEND_TEXT['max_node_size'] = 'Select a metric to size'
+DEFAULT_LEGEND_TEXT['min_edge_size'] = 'A weak interaction in the wiki'
+DEFAULT_LEGEND_TEXT['max_edge_size'] = 'A strong interaction in the wiki'
 
 global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
@@ -124,7 +131,7 @@ def inflate_share_dialog(share_link):
                     ])
                     ]),
                 ]),
-                gdc.Import(src='/js/main.share_modal.js')
+                gdc.Import(src='/js/common/dash/main.share_modal.js')
                 ],
                 className='dialog-content')
 
@@ -140,7 +147,7 @@ def build_dilog():
     ])
 
 
-def date_slider_control():
+def date_slider_control(assets_url_path):
     return html.Div(id='date-slider-div', className='container',
             children=[
                 html.Div(id='date-slider-container',
@@ -152,12 +159,18 @@ def date_slider_control():
                 ),
 
                 html.Div(children=[
-                    html.Span('Time interval (months):'),
+                    html.Span('Slide the time window:'),
                     html.Div(children=[
-                        html.Button("<<", id="bt-back"),
+                        html.A(
+                            html.Img(src=f"{assets_url_path}/arrow-left.svg", className="arrow"),
+                            id="bt-back"
+                        ),
                         dcc.Input(id="in-step-slider" , type='number',
                             placeholder='MM', min='1', max='999'),
-                        html.Button(">>", id="bt-forward"),
+                        html.A(
+                            html.Img(src=f"{assets_url_path}/arrow-right.svg", className="arrow"),
+                            id="bt-forward"
+                        ),
                     ], className='slider-controls-pane'),
                 ], className='slider-add-on'),
             ],
@@ -165,12 +178,12 @@ def date_slider_control():
             )
 
 
-def build_slider_pane(selected_wiki_name, selected_network_name):
+def build_slider_pane(selected_wiki_name, selected_network_name, assets_url_path):
     header = html.Div(children=[
         selection_title(selected_wiki_name, selected_network_name)
         ], className='header-pane main-header-pane')
     body = html.Div(children=[
-        date_slider_control()
+        date_slider_control(assets_url_path)
     ], className='body-pane')
 
     return html.Div(children=[header, body], className='pane main-pane')
@@ -188,18 +201,48 @@ def build_network_controls(network_code):
     ], className='net-control')
 
     togg3 = html.Div(children=[
-        daq.BooleanSwitch(id='tg-hide-legend', className='toggle', on=False),
+        daq.BooleanSwitch(id='tg-hide-legend', className='toggle', on=True),
         html.P('Show legend')
     ], className='net-control')
 
-    left = html.Div(children=[togg1, togg2, togg3], className='toggle-container')
+    left = html.Div(children=[togg3, togg1, togg2], className='toggle-container')
 
     center = html.Div(children=[
         html.P('Reset View:'),
         html.Button('Reset', id='reset_cyto')
     ], className='net-control')
 
-    right = dropdown_color_metric_selector(network_code)
+    # metrics to fill dropdowns
+    dict_metrics = net_factory.get_metrics_to_plot(network_code)
+    options = []
+    for k in dict_metrics.keys():
+        options.append({
+            'label': k,
+            'value': k
+        })
+
+    right = html.Div(children=[
+        html.Div(children=[
+            'Color:',
+            dcc.Dropdown(
+                id='dd-color-metric',
+                options=options,
+                placeholder='Select a metric',
+                className='metric-selector'
+            )
+        ], className='controls-right controls-right-spacer'),
+
+        html.Div(children=[
+            'Size:',
+            dcc.Dropdown(
+                id='dd-size-metric',
+                options=options,
+                placeholder='Select a metric',
+                className='metric-selector'
+            )
+        ], className='controls-right'),
+    ], className='controls-right')
+
     return html.Div(children=[left, center, right], className='controls-container')
 
 
@@ -237,7 +280,6 @@ def cytoscape_component():
 
 
 def build_legend(network_code: str) -> html.Div:
-    text = net_factory.get_network_description(network_code)
     return html.Div([
         html.Div(children=[
             html.Div(children=[], className='legend-node',
@@ -249,9 +291,9 @@ def build_legend(network_code: str) -> html.Div:
         ], className='legend-col col1-legend'),
 
         html.Div(children=[
-            html.P(text['min_node_color']),
-            html.P(text['min_node_size']),
-            html.P(text['min_edge_size'])
+            html.P(DEFAULT_LEGEND_TEXT['min_node_color'], id='legend-min-node-color'),
+            html.P(DEFAULT_LEGEND_TEXT['min_node_size'], id='legend-min-node-size'),
+            html.P(DEFAULT_LEGEND_TEXT['min_edge_size'], id='legend-min-edge-edge')
         ], className='legend-col col2-legend'),
 
         html.Div(children=[
@@ -264,12 +306,12 @@ def build_legend(network_code: str) -> html.Div:
         ], className='legend-col col3-legend'),
 
         html.Div(children=[
-            html.P(text['max_node_color']),
-            html.P(text['max_node_size']),
-            html.P(text['max_edge_size'])
+            html.P(DEFAULT_LEGEND_TEXT['max_node_color'], id='legend-max-node-color'),
+            html.P(DEFAULT_LEGEND_TEXT['max_node_size'], id='legend-max-node-size'),
+            html.P(DEFAULT_LEGEND_TEXT['max_edge_size'], id='legend-max-edge-size')
         ], className='legend-col col4-legend'),
 
-    ], id='legend', className='pane non-show')
+    ], id='legend', className='pane')
 
 
 def build_distribution_pane() -> html.Div:
@@ -292,22 +334,6 @@ def build_distribution_pane() -> html.Div:
     body = dcc.Graph(id='distribution-graph')
 
     return html.Div(children=[left, body], className='pane distribution-pane')
-
-
-def dropdown_color_metric_selector(network_code):
-    dict_metrics = net_factory.get_metrics_to_plot(network_code)
-    options = []
-    for k in dict_metrics.keys():
-        options.append({
-            'label': k,
-            'value': k
-        })
-
-    return dcc.Dropdown(
-        id='dd-color-metric',
-        options=options,
-        placeholder='Select a metric to color'
-    )
 
 
 def build_network_stats(network_code: str) -> html.Div:
@@ -339,7 +365,7 @@ def build_network_stats(network_code: str) -> html.Div:
 
 
 def build_ranking(network_code) -> html.Div:
-    dict_metrics = net_factory.get_available_metrics(network_code)
+    dict_metrics = net_factory.get_metrics_to_show(network_code)
     options = []
     for k in dict_metrics.keys():
         options.append({
@@ -388,14 +414,14 @@ def build_ranking(network_code) -> html.Div:
     return html.Div(children=[header, body], className='pane side-pane')
 
 
-def build_user_stats() -> html.Div:
+def build_node_stats() -> html.Div:
     header = html.Div(children=[
-        html.Span(NO_DATA_USER_STATS_HEADER, id='user-stats-title'),
+        html.Span(NO_DATA_NODE_STATS_HEADER, id='user-stats-title'),
         html.Hr(className='pane-hr')
     ],
     className='header-pane sidebar-header-pane')
 
-    body = html.Div(id='user-stats', children=[NO_DATA_USER_STATS_BODY],
+    body = html.Div(id='user-stats', children=[NO_DATA_NODE_STATS_BODY],
         className='body-pane')
     return html.Div(children=[header, body], className='pane side-pane')
 
@@ -407,7 +433,7 @@ def build_sidebar(network_code) -> html.Div:
     return html.Div(className='sidebar', children=[
         build_network_stats(network_code),
         build_ranking(network_code),
-        build_user_stats()
+        build_node_stats()
     ])
 
 
@@ -417,20 +443,18 @@ def build_foot(assets_url_path):
         html.Div([
             html.A(
                 html.Img(src='{}/ico-github.svg'.format(assets_url_path)),
-                href='https://github.com/Grasia/WikiChron-networks',
+                href='https://github.com/Grasia/WikiChron',
                 target='_blank',
                 className='icon',
                 title='Github repo'
             ),
-            html.P('GitHub'),
             html.A(
                 html.Img(src='{}/documentation.svg'.format(assets_url_path)),
                 href='https://github.com/Grasia/WikiChron/wiki/',
                 target='_blank',
                 className='icon',
                 title='Documentation'
-            ),
-            html.P('Docs'),
+            )
         ], className='foot-container')
     ], className='foot')
 
@@ -472,7 +496,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
             id='main',
             className='control-text',
             children=[
-                build_slider_pane(selected_wiki_name, selected_network_name),
+                build_slider_pane(selected_wiki_name, selected_network_name, assets_url_path),
                 build_dilog(),
                 html.Div(id='initial-selection', style={'display': 'none'},
                             children=args_selection),
@@ -489,7 +513,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
                 html.Div(id='network-ready', style={'display': 'none'}),
                 html.Div(id='old-state-node', style={'display': 'none'}),
                 html.Div(id='highlight-node', style={'display': 'none'}),
-                html.Div(id='dates-index', children=time_index_beginning, style={'display': 'none'}),
+                html.Div(id='dates-index', className='time-index', children=time_index_beginning, style={'display': 'none'}),
                 html.Div(id='dates-index-end', children=time_index_end, style={'display': 'none'})
             ])
 
@@ -501,5 +525,6 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     ], className='body')
 
     foot = build_foot(assets_url_path)
-    script = gdc.Import(src='/js/sliderHandlerLabels.js')
-    return html.Div(children = [header, body, foot, script])
+    labels_script = gdc.Import(src='/js/common/dash/sliderHandlerLabels.js')
+    filter_script = gdc.Import(src='/js/networks/dash/filterInfo.js')
+    return html.Div(children = [header, body, foot, labels_script, filter_script])

@@ -1,21 +1,5 @@
 'use strict';
 
-var wikisList;
-
-/* List.js */
-function init_list_js() {
-    var options = {
-        valueNames: [ 'wiki-name', 'wiki-url' ]
-    };
-
-    wikisList = new List('wiki-cards-container', options);
-
-    $('#search-wiki-input').on('keyup', function() {
-        let searchString = $(this).val();
-        wikisList.search(searchString);
-    });
-}
-
 
 /* enable action button */
 function check_enable_action_button() {
@@ -36,35 +20,33 @@ function unselect_badge(target) {
     var target_badge = target.parentNode;
     var code = target_badge.dataset.code;
 
-    // Clear search in order to uncheck a wiki card
-    // Because of https://github.com/javve/list.js/issues/380
-    wikisList.search('')
-    document.getElementById('search-wiki-input').value = "";
-
     $(`input[id="checkbox-${code}"]`)[0].checked = false;
     target_badge.remove();
     check_enable_action_button();
+
+    return false; // Prevents any other event that could trigger in any ancestor element, like an anchor href, to trigger.
+
 }
 
-// aux function
-function generate_wiki_badge(wikiCode, wikiName) {
-    return `
-        <div id="current-selected-${wikiCode}" class="badge badge-secondary p-2 current-selected-wiki" data-code="${wikiCode}">
-            <span class="mr-2 align-middle">${wikiName}</span>
-        </div>
-    `;
-}
 
 // aux function
 function generate_badge({code, name, type}) {
-    return `
-        <div id="badge-${type}-${code}" class="badge badge-secondary p-2 current-selected-${type}" data-code="${code}">
-            <span class="mr-2 align-middle">${name}</span>
-            <button type="button" class="close close-wiki-badge align-middle" aria-label="Close" onclick="unselect_badge(this)">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    `;
+    if (type === 'metric') {
+        return `
+            <div id="badge-${type}-${code}" class="badge badge-secondary current-selected-${type}" data-code="${code}">
+                <span class="mr-2 align-middle">${name}</span>
+                <button type="button" class="close close-wiki-badge align-middle" aria-label="Close" onclick="return unselect_badge(this)">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        `;
+    } else {
+        return `
+            <div id="badge-${type}-${code}" class="badge badge-secondary current-selected-${type}" data-code="${code}">
+                <span class="mr-2 align-middle">${name}</span>
+            </div>
+        `;
+    }
 }
 
 // create badge or remove it
@@ -96,10 +78,28 @@ function check_input({input, checked, type}) {
 // onclick for metrics checkboxes inputs
 $('.metric-input').click(function(event) {
     var checked = $(this).is(':checked');
-    check_input({"input": event.target, "checked": checked, "type": 'metric'});
+    var input = event.target
+    var code = input.value;
+    var name = input.dataset.name;
+    var targetBadge;
+    var newBadge;
+    var badgesContainer;
+    var type = 'metric';
+
+    if (checked) {
+        newBadge = generate_badge({"code": code, "name": name, "type": type});
+        badgesContainer = $('#metrics-badges-container');
+        badgesContainer.append(newBadge);
+    } else {
+        targetBadge = document.getElementById(`badge-${type}-${code}`);
+        targetBadge.remove();
+    }
+
+    check_enable_action_button();
 });
 
 
+// onclick for wikis checkboxes input
 $('.wiki-input').on( "click", function({target}) {
     var wikiCode = target.value;
     var badgesContainer = $('#wikis-badges-container');
@@ -124,7 +124,9 @@ $('.wiki-input').on( "click", function({target}) {
     if (!sameWiki) {
         // Add badge of last selected wiki
         var wikiName = target.dataset.name;
-        var badgeSelectedWiki = generate_wiki_badge(wikiCode, wikiName);
+        var badgeSelectedWiki = generate_badge({"code": wikiCode,
+                                                "name": wikiName,
+                                                "type": "wiki"});
 
         badgesContainer.html(badgeSelectedWiki);
     }
@@ -132,8 +134,6 @@ $('.wiki-input').on( "click", function({target}) {
     check_enable_action_button();
 
 });
-
-
 
 
 function create_badges_in_container(inputs, container, type) {
@@ -163,6 +163,7 @@ function init_current_selection() {
                         })
     badgesContainer = $('#wikis-badges-container');
     create_badges_in_container(checkedBoxes, badgesContainer, 'wiki');
+
 
     /* init metrics current selection */
     checkedBoxes = $('.metric-input').

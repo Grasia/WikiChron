@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
    generate_wikis_json.py
@@ -18,12 +18,17 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import os
-import re
 import pandas as pd
 from datetime import date
+import sys
 
 from query_bot_users import get_bots
 from get_wikia_images_base64 import get_wikia_wordmark_file
+from is_wikia_wiki import is_wikia_wiki
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../wikichron'))
+from utils.data_manager import update_wikis_metadata, get_stats
+from utils.utils import get_domain_from_url
 
 if 'WIKICHRON_DATA_DIR' in os.environ:
     data_dir = os.environ['WIKICHRON_DATA_DIR']
@@ -36,9 +41,7 @@ row_selector = "tr.mw-statistics-"
 stats = ['articles','pages','edits']
 
 
-def get_name(base_url):
-
-    url = 'http://' + base_url
+def get_name(url):
 
     req = requests.get(url)
     if req.status_code != 200:
@@ -55,34 +58,6 @@ def get_name(base_url):
         return 'Unknown'
 
     return name
-
-
-def is_wikia_wiki(url):
-    return (re.search('.*\.(fandom|wikia)\.com.*', url) != None)
-
-
-def get_stats(data : pd.DataFrame) -> dict:
-    stats = {}
-
-    stats['edits'] = data['revision_id'].nunique()
-    stats['pages'] = data['page_id'].nunique()
-    stats['users'] = data['contributor_id'].nunique()
-    stats['articles'] = data[data['page_ns'] == 0]['page_id'].nunique()
-
-    data = data.sort_values(by = 'timestamp')
-    first_edit = data.head(1)
-    stats['first_edit'] = {
-                    'revision_id': int(first_edit['revision_id'].values[0]),
-                    'date': str(first_edit['timestamp'].values[0])
-                    }
-
-    last_edit = data.tail(1)
-    stats['last_edit'] = {
-                    'revision_id': int(last_edit['revision_id'].values[0]),
-                    'date': str(last_edit['timestamp'].values[0])
-                    }
-
-    return stats
 
 
 def load_dataframe_from_csv(csv: str):
@@ -102,6 +77,7 @@ def main():
     for row in wikisreader:
         print(row['url'], row['csvfile'])
         wiki = {}
+        wiki['domain'] = get_domain_from_url(row['url'])
         wiki['url'] = row['url']
         wiki['data'] = row['csvfile']
 
@@ -111,8 +87,8 @@ def main():
         if result_stats:
             wiki.update(result_stats)
         else:
-            raise Exception(f'Wiki {wiki["url"]} is not reacheable. Possibly moved or deleted. Check, whether its url is correct.')
-        
+            raise Exception(f'Unable to get stats for wiki: {wiki["domain"]}.')
+
         try:
             wiki['bots'] = get_bots(wiki['url'])
         except:
@@ -120,7 +96,8 @@ def main():
 
         wiki['lastUpdated'] = row['lastUpdated']
 
-        wiki['verified'] = True # Our own provided wikis are "verified"
+        wiki['verified'] = True # Wikis provided by us are "verified"
+        wiki['uploadedBy'] = 'script' # How the wiki was added
 
         print(wiki)
 
@@ -134,7 +111,7 @@ def main():
     try:
         output_wikis = open(output_wikis_fn)
         wikis_json = json.load(output_wikis)
-        current_wikis_positions = { wiki['url']:pos for (pos, wiki) in enumerate(wikis_json) }
+        current_wikis_positions = { wiki['domain']:pos for (pos, wiki) in enumerate(wikis_json) }
         print(f'\nWe already had these wikis: {list(current_wikis_positions.keys())}')
         output_wikis.close()
     except FileNotFoundError:
@@ -142,8 +119,8 @@ def main():
         wikis_json = []
 
     for wiki in wikis:
-        if wiki['url'] in current_wikis_positions: # already in wikis.json
-            position = current_wikis_positions[wiki['url']]
+        if wiki['domain'] in current_wikis_positions: # already in wikis.json
+            position = current_wikis_positions[wiki['domain']]
             wikis_json[position].update(wiki)
         else:                                      # new wiki for wikis.json
             # get name and image only for new wiki entries
@@ -157,11 +134,9 @@ def main():
             # append to wikis.json
             wikis_json.append(wiki)
 
-    output_wikis = open(output_wikis_fn, 'w')
-    json.dump(wikis_json, output_wikis, indent='\t')
-    output_wikis.close()
+    update_wikis_metadata(wikis_json)
 
-    print(f'\nWikis updated: {[wiki["url"] for wiki in wikis]}')
+    print(f'\nWikis updated: {[wiki["domain"] for wiki in wikis]}')
 
     return 0
 

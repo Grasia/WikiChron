@@ -1,68 +1,92 @@
-<div>
+{% block dependencies %}
 
-    <div id="tab-header" class="d-flex justify-content-between mx-2">
-        <p class="tab-intro-paragraph" >Select the wiki you want to analyze</p>
+    <script src="/js/common/filter_wikis.js" defer="defer"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='common/selection_wikis.css') }}">
 
-        <form class="form-inline">
-            <label class="sr-only" for="search-wiki-input">Wiki keywords</label>
-            <input id="search-wiki-input" class="form-control h-100" type="text" placeholder="Search wiki" autofocus/>
-        </form>
+{% endblock %}
+
+
+<div class="container-fluid px-5" style="color: white">
+
+    <div id="selection-wikis-controls" class="d-flex justify-space-between">
+
+        <section id="filters-section" class="d-flex align-items-center justify-space-between float-left row">
+
+            <div class="d-inline-block my-auto col-2">
+                <img height="12px" src={{url_for('static', filename='assets/ico_filter.svg')}}></img>
+                <span style="font-size: 12px">FILTERS:</span>
+            </div>
+
+            <div class="col-xl-10">
+                <div class="slider-container">
+                    <p class="filter-title">Users number</p>
+                    <div class="range-slider">
+                        <div id="users-slider" class="slider">
+                            <div class="ui-slider-handle slider-handle">
+                                <p id="users-handle-lower" class="handler-text"></p>
+                            </div>
+                            <div class="ui-slider-handle slider-handle">
+                                <p id="users-handle-upper" class="handler-text"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+<!--
+            </div>
+
+            <div class="col-xl-10 offset-xl-2 mt-2">
+-->
+                <div class="slider-container mt-2">
+                    <p class="filter-title">Pages number</p>
+                    <div class="range-slider">
+                        <div id="pages-slider" class="slider">
+                            <div class="ui-slider-handle slider-handle">
+                                <p id="pages-handle-lower" class="handler-text"></p>
+                            </div>
+                            <div class="ui-slider-handle slider-handle">
+                                <p id="pages-handle-upper" class="handler-text"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+
+        <section id="right-controls" class="d-flex ml-auto my-auto float-right">
+
+
+            <div id="sort-wikis-by" class="dropdown mr-3">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-sort-amount-down"></i>
+                    <span style="font-size: 12px">SORT BY</span>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="#" data-by="lastUpdated" data-order="desc">Last Updated</a>
+                    <a class="dropdown-item" href="#" data-by="name" data-order="asc">Alphabetical (A->Z)</a>
+                    <a class="dropdown-item" href="#" data-by="name" data-order="desc">Alphabetical (Z->A)</a>
+                    <a class="dropdown-item" href="#" data-by="edits" data-order="desc">Number of Edits ↘</a>
+                    <a class="dropdown-item" href="#" data-by="users" data-order="desc">Number of Users ↘</a>
+                </div>
+            </div>
+
+
+            <form>
+                <label class="sr-only" for="search-wiki-input">Wiki keywords</label>
+                <input id="search-wiki-input" class="form-control h-100" type="text" placeholder="Search wiki" autofocus/>
+            </form>
+
+        </section>
     </div>
 
-    <hr class="ml-2 line"/>
+    <hr class="line"/>
 
     <div id="wiki-cards-container" class="w-100 mx-auto d-flex">
 
         <div id="wiki-cards-list" class="d-flex flex-row flex-wrap justify-content-center list">
             {% for wiki in wikis %}
-                <div class="card m-2 mb-5" style="width: 18rem;">
-                  <div class="card-body">
-                    <h4 class="card-title">
-                        <div class="custom-control custom-checkbox">
-                            <input class="custom-control-input wiki-input" type="checkbox" id="checkbox-{{wiki.url}}" value="{{wiki.url}}" data-name="{{wiki.name}}" name="wikis" {{"checked" if wiki.url in pre_selected_wikis}}>
-                            <label class="custom-control-label wiki-name" for="checkbox-{{wiki.url}}">{{wiki.name}}</label>
-                        </div>
-                    </h4>
-                    <div class="card-image-container" style="background-color: {{wiki.color or 'white'}};">
-                        <div class="card-image-wrapper">
-                            {% if wiki.imageSrc %}
-                            <img src="{{wiki.imageSrc}}" alt="Wiki image" />
-                            {% else %}
-                            <img src="/static/assets/wiki_img_fallback.png" alt="Wiki image" />
-                            {% endif %}
-                        </div>
-                    </div>
-                    <p class="card-text">
-                        <div class="wiki-item">
-                            <span>Users:</span>
-                            <span class="font-weight-bold">{{wiki.users or "NA"}}</span>
-                        </div>
-                        <div class="wiki-item">
-                            <span>Articles:</span>
-                            <span class="font-weight-bold">{{wiki.articles or "NA"}}</span>
-                        </div>
-                        <div class="wiki-item">
-                            <span>Pages:</span>
-                            <span class="font-weight-bold">{{wiki.pages or "NA"}}</span>
-                        </div>
-                        <div class="wiki-item">
-                            <span>Edits:</span>
-                            <span class="font-weight-bold">{{wiki.edits or "NA"}}</span>
-                        </div>
-                    </p>
-                    <p class="card-text">
-                        <div class="wiki-item">
-                            <span><em>Last updated:</em></span>
-                            <em>{{wiki.lastUpdated or "NA"}}</em>
-                        </div>
-                    </p>
-                    <p class="wiki-url font-weight-bold">
-                        <a href="https://{{wiki.url}}" class="card-link" target="_blank">
-                            {{wiki.url}}
-                        </a>
-                    </p>
-                  </div>
-                </div>
+                {% include "common/selection/wiki_card.html" %}
             {% endfor %}
         </div>
     </div>

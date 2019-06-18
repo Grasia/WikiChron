@@ -79,7 +79,7 @@ h1 {
 #mode-options {
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: space-between;
 }
 
 .mode-image {
@@ -94,6 +94,10 @@ h1 {
     align-items: center;
     margin: auto;
     padding: 20px;
+}
+
+.logo-text {
+    height: 63px;
 }
 
 .to-app-link {

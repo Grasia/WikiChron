@@ -29,7 +29,7 @@ onChangeWiki = function() {
 
     dateIndex.push(lastMonth)
 
-    createSlider();
+    createTimeSlider();
 }
 
 
@@ -46,7 +46,7 @@ function formatDate (unixDate) {
 }
 
 
-createSlider = function() {
+createTimeSlider = function() {
     var lower;
     var upper;
 

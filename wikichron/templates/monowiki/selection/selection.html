@@ -4,40 +4,48 @@
 {% block dependencies %}
 
     <!-- Specific js and css files for this screen -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='monowiki/selection.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='common/selection.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='classic/selection_metrics.css') }}">
     <script src="/js/monowiki/selection.js" defer="defer"></script>
 
 {% endblock %}
 
 
-
 {% block content %}
 
-    {% with %}
-        {% set logo_src = url_for('static', filename='monowiki/assets/logo_classic_white.svg') %}
-        {% set header_paragraph = "Select a wiki, some metrics and press compare to start" %}
-		{% set mode = "monowiki" %}
-        {% include "header.html" %}
-    {% endwith %}
+    <div id="header-background">
 
-    <div class="tabs-bar-container">
-        <ul class="nav nav-tabs" id="tabs" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" id="wikis-tab" data-toggle="tab" href="#wikis" role="tab" aria-controls="home" aria-selected="true">Wikis</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="metrics-tab" data-toggle="tab" href="#metrics" role="tab" aria-controls="metrics" aria-selected="false">Metrics</a>
-            </li>
-        </ul>
+        <!-- include common header -->
+        {% with %}
+            {% set logo_src = url_for('static', filename='monowiki/assets/logo_monowiki_white.svg') %}
+            {% set header_paragraph = "Select one wiki, some metrics and press compare to start" %}
+            {% include "header.html" %}
+        {% endwith %}
+
+        <div class="tabs-bar-container fluid-container">
+            <ul class="nav nav-tabs row" id="tabs" role="tablist">
+                <li class="nav-item col">
+                    <a class="nav-link row active" id="wikis-tab" data-toggle="tab" href="#wikis" role="tab" aria-controls="home" aria-selected="true">
+                            <span class="col-auto">Wikis</span>
+                            <span id="wikis-badges-container" class="d-inline-block align-middle current-selection-paragraph col-9"></span>
+                    </a>
+                </li>
+                <li class="nav-item col">
+                    <a class="nav-link row" id="metrics-tab" data-toggle="tab" href="#metrics" role="tab" aria-controls="metrics" aria-selected="false">
+                            <span class="col-auto">Metrics</span>
+                            <span id="metrics-badges-container" class="d-inline-block align-middle current-selection-paragraph col-9"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
     </div>
+
     <main>
         <section class="selection-content">
 
 
             <div class="tab-content">
-                <div class="current-selection-container">
-                    {% include "monowiki/selection/current_selection.html" %}
-                </div>
                 <div class="tab-pane fade show active" id="wikis" role="tabpanel" aria-labelledby="wikis-tab">
                     {% include "common/selection/selection_wikis.html" %}
                 </div>
@@ -49,7 +57,7 @@
 
         <footer class="action-button-container">
             <div id="selection-footer-container-button" class="selection-container-button">
-                <button id="selection-footer-button" type="button" class="btn action-button" disabled>COMPARE</button>
+                <button id="selection-footer-button" type="button" class="btn action-button" disabled>DISPLAY</button>
             </div>
         </footer>
 

@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+
+{% block dependencies %}
+    <!-- Specific js and css files for this screen -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='upload.css') }}">
+
+    <script>
+        $( function() {
+            $( "#input-date" ).datepicker({
+                dateFormat: "yy-mm-dd",
+                maxDate: 0
+            })
+
+        });
+    </script>
+
+{% endblock %}
+
+
+{% block content %}
+    <main>
+        <div class="jumbotron jumbotron-fluid">
+            <div id="form-screen" class="container">
+                <div class="row">
+                    <div class="col-3"></div>
+                    <h1 id="add-wiki-title" class="col-6 display-4">
+                        Add your wiki
+                        <a target="_blank" href="https://github.com/Grasia/WikiChron/wiki/How-to-add-a-new-wiki">
+                            <span id="add-wiki-info"><i class="fas fa-info-circle"></i></span>
+                        </a>
+                    </h1>
+                </div>
+                <form action="/csv-upload" method="post" enctype=multipart/form-data>
+                    <div class="row input-row">
+                        <label for="input-wiki-name" class="col-3 input-label">Wiki name*</label>
+                        <span class="col-6">
+                            <input id="input-wiki-name" name="name" type="text" placeholder="Write a descriptive name of the wiki" required />
+                        </span>
+                    </div>
+                    <div class="row input-row">
+                        <label for="input-wiki-url" class="col-3 input-label">Wiki url*</label>
+                        <span class="col-6">
+                            <input id="input-wiki-url" name="url" type="url" placeholder="Write the url of the wiki" required />
+                        <span>
+                    </div>
+                    <div class="row input-row">
+                        <label for="input-date" class="col-3 input-label">Date of data retrieval</label>
+                        <span class="col-6">
+                            <input id="input-date" name="date" type="text" placeholder="Provide when the data of the wiki was obtained">
+                        </span>
+                    </div>
+
+                    <div class="row input-row">
+                        <label for="input-wiki-file" class="col-3 input-label">csv file*</label>
+    <!--
+                        <div class="col-6"><div><div id="upload-data"><div class="" aria-disabled="false" style="min-width: 300px; height: 130px; border-width: 1px; border-style: dashed; border-radius: 5px; text-align: center; margin: 10px;"><img src="/assets/upload-drag.svg" style="margin-top: 20px;">
+    -->
+    <!--
+                            <p>Drag and Drop or <a>Choose a file</a></p>
+    -->
+
+                            <span class="col-6">
+                                <input id="input-wiki-file" type="file" name="file" autocomplete="off">
+                            </span>
+                    </div>
+
+<!--
+                    <div id="output-data-upload"></div>
+-->
+
+    <!--
+                    </div></div></div>
+    -->
+
+                    <div id="buttons-container" class="row">
+                        <span class="col-3"></span>
+
+                        <span class="col-3">
+                            <a href="/"><button id="cancel-csv-button" type="button" class="btn button cancel-button">CANCEL</button></a>
+                        </span>
+
+
+                        <span class="col-3">
+                            <input type="submit" value="UPLOAD" id="upload-csv-button" type="button" class="btn button action-button" required></input>
+                        </span>
+
+                </form>
+            </div>
+        </div>
+    </main>
+{% endblock %}

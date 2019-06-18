@@ -91,7 +91,7 @@ def define_meta_tags(hostname, assets_url_path):
         },
         {
             'name': 'og:title',
-            'content': 'WikiChron - Classic'
+            'content': 'WikiChron - Compare'
         },
         {
             'name': 'og:description',
@@ -111,7 +111,7 @@ def define_meta_tags(hostname, assets_url_path):
         },
         {
             'name': 'twitter:title',
-            'content': 'WikiChron - Classic'
+            'content': 'WikiChron - Compare'
         },
     ]
     return meta_tags
@@ -366,7 +366,7 @@ def create_dash_app(server):
                     url_base_pathname = wikichron_base_pathname,
                     assets_url_path = path_to_serve_assets,
                     assets_folder = assets_folder)
-    app.title = 'WikiChron'
+    app.title = 'WikiChron - Compare'
     app.config['suppress_callback_exceptions'] = True
 
     if debug: # In development use offline serving of deps
@@ -389,7 +389,7 @@ def _init_global_vars():
     available_metrics = interface.get_available_metrics()
     available_metrics_dict = interface.get_available_metrics_dict()
     available_wikis = data_controller.get_available_wikis()
-    available_wikis_dict = {wiki['url']: wiki for wiki in available_wikis}
+    available_wikis_dict = {wiki['domain']: wiki for wiki in available_wikis}
 
 
 def _init_app_callbacks(app):

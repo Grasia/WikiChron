@@ -10,13 +10,13 @@ from wikichron.config import DevelopmentConfig
 from wikichron.dash.apps.classic.app import create_dash_app as create_classic, set_up_app as set_up_classic
 from wikichron.dash.apps.classic.dash_config import register_config as register_classic_config
 
-# monowiki app
-from wikichron.dash.apps.monowiki.app import create_dash_app as create_monowiki, set_up_app as set_up_monowiki
-from wikichron.dash.apps.monowiki.dash_config import register_config as register_monowiki_config
-
 # networks app
 from wikichron.dash.apps.networks.app import create_dash_app as create_networks, set_up_app as set_up_networks
 from wikichron.dash.apps.networks.dash_config import register_config as register_networks_config
+
+# monowiki app
+from wikichron.dash.apps.monowiki.app import create_dash_app as create_monowiki, set_up_app as set_up_monowiki
+from wikichron.dash.apps.monowiki.dash_config import register_config as register_monowiki_config
 
 def create_app(config_class = DevelopmentConfig):
     print('Creating Flask instance...')
@@ -37,13 +37,14 @@ def register_dashapp(server):
     classic_dashapp = create_classic(server)
     set_up_classic(classic_dashapp)
 
-    register_monowiki_config(server.config)
-    monowiki_dashapp = create_monowiki(server)
-    set_up_monowiki(monowiki_dashapp)
-
     register_networks_config(server.config)
     networks_dashapp = create_networks(server)
     set_up_networks(networks_dashapp)
+
+
+    register_monowiki_config(server.config)
+    monowiki_dashapp = create_monowiki(server)
+    set_up_monowiki(monowiki_dashapp)
 
 
 def register_blueprints(server):

@@ -1,0 +1,133 @@
+/* General */
+#form-screen {
+    background-color: white;
+    padding: 46px;
+    box-shadow: 0 0 4px 0 #092049;
+    border-radius: 4px;
+    border: 1px solid #E8E8E8;
+}
+
+main {
+    color: #4A4A4A;
+}
+
+input {
+    height: 40px;
+    padding: 15px;
+    width: 100%;
+}
+
+#input-wiki-file {
+    padding: 0px;
+}
+
+.input-label {
+    padding-right: 25px;
+}
+
+.input-row {
+    text-align: right;
+    margin-bottom: 24px;
+    align-items: center;
+}
+
+h1 {
+	font-size: 36px;
+	font-weight: 300;
+	line-height: 36px;
+}
+
+#add-wiki-title {
+    font-size: 40px;
+    margin-bottom: 3rem;
+}
+
+#add-wiki-info {
+    font-size: 20px;
+    vertical-align: super;
+    color: #4A4A4A;
+}
+
+#add-wiki-info:hover {
+    color: #007bff;
+}
+
+#buttons-container {
+    display: flex;
+    flex-wrap: nowrap;
+    margin: 20px 0px 20px 0px;
+    justify-content: flex-start;
+}
+
+input {
+    margin-bottom: 10px;
+}
+
+.jumbotron {
+    background: unset;
+}
+
+
+/* Buttons */
+
+.button {
+    height: 57px;
+    width: 100%;
+    border-radius: 4px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 28px;
+}
+
+.action-button {
+    background-color: #49A5E6;
+    color: white;
+}
+
+.action-button:hover {
+    color: white;
+    background-color: #2DCCCD;
+}
+
+.action-button:disabled {
+    background-color: #D1D1D1;
+    cursor: default;
+    color: #9B9B9B;
+}
+
+.cancel-button {
+    background-color: white;
+    color: #49A5E6;
+    border: 1px solid #4FB6FF;
+}
+
+.cancel-button:hover {
+    background-color: red;
+    color : white;
+    border: none;
+}
+
+/* Background */
+body {
+    background-color: #21446D;
+    background-size: cover;
+}
+
+@media all {
+    body {
+        background-image: url("/static/assets/header_background.png");
+    }
+}
+
+@media all and (min-width: 1441px) {
+    body {
+        background-image: url("/static/assets/header_background_1x.png");
+    }
+}
+
+@media all and (min-width: 1921px){
+    body {
+        background-image: url("/static/assets/header_background_2x.png");
+    }
+}

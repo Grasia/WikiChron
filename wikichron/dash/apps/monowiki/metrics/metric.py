@@ -7,7 +7,7 @@
 
    Created on: 14-nov-2017
 
-   Copyright 2017-2018 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
+   Copyright 2017-2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
 
 from enum import Enum, unique
@@ -15,8 +15,11 @@ from enum import Enum, unique
 class MetricCategory(Enum):
     ACTIVE_EDITORS_ANALYSIS = 'Active editors analysis'
     EDITS_ANALYSIS = 'Edits analysis'
-
-
+    PAGES = 'Pages'
+    EDITIONS = 'Edits'
+    USERS = 'Users'
+    RATIOS = 'Ratios'
+    DISTRIBUTION = 'Distribution of Participation'
 
 class Metric:
     """ Class for ADT Metric. """

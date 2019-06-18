@@ -18,11 +18,11 @@
     <section id="welcome-content" class="container">
       <div id="mode-options">
 
-      <a href="/classic" class="link-unstyled">
+      <a href="/compare" class="link-unstyled">
         <div class="card">
             <div class="card-img-top">
-              <img src={{url_for('static', filename='classic/assets/line_graph.svg')}} class="mode-image" alt="Graph image classic">
-              <img src={{url_for('static', filename='classic/assets/logo_classic_text.svg')}} alt="Logo title classic">
+              <img src={{url_for('static', filename='classic/assets/line_graph.svg')}} class="mode-image" alt="Line chart - Compare">
+              <img class="logo-text" src={{url_for('static', filename='classic/assets/logo_compare_text.svg')}} alt="Logo title compare">
             </div>
             <div class="card-body">
               <div class="d-flex flex-row align-items-center">
@@ -32,25 +32,12 @@
             </div>
         </div>
       </a>
-      <a href="/monowiki" class="link-unstyled">
-        <div class="card">
-            <div class="card-img-top">
-              <img src={{url_for('static', filename='monowiki/assets/line_graph.svg')}} class="mode-image" alt="Graph image monowiki">
-              <img src={{url_for('static', filename='monowiki/assets/logo_monowiki_text.svg')}} alt="Logo title monowiki">
-            </div>
-            <div class="card-body">
-              <div class="d-flex flex-row align-items-center">
-                <p class="card-text">Choose among a big set of metrics and compare its evolution in one wiki</p>
-                <div class="arrow-container"><img height="30px" src={{url_for('static', filename='assets/arrow.svg')}} class="btn btn-link to-app-link"></img></div>
-              </div>
-            </div>
-        </div>
-      </a>
+
       <a href="/networks" class="link-unstyled">
         <div class="card">
           <div class="card-img-top">
-              <img src={{url_for('static', filename='networks/assets/network_graph.svg')}} class="mode-image" alt="Graph image networks">
-              <img src={{url_for('static', filename='networks/assets/logo_networks_text.svg')}} alt="Logo title networks">
+              <img src={{url_for('static', filename='networks/assets/network_graph.svg')}} class="mode-image" alt="Graph image - Networks">
+              <img class="logo-text" src={{url_for('static', filename='networks/assets/logo_networks_text.svg')}} alt="Logo title networks">
             </div>
             <div class="card-body">
               <div class="d-flex flex-row align-items-center">
@@ -61,10 +48,23 @@
         </div>
       </a>
 
+      <a href="/monowiki" class="link-unstyled">
+        <div class="card">
+          <div class="card-img-top">
+              <img src={{url_for('static', filename='monowiki/assets/monowiki_graph.svg')}} class="mode-image" alt="Bar chart - Monowiki">
+              <img class="logo-text" src={{url_for('static', filename='monowiki/assets/logo_monowiki_text.svg')}} alt="Logo title networks">
+            </div>
+            <div class="card-body">
+              <div class="d-flex flex-row align-items-center">
+                <p class="card-text">Display more condensed metrics and other kind of visualizations for single-wiki selections</p>
+                <div class="arrow-container"><img height="30px" src={{url_for('static', filename='assets/arrow.svg')}} class="btn btn-link to-app-link"></img></div>
+              </div>
+            </div>
+        </div>
+      </a>
+
       </div>
     </section>
-
-
 
   </main>
 

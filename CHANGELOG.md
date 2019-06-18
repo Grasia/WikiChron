@@ -1,6 +1,31 @@
 # Change Log for WikiChron
 
-## 2.0.0-beta - 2019-04-11
+## 2.1.1 - 2019-05-22
+### Fixed
+- Fixed url sharing generation issue. See Grasia/WikiChron-networks#52
+
+### Removed
+- Removed unused run_standalone_dashapp.sh script
+
+## 2.1.0 - 2019-05-22
+
+### Added
+- Legend text changes on metric select
+- New drop down to select a metric and re-size nodes
+- A hint pops up when ranking filter is focus
+- All the metrics are available to plot and to rank
+
+### Changed
+- Slide window buttons look
+- Re-ordered network stats
+
+### Fixed
+- Networks -> url sharing
+
+### Updated
+- requests dep and others
+
+## 2.0.0 - 2019-04-11
 Launched stable release of WikiChron v2!!! :tada: :tada:
 
 Many bug fixes and improvements. See github history for more.

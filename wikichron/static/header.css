@@ -1,8 +1,5 @@
 header {
     width: 100%;
-    background-color: #21446D;
-    background-size: cover;
-    padding: 0px 60px 0px 60px;
     color: white;
 }
 
@@ -24,6 +21,21 @@ header {
     display: inline;
 }
 
+.add-wiki-anchor {
+    color: white;
+    text-decoration: none;
+    height: 50px;
+    color: white;
+    vertical-align: unset;
+    margin-left: 3rem;
+}
+
+.add-wiki-anchor:hover {
+    text-decoration: none;
+    height: 50px;
+    color: #4FB6FF;
+}
+
 #logo-container {
     height: 50px;
 }
@@ -39,9 +51,8 @@ header {
 
 #selection-header-paragraph {
     font-family: Roboto;
-    font-size: 20px;
+    font-size: 16px;
     line-height: 27px;
-    width: 300px;
 }
 
 #header-modes-available {
@@ -64,20 +75,27 @@ header {
     opacity: 1 !important;
 }
 
+#header-background {
+    width: 100%;
+    padding: 0px 60px 0px 60px;
+    background-color: #21446D;
+    background-size: cover;
+}
+
 @media all {
-    header {
+    #header-background {
         background-image: url("/static/assets/header_background.png");
     }
 }
 
 @media all and (min-width: 1441px) {
-    header {
+    #header-background {
         background-image: url("/static/assets/header_background_1x.png");
     }
 }
 
 @media all and (min-width: 1921px){
-    header {
+    #header-background {
         background-image: url("/static/assets/header_background_2x.png");
     }
 }

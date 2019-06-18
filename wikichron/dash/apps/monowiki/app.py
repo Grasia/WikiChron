@@ -68,7 +68,6 @@ global available_metrics
 global available_metrics_dict
 global available_wikis
 global available_wikis_dict
-global side_bar
 global main
 
 
@@ -132,16 +131,13 @@ def set_external_imports():
 
 #--------- LAYOUT ----------------------------------------------------------#
 
-def set_layout(has_side_bar):
-
-    side_bar = [html.Div(id='side-bar-root', className='side-bar-cn')] if has_side_bar else []
+def set_layout():
 
     return html.Div(id='app-layout',
         style={'display': 'flex'},
         children=[
             dcc.Location(id='url', refresh=False),
-            html.Div(id='on-load', style={'display': 'none'})
-            ] + side_bar + [
+            html.Div(id='on-load', style={'display': 'none'}),
             html.Div(id='main-root', style={'flex': 'auto'}),
             html.Div(id='sidebar-selection', style={'display': 'none'}),
             html.Div(id='test', style={'display': 'none'})
@@ -155,33 +151,6 @@ def load_external_dash_libs_in_layout():
         children=[
             sd_material_ui.Divider()
         ]
-    )
-
-
-def generate_welcome_page():
-    assets_url_path = os.path.join(current_app.config['DASH_BASE_PATHNAME'],
-                                    'assets')
-    return html.Div(id='welcome-container',
-            className='container',
-            children=[
-                html.Div(html.Img(src='{}/line-graph.svg'.format(assets_url_path))),
-                html.H2([
-                    'Welcome to ',
-                    html.Span(html.Img(src='{}/tipo-logo.svg'.format(assets_url_path)),
-                        style={'vertical-align': 'text-bottom'}
-                    )]
-                ),
-                html.Center([
-                    html.P('Select one wiki and some metrics from the sidebar on the left and press compare to start.',
-                        style={'font-size': 'large'}),
-                    html.P(['You can read more info about WikiChron basic concepts and assumptions ',
-                            html.A('here',
-                                    href='https://github.com/Grasia/WikiChron/wiki/Basic-concepts',
-                                    target='_blank'),
-                            '.'],
-                        style={'font-size': 'large'})
-                ])
-            ]
     )
 
 
@@ -213,7 +182,7 @@ def app_bind_callbacks(app):
 
 
         print('There is not a valid wikis & metrics tuple selection yet for plotting any graph')
-        return generate_welcome_page()
+        return 'Error. Go back to the selection screen.'
 
 
     @app.callback(
@@ -222,57 +191,20 @@ def app_bind_callbacks(app):
     )
     def write_query_string_in_hidden_selection_div(query_string):
 
-        #~ if not (query_string): # check query string is not empty
-            #~ return None
+        #TOLOOKAT: This if shouldn't be neccesary from WikiChron v2 onwards.
+        # But removing it, it thwros a TypeError, while it does not in WCh compare.
+        if not (query_string): # check query string is not empty
+            return None
 
         # Attention! query_string includes heading ? symbol
         query_string_dict = parse_qs(query_string[1:])
 
-        # get only the parameters we are interested in for the side_bar selection
+        # get only the parameters we are interested in
         selection = { param: query_string_dict[param] for param in set(query_string_dict.keys()) & selection_params }
 
         if debug:
             print('selection to write in query string: {}'.format(selection))
         return (json.dumps(selection))
-
-
-    @app.callback(Output('side-bar-root', 'children'),
-        [Input('url', 'pathname')],
-        [State('side-bar-root', 'children'),
-        State('url', 'search')],
-    )
-    def generate_side_bar_onload(pathname, sidebar, query_string):
-
-        if pathname:
-            if debug:
-                print('--> Dash App Loaded!')
-                print('\tAnd this is current path: {}'.format(pathname))
-
-        if not sidebar:
-
-            if pathname:
-
-                # Attention! query_string includes heading ? symbol
-                selection = parse_qs(query_string[1:])
-
-                if debug:
-                    print('generate_side_bar_onload: This is the selection: {}'.format(selection))
-
-                # we might have selection of wikis and metrics in the query string,
-                #  so sidebar should start with those selected.
-                pre_selected_wikis   = selection['wikis'] if 'wikis' in selection else []
-                pre_selected_metrics = selection['metrics'] if 'metrics' in selection else []
-
-                return side_bar.generate_side_bar(available_wikis, available_metrics,
-                                                    pre_selected_wikis, pre_selected_metrics)
-
-            else: # if app hasn't loaded the path yet, wait to load sidebar later
-                return None
-
-        else:
-            raise PreventUpdate("Sidebar already generated! sidebar must be generated only once")
-
-    return
 
 
 #--------- BEGIN AUX SERVERS --------------------------------------------------#
@@ -309,24 +241,26 @@ def start_download_data_server(app, download_pathname):
         zipfile_ob = zipfile.ZipFile(in_memory_zip, mode='w',
                                     compression=zipfile.ZIP_DEFLATED)
 
-        for metric, metric_name in zip(data, metrics):
+        # For each wiki, create a DataFrame and add a column for the data of
+        #   each metric.
+        # Then, generate a csv for that DataFrame and append it to the output zip file
+        # Remember this is the structure of data: data[metric][wiki]
+        for wiki_idx in range(len(data[0])):
+
             # These two following lines are equivalent to the other next 3 lines
             #   but they are, probably, more difficult to understand and
             #  to maintain, although probably more pandas-ish:
             #~ metrics_data_for_this_wiki = [metric[wiki_idx] for metric in data ]
             #~ wiki_df = pd.concat(metrics_data_for_this_wiki, axis=1)
 
-            metric_df = pd.DataFrame()
-            for submetric in metric:
+            wiki_df = pd.DataFrame()
+            for metric in data:
                 # assign the name of the metric as the name of the column for its data:
-                if type(submetric) != str and type(submetric) != 'pandas.core.indexes.datetimes.DatetimeIndex' and type(submetric) != list:
-                    if metric[-1] == 'Heatmap':
-                        metric_df= submetric
-                    else: 
-                        metric_df[submetric.name] = submetric
-            csv_str = metric_df.to_csv()
+                wiki_df[metric[wiki_idx].name] = metric[wiki_idx]
+
+            csv_str = wiki_df.to_csv()
             # append dataframe csv to zip file with name of the wiki:
-            zipfile_ob.writestr('{}.csv'.format(metric_name.text), csv_str)
+            zipfile_ob.writestr('{}.csv'.format(wikis[wiki_idx]['name']), csv_str)
 
         # testing zip format and integrity
         error = zipfile_ob.testzip()
@@ -348,30 +282,22 @@ def create_dash_app(server):
     # load config
     config = get_mode_config(server)
     wikichron_base_pathname = config['DASH_BASE_PATHNAME']
-    assets_url_path = os.path.join(wikichron_base_pathname, 'assets')
+    path_to_serve_assets = config['DASH_STATIC_FOLDER']
+    assets_url_path = os.path.join(config['DASH_STATIC_PATHNAME'], 'assets')
     assets_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                'resources', 'assets')
+                                path_to_serve_assets)
 
     schema_and_hostname = f'{server.config["PREFERRED_URL_SCHEME"]}://{server.config["APP_HOSTNAME"]}'
     meta_tags = define_meta_tags(schema_and_hostname, assets_url_path)
-
-    if not debug:
-        external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', # dash stylesheet
-                            'https://use.fontawesome.com/releases/v5.0.9/css/all.css',  # fontawesome css
-        ]
-    else:
-        external_stylesheets = [f'{assets_url_path}/lib/chriddyp.css', # dash stylesheet
-                                f'{assets_url_path}/lib/fontawesome-v.5.0.9.css',  # fontawesome css
-        ]
 
     print('Creating new Dash instance...')
     app = dash.Dash(__name__,
                     server = server,
                     meta_tags = meta_tags,
-                    external_stylesheets = external_stylesheets,
                     url_base_pathname = wikichron_base_pathname,
+                    assets_url_path = path_to_serve_assets,
                     assets_folder = assets_folder)
-    app.title = 'WikiChron'
+    app.title = 'WikiChron - Monowiki'
     app.config['suppress_callback_exceptions'] = True
 
     if debug: # In development use offline serving of deps
@@ -394,17 +320,14 @@ def _init_global_vars():
     available_metrics = interface.get_available_metrics()
     available_metrics_dict = interface.get_available_metrics_dict()
     available_wikis = data_controller.get_available_wikis()
-    available_wikis_dict = {wiki['url']: wiki for wiki in available_wikis}
+    available_wikis_dict = {wiki['domain']: wiki for wiki in available_wikis}
 
 
 def _init_app_callbacks(app):
-    global side_bar
-    from . import side_bar #TOREMOVE (Probably)
     global main
     from . import main
 
     app_bind_callbacks(app)
-    side_bar.bind_callbacks(app)
     main.bind_callbacks(app)
     return
 
@@ -424,16 +347,15 @@ def set_up_app(app):
 
     # set app layout
     print('Setting up layout...')
-    has_side_bar = mode_config['DASH_STANDALONE']
     app.layout = html.Div([
-        set_layout(has_side_bar),
+        set_layout(),
         load_external_dash_libs_in_layout()
     ])
     app.layout.children += set_external_imports()
 
     start_download_data_server(app, mode_config['DASH_DOWNLOAD_PATHNAME'])
 
-    print('¡¡¡¡ Welcome to WikiChron Monowiki ' + server_config['VERSION'] +' !!!!')
+    print('¡¡¡¡ Welcome to WikiChron ' + server_config['VERSION'] +' !!!!')
     print('Using version ' + dash.__version__ + ' of Dash.')
     print('Using version ' + dash_renderer.__version__ + ' of Dash renderer.')
     print('Using version ' + dcc.__version__ + ' of Dash Core Components.')

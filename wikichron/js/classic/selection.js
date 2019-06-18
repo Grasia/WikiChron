@@ -1,21 +1,5 @@
 'use strict';
 
-var wikisList;
-
-/* List.js */
-function init_list_js() {
-    var options = {
-        valueNames: [ 'wiki-name', 'wiki-url' ]
-    };
-
-    wikisList = new List('wiki-cards-container', options);
-
-    $('#search-wiki-input').on('keyup', function() {
-        let searchString = $(this).val();
-        wikisList.search(searchString);
-    });
-}
-
 
 /* enable action button */
 function check_enable_action_button() {
@@ -44,15 +28,18 @@ function unselect_badge(target) {
     $(`input[id="checkbox-${code}"]`)[0].checked = false;
     target_badge.remove();
     check_enable_action_button();
+
+    return false; // Prevents any other event that could trigger in any ancestor element, like an anchor href, to trigger.
+
 }
 
 
 // aux function
 function generate_badge({code, name, type}) {
     return `
-        <div id="badge-${type}-${code}" class="badge badge-secondary p-2 current-selected-${type}" data-code="${code}">
+        <div id="badge-${type}-${code}" class="badge badge-secondary current-selected-${type}" data-code="${code}">
             <span class="mr-2 align-middle">${name}</span>
-            <button type="button" class="close close-wiki-badge align-middle" aria-label="Close" onclick="unselect_badge(this)">
+            <button type="button" class="close close-wiki-badge align-middle" aria-label="Close" onclick="return unselect_badge(this)">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -167,7 +154,7 @@ $('#selection-footer-button').on ("click", function() {
 
     selection = selection.slice(0, -1);  // remove trailing '&'
 
-    target_app_url = `/classic/app/${selection}`
+    target_app_url = `/compare/app/${selection}`
 
     window.location.href = encodeURI(target_app_url)
 

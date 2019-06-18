@@ -1,0 +1,91 @@
+/* Custom CSS*/
+
+#filters-section {
+    min-height: 50px;
+}
+
+/* Sliders */
+
+.slider-container {
+    display: inline-flex;
+    flex-direction: column;
+    min-height: 50px;
+    width: 450px;
+}
+
+.range-slider {
+    width: 100%;
+}
+
+.slider {
+    width: 400px;
+    height: 2px;
+    background: #D7D7D7 !important;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.slider-handle {
+    width: 15px !important;
+    height: 15px !important;
+    border-radius: 50% !important;
+    border: 2px solid #FFFFFF !important;
+    box-sizing: border-box !important;
+    background: #4FB6FF !important;
+    cursor: pointer !important;
+}
+
+.filter-title {
+    color: white;
+    font-size: 12px;
+    margin-bottom: 12px;
+    margin-left: -10px
+}
+
+.handler-text {
+    color: white;
+    margin-top: 20px;
+    font-size: 12px;
+    text-align: center;
+}
+
+.ui-widget-header {
+    background: none;
+    background-color: #4FB6FF !important;
+}
+
+.ui-widget.ui-widget-content {
+    border: none;
+}
+
+.ui-state-hover {
+    width: 16px !important;
+    height: 16px !important;
+}
+
+.ui-state-active {
+    background: #3D71AE !important;
+}
+
+/* Wiki Card */
+
+p.card-text {
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.wiki-item {
+    display: flex;
+    justify-content: space-between;
+}
+
+.wiki-url {
+    margin-bottom: 0 !important;
+}
+
+.card-verified-text {
+    font-size: 12px;
+    float: right;
+    display: flex;
+    align-items: center;
+}

@@ -67,7 +67,7 @@ def wikis_tab(wikis, selected_wikis):
     def group_wikis_in_accordion(wikis, wikis_category, wiki_category_descp,
                                 selected_wikis_value):
 
-        wikis_options = [{'label': wiki['name'], 'value': wiki['url']} for wiki in wikis]
+        wikis_options = [{'label': wiki['name'], 'value': wiki['domain']} for wiki in wikis]
 
         # add pre-selected wikis (likely, from url query string),
         # if any, to the accordion which is going to be created.
@@ -286,7 +286,7 @@ def generate_side_bar(wikis, metrics, pre_selected_wikis = [], pre_selected_metr
                     compare_button(),
                 ]
             ),
-            gdc.Import(src='/js/side_bar.js')
+            gdc.Import(src='/js/common/dash/side_bar.js')
         ]
     );
 

@@ -377,7 +377,7 @@ def _init_global_vars():
 
     available_networks = interface.get_available_networks()
     available_wikis = data_controller.get_available_wikis()
-    available_wikis_dict = {wiki['url']: wiki for wiki in available_wikis}
+    available_wikis_dict = {wiki['domain']: wiki for wiki in available_wikis}
 
 
 def _init_app_callbacks(app):

@@ -32,8 +32,8 @@ from .networks.models import networks_generator as net_factory
 from .networks.CytoscapeStylesheet import CytoscapeStylesheet
 from .networks.models.BaseNetwork import BaseNetwork
 from .main_view import RANKING_EMPTY_DATA, RANKING_EMPTY_HEADER, PAGE_SIZE, \
-    inflate_switch_network_dialog, inflate_share_dialog, NO_DATA_USER_STATS_HEADER, \
-    NO_DATA_USER_STATS_BODY
+    inflate_switch_network_dialog, inflate_share_dialog, NO_DATA_NODE_STATS_HEADER, \
+    NO_DATA_NODE_STATS_BODY, DEFAULT_LEGEND_TEXT
 
 
 selection_params = {'wikis', 'network', 'lower_bound', 'upper_bound'}
@@ -105,12 +105,13 @@ def bind_callbacks(app):
         Input('highlight-node', 'value'),
         Input('tg-show-clusters', 'on'),
         Input('dd-color-metric', 'value'),
+        Input('dd-size-metric', 'value'),
         Input('cytoscape', 'tapEdgeData')],
         [State('network-ready', 'value'),
         State('initial-selection', 'children')]
     )
-    def update_stylesheet(_, lb_switch, nodes_selc, clus_switch, dd_val,
-        edge, cy_network, selection_json):
+    def update_stylesheet(_, lb_switch, nodes_selc, clus_switch, dd_color,
+        dd_size, edge, cy_network, selection_json):
 
         if not cy_network:
             raise PreventUpdate()
@@ -123,14 +124,16 @@ def bind_callbacks(app):
 
         directed = net_factory.is_directed(network_code)
         stylesheet = CytoscapeStylesheet(directed=directed)
-        selected_metric = {}
-        size_metric = net_factory.get_main_class_metric(network_code)
+        color_metric = {}
+        size_metric = {}
 
-        if dd_val:
-            selected_metric = net_factory.get_metrics_to_plot(network_code)[dd_val]
+        if dd_color:
+            color_metric = net_factory.get_node_metrics(network_code)[dd_color]
+        if dd_size:
+            size_metric = net_factory.get_node_metrics(network_code)[dd_size]
 
         if not nodes_selc:
-            stylesheet.all_transformations(cy_network, selected_metric, size_metric)
+            stylesheet.all_transformations(cy_network, color_metric, size_metric)
         else:
             stylesheet.highlight_nodes(cy_network, nodes_selc, size_metric)
 
@@ -148,15 +151,15 @@ def bind_callbacks(app):
         if trigger == 'tg-show-clusters' and clus_switch:
             stylesheet.color_nodes_by_cluster()
             color = True
-        elif trigger == 'dd-color-metric' and selected_metric:
-                stylesheet.color_nodes(cy_network, selected_metric)
+        elif trigger == 'dd-color-metric' and color_metric:
+                stylesheet.color_nodes(cy_network, color_metric)
                 color = True
 
         # if neither of those was launch the trigger
         if not color and clus_switch:
             stylesheet.color_nodes_by_cluster()
         elif not color:
-            stylesheet.color_nodes(cy_network, selected_metric)
+            stylesheet.color_nodes(cy_network, color_metric)
 
         return stylesheet.cy_stylesheet
 
@@ -382,7 +385,7 @@ def bind_callbacks(app):
         x_scale = 'linear'
         y_scale = 'linear'
         if scale_type == 'Log':
-            y_scale = 'log'    
+            y_scale = 'log'
         elif scale_type == 'Log-Log':
             x_scale = 'log'
             y_scale = 'log'
@@ -426,7 +429,7 @@ def bind_callbacks(app):
         for k, val in stats.items():
             if val not in cy_network:
                 continue
-                
+
             group.append(html.Div(children=[
                 html.P(f'{k}:'),
                 html.P(cy_network[val])
@@ -550,13 +553,13 @@ def bind_callbacks(app):
             raise PreventUpdate()
 
         if old_click and int(old_click) == int(node["timeStamp"]):
-            return NO_DATA_USER_STATS_HEADER, NO_DATA_USER_STATS_BODY, old_click
+            return NO_DATA_NODE_STATS_HEADER, NO_DATA_NODE_STATS_BODY, old_click
 
         selection = json.loads(selection_json)
         network_code = selection['network']
         dict_header = net_factory.get_node_name(network_code)
         dic_info = net_factory.get_user_info(network_code)
-        dic_metrics = net_factory.get_available_metrics(network_code)
+        dic_metrics = net_factory.get_metrics_to_show(network_code)
 
         header_key = list(dict_header.keys())[0]
         header = f'{header_key}: {user_info[dict_header[header_key]]}'
@@ -620,9 +623,9 @@ def bind_callbacks(app):
 
             server_config = current_app.config
             mode_config = get_mode_config(current_app)
-            url = f'{server_config["PREFERRED_URL_SCHEME"]}://'
-            url = f'{url}{server_config["APP_HOSTNAME"]}'
-            url = f'{url}{mode_config["DASH_BASE_PATHNAME"]}?{new_query}'
+
+            schema_and_hostname = f'{server_config["PREFERRED_URL_SCHEME"]}://{server_config["APP_HOSTNAME"]}'
+            url = f'{schema_and_hostname}{mode_config["DASH_BASE_PATHNAME"]}?{new_query}'
 
             child = []
             if trigger == 'share-button':
@@ -656,3 +659,25 @@ def bind_callbacks(app):
         new_link = f'{link_splited[0]}?{new_link}'
 
         return new_link, new_link
+
+
+    @app.callback(
+        [Output('legend-min-node-color', 'children'),
+        Output('legend-max-node-color', 'children'),
+        Output('legend-min-node-size', 'children'),
+        Output('legend-max-node-size', 'children')],
+        [Input('dd-color-metric', 'value'),
+        Input('dd-size-metric', 'value')]
+    )
+    def update_legend(color, size):
+        min_color = DEFAULT_LEGEND_TEXT['min_node_color']
+        max_color = DEFAULT_LEGEND_TEXT['max_node_color']
+        min_size = DEFAULT_LEGEND_TEXT['min_node_size']
+        max_size = DEFAULT_LEGEND_TEXT['max_node_size']
+        if color:
+            min_color = f"Lowest \"{color}\" value"
+            max_color = f"Highest \"{color}\" value"
+        if size:
+            min_size = f"Lowest \"{size}\" value"
+            max_size = f"Highest \"{size}\" value"
+        return min_color, max_color, min_size, max_size

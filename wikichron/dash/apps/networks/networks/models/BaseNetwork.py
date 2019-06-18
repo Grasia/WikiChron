@@ -25,11 +25,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
 # CHANGE NAME
     NODE_METRICS_TO_PLOT = {
-        'Tenure': {
-            'key': 'birth_value',
-            'max': 'max_birth_value',
-            'min': 'min_birth_value'
-        },
         'Edited articles': {
             'key': 'articles',
             'log': 'articles_log',
@@ -53,20 +48,41 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             'max': 'max_talk_edits',
             'min': 'min_talk_edits'
         },
-    }
-# TO FIX
-# This param will be removed, u should use NODE_METRICS_TO_PLOT
-    AVAILABLE_METRICS = {
-        'Degree': 'degree',
-        'In-degree': 'indegree',
-        'Out-degree': 'outdegree',
-        'Closeness': 'closeness',
-        'Betweenness': 'betweenness',
-        'Page rank': 'page_rank',
-        'Edited articles': 'articles',
-        'Article edits': 'article_edits',
-        'Edited talk pages': 'talks',
-        'Talk page edits': 'talk_edits',
+        'Tenure in the wiki': {
+            'key': 'birth_value',
+            'max': 'max_birth_value',
+            'min': 'min_birth_value'
+        },
+        'Degree': {
+            'key': 'degree',
+            'max': 'max_degree',
+            'min': 'min_degree'
+        },
+        'In-degree': {
+            'key': 'indegree',
+            'max': 'max_indegree',
+            'min': 'min_indegree'
+        },
+        'Out-degree': {
+            'key': 'outdegree',
+            'max': 'max_outdegree',
+            'min': 'min_outdegree'
+        },
+        'Closeness': {
+            'key': 'closeness',
+            'max': 'max_closeness',
+            'min': 'min_closeness'
+        },
+        'Betweenness': {
+            'key': 'betweenness',
+            'max': 'max_betweenness',
+            'min': 'min_betweenness'
+        },
+        'Page rank': {
+            'key': 'page_rank',
+            'max': 'max_page_rank',
+            'min': 'min_page_rank'
+        }
     }
 
     EDGE_METRICS_TO_PLOT = {
@@ -79,16 +95,15 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
     NETWORK_STATS = {
         'Nodes': 'num_nodes',
-        'Diameter': 'diameter',
         'Edges': 'num_edges',
-        'Density': 'density',
-        'Connected components': 'components',
+        'Connected comp.': 'components',
         'Clusters': 'n_communities',
-        'Assortativity degree': 'assortativity_degree',
-        'Gini of betweenness': 'gini_betweenness',
-        'Gini of degree': 'gini_degree',
-        'Gini of in-degree': 'gini_indegree',
-        'Gini of out-degree': 'gini_outdegree',
+        'Density': 'density',
+        'Assortativity': 'assortativity_degree',
+        'Gini of betwee.': 'gini_betweenness',
+        'Gini of deg.': 'gini_degree',
+        'Gini of in-deg.': 'gini_indegree',
+        'Gini of out-deg.': 'gini_outdegree',
     }
 
 
@@ -148,29 +163,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
 
     @abc.abstractclassmethod
-    def get_network_description(cls) -> dict:
-        """
-        Returns a dict with the network components description
-        (e.g. nodes, color, edge)
-        """
-        pass
-
-
-    @abc.abstractclassmethod
     def is_directed(cls) -> bool:
-        pass
-
-
-    @abc.abstractclassmethod
-    def get_main_class_metric(cls) -> str:
-        """
-        This method should retrun a main class metric (e.g. article edits) 
-        """
-        pass
-
-
-    @abc.abstractclassmethod
-    def get_main_class_key(cls) -> str:
         pass
 
 
@@ -179,31 +172,39 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         pass
 
 
-    @classmethod
-    def get_available_metrics(cls, directed) -> dict:
-        """
-        Return a dict with the metrics
-        """
-        metrics = cls.AVAILABLE_METRICS.copy()
-        if directed:
-            del metrics['Degree']
-        else:
-            del metrics['In-degree']
-            del metrics['Out-degree']
-
-        return metrics
-
-
-    @classmethod
+    @abc.abstractclassmethod
     def get_metrics_to_plot(cls) -> dict:
         """
-        Returns a dict with the metrics, the dict must get the following structure:
-            dict = {
-                'Metric name well formatted': 'a vertex key'
-            }
+        This is used to clean NODE_METRICS_TO_PLOT
         """
-        return cls.NODE_METRICS_TO_PLOT
+        pass
 
+
+    @abc.abstractclassmethod
+    def get_metrics_to_show(cls) -> dict:
+        """
+        This is used to clean and prepare NODE_METRICS_TO_PLOT in order to show the data
+        """
+        pass
+
+
+    @classmethod
+    def remove_non_directed_node_metrics(cls, metrics):
+        if 'Degree' in metrics:
+            del metrics['Degree']
+
+
+    @classmethod
+    def remove_directed_node_metrics(cls, metrics):
+        if 'In-degree' in metrics:
+            del metrics['In-degree']
+        if 'Out-degree' in metrics:
+            del metrics['Out-degree']
+
+
+    @classmethod
+    def get_node_metrics(cls):
+        return cls.NODE_METRICS_TO_PLOT
 
 
     def add_graph_attrs(self):
@@ -226,15 +227,14 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         network = []
         metrics_to_plot = [val for key, val in self.NODE_METRICS_TO_PLOT.items()]
         metrics_to_plot = metrics_to_plot + [val for key, val in self.EDGE_METRICS_TO_PLOT.items()]
-        keys_to_plot = {metric['key'] for metric in metrics_to_plot if 'log' in metric.keys()}
+        log_keys = {metric['key'] for metric in metrics_to_plot if 'log' in metric.keys()}
 
         # node attrs
         for node in self.graph.vs:
             data = {'data': {}}
             for attr in self.graph.vs.attributes():
                 val = node[attr]
-                
-                if attr in keys_to_plot:
+                if attr in log_keys:
                     data['data'][f'{attr}_log'] = int(log(val)*100)
 
                 data['data'][attr] = val
@@ -248,7 +248,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
                 val = edge[attr]
                 if attr == 'id':
                     continue
-                if attr in keys_to_plot:
+                if attr in log_keys:
                     data['data'][f'{attr}_log'] = int(log(val)*100)
 
                 data['data'][attr] = val
@@ -262,10 +262,10 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         _max = 0
         _min = 0
         for metric in metrics_to_plot:
-            if metric['key'] in self.graph.vs.attributes():
+            if metric['key'] in self.graph.vs.attributes() and len(self.graph.vs[metric['key']]):
                 _max = max(self.graph.vs[metric['key']])
                 _min = min(self.graph.vs[metric['key']])
-            elif metric['key'] in self.graph.es.attributes():
+            elif metric['key'] in self.graph.es.attributes() and len(self.graph.es[metric['key']]):
                 _max = max(self.graph.es[metric['key']])
                 _min = min(self.graph.es[metric['key']])
 
@@ -276,11 +276,8 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             di_net[metric['max']] = _max
             di_net[metric['min']] = _min
 
-        metric_size = self.get_main_class_key()
-        if metric_size:
-            di_net['size'] = metric_size
-        di_net['network'] = network
 
+        di_net['network'] = network
         return di_net
 
 
@@ -302,7 +299,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             p_r = self.graph.pagerank(directed=self.graph.is_directed(), 
                     weights = weight)
 
-            self.graph.vs['page_rank'] = list(map(lambda x: f"{x:.4f}", p_r))
+            self.graph.vs['page_rank'] = list(map(lambda x: float(f"{x:.4f}"), p_r))
 
 
     def calculate_betweenness(self):
@@ -324,7 +321,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             gini = ineq.gini_corrected(self.graph.vs['betweenness'])
             value = 'nan'
             if gini is not np.nan:
-                value = f"{gini:.4f}"
+                value = f"{gini:.2f}"
 
             self.graph['gini_betweenness'] = value
 
@@ -344,19 +341,19 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             gini = ineq.gini_corrected(self.graph.vs['indegree'])
             value = 'nan'
             if gini is not np.nan:
-                value = value = f"{gini:.4f}"
+                value = value = f"{gini:.2f}"
             self.graph['gini_indegree'] = value
             gini = ineq.gini_corrected(self.graph.vs['outdegree'])
             value = 'nan'
             if gini is not np.nan:
-                value = value = f"{gini:.4f}"
+                value = value = f"{gini:.2f}"
             self.graph['gini_outdegree'] = value
 
         elif 'gini_degree' not in self.graph.attributes():
             gini = ineq.gini_corrected(self.graph.vs['degree'])
             value = 'nan'
             if gini is not np.nan:
-                value = value = f"{gini:.4f}"
+                value = value = f"{gini:.2f}"
             self.graph['gini_degree'] = value
 
 
@@ -391,21 +388,15 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         if not 'assortativity_degree' in self.graph.attributes():
             assortativity = self.graph.assortativity_degree(self.graph.is_directed())
             if assortativity:
-                assortativity = f"{assortativity:.4f}"
+                assortativity = f"{assortativity:.2f}"
 
             self.graph['assortativity_degree'] = assortativity
 
 
     def calculate_density(self):
         if not 'density' in self.graph.attributes():
-            density = f'{self.graph.density():.4f}'
+            density = f'{self.graph.density():.2f}'
             self.graph['density'] = density
-
-
-    def calculate_diameter(self):
-        if not 'diameter' in self.graph.attributes():
-            diameter = self.graph.diameter(directed=self.graph.is_directed(), unconn=False)
-            self.graph['diameter'] = diameter
 
 
     def calculate_components(self):
@@ -418,7 +409,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         if 'closeness' not in self.graph.vs.attributes() and 'weight'\
             in self.graph.es.attributes():
 
-            rounder = lambda x: f"{x:.4f}"
+            rounder = lambda x: float(f"{x:.4f}")
             closeness = self.graph.closeness(weights='weight')
             closeness = list(map(rounder, closeness))
             self.graph.vs['closeness'] = closeness
@@ -436,7 +427,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         self.calculate_assortativity_degree()
         self.calculate_communities()
         self.calculate_density()
-        self.calculate_diameter()
         self.calculate_components()
         self.calculate_closeness()
 

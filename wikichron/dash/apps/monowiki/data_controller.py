@@ -29,7 +29,6 @@ TIME_DIV = 60 * 60 * 24 * 30
 
 # Local imports:
 from .metrics.interface import compute_data
-from .metrics.metric import MetricCategory
 
 ### CACHED FUNCTIONS ###
 
@@ -56,9 +55,6 @@ def set_cache(cache):
 
         # load data from csvs:
         time_start_loading_csvs = time.perf_counter()
-        """for wiki in wikis:
-            df = read_data(wiki)
-            wikis_df.append(df)"""
         wikis_df = read_data(wikis[0])
         time_end_loading_csvs = time.perf_counter() - time_start_loading_csvs
         print(' * [Timing] Loading csvs : {} seconds'.format(time_end_loading_csvs) )
@@ -75,12 +71,6 @@ def set_cache(cache):
     @cache.memoize()
     def generate_longest_time_axis(list_of_selected_wikis, relative_time):
         """ Get time axis of selected wiki """
-
-        # Make the union of the Datetime indices of every wiki.
-        # In this way, we get the date range corresponding of the smallest set that
-        #  covers all the lifespan of all wikis.
-        # Otherwise, wikis lifespan for different dates which are not
-        #  contained in the lifespan of the oldest wiki would be lost
 
         if(list_of_selected_wikis[len(list_of_selected_wikis) - 1] == 'Heatmap'):
             unified_datetime_index = list_of_selected_wikis[0]
@@ -154,13 +144,11 @@ def clean_up_bot_activity(df, wiki):
 
 
 def get_first_entry(wiki):
-    df = read_data(wiki)
-    return df['timestamp'].min()
+    return wiki['first_edit']['date']
 
 
 def get_last_entry(wiki):
-    df = read_data(wiki)
-    return df['timestamp'].max()
+    return wiki['last_edit']['date']
 
 
 def get_time_bounds(wiki, lower, upper):

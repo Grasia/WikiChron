@@ -2,20 +2,25 @@
     <div class="sticky-header">
       <div id='logo-container'>
         <div id="img-logo-header-container">
-          <img height="40px" src={{ logo_src }} />
+          <a href="/">
+            <img height="40px" src={{ logo_src }} />
+          </a>
         </div>
+        <a href="/upload" class="btn btn-link add-wiki-anchor">
+          <i class="far fa-plus-square"></i>
+          <span>Add a wiki</span>
+        </a>
         <div id="header-modes-available">
-          <a href="/classic" class="btn header-app-link {{ 'disabled selected-app-link' if mode == 'classic' }}">CLASSIC</a>
-		  <a href="/monowiki" class="btn header-app-link {{ 'disabled selected-app-link' if mode == 'monowiki' }}">MONOWIKI</a>
-          <a href="/networks" class="btn header-app-link {{ 'disabled selected-app-link' if mode == 'networks' }}">NETWORKS</a>
+          <a href="/compare" class="btn header-app-link {{ 'disabled selected-app-link' if mode == 'classic' }}">COMPARE</a>
+          <a href="/networks" class="btn header-app-link {{ 'selected-app-link' if mode == 'networks' }}">NETWORKS</a>
+          <a href="/monowiki" class="btn header-app-link {{ 'selected-app-link' if mode == 'monowiki' }}">MONOWIKI</a>
         </div>
       </div>
 
-      <hr/>
+      <hr class="line"/>
     </div>
 
         <div class='intro-container'>
-            <h3 id='selection-header-welcome'>Welcome to WikiChron <em>{{ mode }}</em></h3>
             <div id='selection-header-paragraph-div'>
 <!--
                 <img src={{ paragraph_img_src }} />

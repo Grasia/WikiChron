@@ -7,15 +7,22 @@ It analyzes the history dump of a wiki and give you nice graphs plotting that da
 
 ## Install
 ### Dependencies
-* Python 3.5.2 or later
+* Python 3.6.7 or later
 * pip3
 * [Dash framework](https://plot.ly/dash)
 * [Grasia Dash Components](https://github.com/Grasia/grasia-dash-components)
 * [pandas](pandas.pydata.org)
 * (Production only) [Redis Cache](https://redis.io/)
+* [python-igraph](https://igraph.org/python/) -> it's a c package so it depends on your OS
 
 ### Install instructions
-Simply run: `pip3 install -r requirements.txt`
+The dependency `python-igraph` needs to compile some C code, so, in order to install it, you priorly need some dev libraries for python, xml, zlib and C compiler utilities.
+
+For Ubuntu 16.04/18.04 and derivatives, you can use the following command to install those:
+
+`sudo apt-get install build-essential python3-dev libxml2 libxml2-dev zlib1g-dev`
+
+After that, simply run: `pip3 install -r requirements.txt`. pip will install (and build for the case of python-igraph) all the dependencies you need.
 
 ### Using a virtual environment
 A good pratice is to use a virtual environment in order to isolate the development environment from your personal stuff. This skips issues about having different Python versions, pip packages in the wrong place or requiring sudo privileges and so on.

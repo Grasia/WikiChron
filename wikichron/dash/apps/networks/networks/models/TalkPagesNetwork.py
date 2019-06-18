@@ -44,12 +44,12 @@ class TalkPagesNetwork(BaseNetwork):
 
     USER_INFO = {
         #'User ID': 'id',
-        'Birth': 'birth',
+        'Registered since': 'birth',
         'Cluster #': 'cluster'
     }
 
     NODE_NAME = {
-        'User': 'label'
+        'Editor': 'label'
     }
 
 
@@ -121,12 +121,14 @@ class TalkPagesNetwork(BaseNetwork):
     
 
     def get_metric_dataframe(self, metric):
-        if self.AVAILABLE_METRICS[metric] in self.graph.vs.attributes()\
+        metrics = TalkPagesNetwork.get_metrics_to_plot()
+
+        if metrics[metric] in self.graph.vs.attributes()\
             and 'label' in self.graph.vs.attributes():
 
             df = pd.DataFrame({
                     'User': self.graph.vs['label'],
-                    metric: self.graph.vs[self.AVAILABLE_METRICS[metric]]
+                    metric: self.graph.vs[metrics[metric]]
                     })
             return df
 
@@ -138,10 +140,28 @@ class TalkPagesNetwork(BaseNetwork):
 
 
     @classmethod
+    def get_metrics_to_plot(cls) -> dict:
+        cls.remove_directed_node_metrics(cls.NODE_METRICS_TO_PLOT)
+        metrics = dict()
+
+        for k in cls.NODE_METRICS_TO_PLOT.keys():
+            metrics[k] = cls.NODE_METRICS_TO_PLOT[k]['key']
+        return metrics
+
+
+    @classmethod
+    def get_metrics_to_show(cls) -> dict:
+        metrics = cls.get_metrics_to_plot().copy()
+        del metrics['Tenure in the wiki']
+        return metrics
+        
+
+    @classmethod
     def get_metric_header(cls, metric: str) -> list:
+        metrics = cls.get_metrics_to_plot()
         header = list()
-        if metric in cls.AVAILABLE_METRICS:
-            header = [{'name': 'User', 'id': 'User'}, 
+        if metric in metrics:
+            header = [{'name': 'Editor', 'id': 'User'}, 
                 {'name': metric, 'id': metric}]
 
         return header
@@ -165,29 +185,3 @@ class TalkPagesNetwork(BaseNetwork):
     @classmethod
     def is_directed(cls):
         return cls.DIRECTED
-
-
-    @classmethod
-    def get_network_description(cls) -> dict:
-        desc = {}
-        desc['min_node_color'] = 'Lowest value in selected metric'
-        desc['max_node_color'] = 'Highest value in selected metric'
-        desc['min_node_size'] = 'A low edition in talk articles'
-        desc['max_node_size'] = 'A high edition in talk articles'
-        desc['min_edge_size'] = 'A weak communication'
-        desc['max_edge_size'] = 'A strong communication'
-        return desc
-
-
-    @classmethod
-    def get_main_class_metric(cls) -> str:
-        if 'Talk page edits' in cls.NODE_METRICS_TO_PLOT:
-            return cls.NODE_METRICS_TO_PLOT['Talk page edits']
-        else:
-            return ''
-
-
-    @classmethod
-    def get_main_class_key(cls) -> str:
-        metric = cls.get_main_class_metric()
-        return metric['log'] if metric and 'log' in metric else ''

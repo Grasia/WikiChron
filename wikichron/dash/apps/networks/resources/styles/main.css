@@ -215,15 +215,14 @@ a{
 }
 
 .slider-controls-pane{
-    margin-left: 2rem;
+    margin-left: 1rem;
+    display: flex;
+    align-items: end;
 }
 
-#bt-back, #bt-forward {
-    height: 3rem;
-    width: 3rem;
-    line-height: 0;
-    padding: 0;
-    letter-spacing: 0;
+.arrow {
+    height: 2rem;
+    width: 2.5rem;
 }
 
 #in-step-slider{
@@ -232,6 +231,8 @@ a{
     margin: 0 0.6rem 0 0.6rem;
     padding: 0.5rem 1rem;
 }
+
+
 /******************************************************************/
 
 .share-modal-link-and-button-cn {
@@ -360,7 +361,7 @@ a{
  *****************************************************************/
 .legend-cls {
     position: absolute;
-    margin: 37rem 0 0 2rem;
+    margin: 2rem 0 0 2rem;
     height: 18rem;
     width: 32rem;
     z-index: 99;
@@ -465,7 +466,7 @@ div.user-container-stat > p:nth-child(2){
 .net-control {
     display: flex;
     justify-content: left;
-    margin-right: 3.5rem;
+    margin-right: 2rem;
     display: flex;
     align-items: center;
 }
@@ -494,8 +495,18 @@ div.user-container-stat > p:nth-child(2){
     text-transform: initial;
 }
 
-#dd-color-metric{
-    width: 20rem;
+.controls-right {
+    display: flex;
+    align-items: center;
+}
+
+.controls-right-spacer {
+    margin-right: 2rem;
+}
+
+.metric-selector{
+    width: 12rem;
+    margin-left: 0.5rem;
 }
 /*****************************************************************/
 
@@ -550,9 +561,14 @@ div.user-container-stat > p:nth-child(2){
 
 th.dash-header > div {
     display: flex;
-    justify-content: space-around;
     align-items: baseline;
-    flex-wrap: wrap;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+th.dash-header > div > span {
+    margin-left: 0.5rem;
 }
 
 .cell-1-1 > table > tbody > tr > td {
@@ -593,8 +609,28 @@ th.dash-header > div {
     display: flex;
     justify-content: space-around;
     align-items: center;
+    margin-right: 2rem;
 }
 
-.foot-container > p{
-    margin-left: 1rem;
-}
+ /*****************************************************************/
+
+  /*****************************************************************
+ * Others
+ *****************************************************************/
+ .hint {
+     background-color: #fff;
+     border-radius: 0.5rem;
+     border: 2px #7bc8ff solid;
+     position: absolute;
+     float: left;
+     top: -3.3rem;
+     left: 0rem;
+ }
+
+ .hint-2 {
+    left: 5rem;
+ }
+
+ .hint > p{
+     margin: 0.5rem !important;
+ }
