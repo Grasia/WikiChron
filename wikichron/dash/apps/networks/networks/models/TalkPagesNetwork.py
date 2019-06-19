@@ -42,6 +42,34 @@ class TalkPagesNetwork(BaseNetwork):
     NETWORK_STATS['Edited talk pages'] = 'wiki_talks'
     NETWORK_STATS['Talk page edits'] = 'wiki_talk_edits'
 
+    NODE_METRICS_TO_PLOT = {
+        'Edited talk pages': {
+            'key': 'talks',
+            'max': 'max_talks',
+            'min': 'min_talks'
+        },
+        'Talk page edits': {
+            'key': 'talk_edits',
+            'log': 'talk_edits_log',
+            'max': 'max_talk_edits',
+            'min': 'min_talk_edits'
+        },
+        'Edited articles': {
+            'key': 'articles',
+            'log': 'articles_log',
+            'max': 'max_articles',
+            'min': 'min_articles'
+        },
+        'Article edits': {
+            'key': 'article_edits',
+            'log': 'article_edits_log',
+            'max': 'max_article_edits',
+            'min': 'min_article_edits'
+        }
+    }
+
+    NODE_METRICS_TO_PLOT.update(BaseNetwork.NODE_METRICS_TO_PLOT.copy())
+
     USER_INFO = {
         #'User ID': 'id',
         'Registered since': 'birth',
@@ -185,3 +213,8 @@ class TalkPagesNetwork(BaseNetwork):
     @classmethod
     def is_directed(cls):
         return cls.DIRECTED
+
+
+    @classmethod
+    def get_node_metrics(cls):
+        return cls.NODE_METRICS_TO_PLOT

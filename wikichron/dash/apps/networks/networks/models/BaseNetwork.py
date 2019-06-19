@@ -25,29 +25,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
 # CHANGE NAME
     NODE_METRICS_TO_PLOT = {
-        'Edited articles': {
-            'key': 'articles',
-            'log': 'articles_log',
-            'max': 'max_articles',
-            'min': 'min_articles'
-        },
-        'Article edits': {
-            'key': 'article_edits',
-            'log': 'article_edits_log',
-            'max': 'max_article_edits',
-            'min': 'min_article_edits'
-        },
-        'Edited talk pages': {
-            'key': 'talks',
-            'max': 'max_talks',
-            'min': 'min_talks'
-        },
-        'Talk page edits': {
-            'key': 'talk_edits',
-            'log': 'talk_edits_log',
-            'max': 'max_talk_edits',
-            'min': 'min_talk_edits'
-        },
         'Tenure in the wiki': {
             'key': 'birth_value',
             'max': 'max_birth_value',
@@ -187,6 +164,11 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         """
         pass
 
+        
+    @abc.abstractclassmethod
+    def get_node_metrics(cls):
+        pass
+
 
     @classmethod
     def remove_non_directed_node_metrics(cls, metrics):
@@ -200,11 +182,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             del metrics['In-degree']
         if 'Out-degree' in metrics:
             del metrics['Out-degree']
-
-
-    @classmethod
-    def get_node_metrics(cls):
-        return cls.NODE_METRICS_TO_PLOT
 
 
     def add_graph_attrs(self):

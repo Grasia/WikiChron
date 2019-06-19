@@ -238,7 +238,8 @@ def build_network_controls(network_code):
                 id='dd-size-metric',
                 options=options,
                 placeholder='Select a metric',
-                className='metric-selector'
+                className='metric-selector',
+                value=options[0]['value']
             )
         ], className='controls-right'),
     ], className='controls-right')

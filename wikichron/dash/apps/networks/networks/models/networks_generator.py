@@ -66,9 +66,9 @@ def get_metrics_to_plot(network_code):
 
 def get_node_metrics(network_code):
     if network_code == CoEditingNetwork.CODE:
-        return BaseNetwork.get_node_metrics()
+        return CoEditingNetwork.get_node_metrics()
     elif network_code == TalkPagesNetwork.CODE:
-        return BaseNetwork.get_node_metrics()
+        return TalkPagesNetwork.get_node_metrics()
     elif network_code == UserTalkNetwork.CODE:
         return UserTalkNetwork.get_node_metrics()
     else:
