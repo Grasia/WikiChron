@@ -17,6 +17,8 @@ from warnings import warn
 import json
 from urllib.parse import urlencode
 
+
+import colorlover as cl
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -66,6 +68,9 @@ def generate_graphs(data, metrics, wikis, relative_time):
     for metric_idx in range(len(metrics)):
         if category[metric_idx] == "Bar":
             num_submetrics = len(data[metric_idx])
+            #colors = ['rgb(27,79,114)', 'rgb(40,116,166)', 'rgb(52,152,219)', 'rgb(133,193,233)', 'rgb(174,214,241)', 'rgb(214,234,248)']
+            colors = cl.scales['7']['seq']['Blues']
+            colors = colors[::-1]
             for submetric in range(num_submetrics):
                 metric_data = data[metric_idx][submetric]
                 if relative_time:
@@ -76,7 +81,8 @@ def generate_graphs(data, metrics, wikis, relative_time):
                 graphs_list[metric_idx][submetric] = go.Bar(
                                     x=x_axis,
                                     y=metric_data,
-                                    name=metric_data.name
+                                    name=metric_data.name,
+                                    marker={'color': colors[submetric]}
                                     )
         elif category[metric_idx] == "Heatmap":
             if relative_time:

@@ -67,3 +67,5 @@ wcwidth==0.1.7
 Werkzeug==0.14.1
 wiki-dump-parser==2.0.0
 zc.lockfile==1.4
+cufflinks==0.15
+colorlover==0.3.0
