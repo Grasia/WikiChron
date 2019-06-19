@@ -81,7 +81,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         'Gini of close.': 'gini_closeness',
         'Gini of deg.': 'gini_degree',
         'Gini of in-deg.': 'gini_indegree',
-        'Gini of out-deg.': 'gini_outdegree',
+        'Gini of out-deg.': 'gini_outdegree'
     }
 
 
@@ -402,6 +402,39 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         else:
             self.graph['gini_closeness'] = 'nan'
 
+    
+    def calculate_gini_article_edits(self):
+        if 'article_edits' in self.graph.vs.attributes() and 'gini_article_edits'\
+            not in self.graph.attributes():
+
+            gini = ineq.gini_corrected(self.graph.vs['article_edits'])
+            if gini is not np.nan:
+                self.graph['gini_article_edits'] = f"{gini:.2f}"
+        else:
+            self.graph['gini_article_edits'] = 'nan'
+
+
+    def calculate_gini_talk_edits(self):
+        if 'talk_edits' in self.graph.vs.attributes() and 'gini_talk_edits'\
+            not in self.graph.attributes():
+
+            gini = ineq.gini_corrected(self.graph.vs['talk_edits'])
+            if gini is not np.nan:
+                self.graph['gini_talk_edits'] = f"{gini:.2f}"
+        else:
+            self.graph['gini_talk_edits'] = 'nan'
+
+
+    def calculate_gini_user_talk_edits(self):
+        if 'user_talks' in self.graph.vs.attributes() and 'gini_user_talks'\
+            not in self.graph.attributes():
+
+            gini = ineq.gini_corrected(self.graph.vs['user_talks'])
+            if gini is not np.nan:
+                self.graph['gini_user_talks'] = f"{gini:.2f}"
+        else:
+            self.graph['gini_user_talks'] = 'nan'
+
 
     def calculate_metrics(self):
         """
@@ -418,6 +451,9 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         self.calculate_components()
         self.calculate_closeness()
         self.calculate_gini_closeness()
+        self.calculate_gini_article_edits()
+        self.calculate_gini_talk_edits()
+        self.calculate_gini_user_talk_edits()
 
 
     def get_degree_distribution(self) -> (list, list):

@@ -34,6 +34,7 @@ class CoEditingNetwork(BaseNetwork):
     DIRECTED = False
 
     NETWORK_STATS = BaseNetwork.NETWORK_STATS.copy()
+    NETWORK_STATS['Gini of article ed.'] = 'gini_article_edits'
     NETWORK_STATS['Edited articles'] = 'wiki_articles'
     NETWORK_STATS['Article edits'] = 'wiki_article_edits'
 

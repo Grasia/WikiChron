@@ -41,6 +41,7 @@ class UserTalkNetwork(BaseNetwork):
     DIRECTED = True
 
     NETWORK_STATS = BaseNetwork.NETWORK_STATS.copy()
+    NETWORK_STATS['Gini of user talk ed.'] = 'gini_user_talks'
     NETWORK_STATS['User talk edits'] = 'wiki_user_talk_edits'
 
     NODE_METRICS_TO_PLOT = {

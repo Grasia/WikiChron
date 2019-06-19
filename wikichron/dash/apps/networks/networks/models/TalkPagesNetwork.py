@@ -39,6 +39,7 @@ class TalkPagesNetwork(BaseNetwork):
     DIRECTED = False
 
     NETWORK_STATS = BaseNetwork.NETWORK_STATS.copy()
+    NETWORK_STATS['Gini of talk ed.'] = 'gini_talk_edits'
     NETWORK_STATS['Edited talk pages'] = 'wiki_talks'
     NETWORK_STATS['Talk page edits'] = 'wiki_talk_edits'
 
