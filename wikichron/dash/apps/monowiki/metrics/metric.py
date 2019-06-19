@@ -13,8 +13,8 @@
 from enum import Enum, unique
 @unique
 class MetricCategory(Enum):
-    ACTIVE_EDITORS_ANALYSIS = 'Active editors analysis'
-    EDITS_ANALYSIS = 'Edits analysis'
+    ACTIVE_USER_DISTRIBUTION = 'Active users distribution'
+    EDIT_DISTRIBUTION = 'Edits distribution'
     PAGES = 'Pages'
     EDITIONS = 'Edits'
     USERS = 'Users'

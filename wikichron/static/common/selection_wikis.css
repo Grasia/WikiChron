@@ -1,5 +1,16 @@
 /* Custom CSS*/
 
+/* Search wiki and filters */
+
+#search-wiki-input {
+    font-family: "FontAwesome";
+    min-width: 250px;
+}
+
+input#search-wiki-input::placeholder {
+    text-align: left;
+}
+
 #filters-section {
     min-height: 50px;
 }

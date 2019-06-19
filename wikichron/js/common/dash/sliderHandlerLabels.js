@@ -22,6 +22,7 @@ function get_date(val) {
     const relativeDates = variableTimeAxis && document.querySelector("#time-axis-selection > label:nth-child(1) > input").checked;
 
     if (relativeDates) {
+        time_index = JSON.parse(time_index);
         date = time_index[val];
     } else {
         // Get list of all day and month in "words" for this wiki selection
@@ -50,6 +51,8 @@ function init_labels(handler, handlerId) {
 }
 
 
+/* Setting handler labels observers*/
+let observer;
 for (i = 0; i < handlerClasses.length; i++){
     handlers[i].innerHTML += `<div class='handler-label ${handlerClasses[i]}'><p id=handler-label${i}></p></div>`;
 
@@ -61,4 +64,22 @@ for (i = 0; i < handlerClasses.length; i++){
 
     init_labels(handlers[i], `handler-label${i}`);
 }
+
+
+/* Setting time index observer */
+const timeIndexDiv = document.querySelector(".time-index");
+const TimeAxisSwitchObserver = new MutationObserver(function(mutations, observer) {
+
+    mutations.forEach(function(){
+
+        for (i = 0; i < handlerClasses.length; i++){
+            init_labels(handlers[i], `handler-label${i}`);
+        }
+    });
+});
+
+TimeAxisSwitchObserver.observe(timeIndexDiv, {attributes: true})
+
+
+
 
