@@ -78,6 +78,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         'Density': 'density',
         'Assortativity': 'assortativity_degree',
         'Gini of betwee.': 'gini_betweenness',
+        'Gini of close.': 'gini_closeness',
         'Gini of deg.': 'gini_degree',
         'Gini of in-deg.': 'gini_indegree',
         'Gini of out-deg.': 'gini_outdegree',
@@ -164,7 +165,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         """
         pass
 
-        
+
     @abc.abstractclassmethod
     def get_node_metrics(cls):
         pass
@@ -294,7 +295,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
     def calculate_gini_betweenness(self):
         if 'betweenness' in self.graph.vs.attributes() and 'gini_betweenness'\
             not in self.graph.attributes():
-
             gini = ineq.gini_corrected(self.graph.vs['betweenness'])
             value = 'nan'
             if gini is not np.nan:
@@ -392,6 +392,17 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             self.graph.vs['closeness'] = closeness
 
 
+    def calculate_gini_closeness(self):
+        if 'closeness' in self.graph.vs.attributes() and 'gini_closeness'\
+            not in self.graph.attributes():
+
+            gini = ineq.gini_corrected(self.graph.vs['closeness'])
+            if gini is not np.nan:
+                self.graph['gini_closeness'] = f"{gini:.2f}"
+        else:
+            self.graph['gini_closeness'] = 'nan'
+
+
     def calculate_metrics(self):
         """
         A method which calculate the available metrics 
@@ -406,6 +417,7 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         self.calculate_density()
         self.calculate_components()
         self.calculate_closeness()
+        self.calculate_gini_closeness()
 
 
     def get_degree_distribution(self) -> (list, list):
