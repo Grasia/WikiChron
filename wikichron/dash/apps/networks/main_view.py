@@ -83,6 +83,20 @@ def main_header(selection_url, query_string, mode_config, assets_url_path):
                                     id='share-button',
                                     className='icon',
                                     title='Share current selection'
+                                ),
+                                html.A(
+                                    html.Img(src='{}/documentation.svg'.format(assets_url_path)),
+                                    href='https://github.com/Grasia/WikiChron/wiki/',
+                                    target='_blank',
+                                    className='icon',
+                                    title='Documentation'
+                                ),
+                                html.A(
+                                    html.Img(src='{}/ico-github.svg'.format(assets_url_path)),
+                                    href='https://github.com/Grasia/WikiChron',
+                                    target='_blank',
+                                    className='icon',
+                                    title='Github repo'
                                 )
                             ],
                             className='icons-bar')
@@ -438,28 +452,6 @@ def build_sidebar(network_code) -> html.Div:
     ])
 
 
-def build_foot(assets_url_path):
-    return html.Div(children=[
-        html.P('Developded by Youssef El Faqir El Rhazoui'),
-        html.Div([
-            html.A(
-                html.Img(src='{}/ico-github.svg'.format(assets_url_path)),
-                href='https://github.com/Grasia/WikiChron',
-                target='_blank',
-                className='icon',
-                title='Github repo'
-            ),
-            html.A(
-                html.Img(src='{}/documentation.svg'.format(assets_url_path)),
-                href='https://github.com/Grasia/WikiChron/wiki/',
-                target='_blank',
-                className='icon',
-                title='Documentation'
-            )
-        ], className='foot-container')
-    ], className='foot')
-
-
 def generate_main_content(wikis_arg, network_type_arg, query_string):
     """
     It generates the main content
@@ -525,7 +517,6 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
         build_sidebar(network_type_code)
     ], className='body')
 
-    foot = build_foot(assets_url_path)
     labels_script = gdc.Import(src='/js/common/dash/sliderHandlerLabels.js')
     filter_script = gdc.Import(src='/js/networks/dash/filterInfo.js')
-    return html.Div(children = [header, body, foot, labels_script, filter_script])
+    return html.Div(children = [header, body, labels_script, filter_script])
