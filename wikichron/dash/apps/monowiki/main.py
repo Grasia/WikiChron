@@ -68,7 +68,6 @@ def generate_graphs(data, metrics, wikis, relative_time):
     for metric_idx in range(len(metrics)):
         if category[metric_idx] == "Bar":
             num_submetrics = len(data[metric_idx])
-            #colors = ['rgb(27,79,114)', 'rgb(40,116,166)', 'rgb(52,152,219)', 'rgb(133,193,233)', 'rgb(174,214,241)', 'rgb(214,234,248)']
             colors = cl.scales['7']['seq']['Blues']
             colors = colors[::-1]
             for submetric in range(num_submetrics):
