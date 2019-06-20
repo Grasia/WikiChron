@@ -25,29 +25,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
 
 # CHANGE NAME
     NODE_METRICS_TO_PLOT = {
-        'Edited articles': {
-            'key': 'articles',
-            'log': 'articles_log',
-            'max': 'max_articles',
-            'min': 'min_articles'
-        },
-        'Article edits': {
-            'key': 'article_edits',
-            'log': 'article_edits_log',
-            'max': 'max_article_edits',
-            'min': 'min_article_edits'
-        },
-        'Edited talk pages': {
-            'key': 'talks',
-            'max': 'max_talks',
-            'min': 'min_talks'
-        },
-        'Talk page edits': {
-            'key': 'talk_edits',
-            'log': 'talk_edits_log',
-            'max': 'max_talk_edits',
-            'min': 'min_talk_edits'
-        },
         'Tenure in the wiki': {
             'key': 'birth_value',
             'max': 'max_birth_value',
@@ -101,9 +78,10 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         'Density': 'density',
         'Assortativity': 'assortativity_degree',
         'Gini of betwee.': 'gini_betweenness',
+        'Gini of close.': 'gini_closeness',
         'Gini of deg.': 'gini_degree',
         'Gini of in-deg.': 'gini_indegree',
-        'Gini of out-deg.': 'gini_outdegree',
+        'Gini of out-deg.': 'gini_outdegree'
     }
 
 
@@ -188,6 +166,11 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         pass
 
 
+    @abc.abstractclassmethod
+    def get_node_metrics(cls):
+        pass
+
+
     @classmethod
     def remove_non_directed_node_metrics(cls, metrics):
         if 'Degree' in metrics:
@@ -200,11 +183,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             del metrics['In-degree']
         if 'Out-degree' in metrics:
             del metrics['Out-degree']
-
-
-    @classmethod
-    def get_node_metrics(cls):
-        return cls.NODE_METRICS_TO_PLOT
 
 
     def add_graph_attrs(self):
@@ -317,7 +295,6 @@ class BaseNetwork(metaclass=abc.ABCMeta):
     def calculate_gini_betweenness(self):
         if 'betweenness' in self.graph.vs.attributes() and 'gini_betweenness'\
             not in self.graph.attributes():
-
             gini = ineq.gini_corrected(self.graph.vs['betweenness'])
             value = 'nan'
             if gini is not np.nan:
@@ -415,6 +392,50 @@ class BaseNetwork(metaclass=abc.ABCMeta):
             self.graph.vs['closeness'] = closeness
 
 
+    def calculate_gini_closeness(self):
+        if 'closeness' in self.graph.vs.attributes() and 'gini_closeness'\
+            not in self.graph.attributes():
+
+            gini = ineq.gini_corrected(self.graph.vs['closeness'])
+            if gini is not np.nan:
+                self.graph['gini_closeness'] = f"{gini:.2f}"
+        else:
+            self.graph['gini_closeness'] = 'nan'
+
+    
+    def calculate_gini_article_edits(self):
+        if 'article_edits' in self.graph.vs.attributes() and 'gini_article_edits'\
+            not in self.graph.attributes():
+
+            gini = ineq.gini_corrected(self.graph.vs['article_edits'])
+            if gini is not np.nan:
+                self.graph['gini_article_edits'] = f"{gini:.2f}"
+        else:
+            self.graph['gini_article_edits'] = 'nan'
+
+
+    def calculate_gini_talk_edits(self):
+        if 'talk_edits' in self.graph.vs.attributes() and 'gini_talk_edits'\
+            not in self.graph.attributes():
+
+            gini = ineq.gini_corrected(self.graph.vs['talk_edits'])
+            if gini is not np.nan:
+                self.graph['gini_talk_edits'] = f"{gini:.2f}"
+        else:
+            self.graph['gini_talk_edits'] = 'nan'
+
+
+    def calculate_gini_user_talk_edits(self):
+        if 'user_talks' in self.graph.vs.attributes() and 'gini_user_talks'\
+            not in self.graph.attributes():
+
+            gini = ineq.gini_corrected(self.graph.vs['user_talks'])
+            if gini is not np.nan:
+                self.graph['gini_user_talks'] = f"{gini:.2f}"
+        else:
+            self.graph['gini_user_talks'] = 'nan'
+
+
     def calculate_metrics(self):
         """
         A method which calculate the available metrics 
@@ -429,6 +450,10 @@ class BaseNetwork(metaclass=abc.ABCMeta):
         self.calculate_density()
         self.calculate_components()
         self.calculate_closeness()
+        self.calculate_gini_closeness()
+        self.calculate_gini_article_edits()
+        self.calculate_gini_talk_edits()
+        self.calculate_gini_user_talk_edits()
 
 
     def get_degree_distribution(self) -> (list, list):
