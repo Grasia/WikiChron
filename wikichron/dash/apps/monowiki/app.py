@@ -138,7 +138,7 @@ def set_layout():
         children=[
             dcc.Location(id='url', refresh=False),
             html.Div(id='on-load', style={'display': 'none'}),
-            html.Div(id='main-root', style={'flex': 'auto'}),
+            html.Div(id='main-root'),
             html.Div(id='sidebar-selection', style={'display': 'none'}),
             html.Div(id='test', style={'display': 'none'})
         ]

@@ -142,7 +142,7 @@ def set_layout(has_side_bar):
             dcc.Location(id='url', refresh=False),
             html.Div(id='on-load', style={'display': 'none'})
             ] + side_bar + [
-            html.Div(id='main-root', style={'flex': 'auto'}),
+            html.Div(id='main-root'),
             html.Div(id='sidebar-selection', style={'display': 'none'}),
             html.Div(id='test', style={'display': 'none'})
         ]

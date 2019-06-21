@@ -72,7 +72,7 @@ def generate_graphs(data, metrics, wikis, relative_time):
                     x_axis = list(range(len(metric_data.index))) # relative to the age of the wiki in months
                 else:
                     x_axis = metric_data.index # natural months
-                
+
                 graphs_list[metric_idx][submetric] = go.Bar(
                                     x=x_axis,
                                     y=metric_data,
@@ -380,7 +380,6 @@ def generate_main_content(wikis_arg, metrics_arg, relative_time_arg,
 
     return html.Div(id='main',
         className='control-text',
-        style={'width': '100%'},
         children=[
 
             main_header(),
