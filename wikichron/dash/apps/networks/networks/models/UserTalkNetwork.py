@@ -41,21 +41,46 @@ class UserTalkNetwork(BaseNetwork):
     DIRECTED = True
 
     NETWORK_STATS = BaseNetwork.NETWORK_STATS.copy()
+    NETWORK_STATS['Gini of user talk ed.'] = 'gini_user_talks'
     NETWORK_STATS['User talk edits'] = 'wiki_user_talk_edits'
 
-    NODE_METRICS_TO_PLOT = BaseNetwork.NODE_METRICS_TO_PLOT.copy()
-    NODE_METRICS_TO_PLOT['Edits in its own page'] = \
-        {
+    NODE_METRICS_TO_PLOT = {
+        'Edits in its own page': {
             'key': 'own_u_edits',
             'max': 'max_own_u_edits',
             'min': 'min_own_u_edits'
-        }
-    NODE_METRICS_TO_PLOT['User Talks'] = \
-        {
+        },
+        'User Talks': {
             'key': 'user_talks',
             'max': 'max_user_talks',
             'min': 'min_user_talks'
+        },
+        'Edited articles': {
+            'key': 'articles',
+            'log': 'articles_log',
+            'max': 'max_articles',
+            'min': 'min_articles'
+        },
+        'Article edits': {
+            'key': 'article_edits',
+            'log': 'article_edits_log',
+            'max': 'max_article_edits',
+            'min': 'min_article_edits'
+        },
+        'Edited talk pages': {
+            'key': 'talks',
+            'max': 'max_talks',
+            'min': 'min_talks'
+        },
+        'Talk page edits': {
+            'key': 'talk_edits',
+            'log': 'talk_edits_log',
+            'max': 'max_talk_edits',
+            'min': 'min_talk_edits'
         }
+    }
+
+    NODE_METRICS_TO_PLOT.update(BaseNetwork.NODE_METRICS_TO_PLOT.copy())
 
     USER_INFO = {
         #'User ID': 'id',
