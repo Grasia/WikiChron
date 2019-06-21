@@ -319,13 +319,13 @@ def serve_wikis_time_lifes():
 @server_bp.route('/classic/<path>')
 def redirect_classic_to_compare(path):
     print('Redirecting user from old endpoint "/classic" to "/compare"...')
-    return flask.redirect(f'/compare/{path}/?{bytes.decode(request.query_string)}', code=302)
+    return flask.redirect(f'/compare/{path}/?{bytes.decode(request.query_string)}', code=301)
 
 
 @server_bp.route('/app/')
 def redirect_app_to_classic():
     print('Redirecting user from old endpoint "/app" to /compare/app...')
-    return flask.redirect('/compare/app/?{}'.format(bytes.decode(request.query_string)), code=302)
+    return flask.redirect('/compare/app/?{}'.format(bytes.decode(request.query_string)), code=301)
 
 
 #--------- BEGIN AUX SERVERS (non pure flask / jinja / html / http servers) ---#
