@@ -478,7 +478,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
     selected_wiki = wikis_arg[0]
     selected_wiki_name = selected_wiki['name']
     selected_network_name = network_type_arg['name']
-    selection_url = f'{mode_config["HOME_MODE_PATHNAME"]}selection{query_string}'
+    selection_url = f'{mode_config["HOME_MODE_PATHNAME"]}selection/{query_string}'
 
     (time_index_beginning, time_index_end) = data_controller.calculate_indices_all_months(selected_wiki)
 
