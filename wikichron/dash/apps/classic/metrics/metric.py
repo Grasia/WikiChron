@@ -17,6 +17,7 @@ class MetricCategory(Enum):
     EDITIONS = 'Edits'
     USERS = 'Users'
     RATIOS = 'Ratios'
+    RETENTION = 'Retention'
     DISTRIBUTION = 'Distribution of Participation'
 
 class Metric:

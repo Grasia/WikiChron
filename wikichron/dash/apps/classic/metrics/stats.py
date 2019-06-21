@@ -14,6 +14,7 @@ import pandas as pd
 import numpy as np
 import math
 import inequality_coefficients as ineq
+import datetime
 
 # CONSTANTS
 MINIMAL_USERS_GINI = 20
@@ -261,7 +262,72 @@ def percentage_edits_by_anonymous_accum(data, index):
 
 ########################################################################
 
-# Distribution Of Work
+# Retention Metrics
+
+###### Helper Functions ######
+
+def filter_anonymous(data):
+    series = data[data['contributor_name'] != 'Anonymous']
+    return series
+
+##### callable users metrics #####
+
+def returning_new_editors(data, index):
+    data.reset_index(drop=True, inplace=True)
+    # remove anonymous users
+    registered_users = filter_anonymous(data)
+    # add up 7 days to the date on which each user registered
+    seven_days_after_registration = registered_users.groupby(['contributor_id']).agg({'timestamp':'first'}).apply(lambda x: x+datetime.timedelta(days=7)).reset_index()
+    # change the name to the timestamp column
+    seven_days_after_registration = seven_days_after_registration.rename(columns = {'timestamp':'seven_days_after'})
+    # merge two dataframes by contributor_id
+    registered_users = pd.merge(registered_users, seven_days_after_registration, on ='contributor_id')
+    # edits of each user within 7 days of being registered
+    registered_users = registered_users[registered_users['timestamp'] <= registered_users['seven_days_after']]
+    # to order by date
+    registered_users = registered_users.sort_values(['timestamp'])
+    # get the timestamp and contributor_id and group by contributor_id
+    timestamp_and_contributor_id = registered_users[['timestamp', 'contributor_id']].groupby(['contributor_id'])
+    # displace the timestamp a position
+    displace_timestamp = timestamp_and_contributor_id.apply(lambda x: x.shift())
+    registered_users['displace_timestamp'] = displace_timestamp['timestamp']
+    # compare the origin timestamp with the displace_timestamp
+    registered_users['comp'] = (registered_users.timestamp-registered_users.displace_timestamp)
+    # convert to seconds and replace the NAT for 61 because the NAT indicate the first edition
+    registered_users['comp'] = registered_users['comp'].apply(lambda y: y.total_seconds()/60).fillna(61)
+    # take the edit sessions
+    edits_sessions = registered_users[(registered_users['comp']>60) ]
+    num_edits_sessions = edits_sessions.groupby([pd.Grouper(key='timestamp', freq='MS'), 'contributor_id']).size()
+    # users with at least two editions
+    returning_users = num_edits_sessions[num_edits_sessions >1].to_frame('returning_users').reset_index()
+    # minimum month in which each user has made two editions
+    returning_new_users = returning_users.groupby(['contributor_id'])['timestamp'].min().reset_index()
+    returning_new_users = returning_new_users.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
+    if index is not None:
+        returning_new_users = returning_new_users.reindex(index, fill_value=0)
+    return returning_new_users
+
+
+def surviving_new_editors(data, index):
+    data.reset_index(drop=True, inplace=True)
+    registered_users = filter_anonymous(data)
+    # add up 30 days to the date on which each user registered
+    thirty_days_after_registration = registered_users.groupby(['contributor_id']).agg({'timestamp':'first'}).apply(lambda x: x+datetime.timedelta(days=30)).reset_index()
+    thirty_days_after_registration=thirty_days_after_registration.rename(columns = {'timestamp':'thirty_days_after'})
+    registered_users = pd.merge(registered_users, thirty_days_after_registration, on ='contributor_id')
+    registered_users['survival period'] = registered_users['thirty_days_after'].apply(lambda x: x+datetime.timedelta(days=30))
+    survival_users = registered_users[(registered_users['timestamp'] >= registered_users['thirty_days_after']) & (registered_users['timestamp'] <= registered_users['survival period'])]
+    survival_users = survival_users.groupby([pd.Grouper(key='timestamp', freq='MS'), 'contributor_id']).size().to_frame('num_editions_in_survival_period').reset_index()
+    survival_new_users = survival_users.groupby(['contributor_id'])['timestamp'].max().reset_index()
+    survival_new_users = survival_new_users.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
+    if index is not None:
+        survival_new_users = survival_new_users.reindex(index, fill_value=0)
+    return survival_new_users
+
+
+########################################################################
+
+# Distribution Of Participation
 
 ##### Helper functions #####
 
