@@ -47,10 +47,9 @@ def index():
                                 title = 'WikiChron - Welcome')
 
 
-@server_bp.route('/compare/') # will be wizard screen
+@server_bp.route('/compare/')
 @server_bp.route('/compare/selection')
-@server_bp.route('/classic/') # will be wizard screen
-@server_bp.route('/classic/selection')
+@server_bp.route('/compare/selection/')
 def compare_app():
 
     def transform_metric_obj_in_metric_frontend(metric):
@@ -85,8 +84,9 @@ def compare_app():
                                 )
 
 
-@server_bp.route('/networks/') # will be wizard screen
+@server_bp.route('/networks/')
 @server_bp.route('/networks/selection')
+@server_bp.route('/networks/selection/')
 def networks_app():
 
     config = current_app.config;
@@ -113,8 +113,9 @@ def networks_app():
                                 )
 
 
-@server_bp.route('/monowiki/') # will be wizard screen
+@server_bp.route('/monowiki/')
 @server_bp.route('/monowiki/selection')
+@server_bp.route('/monowiki/selection/')
 def monowiki_app():
 
     def transform_metric_obj_in_metric_frontend(metric):
@@ -312,6 +313,13 @@ def serve_wikis_time_lifes():
                                 for wiki in wikis
                                 if 'first_edit' in wiki and 'last_edit' in wiki}
     return jsonify(time_spans)
+
+
+@server_bp.route('/classic/<path>/')
+@server_bp.route('/classic/<path>')
+def redirect_classic_to_compare(path):
+    print('Redirecting user from old endpoint "/classic" to "/compare"...')
+    return flask.redirect(f'/compare/{path}/?{bytes.decode(request.query_string)}', code=302)
 
 
 @server_bp.route('/app/')
