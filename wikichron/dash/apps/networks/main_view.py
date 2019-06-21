@@ -504,6 +504,7 @@ def generate_main_content(wikis_arg, network_type_arg, query_string):
 
                 # Signal data
                 html.Div(id='network-ready', style={'display': 'none'}),
+                html.Div(id='ready', style={'display': 'none'}),
                 html.Div(id='old-state-node', style={'display': 'none'}),
                 html.Div(id='highlight-node', style={'display': 'none'}),
                 html.Div(id='dates-index', className='time-index', children=time_index_beginning, style={'display': 'none'}),

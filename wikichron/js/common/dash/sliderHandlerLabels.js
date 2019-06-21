@@ -41,10 +41,10 @@ function get_date(val) {
 
 function update_labels(mutation) {
 
-    //~ if (mutation['attributeName'] === "aria-valuenow") {
+    if (mutation['attributeName'] === "aria-valuenow") {
         const val = parseInt(mutation.target.getAttribute("aria-valuenow"), 10);
         mutation.target.children[0].children[0].innerHTML = get_date(val);
-    //~ }
+    }
 }
 
 
@@ -61,9 +61,6 @@ for (i = 0; i < handlerClasses.length; i++){
 
     // now, add event when value change
     observer = new MutationObserver( function(mutations){
-        console.log(`Slider handle: ${mutations} mutated!!!`);
-
-
         mutations.forEach(update_labels);
     });
     observer.observe(handlers[i], { attributes: true});
@@ -72,18 +69,19 @@ for (i = 0; i < handlerClasses.length; i++){
 
 /* Setting time index observer */
 const timeIndexDiv = document.querySelector(".time-index");
-const TimeAxisSwitchObserver = new MutationObserver(function(mutations, observer) {
+const ready = document.querySelector("#ready");
+const initHandlerLabelsObserver = new MutationObserver(function(mutations, observer) {
 
     mutations.forEach(function(){
 
         for (i = 0; i < handlerClasses.length; i++){
-            console.log(`TimeAxis: handler: ${handlers[i]} mutated!!!`);
             init_labels(handlers[i], `handler-label${i}`);
         }
     });
 });
 
-TimeAxisSwitchObserver.observe(timeIndexDiv, {subtree: true, characterData: true})
+initHandlerLabelsObserver.observe(ready, {childList: true}); // initialization
+initHandlerLabelsObserver.observe(timeIndexDiv, {subtree: true, characterData: true}); // when timeIndex changes
 
 
 
