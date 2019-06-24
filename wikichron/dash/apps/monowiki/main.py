@@ -16,7 +16,9 @@ import time
 from warnings import warn
 import json
 from urllib.parse import urlencode
+import numpy as np
 
+from colormap import Colormap
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -35,6 +37,24 @@ from . import data_controller
 global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
+
+def colors_bar_chart():
+    c = Colormap()
+    c.plot_colormap('sequentials')
+    mycmap = c.cmap('Blues')
+    rgba = mycmap(np.linspace(0, 1, 256))*255
+    colors = rgba[::-1]
+    value = colors[0][0]-20
+    colors_rgb = []
+    #take colors that are apart
+    for x in colors:
+        if x[0] - value >= 20:
+            colors_rgb.append(x)
+            value = x[0]
+    colors_rgb = list(map(lambda x: 'rgb(' + str(int(x[0])) + ', ' + str(int(x[1])) + ', ' + str(int(x[2])) + ')', colors_rgb))
+    #take the colors of the odd position
+    colors_rgb = colors_rgb[0::2]
+    return colors_rgb
 
 def extract_metrics_objs_from_metrics_codes(metric_codes):
     metrics_dict = interface.get_available_metrics_dict()
@@ -63,9 +83,13 @@ def generate_graphs(data, metrics, wikis, relative_time):
             graphs_list[metric_idx].append(None)
     """ Turn over data[] into plotly graphs objects and store it in graphs[] """
 
+    colors_rgb = colors_bar_chart()
     for metric_idx in range(len(metrics)):
         if category[metric_idx] == "Bar":
             num_submetrics = len(data[metric_idx])
+            #takes the necesary colors to represent the graph 
+            colors = colors_rgb[0:num_submetrics]
+            colors = colors[::-1]
             for submetric in range(num_submetrics):
                 metric_data = data[metric_idx][submetric]
                 if relative_time:
@@ -76,7 +100,8 @@ def generate_graphs(data, metrics, wikis, relative_time):
                 graphs_list[metric_idx][submetric] = go.Bar(
                                     x=x_axis,
                                     y=metric_data,
-                                    name=metric_data.name
+                                    name=metric_data.name,
+                                    marker={'color': colors[submetric]}
                                     )
         elif category[metric_idx] == "Heatmap":
             if relative_time:
