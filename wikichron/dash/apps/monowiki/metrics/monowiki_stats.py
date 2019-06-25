@@ -266,7 +266,7 @@ def current_streak(data, index):
     two_three_months.name = 'btw. 2 and 3 consecutive months'
     four_six_months.name = 'btw. 4 and 6 consecutive months'
     more_six.name = 'more than 6 consecutive months'
-    return [this_month, two_three_months, four_six_months, more_six, 'Bar']
+    return [this_month, two_three_months, four_six_months, more_six]
 
 def current_streak_only_mains(data, index):
     data = data[data['page_ns']==0]
@@ -278,7 +278,7 @@ def current_streak_only_mains(data, index):
     two_three_months.name = 'btw. 2 and 3 consecutive months'
     four_six_months.name = 'btw. 4 and 6 consecutive months'
     more_six.name = 'more than 6 consecutive months'
-    return [this_month, two_three_months, four_six_months, more_six, 'Bar']
+    return [this_month, two_three_months, four_six_months, more_six]
 
 
 def edition_on_type_pages(data, index):
@@ -293,7 +293,7 @@ def edition_on_type_pages(data, index):
     userP.name='User pages'
     talkPU.name='User talk pages'
     rest.name='Other pages'
-    return [articles,talkPA,userP,talkPU,rest,'Bar']
+    return [articles,talkPA,userP,talkPU,rest]
 
 def edition_on_type_pages_extends_rest(data, index):
     data=filter_anonymous(data)
@@ -308,7 +308,7 @@ def edition_on_type_pages_extends_rest(data, index):
     template.name='Template pages'
     category.name='Category pages'
     rest.name='Other pages'
-    return [file,mediaWiki,template,category,rest,'Bar']
+    return [file,mediaWiki,template,category,rest]
 
 ############################ METRIC 3 #################################################################################################
 
@@ -347,7 +347,7 @@ def users_first_edit(data, index):
     four_six.name = '1st edit btw. 4 and 6 months ago'
     six_twelve.name = '1st edit btw. 6 and 12 months ago'
     more_twelve.name = "1st edit more than 12 months ago"
-    return [this_month, one_three, four_six, six_twelve, more_twelve, 'Bar']
+    return [this_month, one_three, four_six, six_twelve, more_twelve]
 ############################ METRIC 4 #################################################################################################
 
 # This metric counts, among the users that have edited in that month X, the ones that have edited the last time in month X-1
@@ -385,7 +385,7 @@ def users_last_edit(data, index):
     two_three_months.name = 'last edit made btw. 2 and 3 months ago'
     four_six_months.name = 'last edit made btw. 4 and 6 months ago'
     more_six_months.name = 'last edit made more than six months ago'
-    return [this_month, one_month, two_three_months, four_six_months, more_six_months, 'Bar']
+    return [this_month, one_month, two_three_months, four_six_months, more_six_months]
 
 ############################ METRIC 5 #################################################################################################
 
@@ -416,7 +416,7 @@ def users_number_of_edits(data, index):
     between_5_24.name = 'Btw. 5 and 24 edits'
     between_25_99.name = 'Btw. 25 and 99 edits'
     highEq_100.name = 'More than 99 edits'
-    return [new_users, one_four, between_5_24, between_25_99, highEq_100, 'Bar']
+    return [new_users, one_four, between_5_24, between_25_99, highEq_100]
 
 def users_number_of_edits_abs(data, index):
     new_users = users_new(data, index).to_frame('new_users')
@@ -441,7 +441,7 @@ def users_number_of_edits_abs(data, index):
     between_5_24.name = 'Btw. 5 and 24 edits'
     between_25_99.name = 'Btw. 25 and 99 edits'
     highEq_100.name = 'More than 99 edits'
-    return [new_users, one_four, between_5_24, between_25_99, highEq_100, 'Bar']
+    return [new_users, one_four, between_5_24, between_25_99, highEq_100]
 ############################ METRICS 9 and 10 #################################################################################################
 
 #this metric filters how many users have edited a main page
@@ -492,7 +492,7 @@ def type_page_users_edit(data, index):
     usertalk_page.name = 'User talk pages'
     other_page.name = 'Other pages'
 
-    return [other_page, main_page, articletalk_page, user_page, template_page, usertalk_page, 'Bar']
+    return [other_page, main_page, articletalk_page, user_page, template_page, usertalk_page]
 
 ############################ METRICS TO CALCULATE THE PARTICIPATION LEVEL OF DIFFERENT USER CATEGORIES #########################################
 
@@ -582,7 +582,7 @@ def number_of_edits_by_category(data, index):
     nEdits_category4.name = "Edits by highly experimented (more than 99 edits)"
     nEdits_category5.name = "Edits by new users"
 
-    return [nEdits_category5, nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, 'Bar']
+    return [nEdits_category5, nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4]
 
 
 ### 2) PERCENTAGE OF EDITIONS PER USER CATEGORY EACH MONTH ###
@@ -621,7 +621,7 @@ def percentage_of_edits_by_category(data, index):
     pctage_category4.name = "% of edits by highly experimented (more than 99 edits)"
     pctage_category5.name = "% of edits by new users"
 
-    return [pctage_category5, pctage_category1, pctage_category2, pctage_category3, pctage_category4, 'Bar']
+    return [pctage_category5, pctage_category1, pctage_category2, pctage_category3, pctage_category4]
 
 def returning_new_editor(data, index):
     data.reset_index(drop=True, inplace=True)
@@ -656,7 +656,7 @@ def returning_new_editor(data, index):
     returning_new_users = returning_new_users.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
     if index is not None:
         returning_new_users = returning_new_users.reindex(index, fill_value=0)
-    return [returning_new_users, 'Scatter']
+    return returning_new_users
 	
 def surviving_new_editor(data, index):
     data.reset_index(drop=True, inplace=True)
@@ -672,7 +672,7 @@ def surviving_new_editor(data, index):
     survival_new_users = survival_new_users.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
     if index is not None:
         survival_new_users = survival_new_users.reindex(index, fill_value=0)
-    return [survival_new_users, 'Scatter']
+    return survival_new_users
 
 ############################# HEATMAP METRICS ##############################################
 
@@ -724,7 +724,7 @@ def edit_distributions_across_editors(data, index):
     for metric_idx in range(max_contributions+1):
         metric_row = [graphs_list[wiki_idx].pop(0) for wiki_idx in range(len(graphs_list))]
         wiki_by_metrics.append(metric_row) 
-    return [index,list(range(max_contributions)), wiki_by_metrics, months_range, 'Heatmap']
+    return [index,list(range(max_contributions)), wiki_by_metrics, months_range]
 
 def bytes_difference_across_articles(data, index):
     data.set_index(data['timestamp'], inplace=True)
@@ -775,7 +775,7 @@ def bytes_difference_across_articles(data, index):
     for metric_idx in range(max_dif_bytes+1):
         metric_row = [graphs_list[wiki_idx].pop(0) for wiki_idx in range(len(graphs_list))]
         wiki_by_metrics.append(metric_row) 
-    return [index, list(range(min_dif_bytes, max_dif_bytes)), wiki_by_metrics, months_range, 'Heatmap']
+    return [index, list(range(min_dif_bytes, max_dif_bytes)), wiki_by_metrics, months_range]
 
 def edition_on_pages(data, index):
     users_registered = filter_anonymous(data)
@@ -814,7 +814,7 @@ def edition_on_pages(data, index):
     for metric_idx in range(maxEditors+1):
             metric_row = [graphs_list[wiki_idx].pop(0) for wiki_idx in range(len(graphs_list))]
             wiki_by_metrics.append(metric_row) 
-    return [index,list(range(maxEditors)),wiki_by_metrics, z, 'Heatmap']
+    return [index,list(range(maxEditors)),wiki_by_metrics, z]
 
 def revision_on_pages(data, index):
     users_registered = filter_anonymous(data)
@@ -854,7 +854,7 @@ def revision_on_pages(data, index):
     for metric_idx in range(maxRevision+1):
             metric_row = [graphs_list[wiki_idx].pop(0) for wiki_idx in range(len(graphs_list))]
             wiki_by_metrics.append(metric_row)
-    return [index,list(range(maxRevision)),wiki_by_metrics, z, 'Heatmap']
+    return [index,list(range(maxRevision)),wiki_by_metrics, z]
 
 def  distribution_editors_between_articles_edited_each_month(data, index):
     users_registered = filter_anonymous(data)
@@ -897,7 +897,7 @@ def  distribution_editors_between_articles_edited_each_month(data, index):
     for i in range(max_editors+1):
             row = [graphs_list[j].pop(0) for j in range(len(graphs_list))]
             z_param.append(row)  
-    return [index,y_param,z_param, z_articles_by_y_editors, 'Heatmap']
+    return [index,y_param,z_param, z_articles_by_y_editors]
 
 def changes_in_absolute_size_of_editor_classes(data, index):
     class1 = users_number_of_edits_between_1_and_4(data, index).to_frame('one_four')
@@ -931,7 +931,7 @@ def changes_in_absolute_size_of_editor_classes(data, index):
                         
                 elif (concatenate.iloc[i, j] > concatenate.iloc[i, j - 1]):
                         graphs_list[i][j] = concatenate.iloc[i, j] - concatenate.iloc[i, j - 1]
-    return[months.index, classes, graphs_list, concatenate, 'Heatmap']
+    return[months.index, classes, graphs_list, concatenate]
 
 ########################### FILLED-AREA CHART METRICS ###########################################
 
@@ -993,7 +993,7 @@ def contributor_pctg_per_contributions_pctg(data, index):
     category_99.name = "99% of edits"
     category_upper.name = "100% of edits"
 
-    return[category_50, category_80, category_90, category_99, category_upper, 'Areachart']
+    return[category_50, category_80, category_90, category_99, category_upper]
 
 def contributor_pctg_per_contributions_pctg_per_month(data, index):
     data = filter_anonymous(data)
@@ -1050,4 +1050,4 @@ def contributor_pctg_per_contributions_pctg_per_month(data, index):
     category_99.name = "99% of edits"
     category_upper.name = "100% of edits"
 
-    return[category_50, category_80, category_90, category_99, category_upper, 'Areachart']
+    return[category_50, category_80, category_90, category_99, category_upper]

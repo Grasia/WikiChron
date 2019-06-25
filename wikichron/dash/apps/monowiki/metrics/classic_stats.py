@@ -41,11 +41,11 @@ def pages_new(data, index):
     series = pages.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
     if index is not None:
         series = series.reindex(index, fill_value=0)
-    return [series, 'Scatter']
+    return series
 
 
 def pages_accum(data, index):
-    return [(pages_new(data, index)[0].cumsum()), 'Scatter']
+    return (pages_new(data, index).cumsum())
 
 
 def pages_main_new(data, index):
@@ -54,11 +54,11 @@ def pages_main_new(data, index):
     series = main_pages.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
     if index is not None:
         series = series.reindex(index, fill_value=0)
-    return [series, 'Scatter']
+    return series
 
 
 def pages_main_accum(data, index):
-    return [(pages_main_new(data, index)[0].cumsum()), 'Scatter']
+    return (pages_main_new(data, index).cumsum())
 
 
 def pages_edited(data, index):
@@ -66,7 +66,7 @@ def pages_edited(data, index):
     series = monthly_data.apply(lambda x: len(x.page_id.unique()))
     if index is not None:
         series = series.reindex(index, fill_value=0)
-    return [series, 'Scatter']
+    return series
 
 
 def main_edited(data, index):
@@ -75,7 +75,7 @@ def main_edited(data, index):
     series = monthly_data.apply(lambda x: len(x.page_id.unique()))
     if index is not None:
         series = series.reindex(index, fill_value=0)
-    return [series, 'Scatter']
+    return series
 
 ########################################################################
 
@@ -87,30 +87,30 @@ def edits(data, index):
     series = monthly_data.size()
     if index is not None:
         series = series.reindex(index, fill_value=0)
-    return [series, 'Scatter']
+    return series
 
 
 def edits_accum(data, index):
-    return [(edits(data, index)[0].cumsum()), 'Scatter']
+    return (edits(data, index).cumsum())
 
 
 def edits_main_content(data, index):
     edits_main_data = data[data['page_ns'] == 0]
-    return [(edits(edits_main_data, index)[0]), 'Scatter']
+    return (edits(edits_main_data, index))
 
 
 def edits_main_content_accum(data, index):
-    return [(edits_main_content(data, index)[0].cumsum()), 'Scatter']
+    return (edits_main_content(data, index).cumsum())
 
 
 def edits_article_talk(data, index):
     edits_talk_data = data[data['page_ns'] == 1]
-    return [(edits(edits_talk_data, index)[0]), 'Scatter']
+    return (edits(edits_talk_data, index))
 
 
 def edits_user_talk(data, index):
     edits_talk_data = data[data['page_ns'] == 3]
-    return [(edits(edits_talk_data, index)[0]), 'Scatter']
+    return (edits(edits_talk_data, index))
 
 ########################################################################
 
@@ -136,11 +136,11 @@ def users_new(data, index):
     series = users.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
     if index is not None:
         series = series.reindex(index, fill_value=0)
-    return [series, 'Scatter']
+    return series
 
 
 def users_accum(data, index):
-    return [(users_new(data, index)[0].cumsum()), 'Scatter']
+    return (users_new(data, index).cumsum())
 
 
 def users_new_anonymous(data, index):
@@ -149,11 +149,11 @@ def users_new_anonymous(data, index):
     series = anonymous_users.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
     if index is not None:
         series = series.reindex(index, fill_value=0)
-    return [series, 'Scatter']
+    return series
 
 
 def users_anonymous_accum(data, index):
-    return [(users_new_anonymous(data, index)[0].cumsum()), 'Scatter']
+    return (users_new_anonymous(data, index).cumsum())
 
 
 def users_new_registered(data, index):
@@ -162,43 +162,43 @@ def users_new_registered(data, index):
     series = non_anonymous_users.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
     if index is not None:
         series = series.reindex(index, fill_value=0)
-    return [series, 'Scatter']
+    return series
 
 
 def users_registered_accum(data, index):
-    return [(users_new_registered(data, index)[0].cumsum()), 'Scatter']
+    return (users_new_registered(data, index).cumsum())
 
 
 def users_active(data, index):
-    return [users_active_more_than_x_editions(data, index, 0), 'Scatter']
+    return users_active_more_than_x_editions(data, index, 0)
 
 
 # this metric is the same as the users_active, but getting rid of anonymous users
 def users_registered_active(data, index):
     # get rid of anonymous users and procceed as it was done in the previous metric.
     user_registered = data[data['contributor_name'] != 'Anonymous']
-    return [(users_active(user_registered, index)[0]), 'Scatter']
+    return users_active(user_registered, index)
 
 
 # this metric is the complementary to users_registered_active: now, we get rid of registered users and focus on anonymous users.
 def users_anonymous_active(data, index):
     user_anonymous = data[data['contributor_name'] == 'Anonymous']
-    return [users_active(user_anonymous, index)[0], 'Scatter']
+    return users_active(user_anonymous, index)
 
 
 # this metric gets, per month, those users who have contributed to the wiki in more than 4 editions.
 def users_active_more_than_4_editions(data, index):
-    return [users_active_more_than_x_editions(data, index, 4), 'Scatter']
+    return users_active_more_than_x_editions(data, index, 5)
 
 
 # this metric gets, per month, those users who have contributed to the wiki in more than 24 editions.
 def users_active_more_than_24_editions(data, index):
-    return [users_active_more_than_x_editions(data, index, 24), 'Scatter']
+    return users_active_more_than_x_editions(data, index, 25)
 
 
 # this metric gets, per month, those users who have contributed to the wiki in more than 99 editions.
 def users_active_more_than_99_editions(data, index):
-    return [users_active_more_than_x_editions(data, index, 99), 'Scatter']
+    return users_active_more_than_x_editions(data, index, 100)
 
 
 ########################################################################
@@ -213,50 +213,50 @@ def anonymous_edits(data, index):
     series = series.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
     if index is not None:
         series = series.reindex(index, fill_value=0)
-    return [series, 'Scatter']
+    return series
 
 
 ##### callable ditribution metrics #####
 
 
 def edits_per_users_accum(data, index):
-    return [(edits_accum(data, index)[0] / users_accum(data, index)[0]), 'Scatter']
+    return (edits_accum(data, index) / users_accum(data, index))
 
 
 def edits_per_users_monthly(data, index):
-    return [(edits(data, index)[0] / users_active(data, index)[0]), 'Scatter']
+    return (edits(data, index) / users_active(data, index))
 
 
 def edits_in_articles_per_users_accum(data, index):
-    return [(edits_main_content_accum(data, index)[0] / users_accum(data, index)[0]), 'Scatter']
+    return (edits_main_content_accum(data, index) / users_accum(data, index))
 
 
 def edits_in_articles_per_users_monthly(data, index):
-    return [(edits_main_content(data, index)[0] / users_active(data, index)[0]), 'Scatter']
+    return (edits_main_content(data, index) / users_active(data, index))
 
 
 def edits_per_pages_accum(data, index):
-    return [(edits_accum(data, index)[0] / pages_accum(data, index)[0]), 'Scatter']
+    return (edits_accum(data, index) / pages_accum(data, index))
 
 
 def edits_per_pages_monthly(data, index):
-    return [(edits(data, index)[0] / pages_edited(data, index)[0]), 'Scatter']
+    return (edits(data, index) / pages_edited(data, index))
 
 
 def percentage_edits_by_anonymous_monthly(data, index):
-    series_anon_edits = anonymous_edits(data, index)[0]
-    series_total_edits = edits(data, index)[0]
+    series_anon_edits = anonymous_edits(data, index)
+    series_total_edits = edits(data, index)
     series = series_anon_edits / series_total_edits
     series *= 100 # we want it to be displayed in percentage
-    return [series, 'Scatter']
+    return series
 
 
 def percentage_edits_by_anonymous_accum(data, index):
-    series_anon_edits_accum = anonymous_edits(data, index)[0].cumsum()
-    series_total_edits_accum = edits_accum(data, index)[0]
+    series_anon_edits_accum = anonymous_edits(data, index).cumsum()
+    series_total_edits_accum = edits_accum(data, index)
     series = series_anon_edits_accum / series_total_edits_accum
     series *= 100 # we want it to be displayed in percentage
-    return [series, 'Scatter']
+    return series
 
 
 ########################################################################
@@ -349,32 +349,32 @@ def gini_accum(data, index):
             gini_accum_df[indices[i]] = ineq.gini_corrected(values, n_users)
         i = i + 1
 
-    return [gini_accum_df, 'Scatter']
+    return gini_accum_df
 
 
 def ratio_percentiles_max_5(data, index):
-    return [calc_ratio_percentile_max(data,index, 5,
-                    MINIMAL_USERS_PERCENTIL_MAX_5), 'Scatter']
+    return calc_ratio_percentile_max(data,index, 5,
+                    MINIMAL_USERS_PERCENTIL_MAX_5)
 
 
 def ratio_percentiles_max_10(data, index):
-    return [calc_ratio_percentile_max(data, index, 10,
-                    MINIMAL_USERS_PERCENTIL_MAX_10), 'Scatter']
+    return calc_ratio_percentile_max(data, index, 10,
+                    MINIMAL_USERS_PERCENTIL_MAX_10)
 
 
 def ratio_percentiles_max_20(data, index):
-    return [calc_ratio_percentile_max(data, index, 20,
-                    MINIMAL_USERS_PERCENTIL_MAX_20), 'Scatter']
+    return calc_ratio_percentile_max(data, index, 20,
+                    MINIMAL_USERS_PERCENTIL_MAX_20)
 
 
 def ratio_percentiles_5_10(data, index):
-    return [calc_ratio_percentile(data, index, 5, 10,
-                    MINIMAL_USERS_PERCENTIL_5_10), 'Scatter']
+    return calc_ratio_percentile(data, index, 5, 10,
+                    MINIMAL_USERS_PERCENTIL_5_10)
 
 
 def ratio_percentiles_10_20(data, index):
-    return [calc_ratio_percentile(data, index, 10, 20,
-                    MINIMAL_USERS_PERCENTIL_10_20), 'Scatter']
+    return calc_ratio_percentile(data, index, 10, 20,
+                    MINIMAL_USERS_PERCENTIL_10_20)
 
 
 def ratio_10_90(data, index):
@@ -398,5 +398,5 @@ def ratio_10_90(data, index):
             result[indices[i]] = ineq.ratio_top10_rest(contributions)
         i = i + 1
 
-    return [result, 'Scatter']
+    return result
 
