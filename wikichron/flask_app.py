@@ -18,6 +18,7 @@ import flask
 from flask import Blueprint, current_app, request, jsonify, url_for, redirect
 from werkzeug.utils import secure_filename
 import shutil
+import base64
 
 # local imports
 import wikichron.utils.data_manager as data_manager
@@ -33,6 +34,7 @@ import wikichron.dash.apps.monowiki.metrics.interface as monowiki_interface
 
 # upload config variables
 ALLOWED_EXTENSIONS = set(['csv'])
+ALLOWED_IMG_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'svg'])
 
 server_bp = Blueprint('main', __name__)
 
@@ -157,9 +159,13 @@ def upload():
                                 title = 'WikiChron - Upload a wiki')
 
 
-def allowed_file(filename):
-    return '.' in filename and \
-        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+def allowed_file(filename, isImage = False):
+    if not isImage:
+        return '.' in filename and \
+            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    else:
+        return '.' in filename and \
+            filename.rsplit('.', 1)[1].lower() in ALLOWED_IMG_EXTENSIONS
 
 
 @server_bp.route('/csv-upload', methods = ['POST'])
@@ -215,7 +221,8 @@ def upload_post():
 
         if wiki_domain in domains:
 
-            existing_wiki = wikis[domains.index(wiki_domain)]
+            existing_wiki_index = domains.index(wiki_domain)
+            existing_wiki = wikis[existing_wiki_index]
 
             if 'verified' in existing_wiki and existing_wiki['verified']:
                 return upload_error(f'Wiki {wiki_domain} is verified. Verified data cannot be overwritten by guest users.')
@@ -256,6 +263,24 @@ def upload_post():
         else: # If invalid or not provided, just set it to 'NA'
             date = 'NA'
 
+        # Set wiki image
+        imageSrc = None
+        if 'image' in request.files:
+            image = request.files['image']
+            if image.filename != '':
+                if allowed_file(image.filename, True):
+                    b64 = base64.encodebytes(image.read())
+                    print(str(b64, encoding='utf-8'))
+                    image_extension = image.filename.rsplit('.', 1)[1].lower()
+                    if image_extension == 'svg':
+                        image_extension = 'svg+xml'
+                    imageSrc = "data:image/{};base64,{}".format(
+                        image_extension,
+                        str(b64, encoding='utf-8'))
+                else:
+                    msg = f'Image format not supported. Format supported are: {ALLOWED_IMG_EXTENSIONS}'
+                    return upload_error(msg)
+
         # show previous stats and ask confirmation to the user. Wait for user confirmation
         wiki_name = request.form['name']
         new_wiki = {
@@ -269,8 +294,14 @@ def upload_post():
         }
         new_wiki.update(wiki_stats)
 
+        if imageSrc:
+            new_wiki["imageSrc"] = imageSrc
+
         # update wikis.json
-        wikis.append(new_wiki)
+        if not overwriting_existing:
+            wikis.append(new_wiki)
+        else:
+            wikis[existing_wiki_index].update(new_wiki)
 
         if not data_manager.update_wikis_metadata(wikis):
             return upload_error('Error updating wikis metadata. Please, try again.')

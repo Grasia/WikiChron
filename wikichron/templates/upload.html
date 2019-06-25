@@ -53,25 +53,18 @@
 
                     <div class="row input-row">
                         <label for="input-wiki-file" class="col-3 input-label">csv file*</label>
-    <!--
-                        <div class="col-6"><div><div id="upload-data"><div class="" aria-disabled="false" style="min-width: 300px; height: 130px; border-width: 1px; border-style: dashed; border-radius: 5px; text-align: center; margin: 10px;"><img src="/assets/upload-drag.svg" style="margin-top: 20px;">
-    -->
-    <!--
-                            <p>Drag and Drop or <a>Choose a file</a></p>
-    -->
-
                             <span class="col-6">
-                                <input id="input-wiki-file" type="file" name="file" autocomplete="off">
+                                <input id="input-wiki-file" class="input-file" type="file" name="file" accept=".csv" autocomplete="off">
                             </span>
                     </div>
 
-<!--
-                    <div id="output-data-upload"></div>
--->
 
-    <!--
-                    </div></div></div>
-    -->
+                    <div class="row input-row">
+                        <label for="input-wiki-image" class="col-3 input-label">Wiki image (optional)</label>
+                            <span class="col-6">
+                                <input id="input-wiki-image" class="input-file" type="file" name="image" accept="image/*" autocomplete="off">
+                            </span>
+                    </div>
 
                     <div id="buttons-container" class="row">
                         <span class="col-3"></span>
