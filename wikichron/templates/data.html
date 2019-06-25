@@ -11,13 +11,11 @@
 
 {% block content %}
 
-
-<!-- include common header -->
-    {% with %}
-        {% set logo_src = url_for('static', filename='assets/logo_wikichron_simple.svg') %}
-        {% set header_paragraph = "" %}
+    <div id="header-background">
+        <!-- include common header -->
         {% include "header.html" %}
-    {% endwith %}
+    </div>
+
 
     <main>
         <div class="tab-pane fade show active" id="wikis" role="tabpanel" aria-labelledby="wikis-tab">
