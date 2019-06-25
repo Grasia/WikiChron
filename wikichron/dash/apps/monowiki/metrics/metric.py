@@ -237,7 +237,7 @@ class LineGraph(Metric):
         """
         Creates a new LineGraph object.
 
-        data -- A list of Pandas Series to draw the corresponding lines -> support both for classic and monowiki. 
+        data -- A Pandas Series to draw the corresponding line. 
         """
         super(LineGraph, self).__init__(code, text, category, func, descp)
 
@@ -250,33 +250,23 @@ class LineGraph(Metric):
         self.data = metric_data
     
     def get_index(self):
-        return self.data[0].index
+        return self.data.index
 
     def draw(self, is_relative_time):
         """
         generate a LineGraph.
-        Returns a filled graphs_list.
+        Returns a graphs_list with one scatter graph.
         """
-        graphs_list = []
-        num_submetrics = len(self.data)
-
-        for idx in range(num_submetrics - 1):
-            graphs_list.append([])
-        
-        for submetric in range(num_submetrics - 1):
-            submetric_data = self.data[submetric]
-
-            if is_relative_time:
-                x_axis = list(range(len(submetric_data.index))) # relative to the age of the wiki in months
-            else:
-                x_axis = submetric_data.index # natural months
+        if is_relative_time:
+            x_axis = list(range(len(self.data.index))) # relative to the age of the wiki in months
+        else:
+            x_axis = self.data.index # natural months
                 
-            graphs_list[submetric] = go.Scatter(
-                                x=x_axis,
-                                y=submetric_data,
-                                name=submetric_data.name
-                                )
-        return graphs_list
+        return [go.Scatter(
+                        x=x_axis,
+                        y=self.data,
+                        name=self.data.name
+                        )]
 
 
 
