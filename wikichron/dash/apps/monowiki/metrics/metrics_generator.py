@@ -10,9 +10,13 @@
    Copyright 2017-2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
 
-from .metric import Metric, MetricCategory, HeatMap, BarGraph, AreaChart, LineGraph
+from .metric import Metric, MetricCategory
 from . import classic_stats
 from . import monowiki_stats
+from .metricClasses.heatMap import HeatMap
+from .metricClasses.barGraph import BarGraph
+from .metricClasses.areaChart import AreaChart
+from .metricClasses.lineGraph import LineGraph
 
 def generate_classic_metrics():
     metrics = []
