@@ -469,7 +469,6 @@ def users_other_page(data,index):
     aux['timestamp'] = index
 
     for i in range(len(category_list)):
-        print(category_list[i])
         serie = filter_users_pageNS(data, index, category_list[i])
         serie = pd.DataFrame(serie).reset_index()
         aux['page_ns_' + str(category_list[i])] = serie['contributor_id']
@@ -806,7 +805,7 @@ def revision_on_pages(data, index):
             wiki_by_metrics.append(metric_row)
     return [index,list(range(maxRevision)),wiki_by_metrics, z, 'Heatmap']
 
-def  distribution_editors_between_articles_edited_each_month(data, index):
+def distribution_editors_between_articles_edited_each_month(data, index):
     users_registered = filter_anonymous(data)
     #main namespace
     users_registered = users_registered[users_registered['page_ns']==0]
@@ -825,7 +824,6 @@ def  distribution_editors_between_articles_edited_each_month(data, index):
     graphs_list = [[0 for j in range(max_editors+1)] for i in range(len(index))]
     anterior = pd.to_datetime(0)
     j = -1
-    print('first for starts')
     for i, v in z_articles_by_y_editors.iteritems():
         i = list(i)
         actual = i[0]
@@ -841,8 +839,6 @@ def  distribution_editors_between_articles_edited_each_month(data, index):
         if(j <= len(index)):
             graphs_list[j][num] = v
 
-
-    print('second for starts')
     z_param = []
     for i in range(max_editors+1):
             row = [graphs_list[j].pop(0) for j in range(len(graphs_list))]
@@ -862,7 +858,6 @@ def changes_in_absolute_size_of_editor_classes(data, index):
     months = months.size()
     classes = ['between 1 and 4 edits', 'between 5 and 24 edits', 'between 25 and 99 edits', '>= 100 edits' ]
     graphs_list = [[0 for j in range(len(index))] for i in range(len(classes))]
-    print(concatenate)
 
     for i in range(len(classes)):
 
