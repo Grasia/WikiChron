@@ -11,6 +11,12 @@
 
 {% block content %}
 
+    <div id="header-background">
+        <!-- include common header -->
+        {% include "header.html" %}
+    </div>
+
+
     <main>
         <div class="tab-pane fade show active" id="wikis" role="tabpanel" aria-labelledby="wikis-tab">
             {% include "common/selection/selection_wikis.html" %}
