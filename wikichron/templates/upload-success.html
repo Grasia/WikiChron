@@ -3,7 +3,8 @@
 {% block dependencies %}
     <!-- Specific js and css files for this screen -->
     <link rel="stylesheet" href="{{ url_for('static', filename='upload.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='classic/selection.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='common/selection.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='common/selection_wikis.css') }}">
 
 {% endblock %}
 
@@ -12,7 +13,7 @@
 {% block content %}
     <main>
         <div class="jumbotron jumbotron-fluid">
-            <div class="container">
+            <div class="container" style="color: white">
                 <h1 class="display-4">Successful upload! <span style="color: green"><i class="fa fa-check-circle"></i></span></h1>
                 <p class="lead">The data for wiki: "{{wiki.name}}" was uploaded and successfully added to WikiChron.</p>
 
@@ -31,10 +32,11 @@
 
                 <hr class="my-3">
 
-                <p class="lead">Now you can close this tab and reload the tab were you had WikiChron opened. You should find your wiki within the available wikis.</p>
+                <p class="lead mb-3">Now you should find your wiki within the available wikis in any WikiChron mode.</p>
 
 
-                <div class="d-flex justify-content-around w-100">
+                <div class="d-flex w-100" style="justify-content: space-evenly;">
+                    <a class="btn btn-secondary btn-lg" href="/" role="button">Go back home</a>
                     <a class="btn btn-secondary btn-lg" href="/list_data" role="button">List available wikis</a>
                 </div>
             </div>
