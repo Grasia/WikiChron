@@ -58,7 +58,7 @@ class Metric(ABC):
         return self.func(pandas_data_frame, index)
 
     @abstractmethod
-    def show(self, metric_data, is_relative_time):
+    def draw(self, metric_data, is_relative_time):
         """
         generate the graph associated to each kind of Metric: HeatMap, Bar, AreaChart and Scatter
         """
@@ -67,7 +67,7 @@ class Metric(ABC):
 class HeatMap(Metric):
     """Class for metrics graphically shown as heatmaps"""
     
-    def show(self, metric_data, is_relative_time):
+    def draw(self, metric_data, is_relative_time):
         """
         generate a HeatMap graph using metric_data.
         metric_data[0] -- x axis.
@@ -84,16 +84,16 @@ class HeatMap(Metric):
         y_axis = metric_data[1]
         z_axis = metric_data[2]
 
-        return go.Heatmap(z=z_axis,
+        return [go.Heatmap(z=z_axis,
                         x=x_axis,
                         y=y_axis,
                         colorscale= 'Viridis'
-                        )
+                        )]
 
 class BarGraph(Metric):
     """Class for metrics graphically shown as a bar graph"""
 
-    def show(self, metric_data, is_relative_time):
+    def draw(self, metric_data, is_relative_time):
         """
         generate a Bar graph using metric_data.
         metric_data is an array which contains a Pandas Series per colored bar.
@@ -101,26 +101,30 @@ class BarGraph(Metric):
         """
         graphs_list = []
         num_submetrics = len(metric_data)
-        for submetric in range(num_submetrics):
-                submetric_data = metric_data[submetric]
-                if is_relative_time:
-                    x_axis = list(range(len(submetric_data.index))) # relative to the age of the wiki in months
-                else:
-                    x_axis = submetric_data.index # natural months
-                
-                graphs_list[submetric] = go.Bar(
-                                    x=x_axis,
-                                    y=submetric_data,
-                                    name=submetric_data.name
-                                    #marker={'color': colors[submetric]}
-                                    )
+
+        for idx in range(num_submetrics - 1):
+            graphs_list.append([])
+        
+        for submetric in range(num_submetrics - 1):
+            submetric_data = metric_data[submetric]
+            if is_relative_time:
+                x_axis = list(range(len(submetric_data.index))) # relative to the age of the wiki in months
+            else:
+                x_axis = submetric_data.index # natural months
+           
+            graphs_list[submetric] = go.Bar(
+                                x=x_axis,
+                                y=submetric_data,
+                                name=submetric_data.name
+                                #marker={'color': colors[submetric]}
+                                )
         
         return graphs_list
     
 class AreaChart(Metric):
     """Class for metrics graphically shown as a filled-area charts"""
 
-    def show(self, metric_data, is_relative_time):
+    def draw(self, metric_data, is_relative_time):
         """
         generate a filled-area chart using metric_data.
         metric_data is an array which contains a Pandas Series per area.
@@ -128,8 +132,11 @@ class AreaChart(Metric):
         """
         graphs_list = []
         num_submetrics = len(metric_data)
-        num_submetrics = len(metric_data)
-        for submetric in range(num_submetrics):
+
+        for idx in range(num_submetrics - 1):
+            graphs_list.append([])
+        
+        for submetric in range(num_submetrics - 1):
                 submetric_data = metric_data[submetric]
                 if is_relative_time:
                     x_axis = list(range(len(submetric_data.index))) # relative to the age of the wiki in months
@@ -149,7 +156,7 @@ class AreaChart(Metric):
 
 class LineGraph(Metric):
     """Class for metrics graphically shown as line graphs"""
-    def show(self, metric_data, is_relative_time):
+    def draw(self, metric_data, is_relative_time):
         """
         generate a filled-area chart using metric_data.
         metric_data is an array which contains a Pandas Series per area.
@@ -157,12 +164,18 @@ class LineGraph(Metric):
         """
         graphs_list = []
         num_submetrics = len(metric_data)
-        for submetric in range(num_submetrics):
+
+        for idx in range(num_submetrics - 1):
+            graphs_list.append([])
+        
+        for submetric in range(num_submetrics - 1):
             submetric_data = metric_data[submetric]
+
             if is_relative_time:
                 x_axis = list(range(len(submetric_data.index))) # relative to the age of the wiki in months
             else:
                 x_axis = submetric_data.index # natural months
+                
             graphs_list[submetric] = go.Scatter(
                                 x=x_axis,
                                 y=submetric_data,
