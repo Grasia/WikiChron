@@ -39,28 +39,28 @@ class CoEditingNetwork(BaseNetwork):
     NETWORK_STATS['Article edits'] = 'wiki_article_edits'
 
     NODE_METRICS_TO_PLOT = {
-        'Edited articles': {
-            'key': 'articles',
-            'log': 'articles_log',
-            'max': 'max_articles',
-            'min': 'min_articles'
-        },
         'Article edits': {
             'key': 'article_edits',
             'log': 'article_edits_log',
             'max': 'max_article_edits',
             'min': 'min_article_edits'
         },
-        'Edited talk pages': {
-            'key': 'talks',
-            'max': 'max_talks',
-            'min': 'min_talks'
+        'Edited articles': {
+            'key': 'articles',
+            'log': 'articles_log',
+            'max': 'max_articles',
+            'min': 'min_articles'
         },
         'Talk page edits': {
             'key': 'talk_edits',
             'log': 'talk_edits_log',
             'max': 'max_talk_edits',
             'min': 'min_talk_edits'
+        },
+        'Edited talk pages': {
+            'key': 'talks',
+            'max': 'max_talks',
+            'min': 'min_talks'
         }
     }
 

@@ -1,5 +1,28 @@
 # Change Log for WikiChron
 
+## 2.3.1 - 2019-06-26
+Added missing two commits.
+
+### Added
+- WikiChron networks: Layout reset on node size change
+- WikiChron networks: Changed default size metric
+
+## 2.3.0 - 2019-06-25
+### Added
+- Gini of closeness and article, talk and user talk edits to WikiChron Networks.
+- Retention metrics from WMF #66
+- Add optional image to upload wiki
+
+### Fixed
+- Better default options for WikiChron Networks.
+- Bug in sliderHandlerLabels.js
+- Fixed horizontal bar appearing on dash apps for computer screens
+- wikis selection slider filters #78
+- Overwriting wiki data didn't update properly the wikis.json file
+
+### Changed
+- Clean up code and some code refactoring
+
 ## 2.2.1 - 2019-06-17
 ### Changed
 - Selected a subset of validated and useful monowiki metrics.

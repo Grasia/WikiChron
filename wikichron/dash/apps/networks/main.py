@@ -168,9 +168,10 @@ def bind_callbacks(app):
         [Output('cytoscape', 'zoom'),
         Output('cytoscape', 'elements')],
         [Input('network-ready', 'value'),
-        Input('reset_cyto', 'n_clicks')]
+        Input('reset_cyto', 'n_clicks'),
+        Input('dd-size-metric', 'value')]
     )
-    def add_network_elements(cy_network, _):
+    def add_network_elements(cy_network, _1, _2):
         if not cy_network:
             raise PreventUpdate()
         if 'network' not in cy_network:

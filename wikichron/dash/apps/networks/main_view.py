@@ -397,7 +397,7 @@ def build_ranking(network_code) -> html.Div:
     body = html.Div(children=[
             html.Div(children=[dcc.Dropdown(
                 id='dd-local-metric',
-                value=options[1]['label'],
+                value=options[0]['label'],
                 options=options,
                 placeholder='Select a local metric'
             )], className='ranking-selection'),

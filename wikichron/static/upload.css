@@ -17,7 +17,7 @@ input {
     width: 100%;
 }
 
-#input-wiki-file {
+.input-file {
     padding: 0px;
 }
 
@@ -28,7 +28,7 @@ input {
 .input-row {
     text-align: right;
     margin-bottom: 24px;
-    align-items: center;
+    align-items: baseline;
 }
 
 h1 {
@@ -57,10 +57,6 @@ h1 {
     flex-wrap: nowrap;
     margin: 20px 0px 20px 0px;
     justify-content: flex-start;
-}
-
-input {
-    margin-bottom: 10px;
 }
 
 .jumbotron {
