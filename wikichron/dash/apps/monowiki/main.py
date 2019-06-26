@@ -40,21 +40,25 @@ debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
 def colors_bar_chart():
     c = Colormap()
-    c.plot_colormap('sequentials')
-    mycmap = c.cmap('Blues')
+    mycmap = c.cmap('YlGnBu_r')
     rgba = mycmap(np.linspace(0, 1, 256))*255
     colors = rgba[::-1]
-    value = colors[0][0]-20
+    long = len(colors)
+    '''print(len(colors))
+    value = colors[0][0]
     colors_rgb = []
     #take colors that are apart
     for x in colors:
-        if x[0] - value >= 20:
+        print(x)
+        if x[0] != value:
             colors_rgb.append(x)
             value = x[0]
     colors_rgb = list(map(lambda x: 'rgb(' + str(int(x[0])) + ', ' + str(int(x[1])) + ', ' + str(int(x[2])) + ')', colors_rgb))
+    print(colors_rgb)
     #take the colors of the odd position
     colors_rgb = colors_rgb[0::2]
-    return colors_rgb
+    print(colors_rgb)'''
+    return colors, long 
 
 def extract_metrics_objs_from_metrics_codes(metric_codes):
     metrics_dict = interface.get_available_metrics_dict()
@@ -82,27 +86,69 @@ def generate_graphs(data, metrics, wikis, relative_time):
         else:
             graphs_list[metric_idx].append(None)
     """ Turn over data[] into plotly graphs objects and store it in graphs[] """
-
-    colors_rgb = colors_bar_chart()
+    c = Colormap()
+    mycmap = c.cmap('YlGnBu_r')
+    mycmap1 = c.cmap('tab10')
+    rgba = mycmap(np.linspace(0, 1, 256))*255
+    rgba1 = mycmap1(np.linspace(0, 1, 256))*255
+    colors_rgb = rgba[::-1]
+    long = len(colors_rgb)
     for metric_idx in range(len(metrics)):
         if category[metric_idx] == "Bar":
+            print(metrics[metric_idx].text)
             num_submetrics = len(data[metric_idx])
             #takes the necesary colors to represent the graph 
-            colors = colors_rgb[0:num_submetrics]
-            colors = colors[::-1]
-            for submetric in range(num_submetrics):
-                metric_data = data[metric_idx][submetric]
-                if relative_time:
-                    x_axis = list(range(len(metric_data.index))) # relative to the age of the wiki in months
-                else:
-                    x_axis = metric_data.index # natural months
+            if metrics[metric_idx].text == 'By namespace edited':
+                value = rgba1[0][0]
+                colors_rgb1 = [rgba1[0]]
+                #take colors that are apart
+                for x in rgba1:
+                   print(x)
+                   if x[0] != value:
+                       colors_rgb1.append(x)
+                       value = x[0]
+                colors = list(map(lambda x: 'rgb(' + str(int(x[0])) + ', ' + str(int(x[1])) + ', ' + str(int(x[2])) + ')', colors_rgb1))
+                for submetric in range(num_submetrics):
+                    metric_data = data[metric_idx][submetric]
+                    if relative_time:
+                        x_axis = list(range(len(metric_data.index))) # relative to the age of the wiki in months
+                    else:
+                        x_axis = metric_data.index # natural months
+                    if submetric == 5:
+                        submetric1 = 9
+                    else:
+                        submetric1 = submetric
+                    print(type(submetric))
+                    graphs_list[metric_idx][submetric] = go.Bar(
+                                        x=x_axis,
+                                        y=metric_data,
+                                        name=metric_data.name,
+                                        marker={'color': colors[submetric1]}
+                                        )
+            else:
+                num_colors = int(long/(num_submetrics+1))
+                colors_r = []
+                valor = 0
+                for x in range(num_submetrics+1):
+                    valor1 = valor + num_colors
+                    valor2 = colors_rgb[valor1]
+                    colors_r.append(valor2)
+                    valor = valor + num_colors
+                colors = list(map(lambda x: 'rgb(' + str(int(x[0])) + ', ' + str(int(x[1])) + ', ' + str(int(x[2])) + ')', colors_r))
+                #colors = colors[::-1]
+                for submetric in range(num_submetrics):
+                    metric_data = data[metric_idx][submetric]
+                    if relative_time:
+                        x_axis = list(range(len(metric_data.index))) # relative to the age of the wiki in months
+                    else:
+                        x_axis = metric_data.index # natural months
 
-                graphs_list[metric_idx][submetric] = go.Bar(
-                                    x=x_axis,
-                                    y=metric_data,
-                                    name=metric_data.name,
-                                    marker={'color': colors[submetric]}
-                                    )
+                    graphs_list[metric_idx][submetric] = go.Bar(
+                                        x=x_axis,
+                                        y=metric_data,
+                                        name=metric_data.name,
+                                        marker={'color': colors[submetric]}
+                                        )
         elif category[metric_idx] == "Heatmap":
             if relative_time:
                 x_axis = list(range(len(data[metric_idx][0]))) # relative to the age of the wiki in months
