@@ -59,6 +59,24 @@ def update_query_by_time(query_string, up_val, low_val):
 def bind_callbacks(app):
 
     @app.callback(
+        Output('ready', 'children'),
+        [Input('dates-slider', 'value'),
+        Input('initial-selection', 'children'),
+        Input('dates-index', 'children'),
+        Input('dates-index-end', 'children')]
+    )
+    def ready(*args):
+        #~ print (args)
+        if not all(args):
+            #~ print('not ready!')
+            return None
+        else:
+            if debug:
+                print('Ready to plot network!')
+            return 'ready'
+
+
+    @app.callback(
         Output('network-ready', 'value'),
         [Input('dates-slider', 'value')],
         [State('initial-selection', 'children'),
