@@ -189,17 +189,17 @@ def users_anonymous_active(data, index):
 
 # this metric gets, per month, those users who have contributed to the wiki in more than 4 editions.
 def users_active_more_than_4_editions(data, index):
-    return users_active_more_than_x_editions(data, index, 4)
+    return users_active_more_than_x_editions(data, index, 5)
 
 
 # this metric gets, per month, those users who have contributed to the wiki in more than 24 editions.
 def users_active_more_than_24_editions(data, index):
-    return users_active_more_than_x_editions(data, index, 24)
+    return users_active_more_than_x_editions(data, index, 25)
 
 
 # this metric gets, per month, those users who have contributed to the wiki in more than 99 editions.
 def users_active_more_than_99_editions(data, index):
-    return users_active_more_than_x_editions(data, index, 99)
+    return users_active_more_than_x_editions(data, index, 100)
 
 
 ########################################################################

@@ -1,0 +1,225 @@
+/* General */
+body {
+    margin: 0px;
+    font-family: Roboto, sans-serif;
+    height: 100%;
+    background-color: #21446D;
+}
+
+p {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.action-button {
+    border: none;
+    border-radius: 4px;
+    background-color: #49A5E6;
+    color: white;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    line-height: 28px;
+}
+
+.action-button:hover {
+    color: white;
+    background-color: #2DCCCD;
+}
+
+.action-button:disabled {
+    background-color: #D1D1D1;
+    cursor: default;
+    color: #9B9B9B;
+}
+
+/* Current selection display */
+
+.badge-secondary {
+    background-color: #3D71AE;
+}
+
+.close-wiki-badge {
+    color: inherit;
+    font-size: 1.2rem;
+    float: none;
+}
+
+.close-wiki-badge:hover {
+    color: inherit;
+    opacity: 1;
+    border: 0;
+    font-size: 1.3rem;
+}
+
+
+/* Header */
+
+
+/* Main */
+
+section.selection-content {
+    color: white;
+}
+
+section.selection-content p {
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+#tabs {
+    border: none;
+}
+
+.nav-tabs .nav-link, .nav-tabs .nav-item, .nav-tabs .nav-link.active{
+    color: white;
+    border: none;
+}
+
+.nav-tabs .nav-item{
+    background-color: #183657;
+}
+
+.nav-tabs .nav-link:hover{
+    background-color: gray;
+}
+
+.nav-tabs .nav-link {
+    padding: 20px 50px 20px 50px;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #21446D;
+}
+
+.tabs-bar-container {
+    background-color: #0D233C;
+    color: white;
+}
+
+.nav-item {
+    color: #FFFFFF;
+    font-family: Roboto;
+    font-size: 35px;
+    font-weight: 900;
+    line-height: 41px;
+}
+
+.tab-content {
+    padding: 33px 60px 33px 60px;
+}
+
+.current-selection-container {
+    margin: 0px 0px 15px 0px;
+}
+
+.line {
+    box-sizing: border-box;
+    height: 3px;
+    border: 1px solid #BAD8EC;
+    opacity: 0.22;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* Main - Wikis */
+
+.card-title {
+    color: #193250;
+}
+
+.card-body {
+    color: #4A4A4A;
+}
+
+.card-image-container {
+    width: 250px;
+    height: 140px;
+    display: flex;
+}
+
+.card-image-wrapper {
+    margin: auto;
+}
+
+.card-image-wrapper > img {
+    max-height: 90px;
+    max-width: 240px;
+}
+
+.tab-intro-paragraph {
+    font-size: 1.5rem;
+    font-weight: 300;
+}
+
+.current-selection-paragraph {
+    font-weight: 500;
+    font-size: 1.2rem;
+    line-height: 18px;
+}
+
+.wiki-item {
+    display: flex;
+    justify-content: space-between;
+}
+
+.wiki-url {
+    margin-bottom: 0 !important;
+}
+
+/* Main - Metrics */
+
+/* Bold checked inputs */
+input:checked+label{ font-weight: bold; }
+
+/* Collapsable card */
+.cat-title:hover {
+    text-decoration: none;
+}
+
+.cat-title:focus {
+    text-decoration: none;
+}
+
+.cat-title {
+    text-decoration: none;
+}
+
+/* Metrics - info icon */
+.aside-checklist-option {
+    padding: 4px 4px 4px 0;
+}
+
+.checklist-info {
+    opacity: 0.2;
+}
+
+.checklist-info:hover {
+    opacity: 1;
+}
+
+
+/* Footer */
+
+/* footer - button */
+
+footer.action-button-container{
+    width: 100%;
+    height: 100px;
+}
+
+.selection-container-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: inherit;
+    background-color: #072146;
+    bottom: 0px;
+    position: fixed;
+}
+
+#selection-footer-button {
+    font-size: 24px;
+    height: 57px;
+    width: 256px;
+}
