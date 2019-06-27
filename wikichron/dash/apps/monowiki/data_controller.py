@@ -62,11 +62,10 @@ def set_cache(cache):
         # compute metric data:
         print(' * [Info] Starting calculations....')
         time_start_calculations = time.perf_counter()
-        #data = compute_data(wikis_df, metrics)
-        compute_data(wikis_df, metrics)
+        metric_object_list = compute_data(wikis_df, metrics)
         time_end_calculations = time.perf_counter() - time_start_calculations
         print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
-        #return data
+        return metric_object_list
 
 
     @cache.memoize()

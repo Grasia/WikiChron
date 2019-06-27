@@ -378,9 +378,6 @@ def bind_callbacks(app):
         wikis = selection['wikis']
         metrics = extract_metrics_objs_from_metrics_codes(selection['metrics'])
 
-        #data = data_controller.load_and_compute_data(wikis, metrics)
-        data_controller.load_and_compute_data(wikis, metrics)
-
         # get time axis of the oldest one and use it as base numbers for the slider:
         time_axis_index = data_controller.generate_longest_time_axis([ metric for metric in metrics ],
                                                     relative_time)
@@ -433,8 +430,7 @@ def bind_callbacks(app):
         wikis = selection['wikis']
         metrics = extract_metrics_objs_from_metrics_codes(selection['metrics'])
 
-        #data = data_controller.load_and_compute_data(wikis, metrics)
-        data_controller.load_and_compute_data(wikis, metrics)
+        data = data_controller.load_and_compute_data(wikis, metrics)
 
         if debug:
             print('Updating graphs. Selection: [{}, {}, {}, {}]'.format(selected_wikis, selected_metrics, selected_timerange, selected_timeaxis))

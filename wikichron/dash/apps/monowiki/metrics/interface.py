@@ -59,7 +59,7 @@ def compute_metrics_on_dataframe(metrics, df):
         metric.set_data(metric_series)
         #~ metric_series.name = '{}<>{}'.format(df.index.name,metric.code) #TOFIX for monowiki metrics
         #metrics_data.append(metric_series)
-    #return metrics_data
+    return metrics
 
 
 def compute_data(dataframes, metrics):
@@ -67,7 +67,7 @@ def compute_data(dataframes, metrics):
         One wiki only, so one dimensional array where every element
         is a pandas dataframe with the computed metric.
     """
-    compute_metrics_on_dataframe(metrics, dataframes)
+    return compute_metrics_on_dataframe(metrics, dataframes)
 
 
 # Too inefficient with the current implementation
