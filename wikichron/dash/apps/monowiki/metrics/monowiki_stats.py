@@ -570,6 +570,9 @@ def users_other_page(data,index):
     return series
 
 def users_in_namespaces(data, index):
+    '''
+    Get the monthly number of users that belong to each category in the Active editors in namespaces metric
+    '''
     main_page = users_article_page(data, index)
     articletalk_page = users_articletalk_page(data, index)
     user_page = users_user_page(data, index)
