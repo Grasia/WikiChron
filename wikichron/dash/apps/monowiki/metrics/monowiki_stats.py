@@ -389,6 +389,7 @@ def users_first_edit_more_than_12_months_ago(data, index):
 def users_first_edit(data, index):
     '''Calculate the monthly number of users whose first edit was between 1 and 3, 4 and 6, 6 and 12, and more than 12 months ago
     '''
+    data = filter_anonymous(data)
     format_data = get_accum_number_of_edits_until_each_month(data, index)
     add_position_column_users_first_edit(format_data)
 
@@ -437,6 +438,7 @@ def users_last_edit(data, index):
     '''
     Get the monthly number of users whose last edit was less than 1, between 2 and 3, 4 and 6, and more than 6 months ago
     '''
+    data = filter_anonymous(data)
     format_data = get_accum_number_of_edits_until_each_month(data, index)
     add_position_column_users_last_edit(format_data)
 
@@ -485,6 +487,7 @@ def users_number_of_edits(data, index):
     '''
     Get the monthly number of users that belong to each category, in the Active editors by experience metric.
     '''
+    data = filter_anonymous(data)
     format_data = get_accum_number_of_edits_until_each_month(data, index)
 
     new_users = users_new(data, index)
@@ -573,6 +576,8 @@ def users_in_namespaces(data, index):
     '''
     Get the monthly number of users that belong to each category in the Active editors in namespaces metric
     '''
+    data = filter_anonymous(data)
+    
     main_page = users_article_page(data, index)
     articletalk_page = users_articletalk_page(data, index)
     user_page = users_user_page(data, index)
