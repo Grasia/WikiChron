@@ -29,6 +29,13 @@ def calculate_index_all_months(data):
 
 ###### General helper functions ######
 
+def set_category_name(list_of_series, list_of_names):
+    '''
+    Set the name to be given to each pd series.
+    '''
+    for i in range(len(list_of_series)):
+        list_of_series[i].name = list_of_names[i]
+
 def get_accum_number_of_edits_until_each_month(data, index):
     '''
     Returns a pd DataFrame with the suitable shape for calculating the metrics:
@@ -56,6 +63,32 @@ def filter_anonymous(data):
     '''
     data = data[data['contributor_name'] != 'Anonymous']
     return data
+
+def calcultate_relative_proportion(list_of_category_series, list_of_column_names):
+    '''
+    Calculate the relative number of the data in each pd Series given in the list_of_category_series parameter.
+    Return a pd DataFrame in which:
+    -index = time index of the wiki.
+    -A column per category with its relative proportion regarding the total in the month is computed.
+    '''
+    df = pd.concat(list_of_category_series, axis = 1)
+    df['total'] = df[list_of_column_names].sum(axis=1)
+    
+    for i in range(len(list_of_column_names)):
+        df[str(list_of_column_names[i])] = (df[str(list_of_column_names[i])]/df['total'])*100
+    
+    return df
+
+def generate_list_of_dataframes(list_of_series, list_of_names):
+    '''
+    Return a list of pd DataFrames from the given list_of_series, using as column names the given list_of_names.
+    '''
+    list_of_dfs = []
+    
+    for i in range(len(list_of_names)):
+        list_of_dfs.append(list_of_series[i].to_frame(str(list_of_names[i])))
+    
+    return list_of_dfs
 
 #### Helper metric users active ####
 
@@ -161,8 +194,7 @@ def generate_condition_users_last_edit(data, x):
 
 def generate_condition_users_by_number_of_edits(data, x, y):
     '''
-    Create a condition that the users must fulfill in orcond = format_data['nEdits'] == 0
-    format_data['position'] = np.where(cond, 0, format_data.groupby([cond, 'contributor_id', 'nEdits']).cumcount() + 1)der to be included in one of the categories of the active editors by experience metric.
+    Create a condition that the users must fulfill in order to be included in one of the categories of the Active editors by experience metric.
     '''
     if y != 0:
         condition = (data['contributor_id'].shift() == data['contributor_id']) & (data['nEdits'] != data['nEdits'].shift()) & ((data['nEdits'].shift()<=x) & (data['nEdits'].shift()>=y))
@@ -365,14 +397,12 @@ def users_first_edit(data, index):
     four_six = users_first_edit_between_4_6_months_ago(format_data, index)
     six_twelve = users_first_edit_between_6_12_months_ago(format_data, index)
     more_twelve = users_first_edit_more_than_12_months_ago(format_data, index)
-    this_month.name ='1st edit this month'
-    one_three.name = '1st edit btw. 1 and 3 months ago'
-    four_six.name = '1st edit btw. 4 and 6 months ago'
-    six_twelve.name = '1st edit btw. 6 and 12 months ago'
-    more_twelve.name = "1st edit more than 12 months ago"
 
+
+    set_category_name([this_month, one_three, four_six, six_twelve, more_twelve], ['1st edit this month', '1st edit btw. 1 and 3 months ago', '1st edit btw. 4 and 6 months ago', '1st edit btw. 6 and 12 months ago', "1st edit more than 12 months ago"])
     
     return [this_month, one_three, four_six, six_twelve, more_twelve, 'Bar']
+
 ############################ METRIC 4 #################################################################################################
 
 def users_last_edit_1_month_ago(data, index):
@@ -415,11 +445,8 @@ def users_last_edit(data, index):
     two_three_months = users_last_edit_2_or_3_months_ago(format_data, index)
     four_six_months = users_last_edit_4_or_5_or_6_months_ago(format_data, index)
     more_six_months = users_last_edit_more_than_6_months_ago(format_data, index)
-    this_month.name = 'new users'
-    one_month.name = 'last edit made 1 month ago'
-    two_three_months.name = 'last edit made btw. 2 and 3 months ago'
-    four_six_months.name = 'last edit made btw. 4 and 6 months ago'
-    more_six_months.name = 'last edit made more than six months ago'
+
+    set_category_name([this_month, one_month, two_three_months, four_six_months, more_six_months], ['new_users', 'last edit made 1 month ago', 'last edit made btw. 2 and 3 months ago', 'last edit made btw. 4 and 6 months ago', 'last edit made more than six months ago'])
 
 
     return [this_month, one_month, two_three_months, four_six_months, more_six_months, 'Bar']
@@ -455,6 +482,9 @@ def users_number_of_edits_highEq_100(data, index):
     return filter_df(data, condition, index)
 
 def users_number_of_edits(data, index):
+    '''
+    Get the monthly number of users that belong to each category, in the Active editors by experience metric.
+    '''
     format_data = get_accum_number_of_edits_until_each_month(data, index)
 
     new_users = users_new(data, index)
@@ -462,60 +492,69 @@ def users_number_of_edits(data, index):
     between_5_24 = users_number_of_edits_between_5_and_24(format_data, index)
     between_25_99 = users_number_of_edits_between_25_and_99(format_data, index)
     highEq_100 = users_number_of_edits_highEq_100(format_data, index)
-    new_users.name = 'New users'
-    one_four.name = 'Btw. 1 and 4 edits'
-    between_5_24.name = 'Btw. 5 and 24 edits'
-    between_25_99.name = 'Btw. 25 and 99 edits'
-    highEq_100.name = 'More than 99 edits'
+
+    set_category_name([new_users, one_four, between_5_24, between_25_99, highEq_100], ['New users', 'Btw. 1 and 4 edits', 'Btw. 5 and 24 edits', 'Btw. 25 and 99 edits', 'More than 99 edits'])
 
 
     return [new_users, one_four, between_5_24, between_25_99, highEq_100, 'Bar']
 
 def users_number_of_edits_abs(data, index):
-    new_users = users_new(data, index).to_frame('new_users')
-    one_four = users_number_of_edits_between_1_and_4(data, index).to_frame('one_four')
-    between_5_24 = users_number_of_edits_between_5_and_24(data, index).to_frame('5_24')
-    between_25_99 = users_number_of_edits_between_25_and_99(data, index).to_frame('25_99')
-    highEq_100 = users_number_of_edits_highEq_100(data, index).to_frame('highEq_100')
-    concatenate = pd.concat([new_users, one_four, between_5_24, between_25_99, highEq_100], axis = 1)
-    concatenate['suma'] = concatenate[['new_users', 'one_four', '5_24', '25_99', 'highEq_100']].sum(axis=1)
-    concatenate['new_users'] = (concatenate['new_users']/concatenate['suma'])*100
-    concatenate['one_four'] = (concatenate['one_four']/concatenate['suma'])*100
-    concatenate['5_24'] = (concatenate['5_24']/concatenate['suma'])*100
-    concatenate['25_99'] = (concatenate['25_99']/concatenate['suma'])*100
-    concatenate['highEq_100'] = (concatenate['highEq_100']/concatenate['suma'])*100
-    new_users = pd.Series(concatenate['new_users'], index = concatenate.index)
-    one_four = pd.Series(concatenate['one_four'], index = concatenate.index)
-    between_5_24 = pd.Series(concatenate['5_24'], index = concatenate.index)
-    between_25_99 = pd.Series(concatenate['25_99'], index = concatenate.index)
-    highEq_100 = pd.Series(concatenate['highEq_100'], index = concatenate.index)
-    new_users.name = 'New users'
-    one_four.name = 'Btw. 1 and 4 edits'
-    between_5_24.name = 'Btw. 5 and 24 edits'
-    between_25_99.name = 'Btw. 25 and 99 edits'
-    highEq_100.name = 'More than 99 edits'
-    return [new_users, one_four, between_5_24, between_25_99, highEq_100]
+
+    '''
+    Get the absolute proportion of users that belong to each category, in the Active editors by experience metric.
+    '''
+    users_num_edits = users_number_of_edits(data, index)
+
+    list_of_category_names = ['new_users', 'one_four', '5_24', '25_99', 'highEq_100']
+    list_of_categories = generate_list_of_dataframes(users_num_edits, list_of_category_names)
+    df = calcultate_relative_proportion(list_of_categories, list_of_category_names)
+
+    new_users = pd.Series(df['new_users'], index = index)
+    one_four = pd.Series(df['one_four'], index = index)
+    between_5_24 = pd.Series(df['5_24'], index = index)
+    between_25_99 = pd.Series(df['25_99'], index = index)
+    highEq_100 = pd.Series(df['highEq_100'], index = index)
+
+    set_category_name([new_users, one_four, between_5_24, between_25_99, highEq_100], ['New users', 'Btw. 1 and 4 edits', 'Btw. 5 and 24 edits', 'Btw. 25 and 99 edits', 'More than 99 edits'])
+ 
+    return [new_users, one_four, between_5_24, between_25_99, highEq_100, 'Bar']
+
 ############################ METRICS 9 and 10 #################################################################################################
 
-#this metric filters how many users have edited a main page
 def users_article_page(data, index):
-  return filter_users_pageNS(data, index, 0)
+    '''
+    Monthly number of users that have edited a main page
+    '''
+    return filter_users_pageNS(data, index, 0)
 
 def users_articletalk_page(data, index):
-  return filter_users_pageNS(data, index, 1)
+    '''
+    Monthly number of users that have edited an article talk page
+    '''
+    return filter_users_pageNS(data, index, 1)
 
 def users_user_page(data, index):
-  return filter_users_pageNS(data, index, 2)
+    '''
+    Monthly number of users that have edited a user page
+    '''
+    return filter_users_pageNS(data, index, 2)
 
-#this metric filters how many users have edited a template page
 def users_template_page(data, index):
-   return filter_users_pageNS(data, index, 10)
+    '''
+    Monthly number of users that have edited a template page
+    '''
+    return filter_users_pageNS(data, index, 10)
 
-#this metric filters how many users have edited a talk page
 def users_usertalk_page(data,index):
+    '''
+    Monthly number of users that have edited a talk page
+    '''
     return filter_users_pageNS(data, index, 3)
 
 def users_other_page(data,index):
+    '''
+    Monthly number of users that have edited the rest of relevant namespaces in the wiki
+    '''
     category_list = [-2, -1, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 110, 111]
 
     aux = pd.DataFrame()
@@ -530,19 +569,15 @@ def users_other_page(data,index):
     series = pd.Series(index=aux['timestamp'], data=aux['final_result'].values)
     return series
 
-def type_page_users_edit(data, index):
+def users_in_namespaces(data, index):
     main_page = users_article_page(data, index)
     articletalk_page = users_articletalk_page(data, index)
     user_page = users_user_page(data, index)
     template_page = users_template_page(data, index)
     usertalk_page = users_usertalk_page(data,index)
     other_page = users_other_page(data,index)
-    main_page.name = 'Article pages'
-    articletalk_page.name = 'Article talk pages'
-    user_page.name = 'User pages'
-    template_page.name = 'Template pages'
-    usertalk_page.name = 'User talk pages'
-    other_page.name = 'Other pages'
+
+    set_category_name([main_page, articletalk_page, user_page, template_page, usertalk_page, other_page], ['Article pages', 'Article talk pages', 'User pages', 'Template pages', 'User talk pages', 'Other pages'])
 
     return [other_page, main_page, articletalk_page, user_page, template_page, usertalk_page]
 

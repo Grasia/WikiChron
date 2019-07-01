@@ -90,7 +90,11 @@ def generate_monowiki_metrics():
 
     metrics.append(BarGraph('users_last_edit', 'By date of the last edit', MetricCategory.ACTIVE_USER_DISTRIBUTION, monowiki_stats.users_last_edit, 'BAR GRAPH: Users by the number of months since their last edit in the wiki.'))
 
+<<<<<<< HEAD
     metrics.append(BarGraph('type_page_users_edit', 'By namespace edited', MetricCategory.ACTIVE_USER_DISTRIBUTION, monowiki_stats.type_page_users_edit, 'BAR GRAPH: Users by the namespaces they have edited in a month.'))
+=======
+    metrics.append(Metric('type_page_users_edit', 'Active editors in namespaces', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.users_in_namespaces, 'BAR GRAPH: Users by the namespaces they have edited in a month.'))
+>>>>>>> 425d229... added three new general helper functions to reduce and order the code of monowiki_stats.py: 1.calcultate_relative_proportion: to calculate the relative version of a metric. 2.generate_list_of_dataframes: to generate a list of dataframes from a series list. 3.set_category_name: to set the name of each metric category.
 
     # EDIT_DISTRIBUTION
     metrics.append(BarGraph('number_of_edits_category', 'By editor (edit experience)', MetricCategory.EDIT_DISTRIBUTION, monowiki_stats.number_of_edits_by_category, 'BAR GRAPH: Number of editions per categories of active editors by experience.'))
