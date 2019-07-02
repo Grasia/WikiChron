@@ -204,7 +204,7 @@ def generate_condition_users_by_number_of_edits(data, x, y):
     '''
     Create a condition that the users must fulfill in order to be included in one of the categories of the Active editors by experience metric.
     '''
-    if y != 0:
+    if (y != 0) and (x > 0):
         condition = (data['contributor_id'].shift() == data['contributor_id']) & (data['nEdits'] != data['nEdits'].shift()) & ((data['nEdits'].shift()<=x) & (data['nEdits'].shift()>=y))
     elif (y == 0) and (x == 0):
         condition = (((data['nEdits'] > 0) & (data['nEdits'].shift() == 0)) & (data['contributor_id'] == data['contributor_id'].shift())) | ((data['contributor_id'] != data['contributor_id'].shift()) & (data['nEdits'] > 0))
@@ -674,7 +674,8 @@ def number_of_edits_by_new_users(data, index):
     '''
     Get the total number of editions per month that were done by new users
     '''
-    condition = generate_condition_users_by_number_of_edits(data, 100, 0)
+    print('IN NUMBER OF EDITS BY NEW USERS')
+    condition = generate_condition_users_by_number_of_edits(data, 0, 0)
     users = data[condition]
 
     return sum_monthly_edits_by_users(users, index)
