@@ -682,10 +682,29 @@ def number_of_edits_by_category(data, index):
 
     return [nEdits_category5, nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4]
 
+def number_of_edits_by_category_abs(data, index):
+    '''
+    Get the monthly proportion of edits done by each user category in the Active editors by experience metrics
+    '''
+    edits_by_category = number_of_edits_by_category(data, index)
+    list_of_category_names = ["% of edits by new users", "% of edits by beginners (btw. 1 and 4 edits)", "% of edits by advanced (btw. 5 and 24 edits)", "% of edits by experimented (btw. 24 and 99 edits)", "% of edits by highly experimented (more than 99 edits)"]
+    list_of_edits_by_category = generate_list_of_dataframes(edits_by_category, list_of_category_names)
+    df = calcultate_relative_proportion(list_of_edits_by_category, list_of_category_names)
+
+    edits_new_users = pd.Series(df[list_of_category_names[0]], index = index)
+    edits_beginners = pd.Series(df[list_of_category_names[1]], index = index)
+    edits_advanced = pd.Series(df[list_of_category_names[2]], index = index)
+    edits_experimented = pd.Series(df[list_of_category_names[3]], index = index)
+    edits_H_experimented = pd.Series(df[list_of_category_names[4]], index = index)
+
+    set_category_name([edits_new_users, edits_beginners, edits_advanced, edits_experimented, edits_H_experimented], list_of_category_names)
+
+    return [edits_new_users, edits_beginners, edits_advanced, edits_experimented, edits_H_experimented, 'Bar']
 
 ### 2) PERCENTAGE OF EDITIONS PER USER CATEGORY EACH MONTH ###
 
 #this metric gets the percentage of editions per month that were done by beginner users (X = number of edits in all the history of the wiki -> x in [1,4])
+'''
 def percentage_of_edits_by_beginner_users(data, index):
     return percentage_of_edits_by_user_category(data, index, 4, 1)
 
@@ -721,7 +740,7 @@ def percentage_of_edits_by_category(data, index):
 
 
     return [pctage_category5, pctage_category1, pctage_category2, pctage_category3, pctage_category4, 'Bar']
-
+'''
 ############################# Returning and surviving new editors ############################################
 
 def returning_new_editor(data, index):
