@@ -624,7 +624,6 @@ def number_of_edits_by_new_users(data, index):
     '''
     Get the total number of editions per month that were done by new users
     '''
-    print('IN NUMBER OF EDITS BY NEW USERS')
     condition = generate_condition_users_by_number_of_edits(data, 0, 0)
     users = data[condition]
 
