@@ -625,7 +625,7 @@ def number_of_edits_by_highly_experimented_users(data, index):
     return sum_monthly_edits_by_users(users, index)
 
 
-def number_of_edits_by_new_users_experience(data, index):
+def number_of_edits_by_new_users(data, index):
     '''
     Get the total number of editions per month that were done by new users
     '''
@@ -645,7 +645,7 @@ def number_of_edits_by_experience(data, index):
     nEdits_category2 = number_of_edits_by_advanced_users(data, index)
     nEdits_category3 = number_of_edits_by_experimented_users(data, index)
     nEdits_category4 = number_of_edits_by_highly_experimented_users(data, index)
-    nEdits_category5 = number_of_edits_by_new_users_experience(data, index)
+    nEdits_category5 = number_of_edits_by_new_users(data, index)
 
     set_category_name([nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5], ["Edits by beginners (btw. 1 and 4 edits)", "Edits by advanced (btw. 5 and 24 edits)", "Edits by experimented (btw. 24 and 99 edits)", "Edits by highly experimented (more than 99 edits)", "Edits by new users"])
 
@@ -672,14 +672,6 @@ def number_of_edits_by_experience_abs(data, index):
 
 
 ############################ Edits by editor's tenure #########################################
-
-def number_of_edits_by_new_users_tenure(data, index):
-    '''
-    Get the total number of edits done by users whose first edit was this month
-    '''
-    condition = generate_condition_users_first_edit(data, 1, 0)
-    users = data[condition]
-    return sum_monthly_edits_by_users(users, index)
 
 def number_of_edits_by_users_first_edit_between_1_3_months_ago(data, index):
     '''
@@ -722,7 +714,7 @@ def number_of_edits_by_tenure(data, index):
     add_position_column_users_first_edit(data)
     get_monthly_number_of_edits(data, index)
 
-    nEdits_category1 = number_of_edits_by_new_users_tenure(data, index)
+    nEdits_category1 = number_of_edits_by_new_users(data, index)
     nEdits_category2 = number_of_edits_by_users_first_edit_between_1_3_months_ago(data, index)
     nEdits_category3 = number_of_edits_by_users_first_edit_between_4_6_months_ago(data, index)
     nEdits_category4 = number_of_edits_by_users_first_edit_between_6_12_months_ago(data, index)
@@ -753,11 +745,6 @@ def number_of_edits_by_tenure_abs(data, index):
 >>>>>>> ffb35a9... added new edit distribution metrics: edits by editor's tenure (relative and absolute)
 
 ############################ Edits by editor's last edit date #########################################
-
-def number_of_edits_by_new_users_last_edit(data, index):
-    '''
-    Get the total number of edits done by new users
-    '''
 
 def number_of_edits_by_users_last_edit_1_month_ago(data, index):
     '''
@@ -800,7 +787,7 @@ def number_of_edits_by_last_edit(data, index):
     add_position_column_users_last_edit(data)
     get_monthly_number_of_edits(data, index)
 
-    nEdits_category1 = number_of_edits_by_new_users_last_edit(data, index)
+    nEdits_category1 = number_of_edits_by_new_users(data, index)
     nEdits_category2 = number_of_edits_by_users_last_edit_1_month_ago(data, index)
     nEdits_category3 = number_of_edits_by_users_last_edit_2_or_3_months_ago(data, index)
     nEdits_category4 = number_of_edits_by_users_last_edit_4_or_5_or_6_months_ago(data, index)
