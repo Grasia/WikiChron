@@ -194,6 +194,10 @@ def generate_condition_users_last_edit(data, x):
     '''
     if x != 6:
         condition = ((data['position'] == 1) & (data['position'].shift() == x)) & (data['contributor_id'] == data['contributor_id'].shift())
+    
+    elif x == 0:
+        condition = (((data['nEdits'].shift() == 0) & (data['nEdits'] > 0)) | ((data['nEdits'] > 0) & (data['contributor_id'].shift() != data['contributor_id'])))
+    
     else:
         condition = ((data['position'] == 1) & (data['position'].shift() > x)) & (data['contributor_id'] == data['contributor_id'].shift())
 
@@ -634,7 +638,6 @@ def number_of_edits_by_experience(data, index):
     '''
     Get the monthly number of edits by each user category in the Active editors by experience metric
     '''
-    data = filter_anonymous(data)
     data = get_accum_number_of_edits_until_each_month(data, index)
     get_monthly_number_of_edits(data, index)
 
@@ -649,7 +652,7 @@ def number_of_edits_by_experience(data, index):
     return [nEdits_category5, nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4]
 
 def number_of_edits_by_experience_abs(data, index):
-    '''
+    '''def 
     Get the monthly proportion of edits done by each user category in the Active editors by experience metrics
     '''
     edits_by_category = number_of_edits_by_experience(data, index)
@@ -714,7 +717,7 @@ def number_of_edits_by_tenure(data, index):
     '''
     Get the monthly number of edits by each user category in the Users by tenure metric
     '''
-    #data = filter_anonymous(data)
+    data = filter_anonymous(data)
     data = get_accum_number_of_edits_until_each_month(data, index)
     add_position_column_users_first_edit(data)
     get_monthly_number_of_edits(data, index)
@@ -749,6 +752,63 @@ def number_of_edits_by_tenure_abs(data, index):
     return [edits_new_users, edits_1_3, edits_4_6, edits_6_12, edits_12, 'Bar']
 >>>>>>> ffb35a9... added new edit distribution metrics: edits by editor's tenure (relative and absolute)
 
+############################ Edits by editor's last edit date #########################################
+
+def number_of_edits_by_new_users_last_edit(data, index):
+    '''
+    Get the total number of edits done by new users
+    '''
+
+def number_of_edits_by_users_last_edit_1_month_ago(data, index):
+    '''
+    Get the total number of edits done by users whose last edit was 1 month ago
+    '''
+    condition = generate_condition_users_last_edit(data, 1)
+    users = data[condition]
+    return sum_monthly_edits_by_users(users, index)
+
+def number_of_edits_by_users_last_edit_2_or_3_months_ago(data, index):
+    '''
+    Get the total number of edits done by users whose last edit was between 2 and 3 months ago
+    '''
+    condition = generate_condition_users_last_edit(data, 2)
+    users = data[condition]
+    return sum_monthly_edits_by_users(users, index)
+
+def number_of_edits_by_users_last_edit_4_or_5_or_6_months_ago(data, index):
+    '''
+    Get the total number of edits done by users whose last edit was between 4, 5 or 6 months ago
+    '''
+    condition = generate_condition_users_last_edit(data, 4)
+    users = data[condition]
+    return sum_monthly_edits_by_users(users, index)
+
+def number_of_edits_by_users_last_edit_more_than_6_months_ago(data, index):
+    '''
+    Get the total number of edits done by users whose last edit was more than 6 months ago
+    '''
+    condition = generate_condition_users_last_edit(data, 6)
+    users = data[condition]
+    return sum_monthly_edits_by_users(users, index)
+
+def number_of_edits_by_last_edit(data, index):
+    '''
+    Get the monthly number of edits by each user category in the Users by the date of the last edit metric
+    '''
+    data = filter_anonymous(data)
+    data = get_accum_number_of_edits_until_each_month(data, index)
+    add_position_column_users_last_edit(data)
+    get_monthly_number_of_edits(data, index)
+
+    nEdits_category1 = number_of_edits_by_new_users_last_edit(data, index)
+    nEdits_category2 = number_of_edits_by_users_last_edit_1_month_ago(data, index)
+    nEdits_category3 = number_of_edits_by_users_last_edit_2_or_3_months_ago(data, index)
+    nEdits_category4 = number_of_edits_by_users_last_edit_4_or_5_or_6_months_ago(data, index)
+    nEdits_category5 = number_of_edits_by_users_last_edit_more_than_6_months_ago(data, index)
+    
+    set_category_name([nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4], ["Edits by new users", "Edits by users whose last edit was 1 month ago", "Edits by users whose last edit was btw. 2 and 3 months ago", "Edits by users whose last edit was btw. 4 and 6 months ago", "Edits by users whose last edit was more than six months ago"])
+
+    return [nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5, 'Bar']
 ############################# Returning and surviving new editors ############################################
 
 def returning_new_editor(data, index):
