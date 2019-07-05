@@ -171,8 +171,6 @@ def generate_condition_users_first_edit(data, x, y):
     '''
     if y > 0:
         condition = ((data['position'] >= x) & (data['position'] <= y)) & (data['nEdits'] != data['nEdits'].shift())
-    elif (x == 1) and (y == 0):
-        condition = ((data['position'] == x)) & (data['nEdits'] != data['nEdits'].shift())
     else:
         condition = (data['position'] > x) & (data['nEdits'] != data['nEdits'].shift())
     
@@ -194,9 +192,6 @@ def generate_condition_users_last_edit(data, x):
     '''
     if x != 6:
         condition = ((data['position'] == 1) & (data['position'].shift() == x)) & (data['contributor_id'] == data['contributor_id'].shift())
-    
-    elif x == 0:
-        condition = (((data['nEdits'].shift() == 0) & (data['nEdits'] > 0)) | ((data['nEdits'] > 0) & (data['contributor_id'].shift() != data['contributor_id'])))
     
     else:
         condition = ((data['position'] == 1) & (data['position'].shift() > x)) & (data['contributor_id'] == data['contributor_id'].shift())
@@ -368,7 +363,7 @@ def users_first_edit_between_6_12_months_ago(data, index):
     '''
     Get the users whose first edition was between 6 and 12 months ago
     '''
-    condition = generate_condition_users_first_edit(data, 7, 13)
+    condition = generate_condition_users_first_edit(data, 8, 13)
     return filter_df(data, condition, index)
 
 def users_first_edit_more_than_12_months_ago(data, index):
@@ -609,7 +604,8 @@ def number_of_edits_by_experimented_users(data, index):
     '''
     Get the total number of editions per month that were done by users who have made between 25 and 99 editions in all the history of the wiki
     '''
-    condition = generate_condition_users_by_number_of_edits(data, 99, 25)
+
+    condition = generate_condition_users_by_number_of_edits(data,99, 25)
     users = data[condition]
 
     return sum_monthly_edits_by_users(users, index)
@@ -694,7 +690,7 @@ def number_of_edits_by_users_first_edit_between_6_12_months_ago(data, index):
     '''
     Get the total number of edits done by users whose first edit was between 6 and 12 months ago
     '''
-    condition = generate_condition_users_first_edit(data, 7, 13)
+    condition = generate_condition_users_first_edit(data, 8, 13)
     users = data[condition]
     return sum_monthly_edits_by_users(users, index)
 

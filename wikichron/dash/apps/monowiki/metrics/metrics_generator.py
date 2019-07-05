@@ -104,8 +104,8 @@ def generate_monowiki_metrics():
     #~ metrics.append(Metric('edition_on_type_pages_extends_rest', 'By namespace edited (others)', MetricCategory.EDIT_DISTRIBUTION, monowiki_stats.edition_on_type_pages_extends_rest, 'BAR GRAPH: Number of edits in less popular namespaces of the wiki.'))
     #~ metrics.append(Metric('users_edits_number_of_edits_abs', 'Active editors by experience (relative)', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.users_number_of_edits_abs, 'BAR GRAPH: Users by the number of edits they have made until the previous month (relative).'))
 
-    #~ metrics.append(Metric('surviving new editor', 'Surviving new editor', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.surviving_new_editor, 'SCATTER GRAPH: Editor which, in the second month after being registrated, edits the wiki'))
-    #~ metrics.append(Metric('returning new editor', 'Returning new editor', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.returning_new_editor, 'SCATTER GRAPH: New editor who completes at least two edit sessions within 7 days afte registering.'))
+
+    metrics.append(BarGraph('type_page_users_edit', 'Active editors in namespaces', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.users_in_namespaces, 'BAR GRAPH: Users by the namespaces they have edited in a month.'))
 
 
     # metrics to measure level of participation among different user classifications
@@ -165,3 +165,4 @@ def generate_dict_metrics_by_category(list_of_metrics):
 
     return metrics_by_category
 
+Metric
