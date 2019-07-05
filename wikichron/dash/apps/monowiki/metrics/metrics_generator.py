@@ -111,8 +111,12 @@ def generate_monowiki_metrics():
     # metrics to measure level of participation among different user classifications
     metrics.append(Metric('number_of_edits_experience', 'Edits by editor experience', MetricCategory.EDITS_ANALYSIS, monowiki_stats.number_of_edits_by_experience, 'BAR GRAPH: number of edits per categories of active editors by experience.'))
     metrics.append(Metric('percentage_of_edits_experience', 'Edits by editor experience (absolute)', MetricCategory.EDITS_ANALYSIS, monowiki_stats.number_of_edits_by_experience_abs, 'BAR GRAPH: number of edits per categories of active editors by experience (absolute).'))
-    metrics.append(Metric('number_of_edits_tenure', 'Edits by editor tenure', MetricCategory.EDITS_ANALYSIS, monowiki_stats.number_of_edits_by_tenure, 'BAR GRAPH: number of edits per categories of Users by tenure.'))
+    
+    metrics.append(Metric('number_of_edits_tenure', 'Edits by editor tenure', MetricCategory.EDITS_ANALYSIS, monowiki_stats.number_of_edits_by_last_edit, 'BAR GRAPH: number of edits per categories of Users by tenure.'))
     metrics.append(Metric('percentage_of_edits_tenure', 'Edits by editor tenure (absolute)', MetricCategory.EDITS_ANALYSIS, monowiki_stats.number_of_edits_by_tenure_abs, 'BAR GRAPH: number of edits per categories of Users by tenure (absolute).'))
+    
+    metrics.append(Metric('number_of_edits_last_edit', 'Edits by editors last edit date', MetricCategory.EDITS_ANALYSIS, monowiki_stats.number_of_edits_by_tenure, 'BAR GRAPH: number of edits per categories of Users by the date of the last edit.'))
+    metrics.append(Metric('percentage_of_edits_last_edit', 'Edits by editors last edit date (absolute)', MetricCategory.EDITS_ANALYSIS, monowiki_stats.number_of_edits_by_last_edit_abs, 'BAR GRAPH: number of edits per categories of Users by the date of the last edit (absolute).'))
 
     # area chart metrics
     #~ metrics.append(Metric('contributorPctg_per_contributionPctg', 'editor% per contribution%', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.contributor_pctg_per_contributions_pctg, 'FILLED-AREA CHART: % editors per %editions (% editions fixed to 50%, 80%, 90% and 99%)'))

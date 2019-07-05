@@ -638,6 +638,7 @@ def number_of_edits_by_experience(data, index):
     '''
     Get the monthly number of edits by each user category in the Active editors by experience metric
     '''
+    data = filter_anonymous(data)
     data = get_accum_number_of_edits_until_each_month(data, index)
     get_monthly_number_of_edits(data, index)
 
@@ -796,6 +797,26 @@ def number_of_edits_by_last_edit(data, index):
     set_category_name([nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4], ["Edits by new users", "Edits by users whose last edit was 1 month ago", "Edits by users whose last edit was btw. 2 and 3 months ago", "Edits by users whose last edit was btw. 4 and 6 months ago", "Edits by users whose last edit was more than six months ago"])
 
     return [nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5, 'Bar']
+
+def number_of_edits_by_last_edit_abs(data, index):
+    '''
+    Get the monthly proportion of edits done by each user category in the Users by the date of the last edit metric
+    '''
+    edits_by_category = number_of_edits_by_tenure(data, index)
+    list_of_category_names = ["% of edits by new users", "% of edits by users whose last edit was 1 month ago", "% of edits by users whose last edit was btw. 2 and 3 months ago", "% of edits by users whose last edit was btw. 4 and 6 months ago", "% of edits by users whose last edit was more than six months ago"]
+    list_of_edits_by_category = generate_list_of_dataframes(edits_by_category, list_of_category_names)
+    df = calcultate_relative_proportion(list_of_edits_by_category, list_of_category_names)
+
+    edits_new_users = pd.Series(df[list_of_category_names[0]], index = index)
+    edits_1 = pd.Series(df[list_of_category_names[1]], index = index)
+    edits_2_3 = pd.Series(df[list_of_category_names[2]], index = index)
+    edits_4_5_6 = pd.Series(df[list_of_category_names[3]], index = index)
+    edits_6 = pd.Series(df[list_of_category_names[4]], index = index)
+
+    set_category_name([edits_new_users, edits_1, edits_2_3, edits_4_5_6, edits_6], list_of_category_names)
+
+    return [edits_new_users, edits_1, edits_2_3, edits_4_5_6, edits_6, 'Bar']
+    
 ############################# Returning and surviving new editors ############################################
 
 def returning_new_editor(data, index):
