@@ -721,7 +721,7 @@ def number_of_edits_by_tenure(data, index):
     nEdits_category4 = number_of_edits_by_users_first_edit_between_6_12_months_ago(data, index)
     nEdits_category5 = number_of_edits_by_users_first_edit_more_12_months_ago(data, index)
 
-    set_category_name([nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4], ["Edits by new users", "Edits by users whose 1st edit was btw. 1 and 3 months ago", "Edits by users whose 1st edit was btw. 4 and 6 months ago", "Edits by users whose 1st edit was btw. 6 and 12 months ago", "Edits by users whose 1st edit was more than 12 months ago"])
+    set_category_name([nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5], ["Edits by new users", "Edits by users whose 1st edit was btw. 1 and 3 months ago", "Edits by users whose 1st edit was btw. 4 and 6 months ago", "Edits by users whose 1st edit was btw. 6 and 12 months ago", "Edits by users whose 1st edit was more than 12 months ago"])
 
     return [nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5, 'Bar']
 
@@ -794,7 +794,7 @@ def number_of_edits_by_last_edit(data, index):
     nEdits_category4 = number_of_edits_by_users_last_edit_4_or_5_or_6_months_ago(data, index)
     nEdits_category5 = number_of_edits_by_users_last_edit_more_than_6_months_ago(data, index)
     
-    set_category_name([nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4], ["Edits by new users", "Edits by users whose last edit was 1 month ago", "Edits by users whose last edit was btw. 2 and 3 months ago", "Edits by users whose last edit was btw. 4 and 6 months ago", "Edits by users whose last edit was more than six months ago"])
+    set_category_name([nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5], ["Edits by new users", "Edits by users whose last edit was 1 month ago", "Edits by users whose last edit was btw. 2 and 3 months ago", "Edits by users whose last edit was btw. 4 and 6 months ago", "Edits by users whose last edit was more than six months ago"])
 
     return [nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5, 'Bar']
 
@@ -816,7 +816,7 @@ def number_of_edits_by_last_edit_abs(data, index):
     set_category_name([edits_new_users, edits_1, edits_2_3, edits_4_5_6, edits_6], list_of_category_names)
 
     return [edits_new_users, edits_1, edits_2_3, edits_4_5_6, edits_6, 'Bar']
-    
+
 ############################# Returning and surviving new editors ############################################
 
 def returning_new_editor(data, index):
