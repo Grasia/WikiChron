@@ -62,25 +62,23 @@ def set_cache(cache):
         # compute metric data:
         print(' * [Info] Starting calculations....')
         time_start_calculations = time.perf_counter()
-        data = compute_data(wikis_df, metrics)
+        metric_object_list = compute_data(wikis_df, metrics)
         time_end_calculations = time.perf_counter() - time_start_calculations
         print(' * [Timing] Calculations : {} seconds'.format(time_end_calculations) )
-        return data
+        return metric_object_list
 
 
     @cache.memoize()
-    def generate_longest_time_axis(list_of_selected_wikis, relative_time):
+    def generate_longest_time_axis(list_of_metrics, relative_time):
         """ Get time axis of selected wiki """
 
-        if(list_of_selected_wikis[len(list_of_selected_wikis) - 1] == 'Heatmap'):
-            unified_datetime_index = list_of_selected_wikis[0]
-        else:
-            unified_datetime_index = list_of_selected_wikis[0].index.get_level_values(0)
-
+        index = list_of_metrics[0].get_index()
+        
         if relative_time:
-            time_axis = list(range(0, len(unified_datetime_index)))
+            time_axis = list(range(0, len(index)))
         else:
-            time_axis = unified_datetime_index
+            time_axis = index
+
         return time_axis
 
 

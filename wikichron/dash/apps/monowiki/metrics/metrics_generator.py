@@ -13,61 +13,65 @@
 from .metric import Metric, MetricCategory
 from . import classic_stats
 from . import monowiki_stats
+from .metricClasses.heatMap import HeatMap
+from .metricClasses.barGraph import BarGraph
+from .metricClasses.areaChart import AreaChart
+from .metricClasses.lineGraph import LineGraph
 
 def generate_classic_metrics():
     metrics = []
 
     # Pages
-    metrics.append(Metric('pages_new', 'New pages', MetricCategory.PAGES, classic_stats.pages_new, 'Number of new pages created per month'))
-    metrics.append(Metric('pages_main_new', 'New articles', MetricCategory.PAGES, classic_stats.pages_main_new, 'Number of new articles (main content) created per month'))
-    metrics.append(Metric('pages_edited', 'Pages edited', MetricCategory.PAGES, classic_stats.pages_edited, 'Number of different pages edited per month'))
-    metrics.append(Metric('main_edited', 'Articles edited', MetricCategory.PAGES, classic_stats.main_edited, 'Number of different articles edited per month'))
-    metrics.append(Metric('pages_accum', 'Total pages', MetricCategory.PAGES, classic_stats.pages_accum, 'Total of pages accumulated at every month'))
-    metrics.append(Metric('pages_main_accum', 'Total articles', MetricCategory.PAGES, classic_stats.pages_main_accum, 'Total of articles (main content) at every month'))
+    metrics.append(LineGraph('pages_new', 'New pages', MetricCategory.PAGES, classic_stats.pages_new, 'Number of new pages created per month'))
+    metrics.append(LineGraph('pages_main_new', 'New articles', MetricCategory.PAGES, classic_stats.pages_main_new, 'Number of new articles (main content) created per month'))
+    metrics.append(LineGraph('pages_edited', 'Pages edited', MetricCategory.PAGES, classic_stats.pages_edited, 'Number of different pages edited per month'))
+    metrics.append(LineGraph('main_edited', 'Articles edited', MetricCategory.PAGES, classic_stats.main_edited, 'Number of different articles edited per month'))
+    metrics.append(LineGraph('pages_accum', 'Total pages', MetricCategory.PAGES, classic_stats.pages_accum, 'Total of pages accumulated at every month'))
+    metrics.append(LineGraph('pages_main_accum', 'Total articles', MetricCategory.PAGES, classic_stats.pages_main_accum, 'Total of articles (main content) at every month'))
 
     # Editions
-    metrics.append(Metric('edits', 'Edits in pages', MetricCategory.EDITIONS, classic_stats.edits, 'Editions to any part of the wiki grouped by month'))
-    metrics.append(Metric('edits_main_content', 'Edits in articles', MetricCategory.EDITIONS, classic_stats.edits_main_content, 'Editions to articles (main content) per month'))
-    metrics.append(Metric('edits_article_talk', 'Edits in articles talk', MetricCategory.EDITIONS, classic_stats.edits_article_talk, 'Editions to article discussion pages'))
-    metrics.append(Metric('edits_user_talk', 'Edits in user talk', MetricCategory.EDITIONS, classic_stats.edits_user_talk, 'Editions to user discussion pages'))
-    metrics.append(Metric('edits_accum', 'Total edits in pages', MetricCategory.EDITIONS, classic_stats.edits_accum, 'Total editions to any part of the wiki accumulated at every month'))
-    metrics.append(Metric('edits_main_content_accum', 'Total edits in articles', MetricCategory.EDITIONS, classic_stats.edits_main_content_accum, 'Editions to articles accumulated at every month'))
+    metrics.append(LineGraph('edits', 'Edits in pages', MetricCategory.EDITIONS, classic_stats.edits, 'Editions to any part of the wiki grouped by month'))
+    metrics.append(LineGraph('edits_main_content', 'Edits in articles', MetricCategory.EDITIONS, classic_stats.edits_main_content, 'Editions to articles (main content) per month'))
+    metrics.append(LineGraph('edits_article_talk', 'Edits in articles talk', MetricCategory.EDITIONS, classic_stats.edits_article_talk, 'Editions to article discussion pages'))
+    metrics.append(LineGraph('edits_user_talk', 'Edits in user talk', MetricCategory.EDITIONS, classic_stats.edits_user_talk, 'Editions to user discussion pages'))
+    metrics.append(LineGraph('edits_accum', 'Total edits in pages', MetricCategory.EDITIONS, classic_stats.edits_accum, 'Total editions to any part of the wiki accumulated at every month'))
+    metrics.append(LineGraph('edits_main_content_accum', 'Total edits in articles', MetricCategory.EDITIONS, classic_stats.edits_main_content_accum, 'Editions to articles accumulated at every month'))
 
     # Users
-    metrics.append(Metric('users_new', 'New users', MetricCategory.USERS, classic_stats.users_new, 'Users who have made at least one edition grouped by the month they did their first edit.'))
-    metrics.append(Metric('users_new_registered', 'New registered users', MetricCategory.USERS, classic_stats.users_new_registered, 'New users registration per month who have made at least one edition.'))
-    metrics.append(Metric('users_new_anonymous', 'New anonymous users', MetricCategory.USERS, classic_stats.users_new_anonymous, 'Anonymous users who made at least one edition grouped by the month they did their first edit. Anonymous are identified by their ip.'))
-    metrics.append(Metric('users_accum', 'Total users', MetricCategory.USERS, classic_stats.users_accum, 'Users who have made at least one edition accumulated at every month.'))
-    metrics.append(Metric('users_registered_accum', 'Total registered users', MetricCategory.USERS, classic_stats.users_registered_accum, 'Total registered users at every month. Note that users have to have made at least one edition and they have to be logged with their account when they did that edition.'))
-    metrics.append(Metric('users_anonymous_accum', 'Total anonymous users', MetricCategory.USERS, classic_stats.users_anonymous_accum, 'Anonymous users who have made at least one edition accumulated at every month. Anonymous are identified by their ip.'))
-    metrics.append(Metric('users_active', 'Active users', MetricCategory.USERS, classic_stats.users_active, 'Number of users who have made at least one contribution in a month.'))
-    metrics.append(Metric('users_active_registered', 'Active registered users', MetricCategory.USERS, classic_stats.users_registered_active, 'Number of registered users who have made at least one contribution in a month.'))
-    metrics.append(Metric('users_active_anonymous', 'Active anonymous users', MetricCategory.USERS, classic_stats.users_anonymous_active, 'Number of anonymous users who have made at least one contribution in a month.'))
-    metrics.append(Metric('users_active_more_than_4', 'Active users with > 4 edits', MetricCategory.USERS, classic_stats.users_active_more_than_4_editions, 'Active users who have made more than 4 editions in a month.'))
-    metrics.append(Metric('users_active_more_than_24', 'Active users with > 24 edits', MetricCategory.USERS, classic_stats.users_active_more_than_24_editions, 'Active users who have made more than 24 editions in a month.'))
-    metrics.append(Metric('users_active_more_than_99', 'Active users with > 99 edits', MetricCategory.USERS, classic_stats.users_active_more_than_99_editions, 'Active users who have made more than 99 editions in a month.'))
+    metrics.append(LineGraph('users_new', 'New users', MetricCategory.USERS, classic_stats.users_new, 'Users who have made at least one edition grouped by the month they did their first edit.'))
+    metrics.append(LineGraph('users_new_registered', 'New registered users', MetricCategory.USERS, classic_stats.users_new_registered, 'New users registration per month who have made at least one edition.'))
+    metrics.append(LineGraph('users_new_anonymous', 'New anonymous users', MetricCategory.USERS, classic_stats.users_new_anonymous, 'Anonymous users who made at least one edition grouped by the month they did their first edit. Anonymous are identified by their ip.'))
+    metrics.append(LineGraph('users_accum', 'Total users', MetricCategory.USERS, classic_stats.users_accum, 'Users who have made at least one edition accumulated at every month.'))
+    metrics.append(LineGraph('users_registered_accum', 'Total registered users', MetricCategory.USERS, classic_stats.users_registered_accum, 'Total registered users at every month. Note that users have to have made at least one edition and they have to be logged with their account when they did that edition.'))
+    metrics.append(LineGraph('users_anonymous_accum', 'Total anonymous users', MetricCategory.USERS, classic_stats.users_anonymous_accum, 'Anonymous users who have made at least one edition accumulated at every month. Anonymous are identified by their ip.'))
+    metrics.append(LineGraph('users_active', 'Active users', MetricCategory.USERS, classic_stats.users_active, 'Number of users who have made at least one contribution in a month.'))
+    metrics.append(LineGraph('users_active_registered', 'Active registered users', MetricCategory.USERS, classic_stats.users_registered_active, 'Number of registered users who have made at least one contribution in a month.'))
+    metrics.append(LineGraph('users_active_anonymous', 'Active anonymous users', MetricCategory.USERS, classic_stats.users_anonymous_active, 'Number of anonymous users who have made at least one contribution in a month.'))
+    metrics.append(LineGraph('users_active_more_than_4', 'Active users with > 4 edits', MetricCategory.USERS, classic_stats.users_active_more_than_4_editions, 'Active users who have made more than 4 editions in a month.'))
+    metrics.append(LineGraph('users_active_more_than_24', 'Active users with > 24 edits', MetricCategory.USERS, classic_stats.users_active_more_than_24_editions, 'Active users who have made more than 24 editions in a month.'))
+    metrics.append(LineGraph('users_active_more_than_99', 'Active users with > 99 edits', MetricCategory.USERS, classic_stats.users_active_more_than_99_editions, 'Active users who have made more than 99 editions in a month.'))
 
     # RATIO
-    metrics.append(Metric('edits_per_users_monthly', 'Edits per users', MetricCategory.RATIOS, classic_stats.edits_per_users_monthly, 'Number of edits for every month per number of active users that month'))
-    metrics.append(Metric('edits_in_articles_per_users_monthly', 'Article edits per user', MetricCategory.RATIOS, classic_stats.edits_in_articles_per_users_monthly, 'Number of edits in articles per number of users for each month'))
-    metrics.append(Metric('edits_per_page_monthly', 'Edits per edited pages', MetricCategory.RATIOS, classic_stats.edits_per_pages_monthly, 'Number of edits for every month per number of pages edited that month'))
-    metrics.append(Metric('percentage_edits_by_anonymous_monthly', 'Anonymous edits (%)', MetricCategory.RATIOS, classic_stats.percentage_edits_by_anonymous_monthly, 'Percentage of edits made by anonymous users of the total edits.'))
-    metrics.append(Metric('edits_in_articles_per_users_accum', 'Total articles edits per user', MetricCategory.RATIOS, classic_stats.edits_in_articles_per_users_accum, 'Number of total edits in articles per number of users until a given month'))
-    metrics.append(Metric('edits_per_pages_accum', 'Total edits per page', MetricCategory.RATIOS, classic_stats.edits_per_pages_accum, 'Number of total edits per number of total pages'))
-    metrics.append(Metric('percentage_edits_by_anonymous_accum', 'Total anonymous edits (%)', MetricCategory.RATIOS, classic_stats.percentage_edits_by_anonymous_accum, 'Percentage, per month, of edits made by anonymous users of the total edits.'))
+    metrics.append(LineGraph('edits_per_users_monthly', 'Edits per users', MetricCategory.RATIOS, classic_stats.edits_per_users_monthly, 'Number of edits for every month per number of active users that month'))
+    metrics.append(LineGraph('edits_in_articles_per_users_monthly', 'Article edits per user', MetricCategory.RATIOS, classic_stats.edits_in_articles_per_users_monthly, 'Number of edits in articles per number of users for each month'))
+    metrics.append(LineGraph('edits_per_page_monthly', 'Edits per edited pages', MetricCategory.RATIOS, classic_stats.edits_per_pages_monthly, 'Number of edits for every month per number of pages edited that month'))
+    metrics.append(LineGraph('percentage_edits_by_anonymous_monthly', 'Anonymous edits (%)', MetricCategory.RATIOS, classic_stats.percentage_edits_by_anonymous_monthly, 'Percentage of edits made by anonymous users of the total edits.'))
+    metrics.append(LineGraph('edits_in_articles_per_users_accum', 'Total articles edits per user', MetricCategory.RATIOS, classic_stats.edits_in_articles_per_users_accum, 'Number of total edits in articles per number of users until a given month'))
+    metrics.append(LineGraph('edits_per_pages_accum', 'Total edits per page', MetricCategory.RATIOS, classic_stats.edits_per_pages_accum, 'Number of total edits per number of total pages'))
+    metrics.append(LineGraph('percentage_edits_by_anonymous_accum', 'Total anonymous edits (%)', MetricCategory.RATIOS, classic_stats.percentage_edits_by_anonymous_accum, 'Percentage, per month, of edits made by anonymous users of the total edits.'))
 
     # RETENTION
-    metrics.append(Metric('returning_new_editors', 'Returning new editors', MetricCategory.RETENTION, classic_stats.returning_new_editors, "Number of new users who completes at least two edit sessions (60') within the first 30 days since registration. Based on a WMF's metric."))
-    metrics.append(Metric('surviving_new_editors', 'Surviving new editors', MetricCategory.RETENTION, classic_stats.surviving_new_editors, "Numer of new users who completes at least one edit within the first 30 days since registration and also completes another edit in the survival period, (i.e. the following 30 days). Based on a WMF's metric."))
+    metrics.append(LineGraph('returning_new_editors', 'Returning new editors', MetricCategory.RETENTION, classic_stats.returning_new_editors, "Number of new users who completes at least two edit sessions (60') within the first 30 days since registration. Based on a WMF's metric."))
+    metrics.append(LineGraph('surviving_new_editors', 'Surviving new editors', MetricCategory.RETENTION, classic_stats.surviving_new_editors, "Numer of new users who completes at least one edit within the first 30 days since registration and also completes another edit in the survival period, (i.e. the following 30 days). Based on a WMF's metric."))
 
     # DISTRIBUTION
-    metrics.append(Metric('gini_accum', 'Gini coefficient', MetricCategory.DISTRIBUTION, classic_stats.gini_accum, 'Gini coefficient (accumulated)'))
-    metrics.append(Metric('ratio_10_90', '10:90 ratio', MetricCategory.DISTRIBUTION, classic_stats.ratio_10_90, 'Contributions of the top ten percent more active users between the 90% percent less active'))
-    metrics.append(Metric('ratio_percentiles_max_5', 'Participants prctl. top / 5', MetricCategory.DISTRIBUTION, classic_stats.ratio_percentiles_max_5, 'Ratio between contributions of the top and the 5th top users'))
-    metrics.append(Metric('ratio_percentiles_max_10', 'Participants prctl. top / 10', MetricCategory.DISTRIBUTION, classic_stats.ratio_percentiles_max_10, 'Ratio between contributions of the top user and the 10th top user'))
-    metrics.append(Metric('ratio_percentiles_max_20', 'Participants prctl. top / 20', MetricCategory.DISTRIBUTION, classic_stats.ratio_percentiles_max_20, 'Ratio between contributions of the top user and the 20th top user'))
-    metrics.append(Metric('ratio_percentiles_5_10', 'Participants prctl. 5 / 10', MetricCategory.DISTRIBUTION, classic_stats.ratio_percentiles_5_10, 'Ratio between contributions of the 5th user and the 10th top user'))
-    metrics.append(Metric('ratio_percentiles_10_20', 'Participants prctl. 10 / 20', MetricCategory.DISTRIBUTION, classic_stats.ratio_percentiles_10_20, 'Ratio between contributions of the 10th user and the 20th top user'))
+    metrics.append(LineGraph('gini_accum', 'Gini coefficient', MetricCategory.DISTRIBUTION, classic_stats.gini_accum, 'Gini coefficient (accumulated)'))
+    metrics.append(LineGraph('ratio_10_90', '10:90 ratio', MetricCategory.DISTRIBUTION, classic_stats.ratio_10_90, 'Contributions of the top ten percent more active users between the 90% percent less active'))
+    metrics.append(LineGraph('ratio_percentiles_max_5', 'Participants prctl. top / 5', MetricCategory.DISTRIBUTION, classic_stats.ratio_percentiles_max_5, 'Ratio between contributions of the top and the 5th top users'))
+    metrics.append(LineGraph('ratio_percentiles_max_10', 'Participants prctl. top / 10', MetricCategory.DISTRIBUTION, classic_stats.ratio_percentiles_max_10, 'Ratio between contributions of the top user and the 10th top user'))
+    metrics.append(LineGraph('ratio_percentiles_max_20', 'Participants prctl. top / 20', MetricCategory.DISTRIBUTION, classic_stats.ratio_percentiles_max_20, 'Ratio between contributions of the top user and the 20th top user'))
+    metrics.append(LineGraph('ratio_percentiles_5_10', 'Participants prctl. 5 / 10', MetricCategory.DISTRIBUTION, classic_stats.ratio_percentiles_5_10, 'Ratio between contributions of the 5th user and the 10th top user'))
+    metrics.append(LineGraph('ratio_percentiles_10_20', 'Participants prctl. 10 / 20', MetricCategory.DISTRIBUTION, classic_stats.ratio_percentiles_10_20, 'Ratio between contributions of the 10th user and the 20th top user'))
 
     return metrics
 
@@ -76,25 +80,24 @@ def generate_monowiki_metrics():
     metrics = []
 
     # ACTIVE_USER_DISTRIBUTION
-    metrics.append(Metric('users_edits_number_of_edits', 'Active editors by experience', MetricCategory.ACTIVE_USER_DISTRIBUTION, monowiki_stats.users_number_of_edits, 'BAR GRAPH: Users by the number of edits they have made until the previous month.'))
+    metrics.append(BarGraph('users_edits_number_of_edits', 'Active editors by experience', MetricCategory.ACTIVE_USER_DISTRIBUTION, monowiki_stats.users_number_of_edits, 'BAR GRAPH: Users by the number of edits they have made until the previous month.'))
 
-    metrics.append(Metric('users_first_edit', 'Users by tenure', MetricCategory.ACTIVE_USER_DISTRIBUTION, monowiki_stats.users_first_edit, 'BAR GRAPH: Users by the number of months since their first edit in the wiki.'))
+    metrics.append(BarGraph('users_first_edit', 'Users by tenure', MetricCategory.ACTIVE_USER_DISTRIBUTION, monowiki_stats.users_first_edit, 'BAR GRAPH: Users by the number of months since their first edit in the wiki.'))
 
-    metrics.append(Metric('Current_streak_only_mains', 'Active users by article edit streak', MetricCategory.ACTIVE_USER_DISTRIBUTION, monowiki_stats.current_streak_only_mains, 'BAR GRAPH: Users by the number of consecutive months they have made at least one edit in the main namespace of the wiki.'))
+    metrics.append(BarGraph('Current_streak_only_mains', 'Active users by article edit streak', MetricCategory.ACTIVE_USER_DISTRIBUTION, monowiki_stats.current_streak_only_mains, 'BAR GRAPH: Users by the number of consecutive months they have made at least one edit in the main namespace of the wiki.'))
 
-    metrics.append(Metric('Current_streak', 'Active users by edit streak', MetricCategory.ACTIVE_USER_DISTRIBUTION, monowiki_stats.current_streak, 'BAR GRAPH: Users by the number of consecutive months they have made at least one edit in the wiki.'))
+    metrics.append(BarGraph('Current_streak', 'Active users by edit streak', MetricCategory.ACTIVE_USER_DISTRIBUTION, monowiki_stats.current_streak, 'BAR GRAPH: Users by the number of consecutive months they have made at least one edit in the wiki.'))
 
-    metrics.append(Metric('users_last_edit', 'By date of the last edit', MetricCategory.ACTIVE_USER_DISTRIBUTION, monowiki_stats.users_last_edit, 'BAR GRAPH: Users by the number of months since their last edit in the wiki.'))
+    metrics.append(BarGraph('users_last_edit', 'By date of the last edit', MetricCategory.ACTIVE_USER_DISTRIBUTION, monowiki_stats.users_last_edit, 'BAR GRAPH: Users by the number of months since their last edit in the wiki.'))
 
-    metrics.append(Metric('type_page_users_edit', 'By namespace edited', MetricCategory.ACTIVE_USER_DISTRIBUTION, monowiki_stats.type_page_users_edit, 'BAR GRAPH: Users by the namespaces they have edited in a month.'))
+    metrics.append(BarGraph('type_page_users_edit', 'By namespace edited', MetricCategory.ACTIVE_USER_DISTRIBUTION, monowiki_stats.type_page_users_edit, 'BAR GRAPH: Users by the namespaces they have edited in a month.'))
 
     # EDIT_DISTRIBUTION
-    metrics.append(Metric('number_of_edits_category', 'By editor (edit experience)', MetricCategory.EDIT_DISTRIBUTION, monowiki_stats.number_of_edits_by_category, 'BAR GRAPH: Number of editions per categories of active editors by experience.'))
+    metrics.append(BarGraph('number_of_edits_category', 'By editor (edit experience)', MetricCategory.EDIT_DISTRIBUTION, monowiki_stats.number_of_edits_by_category, 'BAR GRAPH: Number of editions per categories of active editors by experience.'))
 
-    metrics.append(Metric('edition_on_type_pages', 'By namespace edited', MetricCategory.EDIT_DISTRIBUTION, monowiki_stats.edition_on_type_pages, 'BAR GRAPH: Number of edits in the most popular namespaces of a wiki.'))
+    metrics.append(BarGraph('edition_on_type_pages', 'By namespace edited', MetricCategory.EDIT_DISTRIBUTION, monowiki_stats.edition_on_type_pages, 'BAR GRAPH: Number of edits in the most popular namespaces of a wiki.'))
 
     #~ metrics.append(Metric('edition_on_type_pages_extends_rest', 'By namespace edited (others)', MetricCategory.EDIT_DISTRIBUTION, monowiki_stats.edition_on_type_pages_extends_rest, 'BAR GRAPH: Number of edits in less popular namespaces of the wiki.'))
-
     #~ metrics.append(Metric('users_edits_number_of_edits_abs', 'Active editors by experience (relative)', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.users_number_of_edits_abs, 'BAR GRAPH: Users by the number of edits they have made until the previous month (relative).'))
 
     #~ metrics.append(Metric('surviving new editor', 'Surviving new editor', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.surviving_new_editor, 'SCATTER GRAPH: Editor which, in the second month after being registrated, edits the wiki'))
