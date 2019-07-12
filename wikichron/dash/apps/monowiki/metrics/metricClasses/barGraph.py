@@ -37,11 +37,12 @@ class BarGraph(Metric):
         graphs_list = []
         num_submetrics = len(self.data)
 
-        for idx in range(num_submetrics - 1):
+        for idx in range(num_submetrics):
             graphs_list.append([])
         
-        for submetric in range(num_submetrics - 1):
+        for submetric in range(num_submetrics):
             submetric_data = self.data[submetric]
+
             if is_relative_time:
                 x_axis = list(range(len(submetric_data.index))) # relative to the age of the wiki in months
             else:
@@ -53,6 +54,5 @@ class BarGraph(Metric):
                                 name=submetric_data.name
                                 #marker={'color': colors[submetric]}
                                 )
-        
         return graphs_list
     
