@@ -123,7 +123,7 @@ def generate_monowiki_metrics():
     #~ metrics.append(Metric('contributorPctg_per_contributionPctg_month', 'monthly editor% per contribution%', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.contributor_pctg_per_contributions_pctg_per_month, 'FILLED-AREA CHART: monthly % editors per %editions (%editions fixed to 50%, 80%, 90% and 99%)'))
 
     # heatmap metrics
-    #~ metrics.append(Metric('edit_distributions_across_editors', 'Edit distribution across editors', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.edit_distributions_across_editors, 'HEATMAP: contributors (z axis) per contributions (y axis).'))
+    #~ metrics.append(HeatMap('edit_distributions_across_editors', 'Edit distribution across editors', MetricCategory.ACTIVE_USER_DISTRIBUTION, monowiki_stats.edit_distributions_across_editors, 'HEATMAP: contributors (z axis) per contributions (y axis).'))
     #~ metrics.append(Metric('bytes_difference_across_articles', 'Bytes difference across articles', MetricCategory.EDITS_ANALYSIS, monowiki_stats.bytes_difference_across_articles, 'HEATMAP: number of articles (z axis) than contain these bytes (y axis).'))
     #~ metrics.append(Metric('changes_in_absolute_size_of_classes', 'changes in categories of active editors by experience', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.changes_in_absolute_size_of_editor_classes, 'HEATMAP: increment or decrement (z axis) of an active editor category (y axis).'))
     #~ metrics.append(Metric('distribution_editors_between_articles_edited_each_month', 'Monthly distribution of editors across articles', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.distribution_editors_between_articles_edited_each_month, 'HEATMAP:.'))

@@ -326,7 +326,7 @@ def edition_on_type_pages(data, index):
     userP.name='User pages'
     talkPU.name='User talk pages'
     rest.name='Other pages'
-    return [articles,talkPA,userP,talkPU,rest]
+    return [articles, talkPA, talkPU, userP, rest]
 
 def edition_on_type_pages_extends_rest(data, index):
     data=filter_anonymous(data)
@@ -572,7 +572,9 @@ def users_in_namespaces(data, index):
     usertalk_page = users_usertalk_page(data,index)
     other_page = users_other_page(data,index)
 
-    set_category_name([main_page, articletalk_page, user_page, template_page, usertalk_page, other_page], ['Article pages', 'Article talk pages', 'User pages', 'Template pages', 'User talk pages', 'Other pages'])
+
+    return [main_page, articletalk_page, usertalk_page, user_page, template_page, other_page]
+
 
     return [other_page, main_page, articletalk_page, user_page, template_page, usertalk_page]
 
@@ -739,7 +741,6 @@ def number_of_edits_by_tenure_abs(data, index):
     set_category_name([edits_new_users, edits_1_3, edits_4_6, edits_6_12, edits_12], list_of_category_names)
 
     return [edits_new_users, edits_1_3, edits_4_6, edits_6_12, edits_12, 'Bar']
->>>>>>> ffb35a9... added new edit distribution metrics: edits by editor's tenure (relative and absolute)
 
 ############################ Edits by editor's last edit date #########################################
 
