@@ -272,7 +272,7 @@ def users_reincident(data, index):
 
 ############################ METRIC 2 #################################################################################################
 
-def current_streak_this_month(data, index):
+'''def current_streak_this_month(data, index):
     return current_streak_x_or_y_months_in_a_row(data, index, 1, 0)
 
 
@@ -287,16 +287,16 @@ def current_streak_4_or_6_months_in_a_row(data, index):
 
 
 def current_streak_more_than_six_months_in_a_row(data, index):
-    return current_streak_x_or_y_months_in_a_row(data, index, 6, 0)
+    return current_streak_x_or_y_months_in_a_row(data, index, 6, 0)'''
 
 
 def current_streak(data, index):
     data = filter_anonymous(data)
     mothly = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('size').reset_index()
-    this_month = current_streak_this_month(mothly, index)
-    two_three_months = current_streak_2_or_3_months_in_a_row(mothly, index)
-    four_six_months = current_streak_4_or_6_months_in_a_row(mothly, index)
-    more_six = current_streak_more_than_six_months_in_a_row(mothly, index)
+    this_month = current_streak_x_or_y_months_in_a_row(mothly, index, 1, 0)
+    two_three_months = current_streak_x_or_y_months_in_a_row(mothly, index, 1, 3)
+    four_six_months = current_streak_x_or_y_months_in_a_row(mothly, index, 3, 6)
+    more_six = current_streak_x_or_y_months_in_a_row(mothly, index, 6, 0)
     this_month.name = '1 month editing'
     two_three_months.name = 'btw. 2 and 3 consecutive months'
     four_six_months.name = 'btw. 4 and 6 consecutive months'
