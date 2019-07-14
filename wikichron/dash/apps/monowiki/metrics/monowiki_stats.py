@@ -115,9 +115,9 @@ def add_x_months(data, months):
 def displace_x_months_per_user(data, months):
     return data.shift(months)
 
-def current_streak_x_or_y_months_in_a_row(data, index, z, y):
-    data = filter_anonymous(data)
-    mothly = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('size').reset_index()
+def current_streak_x_or_y_months_in_a_row(mothly, index, z, y):
+    #data = filter_anonymous(data)
+    #mothly = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('size').reset_index()
     mothly['add_months'] = add_x_months(mothly, z)
     lista = ['contributor_id']
     lista.append('add_months')
@@ -291,10 +291,12 @@ def current_streak_more_than_six_months_in_a_row(data, index):
 
 
 def current_streak(data, index):
-    this_month = current_streak_this_month(data, index)
-    two_three_months = current_streak_2_or_3_months_in_a_row(data, index)
-    four_six_months = current_streak_4_or_6_months_in_a_row(data, index)
-    more_six = current_streak_more_than_six_months_in_a_row(data, index)
+    data = filter_anonymous(data)
+    mothly = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('size').reset_index()
+    this_month = current_streak_this_month(mothly, index)
+    two_three_months = current_streak_2_or_3_months_in_a_row(mothly, index)
+    four_six_months = current_streak_4_or_6_months_in_a_row(mothly, index)
+    more_six = current_streak_more_than_six_months_in_a_row(mothly, index)
     this_month.name = '1 month editing'
     two_three_months.name = 'btw. 2 and 3 consecutive months'
     four_six_months.name = 'btw. 4 and 6 consecutive months'
@@ -303,15 +305,7 @@ def current_streak(data, index):
 
 def current_streak_only_mains(data, index):
     data = data[data['page_ns']==0]
-    this_month = current_streak_this_month(data, index)
-    two_three_months = current_streak_2_or_3_months_in_a_row(data, index)
-    four_six_months = current_streak_4_or_6_months_in_a_row(data, index)
-    more_six = current_streak_more_than_six_months_in_a_row(data, index)
-    this_month.name = '1 month editing'
-    two_three_months.name = 'btw. 2 and 3 consecutive months'
-    four_six_months.name = 'btw. 4 and 6 consecutive months'
-    more_six.name = 'more than 6 consecutive months'
-    return [this_month, two_three_months, four_six_months, more_six]
+    return current_streak(data, index)
 
 
 def edition_on_type_pages(data, index):
