@@ -379,7 +379,7 @@ def bind_callbacks(app):
         metrics = extract_metrics_objs_from_metrics_codes(selection['metrics'])
 
         # get time axis of the oldest one and use it as base numbers for the slider:
-        time_axis_index = data_controller.generate_longest_time_axis([ metric for metric in metrics ],
+        time_axis_index = data_controller.generate_and_store_time_axis([ metric for metric in metrics ],
                                                     relative_time)
 
         if relative_time:

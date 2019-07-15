@@ -38,7 +38,7 @@ def set_cache(cache):
     #  available to be used from outside of this file.
     global read_data
     global load_and_compute_data
-    global generate_longest_time_axis
+    global generate_and_store_time_axis
     global calculate_index_all_months
 
     @cache.memoize()
@@ -69,7 +69,7 @@ def set_cache(cache):
 
 
     @cache.memoize()
-    def generate_longest_time_axis(list_of_metrics, relative_time):
+    def generate_and_store_time_axis(list_of_metrics, relative_time):
         """ Get time axis of selected wiki """
 
         index = list_of_metrics[0].get_index()
