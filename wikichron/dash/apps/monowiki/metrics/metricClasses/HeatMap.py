@@ -37,18 +37,13 @@ class HeatMap(Metric):
     def get_index(self):
         return self.xaxis
 
-    def draw(self, is_relative_time):
+    def draw(self, time_index):
         """
         generate a HeatMap graph.
         returns a filled graph_list.
         """
-        if is_relative_time:
-            x_axis = list(range(len(self.xaxis))) # relative to the age of the wiki in months
-        else:
-            x_axis = self.xaxis # natural months
-
         return [go.Heatmap(z=self.zaxis,
-                        x=x_axis,
+                        x=time_index,
                         y=self.yaxis,
                         colorscale= 'Viridis'
                         )]

@@ -305,7 +305,7 @@ def returning_new_editors(data, index):
     returning_new_users = returning_new_users.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
     if index is not None:
         returning_new_users = returning_new_users.reindex(index, fill_value=0)
-    return [returning_new_users, 'Scatter']
+    return returning_new_users
 
 
 def surviving_new_editors(data, index):
@@ -322,7 +322,7 @@ def surviving_new_editors(data, index):
     survival_new_users = survival_new_users.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
     if index is not None:
         survival_new_users = survival_new_users.reindex(index, fill_value=0)
-    return [survival_new_users, 'Scatter']
+    return survival_new_users
 
 
 ########################################################################

@@ -28,18 +28,14 @@ class LineGraph(Metric):
     def get_index(self):
         return self.data.index
 
-    def draw(self, is_relative_time):
+    def draw(self, time_index):
         """
         generate a LineGraph.
         Returns a graphs_list with one scatter graph.
         """
-        if is_relative_time:
-            x_axis = list(range(len(self.data.index))) # relative to the age of the wiki in months
-        else:
-            x_axis = self.data.index # natural months
                 
         return [go.Scatter(
-                        x=x_axis,
+                        x=time_index,
                         y=self.data,
                         name=self.data.name
                         )]

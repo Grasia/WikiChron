@@ -29,7 +29,7 @@ class BarGraph(Metric):
     def get_index(self):
         return self.data[0].index
 
-    def draw(self, is_relative_time):
+    def draw(self, time_index):
         """
         generate a Bar graph.
         Returns a filled graphs_list.
@@ -42,14 +42,9 @@ class BarGraph(Metric):
         
         for submetric in range(num_submetrics):
             submetric_data = self.data[submetric]
-
-            if is_relative_time:
-                x_axis = list(range(len(submetric_data.index))) # relative to the age of the wiki in months
-            else:
-                x_axis = submetric_data.index # natural months
            
             graphs_list[submetric] = go.Bar(
-                                x=x_axis,
+                                x=time_index,
                                 y=submetric_data,
                                 name=submetric_data.name
                                 #marker={'color': colors[submetric]}

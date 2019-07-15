@@ -72,7 +72,7 @@ class Metric(ABC):
         pass
 
     @abstractmethod
-    def draw(self, is_relative_time):
+    def draw(self, time_index):
         """
         generate the graph associated to each kind of Metric: HeatMap, Bar, AreaChart and Scatter
         """

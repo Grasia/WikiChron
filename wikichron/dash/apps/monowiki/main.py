@@ -47,14 +47,16 @@ def generate_graphs(metrics, wikis, relative_time):
     2) heatmaps, 3) filled-area graphs,  and store them in graphs[] """
     graphs_list = []
     
+    if relative_time:
+        time_index = metrics[0].get_index()
+    else:
+        time_index = list(range(len(metrics[0].get_index())))
+
     for metric_idx in range(len(metrics)):
         graphs_list.append([])
 
     for metric_idx in range(len(metrics)):
-        if relative_time:
-            graphs_list[metric_idx] = metrics[metric_idx].draw(True)
-        else:
-            graphs_list[metric_idx] = metrics[metric_idx].draw(False)
+        graphs_list[metric_idx] = metrics[metric_idx].draw(time_index)
         
     return graphs_list
 
