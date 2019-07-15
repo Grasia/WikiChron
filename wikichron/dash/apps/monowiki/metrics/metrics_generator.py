@@ -13,10 +13,10 @@
 from .metric import Metric, MetricCategory
 from . import classic_stats
 from . import monowiki_stats
-from .metricClasses.heatMap import HeatMap
-from .metricClasses.barGraph import BarGraph
-from .metricClasses.areaChart import AreaChart
-from .metricClasses.lineGraph import LineGraph
+from .metricClasses.HeatMap import HeatMap
+from .metricClasses.BarGraph import BarGraph
+from .metricClasses.AreaChart import AreaChart
+from .metricClasses.LineGraph import LineGraph
 
 def generate_classic_metrics():
     metrics = []
