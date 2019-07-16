@@ -200,18 +200,18 @@ def generate_condition_users_last_edit(data, x):
 
 #### Helper Active editors by Experience ####
 
-def generate_condition_users_by_number_of_edits(data, x, y):
+def generate_group_users_by_number_of_edits(data, x, y):
     '''
-    Create a condition that the users must fulfill in order to be included in one of the categories of the Active editors by experience metric.
+    Determine the group of users to be included in one of the categories of the Active editors by experience metric.
     '''
     if (y != 0) and (x > 0):
-        users = data[(data['medits'] > 0) & ((data['nEdits_until_previous_month'] >= x) & (data['nEdits_until_previous_month'] <= y))]
+        group = data[(data['medits'] > 0) & ((data['nEdits_until_previous_month'] >= x) & (data['nEdits_until_previous_month'] <= y))]
     elif (y == 0) and (x == 0):
-        users = data[data['nEdits_until_previous_month'] == -1]
+        group = data[data['nEdits_until_previous_month'] == -1]
     elif (y == 0) and (x > 0):
-        users = data[(data['medits'] > 0) & (data['nEdits_until_previous_month'] >= x)]
+        group = data[(data['medits'] > 0) & (data['nEdits_until_previous_month'] >= x)]
 
-    return users
+    return group
 
 #### Helper metrics 9 and 10 ####
 
@@ -439,67 +439,20 @@ def users_last_edit(data, index):
 
 ############################ Active editors by experience #####################################################################
 
-'''def users_number_of_edits_between_1_and_4(data, index):
-    
-    #Get, among the users that make an edition in month X, which ones have done n editions, with n in [1,4], until month X-1
-    
-    condition = generate_condition_users_by_number_of_edits(data, 4, 1)
-    return filter_df(data, condition, index)
- 
-def users_number_of_edits_between_5_and_24(data, index):
-    
-    #Get, among the users that make an edition in month X, which ones have done n editions, with n in [5,24], until month X-1
-   
-    condition = generate_condition_users_by_number_of_edits(data, 24, 5)
-    return filter_df(data, condition, index)
-
-def users_number_of_edits_between_25_and_99(data, index):
-    
-    #Get, among the users that make an edition in month X, which ones have done n editions, with n in [25,99], until month X-1
-    
-    condition = generate_condition_users_by_number_of_edits(data, 99, 25)
-    return filter_df(data, condition, index)
-
-def users_number_of_edits_highEq_100(data, index):
-    
-    #Get, among the users that make an edition in month X, which ones have done n editions, with n>=100, until month X-1
-
-    condition = generate_condition_users_by_number_of_edits(data, 100, 0)
-    return filter_df(data, condition, index)
-'''
 def users_number_of_edits(data, index):
     '''
     Get the monthly number of users that belong to each category, in the Active editors by experience metric.
     '''
-    time_start_0 = time.perf_counter()
     data = filter_anonymous(data)
-    time_end_0 = time.perf_counter()
-    print(' * [Timing] Filtering anonymous in active editors by experience: {} seconds'.format(time_end_0 - time_start_0) )
-
-    time_start_1 = time.perf_counter()
     format_data = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('medits').reset_index()
     format_data['nEdits'] = (format_data[['medits', 'contributor_id']].groupby(['contributor_id']))['medits'].cumsum()
-    time_end_1 = time.perf_counter()
-    print(' * [Timing] (1) Formatting data in active editors by experience: {} seconds'.format(time_end_1 - time_start_1) )
-
-    time_startt = time.perf_counter()
     format_data['nEdits_until_previous_month'] = (format_data[['nEdits','contributor_id']].groupby(['contributor_id']))['nEdits'].shift().fillna(-1)
-    time_endd = time.perf_counter()
-    print(' * [Timing] (2) Formatting data in active editors by experience: {} seconds'.format(time_endd - time_startt) )
-
-
-    time_start = time.perf_counter()
 
     new_users = users_new(data, index)
-    one_four = pd.Series(generate_condition_users_by_number_of_edits(format_data, 1,4).groupby(['timestamp']).size(), index).fillna(0)
-    between_5_24 = pd.Series(generate_condition_users_by_number_of_edits(format_data,5,24).groupby(['timestamp']).size(), index).fillna(0)
-    between_25_99 = pd.Series(generate_condition_users_by_number_of_edits(format_data,99,25).groupby(['timestamp']).size(), index).fillna(0)
-    highEq_100 = pd.Series(generate_condition_users_by_number_of_edits(format_data,100,0).groupby(['timestamp']).size(), index).fillna(0)
-
-    time_end = time.perf_counter()
-    print(' * [Timing] calculating categories of active editors by experience: {} seconds'.format(time_end - time_start) )
-
-    time_start_2 = time.perf_counter()
+    one_four = pd.Series(generate_group_users_by_number_of_edits(format_data, 1,4).groupby(['timestamp']).size(), index).fillna(0)
+    between_5_24 = pd.Series(generate_group_users_by_number_of_edits(format_data,5,24).groupby(['timestamp']).size(), index).fillna(0)
+    between_25_99 = pd.Series(generate_group_users_by_number_of_edits(format_data,25,99).groupby(['timestamp']).size(), index).fillna(0)
+    highEq_100 = pd.Series(generate_group_users_by_number_of_edits(format_data,100,0).groupby(['timestamp']).size(), index).fillna(0)
 
 
     new_users.name = 'New users'
@@ -508,12 +461,6 @@ def users_number_of_edits(data, index):
     between_25_99.name = 'Btw. 25 and 99 edits'
     highEq_100.name = 'More than 99 edits'
 
-    #set_category_name([new_users, one_four, between_5_24, between_25_99, highEq_100], ['New users', 'Btw. 1 and 4 edits', 'Btw. 5 and 24 edits', 'Btw. 25 and 99 edits', 'More than 99 edits'])
-    
-    time_end_2 = time.perf_counter()
-
-    print(' * [Timing] setting names of categories of active editors by experience: {} seconds'.format(time_end_2 - time_start_2) )
-    
     return [new_users, one_four, between_5_24, between_25_99, highEq_100]
 
 def users_number_of_edits_abs(data, index):
@@ -533,9 +480,14 @@ def users_number_of_edits_abs(data, index):
     between_25_99 = pd.Series(df['25_99'], index = index)
     highEq_100 = pd.Series(df['highEq_100'], index = index)
 
-    set_category_name([new_users, one_four, between_5_24, between_25_99, highEq_100], ['New users', 'Btw. 1 and 4 edits', 'Btw. 5 and 24 edits', 'Btw. 25 and 99 edits', 'More than 99 edits'])
- 
-    return [new_users, one_four, between_5_24, between_25_99, highEq_100, 'Bar']
+
+    new_users.name = 'New users'
+    one_four.name = 'Btw. 1 and 4 edits'
+    between_5_24.name = 'Btw. 5 and 24 edits'
+    between_25_99.name = 'Btw. 25 and 99 edits'
+    highEq_100.name = 'More than 99 edits'
+    
+    return [new_users, one_four, between_5_24, between_25_99, highEq_100]
 
 ############################ Active editors by namespace #####################################################################################
 
