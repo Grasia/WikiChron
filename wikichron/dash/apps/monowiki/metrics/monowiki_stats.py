@@ -200,18 +200,18 @@ def generate_condition_users_last_edit(data, x):
 
 #### Helper Active editors by Experience ####
 
-def generate_group_users_by_number_of_edits(data, x, y):
+def generate_condition_users_by_number_of_edits(data, x, y):
     '''
     Determine the group of users to be included in one of the categories of the Active editors by experience metric.
     '''
     if (y != 0) and (x > 0):
-        group = data[(data['medits'] > 0) & ((data['nEdits_until_previous_month'] >= x) & (data['nEdits_until_previous_month'] <= y))]
+        condition = (data['medits'] > 0) & ((data['nEdits_until_previous_month'] >= x) & (data['nEdits_until_previous_month'] <= y))
     elif (y == 0) and (x == 0):
-        group = data[data['nEdits_until_previous_month'] == -1]
+        condition = (data['nEdits_until_previous_month'] == -1)
     elif (y == 0) and (x > 0):
-        group = data[(data['medits'] > 0) & (data['nEdits_until_previous_month'] >= x)]
+        condition = (data['medits'] > 0) & (data['nEdits_until_previous_month'] >= x)
 
-    return group
+    return condition
 
 #### Helper metrics 9 and 10 ####
 
@@ -449,10 +449,10 @@ def users_number_of_edits(data, index):
     format_data['nEdits_until_previous_month'] = (format_data[['nEdits','contributor_id']].groupby(['contributor_id']))['nEdits'].shift().fillna(-1)
 
     new_users = users_new(data, index)
-    one_four = pd.Series(generate_group_users_by_number_of_edits(format_data, 1,4).groupby(['timestamp']).size(), index).fillna(0)
-    between_5_24 = pd.Series(generate_group_users_by_number_of_edits(format_data,5,24).groupby(['timestamp']).size(), index).fillna(0)
-    between_25_99 = pd.Series(generate_group_users_by_number_of_edits(format_data,25,99).groupby(['timestamp']).size(), index).fillna(0)
-    highEq_100 = pd.Series(generate_group_users_by_number_of_edits(format_data,100,0).groupby(['timestamp']).size(), index).fillna(0)
+    one_four = pd.Series(format_data[generate_condition_users_by_number_of_edits(format_data, 1,4)].groupby(['timestamp']).size(), index).fillna(0)
+    between_5_24 = pd.Series(format_data[generate_condition_users_by_number_of_edits(format_data,5,24)].groupby(['timestamp']).size(), index).fillna(0)
+    between_25_99 = pd.Series(format_data[generate_condition_users_by_number_of_edits(format_data,25,99)].groupby(['timestamp']).size(), index).fillna(0)
+    highEq_100 = pd.Series(format_data[generate_condition_users_by_number_of_edits(format_data,100,0)].groupby(['timestamp']).size(), index).fillna(0)
 
 
     new_users.name = 'New users'
@@ -617,21 +617,32 @@ def number_of_edits_by_experience(data, index):
     Get the monthly number of edits by each user category in the Active editors by experience metric
     '''
     data = filter_anonymous(data)
-    data = get_accum_number_of_edits_until_each_month(data, index)
-    get_monthly_number_of_edits(data, index)
+    format_data = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('medits').reset_index()
+    format_data['nEdits'] = (format_data[['medits', 'contributor_id']].groupby(['contributor_id']))['medits'].cumsum()
+    format_data['nEdits_until_previous_month'] = (format_data[['nEdits','contributor_id']].groupby(['contributor_id']))['nEdits'].shift().fillna(-1)
+    
+    users_category1 = format_data[generate_condition_users_by_number_of_edits(format_data, 0,0)]
+    users_category2 = format_data[generate_condition_users_by_number_of_edits(format_data, 1,4)]
+    users_category3 = format_data[generate_condition_users_by_number_of_edits(format_data, 5,24)]
+    users_category4 = format_data[generate_condition_users_by_number_of_edits(format_data, 25,99)]
+    users_category5 = format_data[generate_condition_users_by_number_of_edits(format_data, 100,0)]
 
-    nEdits_category1 = number_of_edits_by_beginner_users(data, index)
-    nEdits_category2 = number_of_edits_by_advanced_users(data, index)
-    nEdits_category3 = number_of_edits_by_experimented_users(data, index)
-    nEdits_category4 = number_of_edits_by_highly_experimented_users(data, index)
-    nEdits_category5 = number_of_edits_by_new_users(data, index)
+    nEdits_category1 = users_category1.groupby(pd.Grouper(key='timestamp', freq='MS'))['medits'].sum().reset_index().set_index('timestamp')['medits'].rename_axis(None)
+    nEdits_category2 = users_category2.groupby(pd.Grouper(key='timestamp', freq='MS'))['medits'].sum().reset_index().set_index('timestamp')['medits'].rename_axis(None)
+    nEdits_category3 = users_category3.groupby(pd.Grouper(key='timestamp', freq='MS'))['medits'].sum().reset_index().set_index('timestamp')['medits'].rename_axis(None)
+    nEdits_category4 = users_category4.groupby(pd.Grouper(key='timestamp', freq='MS'))['medits'].sum().reset_index().set_index('timestamp')['medits'].rename_axis(None)
+    nEdits_category5 = users_category5.groupby(pd.Grouper(key='timestamp', freq='MS'))['medits'].sum().reset_index().set_index('timestamp')['medits'].rename_axis(None)
 
-    set_category_name([nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5], ["Edits by beginners (btw. 1 and 4 edits)", "Edits by advanced (btw. 5 and 24 edits)", "Edits by experimented (btw. 24 and 99 edits)", "Edits by highly experimented (more than 99 edits)", "Edits by new users"])
+    users_category1.name = "Edits by new users"
+    users_category2.name = "Edits by beginners (btw. 1 and 4 edits)"
+    users_category3.name = "Edits by advanced (btw. 5 and 24 edits)"
+    users_category4.name = "Edits by experimented (btw. 24 and 99 edits)"
+    users_category5.name = "Edits by highly experimented (more than 99 edits)"
 
     return [nEdits_category5, nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4]
 
 def number_of_edits_by_experience_abs(data, index):
-    '''def 
+    '''
     Get the monthly proportion of edits done by each user category in the Active editors by experience metrics
     '''
     edits_by_category = number_of_edits_by_experience(data, index)
@@ -645,7 +656,11 @@ def number_of_edits_by_experience_abs(data, index):
     edits_experimented = pd.Series(df[list_of_category_names[3]], index = index)
     edits_H_experimented = pd.Series(df[list_of_category_names[4]], index = index)
 
-    set_category_name([edits_new_users, edits_beginners, edits_advanced, edits_experimented, edits_H_experimented], list_of_category_names)
+    edits_new_users.name = "% of edits by new users"
+    edits_beginners.name = "% of edits by beginners (btw. 1 and 4 edits)"
+    edits_advanced.name = "% of edits by advanced (btw. 5 and 24 edits)"
+    edits_experimented.name = "% of edits by experimented (btw. 24 and 99 edits)"
+    edits_H_experimented.name = "% of edits by highly experimented (more than 99 edits)"
 
     return [edits_new_users, edits_beginners, edits_advanced, edits_experimented, edits_H_experimented, 'Bar']
 
