@@ -48,9 +48,10 @@ def generate_graphs(metrics, wikis, relative_time):
     graphs_list = []
     
     if relative_time:
-        time_index = metrics[0].get_index()
-    else:
         time_index = list(range(len(metrics[0].get_index())))
+    else:
+        time_index = metrics[0].get_index()
+        
 
     for metric_idx in range(len(metrics)):
         graphs_list.append([])
