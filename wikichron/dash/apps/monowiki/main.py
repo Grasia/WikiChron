@@ -42,87 +42,23 @@ def extract_metrics_objs_from_metrics_codes(metric_codes):
     return metrics
 
 
-def generate_graphs(data, metrics, wikis, relative_time):
+def generate_graphs(metrics, wikis, relative_time):
     """ Turn over data[] into plotly graphs objects, which can be: 1) bar graphs,
     2) heatmaps, 3) filled-area graphs,  and store them in graphs[] """
     graphs_list = []
-    category = []
+    
+    if relative_time:
+        time_index = list(range(len(metrics[0].get_index())))
+    else:
+        time_index = metrics[0].get_index()
+        
+
     for metric_idx in range(len(metrics)):
         graphs_list.append([])
-        #print(data[metric_idx])
-        category.append(data[metric_idx].pop(-1))
-        #print(data[metric_idx])
-        if ((category[metric_idx] == "Bar") or (category[metric_idx] == "Areachart")):
-            num_submetrics = len(data[metric_idx])
-            for submetric in range(num_submetrics):
-                graphs_list[metric_idx].append(None)
-        elif (category[metric_idx] == "Heatmap"):
-            data[metric_idx].pop(-1)
-            graphs_list[metric_idx].append(None)
-        else:
-            graphs_list[metric_idx].append(None)
-    """ Turn over data[] into plotly graphs objects and store it in graphs[] """
 
     for metric_idx in range(len(metrics)):
-        if category[metric_idx] == "Bar":
-            num_submetrics = len(data[metric_idx])
-            for submetric in range(num_submetrics):
-                metric_data = data[metric_idx][submetric]
-                if relative_time:
-                    x_axis = list(range(len(metric_data.index))) # relative to the age of the wiki in months
-                else:
-                    x_axis = metric_data.index # natural months
-
-                graphs_list[metric_idx][submetric] = go.Bar(
-                                    x=x_axis,
-                                    y=metric_data,
-                                    name=metric_data.name
-                                    )
-        elif category[metric_idx] == "Heatmap":
-            if relative_time:
-                x_axis = list(range(len(data[metric_idx][0]))) # relative to the age of the wiki in months
-            else:
-                x_axis = data[metric_idx][0] # natural months
-            y_axis = data[metric_idx][1]
-            z_axis = data[metric_idx][2]
-            graphs_list[metric_idx][0] = go.Heatmap(z=z_axis,
-                               x=x_axis,
-                               y=y_axis,
-                               colorscale= 'Viridis'
-                               )
-
-        elif category[metric_idx] == "Areachart":
-            num_traces = len(data[metric_idx])
-            for trace in range(num_traces):
-                metric_data = data[metric_idx][trace]
-                if relative_time:
-                    x_axis = list(range(len(metric_data.index))) # relative to the age of the wiki in months
-                else:
-                    x_axis = metric_data.index # natural months
-
-                graphs_list[metric_idx][trace] = go.Scatter(
-                                x=x_axis,
-                                y=metric_data,
-                                hoverinfo = 'x+y',
-                                mode = 'lines',
-                                line=dict(width=0.5),
-                                stackgroup='one',
-                                name=metric_data.name
-                                )
-        elif category[metric_idx] == "Scatter":
-            num_submetrics = len(data[metric_idx])
-            for submetric in range(num_submetrics):
-                metric_data = data[metric_idx][submetric]
-                if relative_time:
-                    x_axis = list(range(len(metric_data.index))) # relative to the age of the wiki in months
-                else:
-                    x_axis = metric_data.index # natural months
-                graphs_list[metric_idx][submetric] = go.Scatter(
-                                    x=x_axis,
-                                    y=metric_data,
-                                    name=metric_data.name
-                                    )
-
+        graphs_list[metric_idx] = metrics[metric_idx].draw(time_index)
+        
     return graphs_list
 
 
@@ -445,10 +381,8 @@ def bind_callbacks(app):
         wikis = selection['wikis']
         metrics = extract_metrics_objs_from_metrics_codes(selection['metrics'])
 
-        data = data_controller.load_and_compute_data(wikis, metrics)
-
         # get time axis of the oldest one and use it as base numbers for the slider:
-        time_axis_index = data_controller.generate_longest_time_axis([ wiki for wiki in data[0] ],
+        time_axis_index = data_controller.generate_and_store_time_axis([ metric for metric in metrics ],
                                                     relative_time)
 
         if relative_time:
@@ -507,7 +441,8 @@ def bind_callbacks(app):
         relative_time = selected_timeaxis == 'relative'
 
         time_start_generating_graphs = time.perf_counter()
-        new_graphs = generate_graphs(data, metrics, wikis, relative_time)
+        #new_graphs = generate_graphs(data, metrics, wikis, relative_time)
+        new_graphs = generate_graphs(metrics, wikis, relative_time)
         time_end_generating_graphs = time.perf_counter() - time_start_generating_graphs
         print(' * [Timing] Generating graphs : {} seconds'.format(time_end_generating_graphs) )
 

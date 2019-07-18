@@ -9,7 +9,8 @@
 
    Copyright 2017-2019 Abel 'Akronix' Serrano Juste <akronix5@gmail.com>
 """
-
+import plotly.graph_objs as go
+from abc import ABC, abstractmethod
 from enum import Enum, unique
 @unique
 class MetricCategory(Enum):
@@ -22,7 +23,7 @@ class MetricCategory(Enum):
     RETENTION = 'Retention'
     DISTRIBUTION = 'Distribution of Participation'
 
-class Metric:
+class Metric(ABC):
     """ Class for ADT Metric. """
 
     def __init__(self, code, text, category, func, descp):
@@ -45,6 +46,8 @@ class Metric:
         self.func = func
         self.descp = descp
 
+        super().__init__()
+
 
     def calculate(self, pandas_data_frame, index=None):
         """
@@ -53,4 +56,24 @@ class Metric:
         Return a pandas series
         """
         return self.func(pandas_data_frame, index)
+    
+    @abstractmethod
+    def set_data(self, metric_data):
+        """
+        set the data needed to graphically show each metric, depending on its class.
+        """
+        pass
 
+    @abstractmethod
+    def get_index(self):
+        """
+        get the index given by the data calculated by the metric.
+        """
+        pass
+
+    @abstractmethod
+    def draw(self, time_index):
+        """
+        generate the graph associated to each kind of Metric: HeatMap, Bar, AreaChart and Scatter
+        """
+        pass

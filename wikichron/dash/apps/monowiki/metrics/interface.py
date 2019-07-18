@@ -53,12 +53,13 @@ def compute_metrics_on_dataframe(metrics, df):
         Return a list of panda series corresponding to the provided metrics.
     """
     index = calculate_index_all_months(df) #TOIMPROVE
-    metrics_data = []
+    #metrics_data = []
     for metric in metrics:
         metric_series = metric.calculate(df, index)
+        metric.set_data(metric_series)
         #~ metric_series.name = '{}<>{}'.format(df.index.name,metric.code) #TOFIX for monowiki metrics
-        metrics_data.append(metric_series)
-    return metrics_data
+        #metrics_data.append(metric_series)
+    return metrics
 
 
 def compute_data(dataframes, metrics):
