@@ -633,11 +633,11 @@ def number_of_edits_by_experience(data, index):
     nEdits_category4 = users_category4.groupby(pd.Grouper(key='timestamp', freq='MS'))['medits'].sum().reset_index().set_index('timestamp')['medits'].rename_axis(None)
     nEdits_category5 = users_category5.groupby(pd.Grouper(key='timestamp', freq='MS'))['medits'].sum().reset_index().set_index('timestamp')['medits'].rename_axis(None)
 
-    users_category1.name = "Edits by new users"
-    users_category2.name = "Edits by beginners (btw. 1 and 4 edits)"
-    users_category3.name = "Edits by advanced (btw. 5 and 24 edits)"
-    users_category4.name = "Edits by experimented (btw. 24 and 99 edits)"
-    users_category5.name = "Edits by highly experimented (more than 99 edits)"
+    nEdits_category1.name = "Edits by new users"
+    nEdits_category2.name = "Edits by beginners (btw. 1 and 4 edits)"
+    nEdits_category3.name = "Edits by advanced (btw. 5 and 24 edits)"
+    nEdits_category4.name = "Edits by experimented (btw. 24 and 99 edits)"
+    nEdits_category5.name = "Edits by highly experimented (more than 99 edits)"
 
     return [nEdits_category5, nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4]
 
