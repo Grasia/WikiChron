@@ -556,7 +556,7 @@ def users_in_namespaces(data, index):
     return [main_page, articletalk_page, usertalk_page, user_page, template_page, other_page]
 
 
-    return [other_page, main_page, articletalk_page, user_page, template_page, usertalk_page]
+    return [main_page, articletalk_page, user_page, usertalk_page, template_page, other_page]
 
 ############################ Edits by editor experience (absolute and relative) #########################################
 
