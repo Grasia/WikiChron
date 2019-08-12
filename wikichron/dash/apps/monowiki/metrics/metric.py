@@ -14,7 +14,9 @@ from abc import ABC, abstractmethod
 from enum import Enum, unique
 @unique
 class MetricCategory(Enum):
-    ACTIVE_USER_DISTRIBUTION = 'Active users distribution'
+    DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS = 'Distribution of active registered users'
+    DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS = 'Distribution of edits across registered users'
+    ACTIVE_USER_DISTRIBUTION = 'Active user distribution'
     EDIT_DISTRIBUTION = 'Edits distribution'
     PAGES = 'Pages'
     EDITIONS = 'Edits'
