@@ -7,7 +7,7 @@ from ..metric import Metric
 from colormap import Colormap
 import plotly.graph_objs as go
 import numpy as np
-import datetime as d
+
 
 class BarGraph(Metric):
     """Class for metrics graphically shown as a bar graph"""
