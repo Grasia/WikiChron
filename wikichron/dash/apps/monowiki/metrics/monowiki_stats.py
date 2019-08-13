@@ -292,18 +292,15 @@ def current_streak_more_than_six_months_in_a_row(data, index):
 
 def current_streak(data, index):
     data = filter_anonymous(data)
-    time_start_1 = time.perf_counter()
+
     mothly = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('size').reset_index()
-    time_end_1 = time.perf_counter()
-    print(' * [Timing] (1) Formatting data in current streak: {} seconds'.format(time_end_1 - time_start_1) )
+
     this_month = current_streak_x_or_y_months_in_a_row(mothly, index, 1, 0)
     two_three_months = current_streak_x_or_y_months_in_a_row(mothly, index, 1, 3)
     four_six_months = current_streak_x_or_y_months_in_a_row(mothly, index, 3, 6)
     more_six = current_streak_x_or_y_months_in_a_row(mothly, index, 6, 0)
-    this_month.name = '1 month editing'
-    two_three_months.name = 'btw. 2 and 3 consecutive months'
-    four_six_months.name = 'btw. 4 and 6 consecutive months'
-    more_six.name = 'more than 6 consecutive months'
+	
+    set_category_name([this_month, two_three_months, four_six_months, more_six], ['1 month editing', 'Btw. 2 and 3 consecutive months', 'Btw. 4 and 6 consecutive months', 'More than 6 consecutive months'])
     return [this_month, two_three_months, four_six_months, more_six]
 
 def current_streak_only_mains(data, index):
@@ -384,7 +381,7 @@ def users_first_edit(data, index):
     more_twelve = users_first_edit_more_than_12_months_ago(format_data, index)
 
 
-    set_category_name([this_month, one_three, four_six, six_twelve, more_twelve], ['1st edit this month', '1st edit btw. 1 and 3 months ago', '1st edit btw. 4 and 6 months ago', '1st edit btw. 6 and 12 months ago', "1st edit more than 12 months ago"])
+    set_category_name([this_month, one_three, four_six, six_twelve, more_twelve], ['New users', 'Btw. 1 and 3 months ago', 'Btw. 4 and 6 months ago', 'Btw. 6 and 12 months ago', "More than 12 months ago"])
     
     return [this_month, one_three, four_six, six_twelve, more_twelve, 'Bar']
 
@@ -432,7 +429,7 @@ def users_last_edit(data, index):
     four_six_months = users_last_edit_4_or_5_or_6_months_ago(format_data, index)
     more_six_months = users_last_edit_more_than_6_months_ago(format_data, index)
 
-    set_category_name([this_month, one_month, two_three_months, four_six_months, more_six_months], ['new_users', 'last edit made 1 month ago', 'last edit made btw. 2 and 3 months ago', 'last edit made btw. 4 and 6 months ago', 'last edit made more than six months ago'])
+    set_category_name([this_month, one_month, two_three_months, four_six_months, more_six_months], ['New users', '1 month ago', 'Btw. 2 and 3 months ago', 'Btw. 4 and 6 months ago', 'More than six months ago'])
 
 
     return [this_month, one_month, two_three_months, four_six_months, more_six_months, 'Bar']
