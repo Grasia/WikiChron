@@ -21,14 +21,19 @@ class BarGraph(Metric):
         super(BarGraph, self).__init__(code, text, category, func, descp)
 
         self.data = None
+        self.ordered = None
     
     def set_data(self, metric_data):
         """
         set data to metric_data.
         metric_data -- a list that contains one Pandas Series per colored bar to be shown.
         """
+        self.ordered = metric_data.pop(-1)
         self.data = metric_data
-    
+
+
+
+
     def get_index(self):
         return self.data[0].index
 
@@ -83,7 +88,7 @@ class BarGraph(Metric):
             graphs_list.append([])
 
         sequencial = True
-        if self.text == 'By namespace edited' or self.text == 'Edits in popular namespaces' or self.text == 'Edits in other namespaces':
+        if self.ordered == 0:
             sequencial = False
         rgba, long = self.get_colors(sequencial)
         colors = self.colors_selection(sequencial, long, num_submetrics, rgba)

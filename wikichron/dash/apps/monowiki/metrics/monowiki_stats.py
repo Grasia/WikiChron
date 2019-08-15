@@ -301,7 +301,7 @@ def current_streak(data, index):
     more_six = current_streak_x_or_y_months_in_a_row(mothly, index, 6, 0)
 	
     set_category_name([this_month, two_three_months, four_six_months, more_six], ['1 month editing', 'Btw. 2 and 3 consecutive months', 'Btw. 4 and 6 consecutive months', 'More than 6 consecutive months'])
-    return [this_month, two_three_months, four_six_months, more_six]
+    return [this_month, two_three_months, four_six_months, more_six, 1]
 
 def current_streak_only_mains(data, index):
     data = data[data['page_ns']==0]
@@ -320,7 +320,7 @@ def edition_on_type_pages(data, index):
     userP.name='User pages'
     talkPU.name='User talk pages'
     rest.name='Other pages'
-    return [articles, talkPA, talkPU, userP, rest]
+    return [articles, talkPA, talkPU, userP, rest, 0]
 
 def edition_on_type_pages_extends_rest(data, index):
     data=filter_anonymous(data)
@@ -335,7 +335,7 @@ def edition_on_type_pages_extends_rest(data, index):
     template.name='Template pages'
     category.name='Category pages'
     rest.name='Other pages'
-    return [file,mediaWiki,template,category,rest]
+    return [file,mediaWiki,template,category,rest, 0]
 
 ############################ Users by tenure #################################################################################
 
@@ -383,7 +383,8 @@ def users_first_edit(data, index):
 
     set_category_name([this_month, one_three, four_six, six_twelve, more_twelve], ['New users', 'Btw. 1 and 3 months ago', 'Btw. 4 and 6 months ago', 'Btw. 6 and 12 months ago', "More than 12 months ago"])
     
-    return [this_month, one_three, four_six, six_twelve, more_twelve, 'Bar']
+
+    return [this_month, one_three, four_six, six_twelve, more_twelve, 1]
 
 ############################ Users by the date of the last edit ###########################################################################
 
@@ -431,8 +432,8 @@ def users_last_edit(data, index):
 
     set_category_name([this_month, one_month, two_three_months, four_six_months, more_six_months], ['New users', '1 month ago', 'Btw. 2 and 3 months ago', 'Btw. 4 and 6 months ago', 'More than six months ago'])
 
+    return [this_month, one_month, two_three_months, four_six_months, more_six_months, 1]
 
-    return [this_month, one_month, two_three_months, four_six_months, more_six_months, 'Bar']
 
 ############################ Active editors by experience #####################################################################
 
@@ -458,7 +459,7 @@ def users_number_of_edits(data, index):
     between_25_99.name = 'Btw. 25 and 99 edits'
     highEq_100.name = 'More than 99 edits'
 
-    return [new_users, one_four, between_5_24, between_25_99, highEq_100]
+    return [new_users, one_four, between_5_24, between_25_99, highEq_100, 1]
 
 def users_number_of_edits_abs(data, index):
 
@@ -484,7 +485,7 @@ def users_number_of_edits_abs(data, index):
     between_25_99.name = 'Btw. 25 and 99 edits'
     highEq_100.name = 'More than 99 edits'
     
-    return [new_users, one_four, between_5_24, between_25_99, highEq_100]
+    return [new_users, one_four, between_5_24, between_25_99, highEq_100, 1]
 
 ############################ Active editors by namespace #####################################################################################
 
@@ -553,7 +554,7 @@ def users_in_namespaces(data, index):
     return [main_page, articletalk_page, usertalk_page, user_page, template_page, other_page]
 
 
-    return [main_page, articletalk_page, user_page, usertalk_page, template_page, other_page]
+    return [main_page, articletalk_page, user_page, usertalk_page, template_page, other_page, 0]
 
 ############################ Edits by editor experience (absolute and relative) #########################################
 
@@ -636,7 +637,7 @@ def number_of_edits_by_experience(data, index):
     nEdits_category4.name = "Edits by experimented (btw. 24 and 99 edits)"
     nEdits_category5.name = "Edits by highly experimented (more than 99 edits)"
 
-    return [nEdits_category5, nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4]
+    return [nEdits_category5, nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, 1]
 
 def number_of_edits_by_experience_abs(data, index):
     '''
@@ -659,8 +660,8 @@ def number_of_edits_by_experience_abs(data, index):
     edits_experimented.name = "% of edits by experimented (btw. 24 and 99 edits)"
     edits_H_experimented.name = "% of edits by highly experimented (more than 99 edits)"
 
-    return [edits_new_users, edits_beginners, edits_advanced, edits_experimented, edits_H_experimented, 'Bar']
 
+    return [edits_new_users, edits_beginners, edits_advanced, edits_experimented, edits_H_experimented, 1]
 
 ############################ Edits by editor's tenure #########################################
 
@@ -713,7 +714,8 @@ def number_of_edits_by_tenure(data, index):
 
     set_category_name([nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5], ["Edits by new users", "Edits by users whose 1st edit was btw. 1 and 3 months ago", "Edits by users whose 1st edit was btw. 4 and 6 months ago", "Edits by users whose 1st edit was btw. 6 and 12 months ago", "Edits by users whose 1st edit was more than 12 months ago"])
 
-    return [nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5, 'Bar']
+
+    return [nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5, 1]
 
 def number_of_edits_by_tenure_abs(data, index):
     '''
@@ -732,7 +734,8 @@ def number_of_edits_by_tenure_abs(data, index):
 
     set_category_name([edits_new_users, edits_1_3, edits_4_6, edits_6_12, edits_12], list_of_category_names)
 
-    return [edits_new_users, edits_1_3, edits_4_6, edits_6_12, edits_12, 'Bar']
+
+    return [edits_new_users, edits_1_3, edits_4_6, edits_6_12, edits_12, 1]
 
 ############################ Edits by editor's last edit date #########################################
 
@@ -785,7 +788,8 @@ def number_of_edits_by_last_edit(data, index):
     
     set_category_name([nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5], ["Edits by new users", "Edits by users whose last edit was 1 month ago", "Edits by users whose last edit was btw. 2 and 3 months ago", "Edits by users whose last edit was btw. 4 and 6 months ago", "Edits by users whose last edit was more than six months ago"])
 
-    return [nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5, 'Bar']
+
+    return [nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5, 1]
 
 def number_of_edits_by_last_edit_abs(data, index):
     '''
@@ -804,60 +808,11 @@ def number_of_edits_by_last_edit_abs(data, index):
 
     set_category_name([edits_new_users, edits_1, edits_2_3, edits_4_5_6, edits_6], list_of_category_names)
 
-    return [edits_new_users, edits_1, edits_2_3, edits_4_5_6, edits_6, 'Bar']
 
-############################# Returning and surviving new editors ############################################
+    return [edits_new_users, edits_1, edits_2_3, edits_4_5_6, edits_6, 1]
 
-def returning_new_editor(data, index):
-    data.reset_index(drop=True, inplace=True)
-    #remove anonymous users
-    registered_users = filter_anonymous(data)
-    #add up 7 days to the date on which each user registered
-    seven_days_after_registration = registered_users.groupby(['contributor_id']).agg({'timestamp':'first'}).apply(lambda x: x+d.timedelta(days=7)).reset_index()
-    #change the name to the timestamp column
-    seven_days_after_registration=seven_days_after_registration.rename(columns = {'timestamp':'seven_days_after'})
-    #merge two dataframes by contributor_id
-    registered_users = pd.merge(registered_users, seven_days_after_registration, on ='contributor_id')
-    #edits of each user within 7 days of being registered
-    registered_users = registered_users[registered_users['timestamp'] <=registered_users['seven_days_after']]
-    #to order by date
-    registered_users = registered_users.sort_values(['timestamp'])
-    #get the timestamp and contributor_id and group by contributor_id
-    timestamp_and_contributor_id = registered_users[['timestamp', 'contributor_id']].groupby(['contributor_id'])
-    #displace the timestamp a position 
-    displace_timestamp = timestamp_and_contributor_id.apply(lambda x: x.shift())
-    registered_users['displace_timestamp'] = displace_timestamp['timestamp']
-    #compare the origin timestamp with the displace_timestamp
-    registered_users['comp'] = (registered_users.timestamp-registered_users.displace_timestamp)
-    #convert to seconds and replace the NAT for 31 because the NAT indicate the first edition
-    registered_users['comp'] = registered_users['comp'].apply(lambda y: y.total_seconds()/60).fillna(61)
-    #take the edit sessions
-    edits_sessions = registered_users[(registered_users['comp']>60) ]
-    num_edits_sessions = edits_sessions.groupby([pd.Grouper(key='timestamp', freq='MS'), 'contributor_id']).size()
-    #users with at least two editions
-    returning_users = num_edits_sessions[num_edits_sessions >1].to_frame('returning_users').reset_index()
-    #minimum month in which each user has made two editions
-    returning_new_users = returning_users.groupby(['contributor_id'])['timestamp'].min().reset_index()
-    returning_new_users = returning_new_users.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
-    if index is not None:
-        returning_new_users = returning_new_users.reindex(index, fill_value=0)
-    return [returning_new_users, 'Scatter']
-	
-def surviving_new_editor(data, index):
-    data.reset_index(drop=True, inplace=True)
-    registered_users = filter_anonymous(data)
-    #add up 30 days to the date on which each user registered
-    thirty_days_after_registration = registered_users.groupby(['contributor_id']).agg({'timestamp':'first'}).apply(lambda x: x+d.timedelta(days=30)).reset_index()
-    thirty_days_after_registration=thirty_days_after_registration.rename(columns = {'timestamp':'thirty_days_after'})
-    registered_users = pd.merge(registered_users, thirty_days_after_registration, on ='contributor_id')
-    registered_users['survival period'] = registered_users['thirty_days_after'].apply(lambda x: x+d.timedelta(days=30))
-    survival_users = registered_users[(registered_users['timestamp'] >= registered_users['thirty_days_after']) & (registered_users['timestamp'] <= registered_users['survival period'])]
-    survival_users = survival_users.groupby([pd.Grouper(key='timestamp', freq='MS'), 'contributor_id']).size().to_frame('num_editions_in_survival_period').reset_index()
-    survival_new_users = survival_users.groupby(['contributor_id'])['timestamp'].max().reset_index()
-    survival_new_users = survival_new_users.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
-    if index is not None:
-        survival_new_users = survival_new_users.reindex(index, fill_value=0)
-    return [survival_new_users, 'Scatter']
+
+
 
 ############################# HEATMAP METRICS ##############################################
 
