@@ -115,9 +115,9 @@ def add_x_months(data, months):
 def displace_x_months_per_user(data, months):
     return data.shift(months)
 
-def current_streak_x_or_y_months_in_a_row(mothly, index, z, y):
-    #data = filter_anonymous(data)
-    #mothly = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('size').reset_index()
+
+def current_streak_x_or_y_months_in_a_row(mothly, index, z, y, edits):
+
     mothly['add_months'] = add_x_months(mothly, z)
     lista = ['contributor_id']
     lista.append('add_months')
@@ -135,7 +135,12 @@ def current_streak_x_or_y_months_in_a_row(mothly, index, z, y):
       current_streak = mothly[mothly['displace'] != mothly['timestamp']]
     elif z == 6:
       current_streak = mothly[mothly['displace'] == mothly['timestamp']]
-    series = current_streak.groupby(pd.Grouper(key = 'timestamp', freq = 'MS')).size()
+	 
+    if edits == 0:
+      series = current_streak.groupby(pd.Grouper(key = 'timestamp', freq = 'MS')).size()
+    elif edits == 1:
+      series = current_streak.groupby(pd.Grouper(key = 'timestamp', freq = 'MS'))['size'].sum()
+
     if index is not None:
         series = series.reindex(index, fill_value=0)
     return series
@@ -231,8 +236,7 @@ def sum_monthly_edits_by_users(data, index):
     '''
     Return a pd Series with the sum of the monthly number of edits, stored in the monthly_nEdits column in the pd DataFrame given in data
     '''
-    data = data.groupby(pd.Grouper(key='timestamp', freq='MS'))['monthly_nEdits'].sum().reset_index()
-    series = data.set_index('timestamp')['monthly_nEdits'].rename_axis(None)
+    data = data.groupby(pd.Grouper(key='timestamp', freq='MS'))['monthly_nEdits'].sum()
 
     if index is not None:
         series = series.reindex(index, fill_value=0)
@@ -272,41 +276,37 @@ def users_reincident(data, index):
 
 ############################ METRIC 2 #################################################################################################
 
-'''def current_streak_this_month(data, index):
-    return current_streak_x_or_y_months_in_a_row(data, index, 1, 0)
-
-
-def current_streak_2_or_3_months_in_a_row(data, index):
-    return current_streak_x_or_y_months_in_a_row(data, index, 1, 3)
-
-
-
-def current_streak_4_or_6_months_in_a_row(data, index):
-    return current_streak_x_or_y_months_in_a_row(data, index, 3, 6)
-
-
-
-def current_streak_more_than_six_months_in_a_row(data, index):
-    return current_streak_x_or_y_months_in_a_row(data, index, 6, 0)'''
-
-
 def current_streak(data, index):
     data = filter_anonymous(data)
 
     mothly = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('size').reset_index()
 
-    this_month = current_streak_x_or_y_months_in_a_row(mothly, index, 1, 0)
-    two_three_months = current_streak_x_or_y_months_in_a_row(mothly, index, 1, 3)
-    four_six_months = current_streak_x_or_y_months_in_a_row(mothly, index, 3, 6)
-    more_six = current_streak_x_or_y_months_in_a_row(mothly, index, 6, 0)
+    this_month = current_streak_x_or_y_months_in_a_row(mothly, index, 1, 0, 0)
+    two_three_months = current_streak_x_or_y_months_in_a_row(mothly, index, 1, 3, 0)
+    four_six_months = current_streak_x_or_y_months_in_a_row(mothly, index, 3, 6, 0)
+    more_six = current_streak_x_or_y_months_in_a_row(mothly, index, 6, 0, 0)
 	
     set_category_name([this_month, two_three_months, four_six_months, more_six], ['1 month editing', 'Btw. 2 and 3 consecutive months', 'Btw. 4 and 6 consecutive months', 'More than 6 consecutive months'])
+    
     return [this_month, two_three_months, four_six_months, more_six, 1]
 
 def current_streak_only_mains(data, index):
     data = data[data['page_ns']==0]
     return current_streak(data, index)
 
+def edits_by_current_streak(data, index):
+    data = filter_anonymous(data)
+
+    mothly = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('size').reset_index()
+	
+    this_month = current_streak_x_or_y_months_in_a_row(mothly, index, 1, 0, 1)
+    two_three_months = current_streak_x_or_y_months_in_a_row(mothly, index, 1, 3, 1)
+    four_six_months = current_streak_x_or_y_months_in_a_row(mothly, index, 3, 6, 1)
+    more_six = current_streak_x_or_y_months_in_a_row(mothly, index, 6, 0, 1)
+	
+    set_category_name([this_month, two_three_months, four_six_months, more_six], ['1 month editing', 'Btw. 2 and 3 consecutive months', 'Btw. 4 and 6 consecutive months', 'More than 6 consecutive months'])
+    
+    return [this_month, two_three_months, four_six_months, more_six, 1]
 
 def edition_on_type_pages(data, index):
     data=filter_anonymous(data)
@@ -637,7 +637,7 @@ def number_of_edits_by_experience(data, index):
     nEdits_category4.name = "Edits by experimented (btw. 24 and 99 edits)"
     nEdits_category5.name = "Edits by highly experimented (more than 99 edits)"
 
-    return [nEdits_category5, nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, 1]
+    return [nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5, 1]
 
 def number_of_edits_by_experience_abs(data, index):
     '''
@@ -706,16 +706,16 @@ def number_of_edits_by_tenure(data, index):
     add_position_column_users_first_edit(data)
     get_monthly_number_of_edits(data, index)
 
-    nEdits_category1 = number_of_edits_by_new_users(data, index)
+    #nEdits_category1 = number_of_edits_by_new_users(data, index)
     nEdits_category2 = number_of_edits_by_users_first_edit_between_1_3_months_ago(data, index)
     nEdits_category3 = number_of_edits_by_users_first_edit_between_4_6_months_ago(data, index)
     nEdits_category4 = number_of_edits_by_users_first_edit_between_6_12_months_ago(data, index)
     nEdits_category5 = number_of_edits_by_users_first_edit_more_12_months_ago(data, index)
 
-    set_category_name([nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5], ["Edits by new users", "Edits by users whose 1st edit was btw. 1 and 3 months ago", "Edits by users whose 1st edit was btw. 4 and 6 months ago", "Edits by users whose 1st edit was btw. 6 and 12 months ago", "Edits by users whose 1st edit was more than 12 months ago"])
+    set_category_name([nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5], ["Edits by new users", "Edits by users whose 1st edit was btw. 1 and 3 months ago", "Edits by users whose 1st edit was btw. 4 and 6 months ago", "Edits by users whose 1st edit was btw. 6 and 12 months ago", "Edits by users whose 1st edit was more than 12 months ago"])
 
 
-    return [nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5, 1]
+    return [nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5, 1]
 
 def number_of_edits_by_tenure_abs(data, index):
     '''
