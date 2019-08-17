@@ -21,7 +21,7 @@
                                     <div class="metric-item d-flex">
                                         <div class="custom-control custom-checkbox m-2">
                                             <input class="custom-control-input metric-input" type="checkbox" id="checkbox-{{metric['code']}}" value="{{metric['code']}}" data-name="{{metric.name}}" data-cat-name="{{cat_name}}" name="metric" {{"checked" if metric['code'] in pre_selected_metrics}} />
-                                            <label class="custom-control-label metric-name" for="checkbox-{{metric['code']}}">{{metric['name']}}</label>
+                                            <label class="custom-control-label metric-name" for="checkbox-{{metric['code']}}">{{metric['text']}}</label>
                                             <span class="aside-checklist-option ml-1" title="{{metric.descp}}">
                                                 <span class="checklist-info"><i class="fa fa-info-circle"></i></span>
                                             </span>

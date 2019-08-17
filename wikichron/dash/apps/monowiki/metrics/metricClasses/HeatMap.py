@@ -8,7 +8,7 @@ import plotly.graph_objs as go
 class HeatMap(Metric):
     """Class for metrics graphically shown as heatmaps"""
     
-    def __init__(self, code, text, category, func, descp):
+    def __init__(self, code, text, category, func, descp, name):
         """
         Creates a new HeatMmap object.
 
@@ -16,7 +16,7 @@ class HeatMap(Metric):
         yaxis -- The vertical axis in the HeatMap.
         zaxis -- The color dimension.s
         """
-        super(HeatMap, self).__init__(code, text, category, func, descp)
+        super(HeatMap, self).__init__(code, name, category, func, descp, text)
 
         self.xaxis = None
         self.yaxis = None

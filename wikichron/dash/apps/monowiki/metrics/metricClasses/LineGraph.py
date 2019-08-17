@@ -9,13 +9,13 @@ import plotly.graph_objs as go
 class LineGraph(Metric):
     """Class for metrics graphically shown as line graphs"""
 
-    def __init__(self, code, text, category, func, descp):
+    def __init__(self, code, name, category, func, descp, text):
         """
         Creates a new LineGraph object.
 
         data -- A Pandas Series to draw the corresponding line. 
         """
-        super(LineGraph, self).__init__(code, text, category, func, descp)
+        super(LineGraph, self).__init__(code, name, category, func, descp, text)
 
         self.data = None
 

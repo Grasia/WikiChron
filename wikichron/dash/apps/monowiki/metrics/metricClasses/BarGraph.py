@@ -12,16 +12,17 @@ import numpy as np
 class BarGraph(Metric):
     """Class for metrics graphically shown as a bar graph"""
 
-    def __init__(self, code, text, category, func, descp):
+    def __init__(self, code, name, category, func, descp, text):
         """
         Creates a new BarGraph object.
 
         data -- list of Pandas Series, one per colored bar. 
         """
-        super(BarGraph, self).__init__(code, text, category, func, descp)
+        super(BarGraph, self).__init__(code, name, category, func, descp, text)
 
         self.data = None
         self.ordered = None
+
     
     def set_data(self, metric_data):
         """

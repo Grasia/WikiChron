@@ -9,13 +9,13 @@ import plotly.graph_objs as go
 class AreaChart(Metric):
     """Class for metrics graphically shown as a filled-area charts"""
 
-    def __init__(self, code, text, category, func, descp):
+    def __init__(self, code, name, category, func, descp, text):
         """
         Creates a new AreaChart object.
 
         data -- list of Pandas Series, one per colored bar. 
         """
-        super(AreaChart, self).__init__(code, text, category, func, descp)
+        super(AreaChart, self).__init__(code, name, category, func, descp, text)
 
         self.data = None
 

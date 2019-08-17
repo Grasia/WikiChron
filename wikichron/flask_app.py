@@ -123,6 +123,7 @@ def monowiki_app():
     def transform_metric_obj_in_metric_frontend(metric):
         return {'name': metric.text,
                 'code': metric.code,
+                'text': metric.name,
                 'descp': metric.descp,
                 'category': metric.category}
 
