@@ -547,40 +547,43 @@ def number_of_edits_by_experience(data, index):
     format_data['nEdits'] = (format_data[['medits', 'contributor_id']].groupby(['contributor_id']))['medits'].cumsum()
     format_data['nEdits_until_previous_month'] = (format_data[['nEdits','contributor_id']].groupby(['contributor_id']))['nEdits'].shift().fillna(-1)
     
-    users_category1 = format_data[generate_condition_users_by_number_of_edits(format_data, 0,0)]
-    users_category2 = format_data[generate_condition_users_by_number_of_edits(format_data, 1,4)]
-    users_category3 = format_data[generate_condition_users_by_number_of_edits(format_data, 5,24)]
-    users_category4 = format_data[generate_condition_users_by_number_of_edits(format_data, 25,99)]
-    users_category5 = format_data[generate_condition_users_by_number_of_edits(format_data, 100,0)]
+    new_users = format_data[generate_condition_users_by_number_of_edits(format_data, 0,0)]
+    one_four = format_data[generate_condition_users_by_number_of_edits(format_data, 1,4)]
+    between_5_24 = format_data[generate_condition_users_by_number_of_edits(format_data, 5,24)]
+    between_25_99 = format_data[generate_condition_users_by_number_of_edits(format_data, 25,99)]
+    highEq_100 = format_data[generate_condition_users_by_number_of_edits(format_data, 100,0)]
 
-    nEdits_category1 = users_category1.groupby(pd.Grouper(key='timestamp', freq='MS'))['medits'].sum().reset_index().set_index('timestamp')['medits'].rename_axis(None)
-    nEdits_category2 = users_category2.groupby(pd.Grouper(key='timestamp', freq='MS'))['medits'].sum().reset_index().set_index('timestamp')['medits'].rename_axis(None)
-    nEdits_category3 = users_category3.groupby(pd.Grouper(key='timestamp', freq='MS'))['medits'].sum().reset_index().set_index('timestamp')['medits'].rename_axis(None)
-    nEdits_category4 = users_category4.groupby(pd.Grouper(key='timestamp', freq='MS'))['medits'].sum().reset_index().set_index('timestamp')['medits'].rename_axis(None)
-    nEdits_category5 = users_category5.groupby(pd.Grouper(key='timestamp', freq='MS'))['medits'].sum().reset_index().set_index('timestamp')['medits'].rename_axis(None)
+    new_users = new_users.groupby(['timestamp'])['medits'].sum().reindex(index).fillna(0)
+    one_four = one_four.groupby(['timestamp'])['medits'].sum().reindex(index).fillna(0)
+    between_5_24 = between_5_24.groupby(['timestamp'])['medits'].sum().reindex(index).fillna(0)
+    between_25_99 = between_25_99.groupby(['timestamp'])['medits'].sum().reindex(index).fillna(0)
+    highEq_100 = highEq_100.groupby(['timestamp'])['medits'].sum().reindex(index).fillna(0)
 
-    nEdits_category1.name = "Edits by new users"
-    nEdits_category2.name = "Edits by beginners (btw. 1 and 4 edits)"
-    nEdits_category3.name = "Edits by advanced (btw. 5 and 24 edits)"
-    nEdits_category4.name = "Edits by experimented (btw. 24 and 99 edits)"
-    nEdits_category5.name = "Edits by highly experimented (more than 99 edits)"
+    new_users.name = "Edits by new users"
+    one_four.name = "Edits by beginners (btw. 1 and 4 edits)"
+    between_5_24.name = "Edits by advanced (btw. 5 and 24 edits)"
+    between_25_99.name = "Edits by experimented (btw. 24 and 99 edits)"
+    highEq_100.name = "Edits by highly experimented (more than 99 edits)"
 
-    return [nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5, 1]
+    return [new_users, one_four, between_5_24, between_25_99, highEq_100, 1]
 
 def number_of_edits_by_experience_abs(data, index):
     '''
     Get the monthly proportion of edits done by each user category in the Active editors by experience metrics
     '''
-    edits_by_category = number_of_edits_by_experience(data, index)
-    list_of_category_names = ["% of edits by new users", "% of edits by beginners (btw. 1 and 4 edits)", "% of edits by advanced (btw. 5 and 24 edits)", "% of edits by experimented (btw. 24 and 99 edits)", "% of edits by highly experimented (more than 99 edits)"]
-    list_of_edits_by_category = generate_list_of_dataframes(edits_by_category, list_of_category_names)
-    df = calcultate_relative_proportion(list_of_edits_by_category, list_of_category_names)
+    categories = number_of_edits_by_experience(data, index)
 
-    edits_new_users = pd.Series(df[list_of_category_names[0]], index = index)
-    edits_beginners = pd.Series(df[list_of_category_names[1]], index = index)
-    edits_advanced = pd.Series(df[list_of_category_names[2]], index = index)
-    edits_experimented = pd.Series(df[list_of_category_names[3]], index = index)
-    edits_H_experimented = pd.Series(df[list_of_category_names[4]], index = index)
+    data = filter_anonymous(data)
+    format_data = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('medits').reset_index()
+    format_data['nEdits'] = (format_data[['medits', 'contributor_id']].groupby(['contributor_id']))['medits'].cumsum()
+    format_data['nEdits_until_previous_month'] = (format_data[['nEdits','contributor_id']].groupby(['contributor_id']))['nEdits'].shift().fillna(-1)
+    monthly_total_edits = format_data.groupby(['timestamp'])['medits'].sum().reindex(index).fillna(0)
+
+    edits_new_users = ((categories[0] / monthly_total_edits)*100).fillna(0)
+    edits_beginners = ((categories[1] / monthly_total_edits)*100).fillna(0)
+    edits_advanced = ((categories[2] / monthly_total_edits)*100).fillna(0)
+    edits_experimented = ((categories[3] / monthly_total_edits)*100).fillna(0)
+    edits_H_experimented = ((categories[4] / monthly_total_edits)*100).fillna(0)
 
     edits_new_users.name = "% of edits by new users"
     edits_beginners.name = "% of edits by beginners (btw. 1 and 4 edits)"
@@ -662,8 +665,9 @@ def number_of_edits_by_tenure_abs(data, index):
     Get the monthly proportion of edits done by each user category in the Users by tenure metric
     '''
     categories = number_of_edits_by_tenure(data, index)
+
+    data = filter_anonymous(data)
     format_data = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('medits').reset_index()
-    
     monthly_total_edits = format_data.groupby(['timestamp'])['medits'].sum()
 
     new_users = (categories[0]/monthly_total_edits)*100

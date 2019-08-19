@@ -3,9 +3,9 @@
 		"url": "https://cocktails.fandom.com",
 		"data": "cocktails.csv",
 		"name": "Cocktails Wiki",
-		"articles": 1848,
-		"pages": 4984,
-		"edits": 21836,
+		"articles": 1849,
+		"pages": 5002,
+		"edits": 21882,
 		"bots": [
 			{
 				"id": "22439",
@@ -80,12 +80,28 @@
 				"name": "Wildtech"
 			},
 			{
+				"id": "26028522",
+				"name": "FlanqerBot"
+			},
+			{
 				"id": "26120316",
 				"name": "CristinaGlobalBot"
 			},
 			{
+				"id": "27020890",
+				"name": "SpeedyBot"
+			},
+			{
+				"id": "27144172",
+				"name": "MovieBot"
+			},
+			{
 				"id": "27362472",
 				"name": "8botter"
+			},
+			{
+				"id": "30127408",
+				"name": "Botobliterator"
 			},
 			{
 				"id": "30252127",
@@ -96,6 +112,10 @@
 				"name": "TrueBot"
 			},
 			{
+				"id": "32045548",
+				"name": "AkulakhanBot"
+			},
+			{
 				"id": "32769624",
 				"name": "FANDOM"
 			},
@@ -104,11 +124,23 @@
 				"name": "FANDOMbot"
 			},
 			{
+				"id": "32997079",
+				"name": "Savaphoong"
+			},
+			{
+				"id": "34293559",
+				"name": "Your Werewolf Jesus Savior"
+			},
+			{
 				"id": "34480145",
 				"name": "I make userpages"
+			},
+			{
+				"id": "38461327",
+				"name": "RGTbot"
 			}
 		],
-		"users": 614,
+		"users": 625,
 		"imageSrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPoAAABBCAYAAAD44bmLAAAABmJLR0QApAAyAEgjDHp1AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gQIFC4lj/iPFwAAHTRJREFUeNrtnXl4HNWVt99TvUiWbAtvrME2iNWArZZiwo6CbUkGwjIEkjCWDRjiIQQmMCyZTEKUIV8GAsMQCDAOYJDakICHsAQHyTbEkLAEIskYMIvNZnaMN9na1XW+P+qWutTullvdLW/UeZ5+qrqWW6fq3t/Z7rn3Crs2iWdf8cmnryjJV+zdfLD75JMvxHzyadekwC7+fiOB3QEL6PAFgE8+0HdNTf4NYLIB+afmnPgmvE9fNQrugu/kgrgIOALYB3jTIwQy1uhzy8qC+T2jI1aAvDXhjf+44sUXO7b1y2XKQ82ECaGaFSu6c81PtLTiXFSm23bPf8565amVg/HOdROnjd+s4Q0/eHXhhlyWO7+06jZVTge9qLq5oSHb8uYdXvG1UFiqUTlG0DEqvIfqnx9vLrp/AQvs7QkKaxfT5K6FUgCcDowAngNe8wiBjD54baTi/EJ79IeBgLwkyF937ypaFS2rjGzLF8yUh2ikcmFx3r4b7yutKM35R1e5S0RmWIHgjwfjnaOllbdawcB7w4OxT+si007NpcAE/YEI+wIzsimrprw8EC2tujYUllWC/EqEUxH5hiDfFbHqTittebF20pQDd1WN7gLPMvs2EPMATTyCxs6BOS1AGGg3pvpxwEdAI7ABGGKOD/g50UjVr0T494TH7SPKw/eNLz/0vPeXdg6kvLM52xqohM+GBxE52fHT9JtAU25rWQqMCC30Hr5x4rSCMWKNDwQZj81+CuMFCrqI/XJ285JP09LkJZWnCXKpqd18waqbWzZ1/JzGJS1pC8eSyikWTO2S2K19nzusCMS0P9mYMcgnTAgVt+T/QeCfQFC0U5C/2KprReRYgfGCTLas4INA6a4KdFeDJvrFkmBGS4LZnYllYhmQC/B189x3gfVZmY2Rih+6AFOIxmJ6vWXxE0vkn4H9rBF5J/M+j6TV6EorTrGQ24WWotPsyiurlzXcsy15UJWkFtx9ZdP3D9j2HbZy46xlDU9l+Km+Nj9SdQ3CZFUtQWR/cVo+SLyCwxpsB65MqwFZXOa8s3aKyuciMrZQg/8M3Jl2wxB5WISiMMHdgIvd46GuwHBCrlXCukzbR3Hevjc5IAegvqPbuvCiV5/82BUCB+SP/YkqP0V4Z1c03S2PBu8Bus3WTtDwPZ7jmfrPkvAeEeAq4FVjtnd7hMCABEld2dR9Raz/Mo3t2TZZc8F5rzSs6CZ2lSo9RlselaYJelkA6wlBxoHshkX1tuZB0KTfN6D2f4hIpWVJWgCaW1Y+qra04pxopPJ3HqvhWITrgbNEpFiS1KWqtiuxpek+A6XcuVHuBu4wquCcgRkcFJmHj+jzzla4yN23LXtthm7FcSJymeFr4arhHae6IAeoWbGie0ZT/S/Wh2Tk403Dv7Mrmu4uoIuAMcaEXw+sNcBzzfoCA742DwgziYp7Tf/jjIl0C/AeEDIm/YADZ2IHfizCUFV6YpZ+f05jYw/A7OYln0ZLK58BmYLqHumYjwL/0xd0cmJtSeWUrWnQXPHgPNPaAnz3HHzsUJBzjGb7WypX45RJG44KWoFTFCpFNQJiJRPLqnwowuvACht7tdp8hMjHsW79aPXork9rli6NpcNrgR0+WUQCTuXqfInZm6xg4HoVPWZu2alD5jQ+0Z6dx8HwONOyNsNSfm5AvrbV6piV6t0ue+nJTds7gJVroItHW+8LVAOVQB7wd+Be4yMqcBDwTbP/NPCWxxrQATzPtR7cAFwx8HOj0TFWRWygL3LrkdOHSbddbR4SPa9x0Vt9W7S8hDAFkX225o9b0nI7iIXqJkSeA6oALEsejUYqjq1uXrR8MHmIX65bWHChgmHnCAwFsFXu85676/CTds8Ph/8N3TRLJLBH3McSF9QbEYYLiKLPao/97ZnLF6/Jke9vtLm2vVfU+TJLl9rFkap1IjKyINZVAryQlckpWuT5LgN27+6bXL6HxPQkEGzRm+Y0Ll3LDkxWFvflAflm6+6HPf8rgIuMhp0MzDJAHAecAFwN/Bj4CXAdcBb0BnSGJpSd7Bc24M43/IwCvoXTnfZ/QIvnfNBTXlrvPKI7dgYiwxzTLva/ScLNzc5GD++vnNPKWqpE5GBHM8mPZjTVT7dt/TcDl6GI3F2TwmXJFQ8e01kShZCIw4uiy2Yue/LZeFxg6iFDQqFVAleLsIeJDyhKEzbX2cJx7xR1jBJ0o9FqHTkDuYO+Y5yNvFKzdGmsBlQMuFWsQ7Mv3h7Wux8bONCt7vzj3WBel3Y/wA5OmQDd1didxhzuTNhvN9uwMZs3AOuAzZ7jRwLHGLN+b+Ak89+NyrcmlJ3s12WuazX3FeD0ly/2mOlt5tflKc9O671FTjONe+XMxsUvJbniU3PdnnPLykelLEb5jgHZlxs2yXyAmcsablb0NmPCT96vtOr0weQhlel+WknLOYJMAFBb/l/fawPjXCGj6DO2MrtNdO8ZzfVlM5bVXzuzsf65mqVLY6i4EfDCXDVKp+uLA8x3W+Y59YqJNRySA+dyuAcGA++ft/RQIz03Xdj89OodHejBDECu5j7Xv46ZrXhM6U3AB8YcH2388i+B5cZXzzfn1xgt2w58YXz6TqPRY2kKHAWGAwcCL5rGUOAV3p6oPAbw3VuLBYjKN020OGkiRSzGuqDptR8SG3IY8GyKkqrciOxlq57sco+2SeynhXbwXIRRFnoB8Ojg8bCl6V5TXh6QFq41YFr+p2XD/+i9trq5oaEuMu1bYlkfVzc2NPdTbIupjZwBPdg1Zn8JOW3TQpZ5AjHLTSQ3+z5pj48es2LrB367GKEpoUy6S3dkoLsgjhk/+DtGim80GjPPBNjUgPlQA9yguW+EMa2Pwun+GmmuDRhgH+UB/RD6T2xxhU2nJx4wFvgYmGjuV09Uv9AIgzXA74H3zXPtZM+5r2z6/qiOAojZdtIocWeQdUHt9fcOSQYyU87uRuv2OT+ncUlLNFI5T5CrRKXq9gnlhZesWNqaax6SN07YvyV8PsihJth1TbKGOrN58RNptIoW0zgKctUoQ8HYQW7uUwz7jV6ga+xNSwKoyB5Z41ytoa7DtC428H50tXWlWAJC/mllLVULGvnzrgT03u5QA+RpxjxvN2AOegJgQQNcryVwoNmGPcdca+BA47trmgE57/15HuB3E8+Q6/b4/B3An9J556Cth7lv2hOzXk3RHDc6MgRsSW5KBuxYiZuTEcNu3EIji/VwEL0KITQ8HD4aWJJrHpLRjROnFQjWL4zp+fSs5kX1Gfu66EZBQGVY7iK61rjeb9TNe72mQzj47sgeJd1ehn75tshzG3Pr8sUDj+Db9hIk0I0QQuWu2kknTZ71ytOf7Ao+ujd99H1gHvCwAdcext8eYX6jgd2MZh1iTPUhRsPvZkzrIWZbaLZDjZYfZcoYuZXfCM/1bvCuyDzb5WN381sHzAdqgc8876PJ3Td7nLmi+8NRHUkTHUz3znvmulhyU1kOcvfX9OibiecXNg19WZ3YBSJW2WDwkBAv6ATYIyA/EthbQbtVrskSll+6scPcxeEY6b77k68V9YLnspee3ITSITnQ6IqG3GfUZJCoZQKP843G2duyQn+ti0wt25WAHjA++GLgZ8AvcaKhbcZMXmv88VajUb2/NnNvR5JzHeZcywB/G8197ab8DeYXM+eW4HS3XQv8xQQFQ/STdmuJNcq88Gf99ft2ddkn2DZnb9hk/Ufyj+t0e6ny+VXLF7clnnfMZX3D+M8HDQYPCT56+90TKkcI1tVGmz90/rL6f2SnfVljdvLnlp06JEftcoTh9/MkLsV6oPD2CeWF2TV8CRmh0plpGS09gStA/+EIatnfIvhCXaTyjruOmL7Pjgb0TPrRXbM8aAJod5ntJSZy3l/0N7SVc/k5eKeCeOyGF3ASZxZ7TPwej0mfSqSFjdn8RX+XXfDaoo9wuvKSF6M6TBy3eH0/WvZjhMnAXoPBQ0JwryM/n8uAIlWNdfXItdmrX75wXQyrKzbSxEmy9J9lhBOE3DKRRUXXC7LX0PzwKfNLqg5XS08UeH9GU8OsgWp0QXqtnEzoB68u3HDzUUcdP7qz6DqBy0UkZCEXDwnqhdFI5aOo/u7xZUVP7wiBukz70XuMyS5Gkz4MXAPc77mmgwxHimVIMcOTS/OMxbHEw0cXaSTP2GjYaKu2LJ1No3V0Q+oGJxtM4x46KDxs2cAvMbvzZ79a/3a25dmuRgeC4e6cmO8iuN16X3qP33zUUfmui2IhdVj8TJATFKl2MvwycRM0qzZ6xYsvdsxsbrgKi8kKfwS1EUIicrZY1uLTS1tWR0urbqibOO2wnU2je015N3LdDTxvTOUPcQYt5BNvpHmeAJmS/Swv3jJiHg2db3j4rRE6b3gEmpBmhpw4wcKsG4HggFdE+umn1Q1OFroOGwweEp41XZAxABqzb8yRfP3CrdpALDQyJ1wqeY4hJJsB7jmi6qBwUC+WLs5DZDfzbfNQOoC/ilA7+63nNg+wAbWJ84HDueDZdEGedc8RVQeFQvovAjOcby37CFwtwcDV0dKqF9TW297drfOhdFOBt7dG9wh0xGOSv46T0/1r4BNjRocNMLtzBHKDg97uM9ckz8cZrfZrY66/4RFmAxqHruIIBDF+XPYBH+3o51mdXqGQax4SVOUZxqVYNHP54tdzUaQt0hssUyu2Z274NC6c6n7zI1WLwiHeFJEfgQNy823ntlrBkTOa6ytmNNXfn8FTWo2fMCSXgJr9av3bM5sarnin48N9YnCmwh8V7TKN9mjLkgeKN+Y1RUsrj9uZgK4JfnvABOJ+hZPW+oYBpduX3kNupnFyQe526cWMkLkBuNnw4J6zE3hNw0fUTUazZKuh2hzQytB+fHRjpvblL4c8JPt40Zw1oB790CN998qmrJry8sB9kaqTUCeZRUQmIkwzI+G+AGrcXgpVNqUzsEVR150LJwO6IOFbj5w+LNffuGbFiu5ZTfWPVjfVn2UHevZS5XKU1b3vpfKXaEnl7J0F6K5Wd4ekWsT71R8ygH/G+M6u6d6ZA7B3efjvxImm/5cJSnUQn/DCTakd2PPEzfbKsr9W2WhAO6wfLTssqS+eKx625Km73Yo9nqviZi5fvMaY0IAMCOhzy6YOj5ZWHldbUjUzGqm6t3hj/sdB4SkRjvTw+5rC978Ibxg3o6n+F6CrjY8+Nk3zrLWPlRA3RXqTk4bHGJMVqLdipc56+al11c31t7Raa4pttS8F3SBCEGFutKRi6o7uo6fSsuD0a28GHsTpc78EZxTbbh7QZWLGexNs3Dz6PwO3Ay+Z4wVkMPa8rza1Npmo74i5ZZV7zmls+CxDU/kTY4YP68chHYUIqK4dFB62DD6tHMgMLWkKxo+AA6wBaPS6idPGiB1YKUJRwEpZ2Y9VN9efkXDwfYQJKrpfmj7eZmAkKn2ALpa91tVzAbX3Nm7fgOj2CeWFw/PynwEdN0+tEy5Y9uQb/V1vhhj/tq5s6mOiwWdFZLwKvwEGPVCX64knXCB2GdB1A38DfgHchpOsEjbHMwkyuYG/sDHl7jRWw/NGyIgnFpB5eEniXVr5tpZk4aN/YNDVX79qsQcsOechCa3KuSugfGjeM22gt4esgNc/VtV3UO62Vf9JVd/qJ7axygA4vXx3UaO5E31xWR1/thyUyXsPz8v7pQhlIjI6ZNmj0r1vZuOSD1X1euM6TLgnMnWvnQ3oXtO6m3i/+JvA/wK/Ad4xQA0MAPC2KTNgAm9vAjcaoLtBpXz6RuCz0Hrx/OoAVlV6ZmhZMLHCxBnEgwhFdWVT9028556Djx0q4jRYVVYOBg9JXm5Y7qvbMacVHZvuHXMaGz7rse3DYqpHt0rH6OrmhgNmNNdfNLO54RGR1JFwhRXm6+521+En7Z5+0K2v6d4mseVuXETQAWe01U6qnCxiprpSHqhuavjbwIy9eOylx+rp2lmB7o4s6yA+w8unRqtfR29lESIeEdcUFoLrZ7uV/7qxEG7B6coLGRekw1ybdVR/YWPRShR3IsEza8rLtzr/fYGOuS1McHVdSdW33WMtHZ3NqBE8duDELfymwsIT3THNKvLSYPCQhI6PRiqLcwpzdz40YXzNAL7/+csWr5rV3PBi4qQN2k9MQ1G37RDOC05Iw8RsNUzm9xU0S1oENcJVvjHQoGEgIHeZuvtiU0/gkoHcf+sB08Mosw2DS7fFpBWDBXQvaHuMNrZwAk51wHk487m516Yyt11N7p57Hvgu8AfiUfdu+vaPZx3VX8ACW9H5pvGO3a8lfFYa9us0EYKWcLJ76JIVS1tV9AUTaT0z8ZYA1vmm8a5/t2P1XwaDhySaJCgi9bWTKifnrLZt15yWvLGHV+Qi/TN1emsw1tstaNmyVd9WtDcrMUkyjzxhvm/p3LLKtLsGizfknQ1MAlDb/vlA55sfMcy+QUSKnU8X++9tEYzbFvO6e4Nubv/3y8DlwH3GtMrzmPyuFndndB1iAnvzzD2veXgftJVX2ixuVtUW50HWDXPLpg5PKaGd7pnxTsVp4iQED5uvcJp3bm9nPnY90wBlbrLFFXLIQyIdEAjIS9HSqveipZVLopHK+mhp5ZL5kapno6VVi+8tqfr6AH30Xr8/GAzsn813d2a9kZR927Nefmqdx9KZlIaN/JGz0TGJVlFMdYFplDLE1m8n09y1kYrza0srTkmwYE5w97sJ/N9A3q2utPJ6JycAVHkiraHAOwnQoe+0zyHja78M/LcB+0fEu+Zc0OaZ/feBe4CbcCLreR4z3maQllea09jwmZoplgXGF2rwwRsnTks65npkt37PncjQQvoMR43ZnbUKm0UIWoHg/bWTp4y864jp+6DyoDOPHGvbAp03DSYPnkr4o6JzPf7VeEGmiEilIFMQjheYGrIYUN54d3cc6GLZWQG96uBPCrbemMwUWshWfWtbXaEn1r4bg318+lnNDS96BqVcUzt5Sq/ffG/Z1MOLN+b9LSDWvIDKQ2bWG5eD3sBpQO20ov/3lUybdHpk01KL3tGC77VZetE2wt82X6nFBaY7h9trOAkuv8EErojPEGsbYXATTrbdG0a7u5NBDhrIe6OjTQ13oNzttsG9glZztKTidK9mqC2rKFenDx9Fl7Vaa570lnHesqUbVfU/TcOcbMVCH+QH7ZUCByqoil7cn4+WCx48qleqmxr+xdaer9vov9uqNwG/RblbIaqOhvt9T0zvHMh3unBFw3o1c6M701lnTqG8gq1mqomJZyhMTCX4PP5+b7dZWALFSayRnxq+vxaIhZ6OllZdG41U/SmkgVfi02jLc+7su47wsO5X1XaAgCWPRUsqv3vrAdO3CCDWTZw2JlpacW60tPLPASvQjHC84Xul3RM7KVddpunQ9lh7zTvrSwGwGid63gbMBkqM2f680fYPGT+8sE8UdRvRY83D5pwe2dSK8K8gB4kljxa35K2fH6l8G5FRKAcgoLC527bOnbMs3iBcare+/J9CHRMBvmcmhETRLpQrqpsbFmwLHowIDQDMbF7SiLOCTS7Dr3cDl6itb2VTzGYNdw/fypCEHok9H9QAIgT3tOQYPBN2JFKsh78Hwr2WQBn0ndK6urmhIRqprBWRWcAkgUmOoykobEb52TtFHbf1Fd71H9RGKi6xkHtE2EtEfj9imN0ejVStAF0rSFhF99tS6KmNyryutk2XDzQ3f2cEOh7A5ptfK84glCLgYJz+9juBx4y/nk98xNw2pQUssBc086O6ksqnLUtuAfYTZATCN7xawxY5I1XChNEG59aWVjxqqXxLkNUasx9IN988Wx4UfVaQE1T174P1naqb6q/BGcGYnRZot9s8g5mTjhFobe9+vigv0IGQr5ac3B/QL3ht0UfRSNWHIuwrWElN/XeKOmcXb8xbJSKXArujrAUe6eiRGu+CDH3N/kX3RssqP8eWOxHGmrhCWXxCbPFaFV8qLOhR67atJdUMFm3vtcLdHPguA+bvGFN9DfB9j/QN0Xfdtu1Cc8vKgkPskVVCoAoYJ7AG4al1LbLAO/HjjsbD2ZxtnVK2efx5jU++y05A0Uhlm4gMUdUfVjc33J7imoUicrKiHzzeNHz//sZ810Uq55vlq56f0VR/bH/Bsqll7XmfNj7RUZOmW1gzYUJo/7x9TxUoRzhQVIYqusnEllbERF9Y2FS0bHuPSd/eQPcusrgbcAbO6LO1OGmzL3ii7/6a5l8Rml9SdaJt6Qn2us5fp1o8sjZScX5ArHnGz768urn+ln4ERzHCVTb6p1lNixZ+Fb/p9ga6G1CK4czSejZwvQfofyXeB68+2H2KWzanDim0e95EGGvAfnt1c/0P/S/Tv0bdUYROpgst+jT47aQcZ0pub1/0lTgr7kgWZWREcxqfaI8Jp/bm2cP3/GraOYCuvtbeYcnGGQL8DM7KOi7diDMHwJFZlJExzWqqfzWmHUcANYpe6FfTjksBj3QfjtO9tgZn0MoU4okxlq/ptzu52jiZcC7LogyftgEF/U/gU5q0tJ9zbTkowycf6D4Nout2LM5CGKuID/kdKLX5n9L30X3acekSnPXaHsVJR34BSJW7XYazdl42QO+vjCE4abxNOL0tAeJDnH3yfXSf0qBLgTvYcgGNsTjjDH4KPG387TfYcpio4EyjrTiLWCb66G6+eX+gTFWGe+4J+gZkX8IJ4JX71ecD3af0yJ1998StuHEu2C9Pom1dAEYSgO6OSjwY+AHxIcekWQbABeZ4I8666H/wXDvNrz4f6D6lR3aaoDnEXJeYEz/SA7wDEoDeZuqm2fxPZfqnKkOAlThJU+6MMQUenqf71ef76D6lR5s9gtWlCcA5Cde9iTNcOJJwrXcappYk/vnJOKMOX4D4MscJlKqMIw3wnyI+xVinR7B3+tXnA92n9OjzJGC7DGc67mMSrn3D+PKjU4B0YxKgf9/s/7YfHlKV4boTj3iO7ZXgUvjkA92nNOhTj/nskmtidyXx56Fv4C7fo10TNWyh0eif0/+qrqnKcP31Fz3HihN8e598oPuUBr2bBOhupPyThGtHeTS1S3kptLlbZhB4IInQII0yDjdb73TXh3r2i/zq2/WB7gfgckOvmq136aHdEwDv0jiciUDWeY7ZadTHg1vhIVUZw3ACcd4ZV45NECQ+7UJATzagxR/gklugu9ozYADtBTw4UyIfAryScL8700uqxSLfZ8tIPWmWkUffRTcsoCKFv+7TLgD0xCGq/pDV3FGT2ZZ4TOO8hGMAp5hv/kzC/e0efzlZm3ksDR5SldFpeHHrekqC8BnnV9/OD3QvmAvNz+1bd/+7yzH7lDl9ibMU1t7AnvSNtHvN5EvN9pGE+71mfLJll55Ng4dUZXxg2oDri19ttlcm8dd92glJjKCxPObkGThzvDcCR3jOWb6Gz5pqjSt0IVBv9jeZ3yjz7d3U01TmuQJnJnG3rkq41hXU6ZQxzxw7HmfyCJcHAd7G6QUY4Vffzm1NuHO4W0ain4sTBV6Gk0jh1fD4QM+KzjUg+tKA523gYnNsFU6UvQc4OsX9d5lrr0sCdBtYDNwNLMRZzrqVeAS/vzKqzbHXjR/fQTxD7ufm3LU4abJ+n/pOSK7UH4+zdvpPgUU4XTQbgd8D/wpMNX5agV/RWdFQA0AXnFcaATvX/G81oEtFRxtBMDcB6G8Z89s7IGUDcC9bDnJJVkY+TpKOGj/em623F/G17pUtk3t82gm0eRFO6uPZplG8byr1c6N1OnH6Vu8ATjfXjsDv+8+GZhlQ3Z4AwnE4Yw22RnvSN4Hld8BZpk4Ow5k95tCtCOTEMlwhdAbwtSTXV+EMW70Bf8hqVn7ytn6eGm2+H3AQsAdO1NUFsDczy5XkHTjZXW/jrOzS41edTz7tuED3Pne0+Qmw3ph7MSO11Wj0sPHzinD6Wr8019p+1fnkk08++eTTDqDRM32+nynnk08ZUHA7g1zSALH4YPfJp+xoR8o40xxd45NPPiXQ/wf4/G0dyycjOwAAAABJRU5ErkJggg==",
 		"verified": true,
 		"first_edit": {
@@ -116,8 +148,8 @@
 			"date": "2005-04-19T11:39:43.000000000"
 		},
 		"last_edit": {
-			"revision_id": 26931,
-			"date": "2019-01-07T21:12:42.000000000"
+			"revision_id": 26980,
+			"date": "2019-05-19T23:51:48.000000000"
 		},
 		"lastUpdated": "2019-01-01",
 		"uploadedBy": "script",
@@ -188,12 +220,28 @@
 				"name": "Wildtech"
 			},
 			{
+				"id": "26028522",
+				"name": "FlanqerBot"
+			},
+			{
 				"id": "26120316",
 				"name": "CristinaGlobalBot"
 			},
 			{
+				"id": "27020890",
+				"name": "SpeedyBot"
+			},
+			{
+				"id": "27144172",
+				"name": "MovieBot"
+			},
+			{
 				"id": "27362472",
 				"name": "8botter"
+			},
+			{
+				"id": "30127408",
+				"name": "Botobliterator"
 			},
 			{
 				"id": "30252127",
@@ -204,6 +252,10 @@
 				"name": "TrueBot"
 			},
 			{
+				"id": "32045548",
+				"name": "AkulakhanBot"
+			},
+			{
 				"id": "32769624",
 				"name": "FANDOM"
 			},
@@ -212,8 +264,20 @@
 				"name": "FANDOMbot"
 			},
 			{
+				"id": "32997079",
+				"name": "Savaphoong"
+			},
+			{
+				"id": "34293559",
+				"name": "Your Werewolf Jesus Savior"
+			},
+			{
 				"id": "34480145",
 				"name": "I make userpages"
+			},
+			{
+				"id": "38461327",
+				"name": "RGTbot"
 			}
 		],
 		"users": 6,
@@ -307,12 +371,28 @@
 				"name": "Wildtech"
 			},
 			{
+				"id": "26028522",
+				"name": "FlanqerBot"
+			},
+			{
 				"id": "26120316",
 				"name": "CristinaGlobalBot"
 			},
 			{
+				"id": "27020890",
+				"name": "SpeedyBot"
+			},
+			{
+				"id": "27144172",
+				"name": "MovieBot"
+			},
+			{
 				"id": "27362472",
 				"name": "8botter"
+			},
+			{
+				"id": "30127408",
+				"name": "Botobliterator"
 			},
 			{
 				"id": "30252127",
@@ -323,6 +403,10 @@
 				"name": "TrueBot"
 			},
 			{
+				"id": "32045548",
+				"name": "AkulakhanBot"
+			},
+			{
 				"id": "32769624",
 				"name": "FANDOM"
 			},
@@ -331,8 +415,20 @@
 				"name": "FANDOMbot"
 			},
 			{
+				"id": "32997079",
+				"name": "Savaphoong"
+			},
+			{
+				"id": "34293559",
+				"name": "Your Werewolf Jesus Savior"
+			},
+			{
 				"id": "34480145",
 				"name": "I make userpages"
+			},
+			{
+				"id": "38461327",
+				"name": "RGTbot"
 			}
 		],
 		"users": 514,
@@ -427,12 +523,28 @@
 				"name": "Wildtech"
 			},
 			{
+				"id": "26028522",
+				"name": "FlanqerBot"
+			},
+			{
 				"id": "26120316",
 				"name": "CristinaGlobalBot"
 			},
 			{
+				"id": "27020890",
+				"name": "SpeedyBot"
+			},
+			{
+				"id": "27144172",
+				"name": "MovieBot"
+			},
+			{
 				"id": "27362472",
 				"name": "8botter"
+			},
+			{
+				"id": "30127408",
+				"name": "Botobliterator"
 			},
 			{
 				"id": "30252127",
@@ -443,6 +555,10 @@
 				"name": "TrueBot"
 			},
 			{
+				"id": "32045548",
+				"name": "AkulakhanBot"
+			},
+			{
 				"id": "32769624",
 				"name": "FANDOM"
 			},
@@ -451,8 +567,20 @@
 				"name": "FANDOMbot"
 			},
 			{
+				"id": "32997079",
+				"name": "Savaphoong"
+			},
+			{
+				"id": "34293559",
+				"name": "Your Werewolf Jesus Savior"
+			},
+			{
 				"id": "34480145",
 				"name": "I make userpages"
+			},
+			{
+				"id": "38461327",
+				"name": "RGTbot"
 			}
 		],
 		"users": 575,
@@ -547,12 +675,28 @@
 				"name": "Wildtech"
 			},
 			{
+				"id": "26028522",
+				"name": "FlanqerBot"
+			},
+			{
 				"id": "26120316",
 				"name": "CristinaGlobalBot"
 			},
 			{
+				"id": "27020890",
+				"name": "SpeedyBot"
+			},
+			{
+				"id": "27144172",
+				"name": "MovieBot"
+			},
+			{
 				"id": "27362472",
 				"name": "8botter"
+			},
+			{
+				"id": "30127408",
+				"name": "Botobliterator"
 			},
 			{
 				"id": "30252127",
@@ -563,6 +707,10 @@
 				"name": "TrueBot"
 			},
 			{
+				"id": "32045548",
+				"name": "AkulakhanBot"
+			},
+			{
 				"id": "32769624",
 				"name": "FANDOM"
 			},
@@ -571,8 +719,20 @@
 				"name": "FANDOMbot"
 			},
 			{
+				"id": "32997079",
+				"name": "Savaphoong"
+			},
+			{
+				"id": "34293559",
+				"name": "Your Werewolf Jesus Savior"
+			},
+			{
 				"id": "34480145",
 				"name": "I make userpages"
+			},
+			{
+				"id": "38461327",
+				"name": "RGTbot"
 			}
 		],
 		"users": 44,
@@ -682,12 +842,28 @@
 				"name": "Wildtech"
 			},
 			{
+				"id": "26028522",
+				"name": "FlanqerBot"
+			},
+			{
 				"id": "26120316",
 				"name": "CristinaGlobalBot"
 			},
 			{
+				"id": "27020890",
+				"name": "SpeedyBot"
+			},
+			{
+				"id": "27144172",
+				"name": "MovieBot"
+			},
+			{
 				"id": "27362472",
 				"name": "8botter"
+			},
+			{
+				"id": "30127408",
+				"name": "Botobliterator"
 			},
 			{
 				"id": "30252127",
@@ -698,6 +874,10 @@
 				"name": "TrueBot"
 			},
 			{
+				"id": "32045548",
+				"name": "AkulakhanBot"
+			},
+			{
 				"id": "32769624",
 				"name": "FANDOM"
 			},
@@ -706,8 +886,20 @@
 				"name": "FANDOMbot"
 			},
 			{
+				"id": "32997079",
+				"name": "Savaphoong"
+			},
+			{
+				"id": "34293559",
+				"name": "Your Werewolf Jesus Savior"
+			},
+			{
 				"id": "34480145",
 				"name": "I make userpages"
+			},
+			{
+				"id": "38461327",
+				"name": "RGTbot"
 			}
 		],
 		"users": 21800,
@@ -790,12 +982,28 @@
 				"name": "Wildtech"
 			},
 			{
+				"id": "26028522",
+				"name": "FlanqerBot"
+			},
+			{
 				"id": "26120316",
 				"name": "CristinaGlobalBot"
 			},
 			{
+				"id": "27020890",
+				"name": "SpeedyBot"
+			},
+			{
+				"id": "27144172",
+				"name": "MovieBot"
+			},
+			{
 				"id": "27362472",
 				"name": "8botter"
+			},
+			{
+				"id": "30127408",
+				"name": "Botobliterator"
 			},
 			{
 				"id": "30252127",
@@ -806,6 +1014,10 @@
 				"name": "TrueBot"
 			},
 			{
+				"id": "32045548",
+				"name": "AkulakhanBot"
+			},
+			{
 				"id": "32769624",
 				"name": "FANDOM"
 			},
@@ -814,8 +1026,20 @@
 				"name": "FANDOMbot"
 			},
 			{
+				"id": "32997079",
+				"name": "Savaphoong"
+			},
+			{
+				"id": "34293559",
+				"name": "Your Werewolf Jesus Savior"
+			},
+			{
 				"id": "34480145",
 				"name": "I make userpages"
+			},
+			{
+				"id": "38461327",
+				"name": "RGTbot"
 			}
 		],
 		"users": 512,
@@ -931,12 +1155,28 @@
 				"name": "Wildtech"
 			},
 			{
+				"id": "26028522",
+				"name": "FlanqerBot"
+			},
+			{
 				"id": "26120316",
 				"name": "CristinaGlobalBot"
 			},
 			{
+				"id": "27020890",
+				"name": "SpeedyBot"
+			},
+			{
+				"id": "27144172",
+				"name": "MovieBot"
+			},
+			{
 				"id": "27362472",
 				"name": "8botter"
+			},
+			{
+				"id": "30127408",
+				"name": "Botobliterator"
 			},
 			{
 				"id": "30252127",
@@ -947,6 +1187,10 @@
 				"name": "TrueBot"
 			},
 			{
+				"id": "32045548",
+				"name": "AkulakhanBot"
+			},
+			{
 				"id": "32769624",
 				"name": "FANDOM"
 			},
@@ -955,10 +1199,57 @@
 				"name": "FANDOMbot"
 			},
 			{
+				"id": "32997079",
+				"name": "Savaphoong"
+			},
+			{
+				"id": "34293559",
+				"name": "Your Werewolf Jesus Savior"
+			},
+			{
 				"id": "34480145",
 				"name": "I make userpages"
+			},
+			{
+				"id": "38461327",
+				"name": "RGTbot"
 			}
 		],
 		"domain": "psychology.wikia.org"
+	},
+	{
+		"domain": "hitchwiki.org/en",
+		"url": "https://hitchwiki.org/en",
+		"data": "hitchwiki.org_en.csv",
+		"edits": 60524,
+		"pages": 6659,
+		"users": 5166,
+		"articles": 4816,
+		"first_edit": {
+			"revision_id": 2708,
+			"date": "2004-12-22T17:16:32.000000000"
+		},
+		"last_edit": {
+			"revision_id": 96073,
+			"date": "2019-08-19T07:32:33.000000000"
+		},
+		"bots": [
+			{
+				"id": "173",
+				"name": "Lanigiro"
+			},
+			{
+				"id": "107",
+				"name": "Marvin"
+			},
+			{
+				"id": "9747",
+				"name": "Robyt"
+			}
+		],
+		"lastUpdated": "2019-01-01",
+		"verified": true,
+		"uploadedBy": "script",
+		"name": "Unknown"
 	}
 ]
