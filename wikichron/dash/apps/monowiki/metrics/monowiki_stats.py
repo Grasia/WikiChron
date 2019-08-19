@@ -638,7 +638,7 @@ def number_of_edits_by_tenure(data, index):
     mins = format_data.groupby('contributor_id')['timestamp'].transform('min')
     format_data['months'] = format_data['timestamp'].sub(mins).div(pd.Timedelta(1, 'M')).round().astype(int)
     
-    new_users = format_data[format_data['months'] == 1]
+    new_users = format_data[format_data['months'] == 0]
     one_three = format_data[(format_data['months'] >= 1) & (format_data['months'] <= 3)]
     four_six = format_data[(format_data['months'] >= 4) & (format_data['months'] <= 6)]
     six_twelve = format_data[(format_data['months'] >= 7) & (format_data['months'] <= 12)]
