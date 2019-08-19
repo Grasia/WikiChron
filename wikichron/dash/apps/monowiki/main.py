@@ -26,6 +26,7 @@ from dash.dependencies import Input, Output, State
 import grasia_dash_components as gdc
 import sd_material_ui
 from flask import current_app
+import datetime as d
 
 # Local imports:
 from .metrics import interface as interface
@@ -468,7 +469,7 @@ def bind_callbacks(app):
                 for metric_idx in range(len(metrics)):
                     new_graphs[metric_idx][wiki_idx]['visible'] = "legendonly"
 
-
+ 
         # Show only the selected timerange in the slider.
         new_timerange = selected_timerange
 
@@ -478,7 +479,11 @@ def bind_callbacks(app):
             time_axis = pd.DatetimeIndex(json.loads(time_axis_json))
             new_timerange[0] = time_axis[selected_timerange[0]]
             new_timerange[1] = time_axis[selected_timerange[1]]
-
+            new_timerange[0] = new_timerange[0] - d.timedelta(days=15)
+            new_timerange[1] = new_timerange[1] + d.timedelta(days=15)
+        else:
+            new_timerange[0] = new_timerange[0] - 1
+            new_timerange[1] = new_timerange[1] + 1
         # Dash' graphs:
         dash_graphs = []
         for i, metric in enumerate(metrics):
@@ -492,7 +497,7 @@ def bind_callbacks(app):
                                 'legend': dict(x=.8, y=1.3),
                                 'title': metric.text,
                                 'barmode': 'stack',
-                                'xaxis': {'range': new_timerange, 'tickangle': -60, 'autorange': True}
+                                'xaxis': {'range': new_timerange, 'tickangle': -60}
                             }
                         },
                         config={
