@@ -367,51 +367,27 @@ def users_first_edit(data, index):
 
 ############################ Users by the date of the last edit ###########################################################################
 
-def users_last_edit_1_month_ago(data, index):
-    '''
-    Get, among the users that have edited in that month X, the ones that have edited the last time in month X-1
-    '''
-    condition = generate_condition_users_last_edit(data, 1)
-    return filter_df(data, condition, index)
-
-def users_last_edit_2_or_3_months_ago(data, index):
-    '''
-    Get, among the users that have edited in month X, which ones have edited the last time in month X-2 or X-3
-    '''
-    condition = generate_condition_users_last_edit(data, 2)
-    return filter_df(data, condition, index)
-
-def users_last_edit_4_or_5_or_6_months_ago(data, index):
-    '''
-    Get, among the users that have edited in month X, the ones that have edited the last time in month X-4, X-5 or X-6
-    '''
-    condition = generate_condition_users_last_edit(data, 4)
-    return filter_df(data, condition, index)
-
-def users_last_edit_more_than_6_months_ago(data, index):
-    '''
-    Get, among the users that have edited in that month X, the ones that have edited the last time in any month > X-6
-    '''
-    condition = generate_condition_users_last_edit(data, 6)
-    return filter_df(data, condition, index)
-
 def users_last_edit(data, index):
     '''
     Get the monthly number of users whose last edit was less than 1, between 2 and 3, 4 and 6, and more than 6 months ago
     '''
     data = filter_anonymous(data)
-    format_data = get_accum_number_of_edits_until_each_month(data, index)
-    add_position_column_users_last_edit(format_data)
+    format_data = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('medits').reset_index()
+    format_data['months'] = format_data.groupby('contributor_id')['timestamp'].diff().div(pd.Timedelta(days=30.44), fill_value=0).round().astype(int)
 
-    this_month = users_new(data, index)
-    one_month = users_last_edit_1_month_ago(format_data, index)
-    two_three_months = users_last_edit_2_or_3_months_ago(format_data, index)
-    four_six_months = users_last_edit_4_or_5_or_6_months_ago(format_data, index)
-    more_six_months = users_last_edit_more_than_6_months_ago(format_data, index)
+    new_users = users_new(data, index)
+    one_month = pd.Series((format_data[format_data['months'] == 1]).groupby(['timestamp']).size(), index).fillna(0)
+    two_three_months = pd.Series((format_data[(format_data['months'] == 2) | (format_data['months'] == 3)]).groupby(['timestamp']).size(), index).fillna(0)
+    four_six_months = pd.Series((format_data[(format_data['months'] >= 4) & (format_data['months'] <= 6)]).groupby(['timestamp']).size(), index).fillna(0)
+    more_six_months = pd.Series((format_data[format_data['months'] > 6]).groupby(['timestamp']).size(), index).fillna(0)
 
-    set_category_name([this_month, one_month, two_three_months, four_six_months, more_six_months], ['New users', '1 month ago', 'Btw. 2 and 3 months ago', 'Btw. 4 and 6 months ago', 'More than six months ago'])
+    new_users.name = 'New users'
+    one_month.name = '1 month ago'
+    two_three_months.name = 'Btw. 2 and 3 months ago'
+    four_six_months.name = 'Btw. 4 and 6 months ago'
+    more_six_months.name = 'More than six months ago'
 
-    return [this_month, one_month, two_three_months, four_six_months, more_six_months, 1]
+    return [new_users, one_month, two_three_months, four_six_months, more_six_months, 1]
 
 
 ############################ Active editors by experience #####################################################################
@@ -596,38 +572,6 @@ def number_of_edits_by_experience_abs(data, index):
 
 ############################ Edits by editor's tenure #########################################
 
-def number_of_edits_by_users_first_edit_between_1_3_months_ago(data, index):
-    '''
-    Get the total number of edits done by users whose first edit was between 1 and 3 months ago
-    '''
-    condition = generate_condition_users_first_edit(data, 2, 4)
-    users = data[condition]
-    return sum_monthly_edits_by_users(users, index)
-
-def number_of_edits_by_users_first_edit_between_4_6_months_ago(data, index):
-    '''
-    Get the total number of edits done by users whose first edit was between 4 and 6 months ago
-    '''
-    condition = generate_condition_users_first_edit(data, 5, 7)
-    users = data[condition]
-    return sum_monthly_edits_by_users(users, index)
-
-def number_of_edits_by_users_first_edit_between_6_12_months_ago(data, index):
-    '''
-    Get the total number of edits done by users whose first edit was between 6 and 12 months ago
-    '''
-    condition = generate_condition_users_first_edit(data, 8, 13)
-    users = data[condition]
-    return sum_monthly_edits_by_users(users, index)
-
-def number_of_edits_by_users_first_edit_more_12_months_ago(data, index):
-    '''
-    Get the total number of edits done by users whose first edit was more than 12 months ago
-    '''
-    condition = generate_condition_users_first_edit(data, 13, 0)
-    users = data[condition]
-    return sum_monthly_edits_by_users(users, index)
-
 def number_of_edits_by_tenure(data, index):
     '''
     Get the monthly number of edits by each user category in the Users by tenure metric
@@ -687,79 +631,53 @@ def number_of_edits_by_tenure_abs(data, index):
 
 ############################ Edits by editor's last edit date #########################################
 
-def number_of_edits_by_users_last_edit_1_month_ago(data, index):
-    '''
-    Get the total number of edits done by users whose last edit was 1 month ago
-    '''
-    condition = generate_condition_users_last_edit(data, 1)
-    users = data[condition]
-    return sum_monthly_edits_by_users(users, index)
-
-def number_of_edits_by_users_last_edit_2_or_3_months_ago(data, index):
-    '''
-    Get the total number of edits done by users whose last edit was between 2 and 3 months ago
-    '''
-    condition = generate_condition_users_last_edit(data, 2)
-    users = data[condition]
-    return sum_monthly_edits_by_users(users, index)
-
-def number_of_edits_by_users_last_edit_4_or_5_or_6_months_ago(data, index):
-    '''
-    Get the total number of edits done by users whose last edit was between 4, 5 or 6 months ago
-    '''
-    condition = generate_condition_users_last_edit(data, 4)
-    users = data[condition]
-    return sum_monthly_edits_by_users(users, index)
-
-def number_of_edits_by_users_last_edit_more_than_6_months_ago(data, index):
-    '''
-    Get the total number of edits done by users whose last edit was more than 6 months ago
-    '''
-    condition = generate_condition_users_last_edit(data, 6)
-    users = data[condition]
-    return sum_monthly_edits_by_users(users, index)
-
 def number_of_edits_by_last_edit(data, index):
     '''
     Get the monthly number of edits by each user category in the Users by the date of the last edit metric
     '''
     data = filter_anonymous(data)
-    data = get_accum_number_of_edits_until_each_month(data, index)
-    add_position_column_users_last_edit(data)
-    get_monthly_number_of_edits(data, index)
+    format_data = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('medits').reset_index()
+    format_data['months'] = format_data.groupby('contributor_id')['timestamp'].diff().div(pd.Timedelta(days=30.44), fill_value=0).round().astype(int)
 
-    nEdits_category1 = number_of_edits_by_new_users(data, index)
-    nEdits_category2 = number_of_edits_by_users_last_edit_1_month_ago(data, index)
-    nEdits_category3 = number_of_edits_by_users_last_edit_2_or_3_months_ago(data, index)
-    nEdits_category4 = number_of_edits_by_users_last_edit_4_or_5_or_6_months_ago(data, index)
-    nEdits_category5 = number_of_edits_by_users_last_edit_more_than_6_months_ago(data, index)
-    
-    set_category_name([nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5], ["Edits by new users", "Edits by users whose last edit was 1 month ago", "Edits by users whose last edit was btw. 2 and 3 months ago", "Edits by users whose last edit was btw. 4 and 6 months ago", "Edits by users whose last edit was more than six months ago"])
+    new_users = (format_data[format_data['months'] == 0]).groupby(['timestamp'])['medits'].sum().reindex(index).fillna(0)
+    one_month = (format_data[format_data['months'] == 1]).groupby(['timestamp'])['medits'].sum().reindex(index).fillna(0)
+    two_three_months = (format_data[(format_data['months'] == 2) | (format_data['months'] == 3)]).groupby(['timestamp'])['medits'].sum().reindex(index).fillna(0)
+    four_six_months = (format_data[(format_data['months'] >= 4) & (format_data['months'] <= 6)]).groupby(['timestamp'])['medits'].sum().reindex(index).fillna(0)
+    more_six_months = (format_data[format_data['months'] > 6]).groupby(['timestamp'])['medits'].sum().reindex(index).fillna(0)
+
+    new_users.name = 'New users'
+    one_month.name = '1 month ago'
+    two_three_months.name = 'Btw. 2 and 3 months ago'
+    four_six_months.name = 'Btw. 4 and 6 months ago'
+    more_six_months.name = 'More than six months ago'
 
 
-    return [nEdits_category1, nEdits_category2, nEdits_category3, nEdits_category4, nEdits_category5, 1]
+    return [new_users, one_month, two_three_months, four_six_months, more_six_months, 1]
 
 def number_of_edits_by_last_edit_abs(data, index):
     '''
     Get the monthly proportion of edits done by each user category in the Users by the date of the last edit metric
     '''
-    edits_by_category = number_of_edits_by_tenure(data, index)
-    list_of_category_names = ["% of edits by new users", "% of edits by users whose last edit was 1 month ago", "% of edits by users whose last edit was btw. 2 and 3 months ago", "% of edits by users whose last edit was btw. 4 and 6 months ago", "% of edits by users whose last edit was more than six months ago"]
-    list_of_edits_by_category = generate_list_of_dataframes(edits_by_category, list_of_category_names)
-    df = calcultate_relative_proportion(list_of_edits_by_category, list_of_category_names)
-
-    edits_new_users = pd.Series(df[list_of_category_names[0]], index = index)
-    edits_1 = pd.Series(df[list_of_category_names[1]], index = index)
-    edits_2_3 = pd.Series(df[list_of_category_names[2]], index = index)
-    edits_4_5_6 = pd.Series(df[list_of_category_names[3]], index = index)
-    edits_6 = pd.Series(df[list_of_category_names[4]], index = index)
-
-    set_category_name([edits_new_users, edits_1, edits_2_3, edits_4_5_6, edits_6], list_of_category_names)
+    categories = number_of_edits_by_last_edit(data, index)
+    data = filter_anonymous(data)
+    format_data = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('medits').reset_index()
+    monthly_total_edits = format_data.groupby(['timestamp'])['medits'].sum()
 
 
-    return [edits_new_users, edits_1, edits_2_3, edits_4_5_6, edits_6, 1]
+    new_users = (categories[0] / monthly_total_edits) * 100
+    one_month = (categories[1] / monthly_total_edits) * 100
+    two_three_months = (categories[2] / monthly_total_edits) * 100
+    four_six_months = (categories[3] / monthly_total_edits) * 100
+    more_six_months = (categories[4] / monthly_total_edits) * 100
 
 
+    new_users.name = 'New users'
+    one_month.name = '1 month ago'
+    two_three_months.name = 'Btw. 2 and 3 months ago'
+    four_six_months.name = 'Btw. 4 and 6 months ago'
+    more_six_months.name = 'More than six months ago'
+
+    return [new_users, one_month, two_three_months, four_six_months, more_six_months, 1]
 
 
 ############################# HEATMAP METRICS ##############################################
