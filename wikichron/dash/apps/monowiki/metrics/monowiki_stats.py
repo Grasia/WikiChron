@@ -535,11 +535,11 @@ def number_of_edits_by_experience(data, index):
     between_25_99 = between_25_99.groupby(['timestamp'])['medits'].sum().reindex(index).fillna(0)
     highEq_100 = highEq_100.groupby(['timestamp'])['medits'].sum().reindex(index).fillna(0)
 
-    new_users.name = "Edits by new users"
-    one_four.name = "Edits by beginners (btw. 1 and 4 edits)"
-    between_5_24.name = "Edits by advanced (btw. 5 and 24 edits)"
-    between_25_99.name = "Edits by experimented (btw. 24 and 99 edits)"
-    highEq_100.name = "Edits by highly experimented (more than 99 edits)"
+    new_users.name = "New users"
+    one_four.name = "Btw. 1 and 4 edits"
+    between_5_24.name = "Btw. 5 and 24 edits"
+    between_25_99.name = "Btw. 24 and 99 edits"
+    highEq_100.name = "More than 99 edits"
 
     return [new_users, one_four, between_5_24, between_25_99, highEq_100, 1]
 
@@ -561,11 +561,11 @@ def number_of_edits_by_experience_abs(data, index):
     edits_experimented = ((categories[3] / monthly_total_edits)*100).fillna(0)
     edits_H_experimented = ((categories[4] / monthly_total_edits)*100).fillna(0)
 
-    edits_new_users.name = "% of edits by new users"
-    edits_beginners.name = "% of edits by beginners (btw. 1 and 4 edits)"
-    edits_advanced.name = "% of edits by advanced (btw. 5 and 24 edits)"
-    edits_experimented.name = "% of edits by experimented (btw. 24 and 99 edits)"
-    edits_H_experimented.name = "% of edits by highly experimented (more than 99 edits)"
+    edits_new_users.name = "New users"
+    edits_beginners.name = "Btw. 1 and 4 edits"
+    edits_advanced.name = "Btw. 5 and 24 edits"
+    edits_experimented.name = "Btw. 24 and 99 edits"
+    edits_H_experimented.name = "More than 99 edits"
 
 
     return [edits_new_users, edits_beginners, edits_advanced, edits_experimented, edits_H_experimented, 1]
