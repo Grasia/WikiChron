@@ -34,6 +34,13 @@ class HeatMap(Metric):
         self.yaxis = metric_data[1]
         self.zaxis = metric_data[2]
 
+        self.legend = metric_data[3]
+		
+    def get_data(self):
+        self.xaxis = self.xaxis.format()
+        return [self.xaxis, self.yaxis, self.zaxis, 'Heatmap']
+	   
+
     def get_index(self):
         return self.xaxis
 

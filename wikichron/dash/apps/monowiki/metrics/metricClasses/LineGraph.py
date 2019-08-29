@@ -24,6 +24,9 @@ class LineGraph(Metric):
         set data to metric_data.
         """
         self.data = metric_data
+		
+    def get_data(self):
+        return [self.data, 'Line']
     
     def get_index(self):
         return self.data.index
