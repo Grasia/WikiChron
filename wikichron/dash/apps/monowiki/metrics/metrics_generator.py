@@ -82,47 +82,18 @@ def generate_monowiki_metrics():
 	
 	#DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS
     metrics.append(BarGraph('users_edits_number_of_edits', 'By editing experience', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.users_number_of_edits, 'Distribution of editors by their number of previous edits', 'Dist. of active registered users by editing experience'))
-    metrics.append(BarGraph('users_edits_number_of_edits_abs', 'By editing experience (absolute)', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.users_number_of_edits_abs, 'Distribution of editors by their number of previous edits (absolute)', 'Dist. of active registered users by editing experience (absolute)'))
     metrics.append(BarGraph('users_first_edit', 'By tenure', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.users_first_edit, 'Distribution of editors by their time participating in the wiki', 'Dist. of active registered users by tenure'))
     metrics.append(BarGraph('Current_streak', 'By edit streak', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.current_streak, 'Distribution of editors by their last streak editing the wiki', 'Dist. of active registered users by edit streak'))
-    metrics.append(BarGraph('Current_streak_only_mains', 'By edit in article streak', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.current_streak_only_mains, 'Distribution of editors by their last streak editing the wiki (only articles)', 'Dist. of active registered users by edit in article streak'))
     metrics.append(BarGraph('users_last_edit', 'By date of the last edit', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.users_last_edit, 'Distribution of editors by their last edit in the wiki', 'Dist. of active registered users by date of the last edit'))
     metrics.append(BarGraph('type_page_users_edit', 'By namespace edited', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.users_in_namespaces, 'Distribution of editors by the namespace edited', 'Dist. of active registered users by namespace edited'))
 
     #DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS
     metrics.append(BarGraph('number_of_edits_experience', 'By editing experience', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.number_of_edits_by_experience, 'Distribution of edits across distribution of editors by their number of previous edits', 'Dist. of edits across registered users by editing experience'))
-    metrics.append(BarGraph('percentage_of_edits_experience', 'By editing experience (absolute)', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.number_of_edits_by_experience_abs, 'Distribution of edits across distribution of editors by their number of previous edits (absolute)', 'Dist. of edits across registered users by editing experience (absolute)'))
     metrics.append(BarGraph('number_of_edits_tenure', 'By tenure', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.number_of_edits_by_tenure, 'Distribution of edits across distribution of editors by their time participating in the wiki', 'Dist. of edits across registered users by tenure'))
-    metrics.append(BarGraph('percentage_of_edits_tenure', 'By tenure (absolute)', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.number_of_edits_by_tenure_abs, 'Distribution of edits across distribution of editors by their time participating in the wiki (absolute)', 'Dist. of edits across registered users by tenure (absolute)'))
     metrics.append(BarGraph('edits_by_current_streak', 'By edit streak', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.edits_by_current_streak, 'Distribution of edits across distribution of editors by their last streak editing the wiki', 'Dist. of edits across registered users by edit streak'))
     metrics.append(BarGraph('number_of_edits_last_edit', 'By date of the last edit', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.number_of_edits_by_last_edit, 'Distribution of edits across distribution of editors by their last edit in the wiki', 'Dist. of edits across registered users by date of the last edit'))
-    metrics.append(BarGraph('percentage_of_edits_last_edit', 'By date of the last edit (absolute)', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.number_of_edits_by_last_edit_abs, 'Distribution of edits across distribution of editors by their last edit in the wiki (absolute)', 'Dist. of edits across registered users by date of the last edit (absolute)'))   
     metrics.append(BarGraph('edition_on_type_pages', 'By namespace edited', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.edition_on_type_pages, 'Distribution of edits in the most popular namespaces', 'Dist. of edits across registered users by namespace edited'))
-    metrics.append(BarGraph('edition_on_type_pages_extends_rest', 'By other namespace edited', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.edition_on_type_pages_extends_rest, 'Distribution of edits in less popular namespaces', 'Dist. of edits across registered users by other namespace edited'))
-
-
-    #DISTRIBUTION_OF_EDITS
-    metrics.append(AreaChart('contributorPctg_per_contributionPctg', 'Percentage of registered users making a percentage of edits', MetricCategory.DISTRIBUTION_OF_EDITS, monowiki_stats.contributor_pctg_per_contributions_pctg, 'Percentage of editors across percentege of editions (Percentage of editions fixed to 50%, 80%, 90% and 99%)', 'Percentage of registered users making a percentage of edits'))
-    metrics.append(AreaChart('contributorPctg_per_contributionPctg_month', 'Percentage of registered users making a percentage of edits (monthly)', MetricCategory.DISTRIBUTION_OF_EDITS, monowiki_stats.contributor_pctg_per_contributions_pctg_per_month, 'Monthly percentage of editors aross percentage of editions (Percentage of editions fixed to 50%, 80%, 90% and 99%)', 'Percentage of registered users making a percentage of edits (monthly)'))
-    metrics.append(HeatMap('edit_distributions_across_editors', 'Distribution of edits across editors (heatmap)', MetricCategory.DISTRIBUTION_OF_EDITS, monowiki_stats.edit_distributions_across_editors, 'Distribution of editors (z axis) per distribution of edits (y axis).', 'Distribution of edits across editors (heatmap)'))
-
-
-    # metrics to measure level of participation among different user classifications
     
-        
-    
-
-    
-    # area chart metrics
-    #~ metrics.append(Metric('contributorPctg_per_contributionPctg', 'editor% per contribution%', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.contributor_pctg_per_contributions_pctg, 'FILLED-AREA CHART: % editors per %editions (% editions fixed to 50%, 80%, 90% and 99%)'))
-    #~ metrics.append(Metric('contributorPctg_per_contributionPctg_month', 'monthly editor% per contribution%', MetricCategory.ACTIVE_EDITORS_ANALYSIS, monowiki_stats.contributor_pctg_per_contributions_pctg_per_month, 'FILLED-AREA CHART: monthly % editors per %editions (%editions fixed to 50%, 80%, 90% and 99%)'))
-
-    # heatmap metrics
-
-    metrics.append(HeatMap('bytes_difference_across_articles', 'Bytes difference across articles', MetricCategory.EDIT_DISTRIBUTION, monowiki_stats.bytes_difference_across_articles, 'Number of articles (z axis) than contain these bytes (y axis).', 'Bytes difference across articles'))
-    metrics.append(HeatMap('distribution_editors_between_articles_edited_each_month', 'Monthly distribution of editors across articles', MetricCategory.ACTIVE_USER_DISTRIBUTION, monowiki_stats.distribution_editors_between_articles_edited_each_month, '', 'Monthly distribution of editors across articles'))
-    metrics.append(HeatMap('edition_on_pages', 'Edits on pages', MetricCategory.EDIT_DISTRIBUTION, monowiki_stats.edition_on_pages, '', 'Edits on pages'))
-    metrics.append(HeatMap('revision_on_pages', 'Revisions on pages', MetricCategory.EDIT_DISTRIBUTION, monowiki_stats.revision_on_pages, '', 'Revisions on pages'))
 
     return metrics
 
