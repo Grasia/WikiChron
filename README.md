@@ -115,3 +115,5 @@ WikiChron is used for science and, accordingly, we have presented the tool in so
   * [Freely available here](https://aisel.aisnet.org/cgi/viewcontent.cgi?article=1072&context=ecis2018_rip)
 * Abel Serrano, Javier Arroyo, and Samer Hassan. 2018. Participation Inequality in Wikis: A Temporal Analysis Using WikiChron. In Proceedings of the 14th International Symposium on Open Collaboration (OpenSym '18). ACM, New York, NY, USA, Article 12, 7 pages. DOI: https://doi.org/10.1145/3233391.3233536.
   * [Freely available here](http://www.opensym.org/wp-content/uploads/2018/07/OpenSym2018_paper_31-1.pdf)
+* Youssef El Faqir, Javier Arroyo, and Abel Serrano. 2019. Visualization of the evolution of collaboration and communication networks in wikis. In Proceedings of the 15th International Symposium on Open Collaboration (OpenSym '19). ACM, New York, NY, USA, Article 11, 10 pages. DOI: https://doi.org/10.1145/3306446.3340834
+  * [Freely available here](https://opensym.org/wp-content/uploads/2019/08/os19-paper-A11-faqir.pdf)
