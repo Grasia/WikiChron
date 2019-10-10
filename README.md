@@ -39,7 +39,7 @@ And finally, install dependencies here:
 `pip install -r requirements.txt`
 
 ## Input wiki data
-Likely, the source data for wikichron will come from a XML file with the full edit history of the wikis you want to analyze. [Go here if you want to learn more about Wikimedia XML dumps](https://www.mediawiki.org/wiki/Manual:Backing_up_a_wiki#Backup_the_content_of_the_wiki_(XML_dump).
+Likely, the source data for wikichron will come from a XML file with the full edit history of the wikis you want to analyze. [Go here if you want to learn more about Wikimedia XML dumps](https://www.mediawiki.org/wiki/Manual:Backing_up_a_wiki#Backup_the_content_of_the_wiki_(XML_dump)).
 
 In order to get such XML dump, [you can follow the instructions explained in the WikiChron's wiki](https://github.com/Grasia/WikiChron/wiki/How-to-add-a-new-wiki#get-the-dump).
 
