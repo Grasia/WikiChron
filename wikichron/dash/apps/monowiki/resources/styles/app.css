@@ -14,6 +14,10 @@ p {
     margin-bottom: 0.75rem;
 }
 
+#app-layout {
+  font-family: 'Roboto', sans-serif;
+}
+
 #tool-title {
     margin-top: 22px;
 }
