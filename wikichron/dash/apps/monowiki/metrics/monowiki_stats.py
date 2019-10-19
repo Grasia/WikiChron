@@ -466,7 +466,12 @@ def users_in_namespaces(data, index):
     usertalk_page = users_usertalk_page(data,index)
     other_page = users_other_page(data,index)
 
-
+    main_page.name = "Article pages"
+    articletalk_page.name = "Article talk pages"
+    user_page.name = "User pages"
+    template_page.name = "Template pages"
+    usertalk_page.name = "User talk pages"
+    other_page.name = "Other pages"
 
     return [main_page, articletalk_page, user_page, usertalk_page, template_page, other_page, 0]
 
