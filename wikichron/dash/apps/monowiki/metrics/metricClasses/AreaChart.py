@@ -40,10 +40,10 @@ class AreaChart(Metric):
         graphs_list = []
         num_submetrics = len(self.data)
 
-        for idx in range(num_submetrics - 1):
+        for idx in range(num_submetrics):
             graphs_list.append([])
         
-        for submetric in range(num_submetrics - 1):
+        for submetric in range(num_submetrics):
                 submetric_data = self.data[submetric]
                 
                 graphs_list[submetric]= go.Scatter(
