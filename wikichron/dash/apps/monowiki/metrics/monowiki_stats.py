@@ -570,3 +570,89 @@ def number_of_edits_by_last_edit(data, index):
 
     return [new_users, one_month, two_three_months, four_six_months, more_six_months, 1]
 
+########################### % Of edits by % of users (Total and monthly) ###########################################
+
+	
+def contributor_pctg_per_contributions_pctg(data, index):
+    """
+    Calculate which % of contributors has contributed
+    in a 50%, 80%, 90% and 99% of the total wiki edits until each month.
+    """
+    data = filter_anonymous(data)
+    format_data =data.groupby(['contributor_id']).apply(lambda x: x.groupby(pd.Grouper(key='timestamp', freq='MS')).size().to_frame('nEdits_cumulative').reindex(index, fill_value=0).cumsum()).reset_index()
+    format_data['monthly_total_edits'] = format_data.groupby('timestamp')['nEdits_cumulative'].transform('sum')
+
+    format_data['edits%'] = (format_data['nEdits_cumulative'] / format_data['monthly_total_edits']) * 100
+    format_data = format_data.sort_values(['timestamp', 'edits%'], ascending=[True, False])
+    format_data['edits%accum'] = format_data.groupby('timestamp')['edits%'].cumsum()
+    format_data = format_data[format_data['edits%'] > 0]
+    monthly_total_users = format_data.groupby('timestamp').size().reindex(index).fillna(0)
+    monthly_total_users = monthly_total_users[monthly_total_users >= 10].reindex(index)
+
+    p = [1 for j in range(1, len(format_data.index)+1)]
+    format_data['count'] = p
+    format_data['count_acum'] = format_data.groupby('timestamp')['count'].cumsum()
+
+    category_50 = (format_data[format_data['edits%accum'] >= 50]).groupby('timestamp').head(1)
+    category_50 = category_50.set_index(category_50['timestamp']).reindex(index).fillna(0)['count_acum']
+    category_50= (((category_50 / monthly_total_users)*100)).fillna(0)
+
+    category_80 = (format_data[(format_data['edits%accum'] >=80)]).groupby('timestamp').head(1)
+    category_80 = category_80.set_index(category_80['timestamp']).reindex(index).fillna(0)['count_acum']
+    category_80 = (((category_80 / monthly_total_users)*100)).fillna(0)
+
+    category_90 = (format_data[(format_data['edits%accum'] >=90)]).groupby('timestamp').head(1)
+    category_90 = category_90.set_index(category_90['timestamp']).reindex(index).fillna(0)['count_acum']
+    category_90 = (((category_90 / monthly_total_users)*100)).fillna(0)
+
+    category_99 = (format_data[(format_data['edits%accum'] >=99)]).groupby('timestamp').head(1)
+    category_99 = category_99.set_index(category_99['timestamp']).reindex(index).fillna(0)['count_acum']
+    category_99 = (((category_99 / monthly_total_users)*100)).fillna(0)
+	
+
+    category_50.name = "50% of edits"
+    category_80.name = "80% of edits"
+    category_90.name = "90% of edits"
+    category_99.name = "99% of edits"
+
+    return[category_50, category_80, category_90, category_99]
+	
+def contributor_pctg_per_contributions_pctg_per_month(data, index):
+    """
+    Calculate which % of contributors has contributed
+    in a 50%, 80%, 90% and 99% of the wiki edits.
+    """
+    data = filter_anonymous(data)
+    format_data = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('medits').reset_index()
+    format_data['monthly_total_edits'] = format_data.groupby('timestamp')['medits'].transform('sum')
+    format_data['edits%'] = (format_data['medits'] / format_data['monthly_total_edits']) * 100
+    format_data = format_data.sort_values(['timestamp', 'edits%'], ascending=[True, False])
+    format_data['edits%accum'] = format_data.groupby('timestamp')['edits%'].cumsum()
+    monthly_total_users = format_data.groupby('timestamp').size().reindex(index).fillna(0)
+    monthly_total_users = monthly_total_users[monthly_total_users >= 10].reindex(index)
+    p = [1 for j in range(1, len(format_data.index)+1)]
+    format_data['count'] = p
+    format_data['count_acum'] = format_data.groupby('timestamp')['count'].cumsum()
+
+    category_50 = (format_data[format_data['edits%accum'] >= 50]).groupby('timestamp').head(1)
+    category_50 = category_50.set_index(category_50['timestamp']).reindex(index).fillna(0)['count_acum']
+    category_50= (((category_50 / monthly_total_users)*100)).fillna(0)
+
+    category_80 = (format_data[(format_data['edits%accum'] >=80)]).groupby('timestamp').head(1)
+    category_80 = category_80.set_index(category_80['timestamp']).reindex(index).fillna(0)['count_acum']
+    category_80 = (((category_80 / monthly_total_users)*100)).fillna(0)
+
+    category_90 = (format_data[(format_data['edits%accum'] >=90)]).groupby('timestamp').head(1)
+    category_90 = category_90.set_index(category_90['timestamp']).reindex(index).fillna(0)['count_acum']
+    category_90 = (((category_90 / monthly_total_users)*100)).fillna(0)
+
+    category_99 = (format_data[(format_data['edits%accum'] >=99)]).groupby('timestamp').head(1)
+    category_99 = category_99.set_index(category_99['timestamp']).reindex(index).fillna(0)['count_acum']
+    category_99 = (((category_99 / monthly_total_users)*100)).fillna(0)
+
+    category_50.name = "50% of edits"
+    category_80.name = "80% of edits"
+    category_90.name = "90% of edits"
+    category_99.name = "99% of edits"
+
+    return[category_50, category_80, category_90, category_99]
