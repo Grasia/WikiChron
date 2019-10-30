@@ -3,7 +3,7 @@
 """
 barGraph class.
 """
-from ..metric import Metric 
+from ..metric import Metric
 from colormap import Colormap
 import plotly.graph_objs as go
 import numpy as np
@@ -16,14 +16,14 @@ class BarGraph(Metric):
         """
         Creates a new BarGraph object.
 
-        data -- list of Pandas Series, one per colored bar. 
+        data -- list of Pandas Series, one per colored bar.
         """
         super(BarGraph, self).__init__(code, name, category, func, descp, text)
 
         self.data = None
         self.ordered = None
 
-    
+
     def set_data(self, metric_data):
         """
         set data to metric_data.
@@ -35,7 +35,7 @@ class BarGraph(Metric):
 
     def get_data(self):
         return self.data
-		
+
 
     def get_index(self):
         return self.data[0].index
@@ -43,7 +43,7 @@ class BarGraph(Metric):
 
     def get_colors(self, sequencial):
         c = Colormap()
-        if sequencial == True:
+        if sequencial:
             mycmap = c.cmap('YlGnBu')
         else:
             mycmap = c.cmap('tab10')
@@ -58,7 +58,7 @@ class BarGraph(Metric):
             displace = 0
             for x in range(num_submetrics):
                 value = displace + num_colors
-                if x%2 == 0: 
+                if x%2 == 0:
                     value = value + (x * 10)
                 else:
                     value = value + (x * 7)
@@ -85,7 +85,7 @@ class BarGraph(Metric):
         graphs_list = []
         num_submetrics = len(self.data)
 
-        
+
         for idx in range(num_submetrics):
             graphs_list.append([])
 
@@ -110,4 +110,3 @@ class BarGraph(Metric):
                                 marker={'color': colors[submetric1]}
                                 )
         return graphs_list
-    

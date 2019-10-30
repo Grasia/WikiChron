@@ -37,8 +37,6 @@ global debug
 debug = True if os.environ.get('FLASK_ENV') == 'development' else False
 
 
-
-
 def extract_metrics_objs_from_metrics_codes(metric_codes):
     metrics_dict = interface.get_available_metrics_dict()
     metrics = [ metrics_dict[metric] for metric in metric_codes ]
@@ -49,19 +47,19 @@ def generate_graphs(metrics, wikis, relative_time):
     """ Turn over data[] into plotly graphs objects, which can be: 1) bar graphs,
     2) heatmaps, 3) filled-area graphs,  and store them in graphs[] """
     graphs_list = []
-    
+
     if relative_time:
         time_index = list(range(len(metrics[0].get_index())))
     else:
         time_index = metrics[0].get_index()
-        
+
 
     for metric_idx in range(len(metrics)):
         graphs_list.append([])
 
     for metric_idx in range(len(metrics)):
         graphs_list[metric_idx] = metrics[metric_idx].draw(time_index)
-        
+
     return graphs_list
 
 
@@ -469,7 +467,6 @@ def bind_callbacks(app):
                 for metric_idx in range(len(metrics)):
                     new_graphs[metric_idx][wiki_idx]['visible'] = "legendonly"
 
- 
         # Show only the selected timerange in the slider.
         new_timerange = selected_timerange
 
