@@ -75,22 +75,6 @@ def filter_anonymous(data):
     return data
 
 
-def calcultate_relative_proportion(list_of_category_series, list_of_column_names):
-    '''
-    Calculate the relative number of the data in each pd Series given in the list_of_category_series parameter.
-    Return a pd DataFrame in which:
-    -index = time index of the wiki.
-    -A column per category with its relative proportion regarding the total in the month is computed.
-    '''
-    df = pd.concat(list_of_category_series, axis = 1)
-    df['total'] = df[list_of_column_names].sum(axis=1)
-
-    for i in range(len(list_of_column_names)):
-        df[str(list_of_column_names[i])] = (df[str(list_of_column_names[i])]/df['total'])*100
-
-    return df
-
-
 def generate_list_of_dataframes(list_of_series, list_of_names):
     '''
     Return a list of pd DataFrames from the given list_of_series, using as column names the given list_of_names.
