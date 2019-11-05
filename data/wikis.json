@@ -1216,40 +1216,5 @@
 			}
 		],
 		"domain": "psychology.wikia.org"
-	},
-	{
-		"domain": "hitchwiki.org/en",
-		"url": "https://hitchwiki.org/en",
-		"data": "hitchwiki.org_en.csv",
-		"edits": 60524,
-		"pages": 6659,
-		"users": 5166,
-		"articles": 4816,
-		"first_edit": {
-			"revision_id": 2708,
-			"date": "2004-12-22T17:16:32.000000000"
-		},
-		"last_edit": {
-			"revision_id": 96073,
-			"date": "2019-08-19T07:32:33.000000000"
-		},
-		"bots": [
-			{
-				"id": "173",
-				"name": "Lanigiro"
-			},
-			{
-				"id": "107",
-				"name": "Marvin"
-			},
-			{
-				"id": "9747",
-				"name": "Robyt"
-			}
-		],
-		"lastUpdated": "2019-01-01",
-		"verified": true,
-		"uploadedBy": "script",
-		"name": "Unknown"
 	}
 ]
