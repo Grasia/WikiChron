@@ -14,15 +14,27 @@ It analyzes the history dump of a wiki and give you nice graphs plotting that da
 * [pandas](pandas.pydata.org)
 * (Production only) [Redis Cache](https://redis.io/)
 * [python-igraph](https://igraph.org/python/) -> it's a c package so it depends on your OS
+* [tkinter](https://wiki.python.org/moin/TkInter)
 
 ### Install instructions
+#### Tkinter
+If you are using Linux (and probably Mac OS X too), likely you will need to manually install the tkinter utility. You can check if tkinter is already installed in your system by [following these instructions](https://wiki.python.org/moin/TkInter#Checking_your_Tkinter_support).
+
+To install it, if you are in Ubuntu or derivatives you can use this command:
+
+`sudo apt-get install python3-tk`
+
+If you are using pyenv, you should follow the instructions posted in [this answer of stack overflow](https://stackoverflow.com/a/45622282/2904315).
+
+#### igraph
 The dependency `python-igraph` needs to compile some C code, so, in order to install it, you priorly need some dev libraries for python, xml, zlib and C compiler utilities.
 
 For Ubuntu 16.04/18.04 and derivatives, you can use the following command to install those:
 
 `sudo apt-get install build-essential python3-dev libxml2 libxml2-dev zlib1g-dev`
 
-After that, simply run: `pip3 install -r requirements.txt`. pip will install (and build for the case of python-igraph) all the dependencies you need.
+#### Other deps
+After that, simply run: `pip3 install -r requirements.txt`. pip will install (and build for the case of python-igraph) all the remaining dependencies you need.
 
 ### Using a virtual environment
 A good pratice is to use a virtual environment in order to isolate the development environment from your personal stuff. This skips issues about having different Python versions, pip packages in the wrong place or requiring sudo privileges and so on.

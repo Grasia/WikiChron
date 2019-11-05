@@ -234,33 +234,43 @@ def start_download_data_server(app, download_pathname):
 
         (wikis, metrics) = extract_wikis_and_metrics_from_selection_dict(selection)
 
-        data = data_controller.load_and_compute_data(wikis, metrics)
-
+        data_aux = data_controller.load_and_compute_data(wikis, metrics)
+        #data = main.loaded_data
         # output in-memory zip file
         in_memory_zip = BytesIO()
         zipfile_ob = zipfile.ZipFile(in_memory_zip, mode='w',
                                     compression=zipfile.ZIP_DEFLATED)
 
-        # For each wiki, create a DataFrame and add a column for the data of
-        #   each metric.
-        # Then, generate a csv for that DataFrame and append it to the output zip file
-        # Remember this is the structure of data: data[metric][wiki]
-        for wiki_idx in range(len(data[0])):
-
+        data = []
+        for metric_idx in range(len(data_aux)):
+            data.append(data_aux[metric_idx].get_data())
+        for metric, metric_name in zip(data, metrics):
             # These two following lines are equivalent to the other next 3 lines
             #   but they are, probably, more difficult to understand and
             #  to maintain, although probably more pandas-ish:
             #~ metrics_data_for_this_wiki = [metric[wiki_idx] for metric in data ]
             #~ wiki_df = pd.concat(metrics_data_for_this_wiki, axis=1)
 
-            wiki_df = pd.DataFrame()
-            for metric in data:
-                # assign the name of the metric as the name of the column for its data:
-                wiki_df[metric[wiki_idx].name] = metric[wiki_idx]
-
-            csv_str = wiki_df.to_csv()
+            metric_df = pd.DataFrame()
+            if type(metric[-1]) == str and metric[-1] == 'Line':
+                metric_df = metric[0]
+            elif type(metric[-1]) == str and metric[-1] == 'Heatmap':
+                metric_df['timestamp'] = metric[0]
+                for i in range(0, len(metric[2]), 10):
+                    metric_df[i] = metric[2][i]
+                metric_df = metric_df.set_index('timestamp')
+            else:
+                for submetric in metric:
+                    # assign the name of the metric as the name of the column for its data:
+                    #if type(submetric) != str and type(submetric) != 'pandas.core.indexes.datetimes.DatetimeIndex' and type(submetric) != list:
+                    #if type(metric[-1]) == str and metric[-1] == 'Heatmap' and type(submetric) != str:
+                   #     metric_df = submetric
+                    #elif type(submetric) != str:
+                    metric_df[submetric.name] = submetric
+            print(metric_df)
+            csv_str = metric_df.to_csv()
             # append dataframe csv to zip file with name of the wiki:
-            zipfile_ob.writestr('{}.csv'.format(wikis[wiki_idx]['name']), csv_str)
+            zipfile_ob.writestr('{}.csv'.format(metric_name.text), csv_str)
 
         # testing zip format and integrity
         error = zipfile_ob.testzip()
@@ -268,7 +278,7 @@ def start_download_data_server(app, download_pathname):
             zipfile_ob.close()
             in_memory_zip.seek(0) # move ByteIO cursor to the start
             return flask.send_file(in_memory_zip, as_attachment=True,
-                        attachment_filename='computed_data.zip',
+                        attachment_filename='{}.zip'.format(wikis[0]['name']),
                         mimetype='application/zip')
         else:
             zipfile_ob.close()

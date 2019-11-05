@@ -26,6 +26,7 @@ from dash.dependencies import Input, Output, State
 import grasia_dash_components as gdc
 import sd_material_ui
 from flask import current_app
+import datetime as d
 
 # Local imports:
 from .metrics import interface as interface
@@ -46,19 +47,19 @@ def generate_graphs(metrics, wikis, relative_time):
     """ Turn over data[] into plotly graphs objects, which can be: 1) bar graphs,
     2) heatmaps, 3) filled-area graphs,  and store them in graphs[] """
     graphs_list = []
-    
+
     if relative_time:
         time_index = list(range(len(metrics[0].get_index())))
     else:
         time_index = metrics[0].get_index()
-        
+
 
     for metric_idx in range(len(metrics)):
         graphs_list.append([])
 
     for metric_idx in range(len(metrics)):
         graphs_list[metric_idx] = metrics[metric_idx].draw(time_index)
-        
+
     return graphs_list
 
 
@@ -466,7 +467,6 @@ def bind_callbacks(app):
                 for metric_idx in range(len(metrics)):
                     new_graphs[metric_idx][wiki_idx]['visible'] = "legendonly"
 
-
         # Show only the selected timerange in the slider.
         new_timerange = selected_timerange
 
@@ -476,7 +476,11 @@ def bind_callbacks(app):
             time_axis = pd.DatetimeIndex(json.loads(time_axis_json))
             new_timerange[0] = time_axis[selected_timerange[0]]
             new_timerange[1] = time_axis[selected_timerange[1]]
-
+            new_timerange[0] = new_timerange[0] - d.timedelta(days=15)
+            new_timerange[1] = new_timerange[1] + d.timedelta(days=15)
+        else:
+            new_timerange[0] = new_timerange[0] - 1
+            new_timerange[1] = new_timerange[1] + 1
         # Dash' graphs:
         dash_graphs = []
         for i, metric in enumerate(metrics):

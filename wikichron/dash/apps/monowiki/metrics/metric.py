@@ -14,8 +14,9 @@ from abc import ABC, abstractmethod
 from enum import Enum, unique
 @unique
 class MetricCategory(Enum):
-    ACTIVE_USER_DISTRIBUTION = 'Active users distribution'
-    EDIT_DISTRIBUTION = 'Edits distribution'
+    DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS = 'Distribution of active registered users'
+    DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS = 'Distribution of edits across registered users'
+    DISTRIBUTION_OF_EDITS = 'Distribution of edits'
     PAGES = 'Pages'
     EDITIONS = 'Edits'
     USERS = 'Users'
@@ -26,7 +27,7 @@ class MetricCategory(Enum):
 class Metric(ABC):
     """ Class for ADT Metric. """
 
-    def __init__(self, code, text, category, func, descp):
+    def __init__(self, code, name, category, func, descp, text):
         """
         Creates a new Metric object.
 
@@ -45,6 +46,7 @@ class Metric(ABC):
         self.category = category
         self.func = func
         self.descp = descp
+        self.name = name
 
         super().__init__()
 
