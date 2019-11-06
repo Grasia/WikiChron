@@ -123,7 +123,10 @@ def edits_user_talk(data, index):
 def users_active_more_than_x_editions(data, index, x):
     monthly_edits = data.groupby([pd.Grouper(key='timestamp', freq='MS'), 'contributor_id']).size()
     monthly_edits_filtered = monthly_edits[monthly_edits > x].to_frame(name='pages_edited').reset_index()
-    series = monthly_edits_filtered.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
+    if monthly_edits_filtered.empty:
+        series = pd.Series()
+    else:
+        series = monthly_edits_filtered.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
     if index is not None:
         series = series.reindex(index, fill_value=0)
     return series
