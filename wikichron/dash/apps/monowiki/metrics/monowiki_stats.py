@@ -681,6 +681,30 @@ def number_of_edits_by_tenure(data, index):
     return [new_users, one_three, four_six, six_twelve, more_twelve, 1]
 
 
+def number_of_edits_by_tenure_abs(data, index):
+    '''
+    Get the monthly proportion of edits done by each user category in the Users by tenure metric
+    '''
+    categories = number_of_edits_by_tenure(data, index)
+
+    data = filter_anonymous(data)
+    format_data = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('medits').reset_index()
+    monthly_total_edits = format_data.groupby(['timestamp'])['medits'].sum()
+
+    new_users = (categories[0]/monthly_total_edits)*100
+    one_three = (categories[1]/monthly_total_edits)*100
+    four_six = (categories[2]/monthly_total_edits)*100
+    six_twelve = (categories[3]/monthly_total_edits)*100
+    more_twelve = (categories[4]/monthly_total_edits)*100
+
+    new_users.name = 'New users'
+    one_three.name = 'Btw. 1 and 3 months ago'
+    four_six.name = 'Btw. 4 and 6 months ago'
+    six_twelve.name = 'Btw. 6 and 12 months ago'
+    more_twelve.name = 'More than 12 months ago'
+
+    return [new_users, one_three, four_six, six_twelve, more_twelve, 1]
+
 ############################ Edits by editor's last edit date #########################################
 
 def number_of_edits_by_last_edit(data, index):
