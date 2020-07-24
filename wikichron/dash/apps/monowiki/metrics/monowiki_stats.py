@@ -311,7 +311,7 @@ def current_streak(data, index):
 def current_streak_only_mains(data, index):
     data = data[data['page_ns']==0]
     return current_streak(data, index)
-    
+
 
 def edits_by_current_streak(data, index):
     data = filter_anonymous(data)
@@ -420,6 +420,29 @@ def users_last_edit(data, index):
 
     return [new_users, one_month, two_three_months, four_six_months, more_six_months, 1]
 
+def users_last_edit_abs(data, index):
+    '''
+    Get the monthly percentage of users whose last edit was less than 1, between 2 and 3, 4 and 6, and more than 6 months ago
+    '''
+    data = filter_anonymous(data)
+    monthly_total_users = data.groupby([pd.Grouper(key='timestamp', freq='MS'), 'contributor_id']).size().reset_index()
+    monthly_total_users = monthly_total_users.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
+    format_data = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('medits').reset_index()
+    format_data['months'] = format_data.groupby('contributor_id')['timestamp'].diff().div(pd.Timedelta(days=30.44), fill_value=0).round().astype(int)
+
+    new_users = (users_new(data, index) / monthly_total_users) * 100
+    one_month = ((pd.Series((format_data[format_data['months'] == 1]).groupby(['timestamp']).size(), index).fillna(0)) / monthly_total_users)*100
+    two_three_months = ((pd.Series((format_data[(format_data['months'] == 2) | (format_data['months'] == 3)]).groupby(['timestamp']).size(), index).fillna(0)) / monthly_total_users)*100
+    four_six_months = ((pd.Series((format_data[(format_data['months'] >= 4) & (format_data['months'] <= 6)]).groupby(['timestamp']).size(), index).fillna(0)) / monthly_total_users)*100
+    more_six_months = ((pd.Series((format_data[format_data['months'] > 6]).groupby(['timestamp']).size(), index).fillna(0)) / monthly_total_users)*100
+
+    new_users.name = 'New users'
+    one_month.name = '1 month ago'
+    two_three_months.name = 'Btw. 2 and 3 months ago'
+    four_six_months.name = 'Btw. 4 and 6 months ago'
+    more_six_months.name = 'More than six months ago'
+
+    return [new_users, more_six_months, four_six_months, two_three_months, one_month, 1]
 
 ############################ Active editors by experience #####################################################################
 
@@ -550,6 +573,21 @@ def users_in_namespaces(data, index):
 
     return [main_page, articletalk_page, user_page, usertalk_page, template_page, other_page, 0]
 
+
+def users_in_namespaces_extends(data, index):
+    '''
+    Get the monthly number of users that belong to each category in the Active editors in namespaces metric
+    '''
+    data = filter_anonymous(data)
+
+    file = users_file_page(data, index)
+    mediaWiki = users_mediaWiki_page(data, index)
+    category = users_category_page(data, index)
+    other_page = users_other_page(data,index,1)
+    set_category_name([file,mediaWiki,category,other_page], ['File pages', 'Media wiki pages', 'Category pages','Other pages'])
+
+    return [file, mediaWiki, category, other_page, 0]
+    
 ############################ Edits by editor experience (absolute and relative) #########################################
 
 
