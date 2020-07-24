@@ -81,13 +81,15 @@ def generate_monowiki_metrics():
 
 	# DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS
     metrics.append(BarGraph('users_edits_number_of_edits', 'By editing experience', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.users_number_of_edits, 'Distribution of editors by their number of previous edits', 'Dist. of active registered users by editing experience'))
+    metrics.append(BarGraph('users_edits_number_of_edits_abs', 'By editing experience (in %)', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.users_number_of_edits_abs, 'Distribution of editors by their number of previous edits (in %)', 'Dist. of active registered users by editing experience (in %)'))
     metrics.append(BarGraph('users_first_edit', 'By tenure', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.users_first_edit, 'Distribution of editors by their time participating in the wiki', 'Dist. of active registered users by tenure'))
     metrics.append(BarGraph('Current_streak', 'By edit streak', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.current_streak, 'Distribution of editors by their last streak editing the wiki', 'Dist. of active registered users by edit streak'))
     metrics.append(BarGraph('users_last_edit', 'By date of the last edit', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.users_last_edit, 'Distribution of editors by their last edit in the wiki', 'Dist. of active registered users by date of the last edit'))
     metrics.append(BarGraph('type_page_users_edit', 'By namespace edited', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.users_in_namespaces, 'Distribution of editors by the namespace edited', 'Dist. of active registered users by namespace edited'))
 
     # DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS
-    metrics.append(BarGraph('number_of_edits_experience', 'By editing experience', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.number_of_edits_by_experience, 'Distribution of edits across distribution of editors by their number of previous edits', 'Dist. of edits across registered users by editing experience'))
+    metrics.append(BarGraph('number_of_edits_experience_abs', 'By editing experience', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.number_of_edits_by_experience_abs, 'Distribution of edits across distribution of editors by their number of previous edits', 'Dist. of edits across registered users by editing experience'))
+    metrics.append(BarGraph('number_of_edits_experience_rel', 'By editing experience (in %)', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.number_of_edits_by_experience_rel, 'Distribution of edits across distribution of editors by their number of previous edits in percentage', 'Dist. of edits across registered users by editing experience (in %)'))
     metrics.append(BarGraph('number_of_edits_tenure', 'By tenure', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.number_of_edits_by_tenure, 'Distribution of edits across distribution of editors by their time participating in the wiki', 'Dist. of edits across registered users by tenure'))
     metrics.append(BarGraph('edits_by_current_streak', 'By edit streak', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.edits_by_current_streak, 'Distribution of edits across distribution of editors by their last streak editing the wiki', 'Dist. of edits across registered users by edit streak'))
     metrics.append(BarGraph('number_of_edits_last_edit', 'By date of the last edit', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.number_of_edits_by_last_edit, 'Distribution of edits across distribution of editors by their last edit in the wiki', 'Dist. of edits across registered users by date of the last edit'))
@@ -106,8 +108,8 @@ def generate_metrics():
     #  for every metric code.
     # NOTE: Possibly, It'll be changed in the future by an specifc attr: "order"
     #  in the GUI side, in order to be able to reorder the plots.
-    for idx in range(len(metrics)):
-        metrics[idx].code = "{idx}_{code}".format(idx=idx, code=metrics[idx].code)
+    for idx, metric in enumerate(metrics):
+        metrics[idx].code = f"{idx}_{metric.code}"
 
     return metrics
 

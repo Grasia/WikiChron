@@ -75,6 +75,22 @@ def filter_anonymous(data):
     return data
 
 
+def calcultate_relative_proportion(list_of_category_series, list_of_column_names):
+    '''
+    Calculate the relative number of the data in each pd Series given in the list_of_category_series parameter.
+    Return a pd DataFrame in which:
+    -index = time index of the wiki.
+    -A column per category with its relative proportion regarding the total in the month is computed.
+    '''
+    df = pd.concat(list_of_category_series, axis = 1)
+    df['total'] = df[list_of_column_names].sum(axis=1)
+    
+    for i in range(len(list_of_column_names)):
+        df[str(list_of_column_names[i])] = (df[str(list_of_column_names[i])]/df['total'])*100
+    
+    return df
+
+
 def generate_list_of_dataframes(list_of_series, list_of_names):
     '''
     Return a list of pd DataFrames from the given list_of_series, using as column names the given list_of_names.
@@ -400,6 +416,30 @@ def users_number_of_edits(data, index):
     return [new_users, one_four, between_5_24, between_25_99, highEq_100, 1]
 
 
+def users_number_of_edits_abs(data, index):
+    '''
+    Get the absolute proportion of users that belong to each category, in the Active editors by experience metric.
+    '''
+    users_num_edits = users_number_of_edits(data, index)
+
+    list_of_category_names = ['new_users', 'one_four', '5_24', '25_99', 'highEq_100']
+    list_of_categories = generate_list_of_dataframes(users_num_edits, list_of_category_names)
+    df = calcultate_relative_proportion(list_of_categories, list_of_category_names)
+
+    new_users = pd.Series(df['new_users'], index = index)
+    one_four = pd.Series(df['one_four'], index = index)
+    between_5_24 = pd.Series(df['5_24'], index = index)
+    between_25_99 = pd.Series(df['25_99'], index = index)
+    highEq_100 = pd.Series(df['highEq_100'], index = index)
+
+    new_users.name = 'New users'
+    one_four.name = 'Btw. 1 and 4 edits'
+    between_5_24.name = 'Btw. 5 and 24 edits'
+    between_25_99.name = 'Btw. 25 and 99 edits'
+    highEq_100.name = 'More than 99 edits'
+    
+    return [new_users, one_four, between_5_24, between_25_99, highEq_100, 1]
+
 ############################ Active editors by namespace #####################################################################################
 
 def users_article_page(data, index):
@@ -481,7 +521,7 @@ def users_in_namespaces(data, index):
 ############################ Edits by editor experience (absolute and relative) #########################################
 
 
-def number_of_edits_by_experience(data, index):
+def number_of_edits_by_experience_abs(data, index):
     '''
     Get the monthly number of edits by each user category in the Active editors by experience metric
     '''
@@ -510,6 +550,32 @@ def number_of_edits_by_experience(data, index):
 
     return [new_users, one_four, between_5_24, between_25_99, highEq_100, 1]
 
+
+def number_of_edits_by_experience_rel(data, index):
+    '''
+    Get the monthly proportion of edits done by each user category in the Active editors by experience metrics
+    '''
+    categories = number_of_edits_by_experience_abs(data, index)
+
+    data = filter_anonymous(data)
+    format_data = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('medits').reset_index()
+    format_data['nEdits'] = (format_data[['medits', 'contributor_id']].groupby(['contributor_id']))['medits'].cumsum()
+    format_data['nEdits_until_previous_month'] = (format_data[['nEdits','contributor_id']].groupby(['contributor_id']))['nEdits'].shift().fillna(-1)
+    monthly_total_edits = format_data.groupby(['timestamp'])['medits'].sum().reindex(index).fillna(0)
+
+    edits_new_users = ((categories[0] / monthly_total_edits)*100).fillna(0)
+    edits_beginners = ((categories[1] / monthly_total_edits)*100).fillna(0)
+    edits_advanced = ((categories[2] / monthly_total_edits)*100).fillna(0)
+    edits_experimented = ((categories[3] / monthly_total_edits)*100).fillna(0)
+    edits_H_experimented = ((categories[4] / monthly_total_edits)*100).fillna(0)
+
+    edits_new_users.name = "New users"
+    edits_beginners.name = "Btw. 1 and 4 edits"
+    edits_advanced.name = "Btw. 5 and 24 edits"
+    edits_experimented.name = "Btw. 24 and 99 edits"
+    edits_H_experimented.name = "More than 99 edits"
+
+    return [edits_new_users, edits_beginners, edits_advanced, edits_experimented, edits_H_experimented, 1]
 
 ############################ Edits by editor's tenure #########################################
 
