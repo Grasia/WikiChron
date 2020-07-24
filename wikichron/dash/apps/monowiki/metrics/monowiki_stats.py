@@ -308,6 +308,11 @@ def current_streak(data, index):
     return [this_month, two_three_months, four_six_months, more_six, 1]
 
 
+def current_streak_only_mains(data, index):
+    data = data[data['page_ns']==0]
+    return current_streak(data, index)
+    
+
 def edits_by_current_streak(data, index):
     data = filter_anonymous(data)
 
