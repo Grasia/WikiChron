@@ -328,6 +328,11 @@ def edits_by_current_streak(data, index):
     return [this_month, two_three_months, four_six_months, more_six, 1]
 
 
+def edits_by_current_streak_only_mains(data, index):
+    data = data[data['page_ns']==0]
+    return edits_by_current_streak(data, index)
+
+
 def edition_on_type_pages(data, index):
     data=filter_anonymous(data)
     articles=edition_concrete(data, index, 0)
@@ -730,6 +735,29 @@ def number_of_edits_by_last_edit(data, index):
     return [new_users, one_month, two_three_months, four_six_months, more_six_months, 1]
 
 
+def number_of_edits_by_last_edit_abs(data, index):
+    '''
+    Get the monthly proportion of edits done by each user category in the Users by the date of the last edit metric
+    '''
+    categories = number_of_edits_by_last_edit(data, index)
+    data = filter_anonymous(data)
+    format_data = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('medits').reset_index()
+    monthly_total_edits = format_data.groupby(['timestamp'])['medits'].sum()
+
+    new_users = (categories[0] / monthly_total_edits) * 100
+    one_month = (categories[1] / monthly_total_edits) * 100
+    two_three_months = (categories[2] / monthly_total_edits) * 100
+    four_six_months = (categories[3] / monthly_total_edits) * 100
+    more_six_months = (categories[4] / monthly_total_edits) * 100
+
+    new_users.name = 'New users'
+    one_month.name = '1 month ago'
+    two_three_months.name = 'Btw. 2 and 3 months ago'
+    four_six_months.name = 'Btw. 4 and 6 months ago'
+    more_six_months.name = 'More than six months ago'
+
+    return [new_users, more_six_months, four_six_months, two_three_months, one_month, 1]
+    
 ########################### % Of edits by % of users (Total and monthly) ###########################################
 
 
