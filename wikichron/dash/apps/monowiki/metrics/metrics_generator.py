@@ -50,6 +50,8 @@ def generate_classic_metrics():
     metrics.append(LineGraph('users_active_more_than_4', 'Active users with > 4 edits', MetricCategory.USERS, classic_stats.users_active_more_than_4_editions, 'Active users who have made more than 4 editions in a month.', 'Active users with > 4 edits'))
     metrics.append(LineGraph('users_active_more_than_24', 'Active users with > 24 edits', MetricCategory.USERS, classic_stats.users_active_more_than_24_editions, 'Active users who have made more than 24 editions in a month.', 'Active users with > 24 edits'))
     metrics.append(LineGraph('users_active_more_than_99', 'Active users with > 99 edits', MetricCategory.USERS, classic_stats.users_active_more_than_99_editions, 'Active users who have made more than 99 editions in a month.', 'Active users with > 99 edits'))
+    metrics.append(LineGraph('returning_new_editors', 'Returning new editors', MetricCategory.USERS, classic_stats.returning_new_editors, "Number of new users who completes at least two edit sessions (60') within the first 30 days since registration. Based on a WMF's metric.", 'Returning new editors'))
+    metrics.append(LineGraph('surviving_new_editors', 'Surviving new editors', MetricCategory.USERS, classic_stats.surviving_new_editors, "Numer of new users who completes at least one edit within the first 30 days since registration and also completes another edit in the survival period, (i.e. the following 30 days). Based on a WMF's metric.", 'Surviving new editors',))
 
     # RATIO
     metrics.append(LineGraph('edits_per_users_monthly', 'Edits per active user', MetricCategory.RATIOS, classic_stats.edits_per_users_monthly, 'Number of edits for every month per number of active users that month', 'Edits per users'))
@@ -61,9 +63,7 @@ def generate_classic_metrics():
     metrics.append(LineGraph('percentage_edits_by_anonymous_accum', 'Total anonymous edits (%)', MetricCategory.RATIOS, classic_stats.percentage_edits_by_anonymous_accum, 'Percentage, per month, of edits made by anonymous users of the total edits.', 'Total anonymous edits (%)'))
 
     # RETENTION
-    metrics.append(LineGraph('returning_new_editors', 'Returning new editors', MetricCategory.RETENTION, classic_stats.returning_new_editors, "Number of new users who completes at least two edit sessions (60') within the first 30 days since registration. Based on a WMF's metric.", 'Returning new editors'))
-    metrics.append(LineGraph('surviving_new_editors', 'Surviving new editors', MetricCategory.RETENTION, classic_stats.surviving_new_editors, "Numer of new users who completes at least one edit within the first 30 days since registration and also completes another edit in the survival period, (i.e. the following 30 days). Based on a WMF's metric.", 'Surviving new editors',))
-
+    
     # DISTRIBUTION
     metrics.append(LineGraph('gini_accum', 'Gini coefficient', MetricCategory.DISTRIBUTION, classic_stats.gini_accum, 'Gini coefficient (accumulated)', 'Gini coefficient'))
     metrics.append(LineGraph('ratio_10_90', '10:90 ratio', MetricCategory.DISTRIBUTION, classic_stats.ratio_10_90, 'Contributions of the top ten percent more active users between the 90% percent less active', '10:90 ratio'))
@@ -81,16 +81,26 @@ def generate_monowiki_metrics():
 
 	# DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS
     metrics.append(BarGraph('users_edits_number_of_edits', 'By editing experience', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.users_number_of_edits, 'Distribution of editors by their number of previous edits', 'Dist. of active registered users by editing experience'))
+    metrics.append(BarGraph('users_edits_number_of_edits_abs', 'By editing experience (in %)', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.users_number_of_edits_abs, 'Distribution of editors by their number of previous edits (in %)', 'Dist. of active registered users by editing experience (in %)'))
     metrics.append(BarGraph('users_first_edit', 'By tenure', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.users_first_edit, 'Distribution of editors by their time participating in the wiki', 'Dist. of active registered users by tenure'))
+    metrics.append(BarGraph('users_edits_tenure_abs', 'By tenure (in %)', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.users_first_edit_abs, 'Distribution of editors by their time participating in the wiki (in %)', 'Dist. of active registered users by tenure (in %)'))
     metrics.append(BarGraph('Current_streak', 'By edit streak', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.current_streak, 'Distribution of editors by their last streak editing the wiki', 'Dist. of active registered users by edit streak'))
+    metrics.append(BarGraph('Current_streak_only_mains', 'By edit in article streak', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.current_streak_only_mains, 'Distribution of editors by their last streak editing the wiki (only articles)', 'Dist. of active registered users by edit in article streak'))
     metrics.append(BarGraph('users_last_edit', 'By date of the last edit', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.users_last_edit, 'Distribution of editors by their last edit in the wiki', 'Dist. of active registered users by date of the last edit'))
+    metrics.append(BarGraph('users_last_edit_abs', 'By date of the last edit (in %)', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.users_last_edit_abs, 'Distribution of editors by their last edit in the wiki (in %)', 'Dist. of active registered users by date of the last edit (in %)'))
     metrics.append(BarGraph('type_page_users_edit', 'By namespace edited', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.users_in_namespaces, 'Distribution of editors by the namespace edited', 'Dist. of active registered users by namespace edited'))
+    # Doesn't work properly, it is not mandatory
+    #metrics.append(BarGraph('type_page_users_edit_extends', 'By other namespace edited', MetricCategory.DISTRIBUTION_OF_ACTIVE_REGISTERED_USERS, monowiki_stats.users_in_namespaces_extends, 'Distribution of editors by other namespace edited', 'Dist. of active registered users by other namespace edited'))
 
     # DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS
-    metrics.append(BarGraph('number_of_edits_experience', 'By editing experience', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.number_of_edits_by_experience, 'Distribution of edits across distribution of editors by their number of previous edits', 'Dist. of edits across registered users by editing experience'))
+    metrics.append(BarGraph('number_of_edits_experience_abs', 'By editing experience', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.number_of_edits_by_experience_abs, 'Distribution of edits across distribution of editors by their number of previous edits', 'Dist. of edits across registered users by editing experience'))
+    metrics.append(BarGraph('number_of_edits_experience_rel', 'By editing experience (in %)', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.number_of_edits_by_experience_rel, 'Distribution of edits across distribution of editors by their number of previous edits in percentage', 'Dist. of edits across registered users by editing experience (in %)'))
     metrics.append(BarGraph('number_of_edits_tenure', 'By tenure', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.number_of_edits_by_tenure, 'Distribution of edits across distribution of editors by their time participating in the wiki', 'Dist. of edits across registered users by tenure'))
+    metrics.append(BarGraph('percentage_of_edits_tenure', 'By tenure (in %)', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.number_of_edits_by_tenure_abs, 'Distribution of edits across distribution of editors by their time participating in the wiki (in %)', 'Dist. of edits across registered users by tenure (in %)'))
     metrics.append(BarGraph('edits_by_current_streak', 'By edit streak', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.edits_by_current_streak, 'Distribution of edits across distribution of editors by their last streak editing the wiki', 'Dist. of edits across registered users by edit streak'))
+    metrics.append(BarGraph('edits_by_current_streak_only_means', 'By edit in article streak', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.edits_by_current_streak_only_mains, 'Distribution of edits across distribution of editors by their last streak editing articles in the wiki', 'Dist. of edits across registered users by edit in article streak'))
     metrics.append(BarGraph('number_of_edits_last_edit', 'By date of the last edit', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.number_of_edits_by_last_edit, 'Distribution of edits across distribution of editors by their last edit in the wiki', 'Dist. of edits across registered users by date of the last edit'))
+    metrics.append(BarGraph('percentage_of_edits_last_edit', 'By date of the last edit (in %)', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.number_of_edits_by_last_edit_abs, 'Distribution of edits across distribution of editors by their last edit in the wiki (in %)', 'Dist. of edits across registered users by date of the last edit (in %)'))
     metrics.append(BarGraph('edition_on_type_pages', 'By namespace edited', MetricCategory.DISTRIBUTION_OF_EDITS_ACROSS_REGISTERED_USERS, monowiki_stats.edition_on_type_pages, 'Distribution of edits in the most popular namespaces', 'Dist. of edits across registered users by namespace edited'))
 
     # DISTRIBUTION_OF_EDITS
@@ -106,8 +116,8 @@ def generate_metrics():
     #  for every metric code.
     # NOTE: Possibly, It'll be changed in the future by an specifc attr: "order"
     #  in the GUI side, in order to be able to reorder the plots.
-    for idx in range(len(metrics)):
-        metrics[idx].code = "{idx}_{code}".format(idx=idx, code=metrics[idx].code)
+    for idx, metric in enumerate(metrics):
+        metrics[idx].code = f"{idx}_{metric.code}"
 
     return metrics
 
