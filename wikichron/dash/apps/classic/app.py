@@ -34,7 +34,7 @@ import plotly.graph_objs as go
 import sd_material_ui
 
 # Other external imports:
-from flask import request, current_app
+from flask import request, current_app, abort
 import pandas as pd
 
 # Local imports:
@@ -118,9 +118,13 @@ def define_meta_tags(hostname, assets_url_path):
 
 
 def extract_wikis_and_metrics_from_selection_dict(selection):
-    wikis = [ available_wikis_dict[wiki_url] for wiki_url in selection['wikis'] ]
-    metrics = [ available_metrics_dict[metric] for metric in selection['metrics'] ]
-    return (wikis, metrics)
+    try:
+        wikis = [ available_wikis_dict[wiki_url] for wiki_url in selection['wikis'] ]
+        metrics = [ available_metrics_dict[metric] for metric in selection['metrics'] ]
+        return (wikis, metrics)
+
+    except Exception:
+        abort(500)
 
 
 def set_external_imports():
