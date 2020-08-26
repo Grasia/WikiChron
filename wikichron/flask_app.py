@@ -314,6 +314,7 @@ def upload_post():
         #~ return redirect(url_for('.upload'))
         return upload_error(msg)
 
+    data_manager.refresh_wikis()
 
     return flask.render_template("upload-success.html",
                                 development = config["DEBUG"],

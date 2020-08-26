@@ -423,3 +423,12 @@ def set_up_app(app):
 
     return
 
+
+def refresh_wikis():
+
+    global available_wikis
+    global available_wikis_dict
+
+    available_wikis = data_controller.get_available_wikis()
+    available_wikis_dict = {wiki['domain']: wiki for wiki in available_wikis}
+

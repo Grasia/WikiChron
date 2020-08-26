@@ -19,11 +19,44 @@ import zc.lockfile
 
 data_dir = os.getenv('WIKICHRON_DATA_DIR', 'data')
 
+global available_wikis
+global available_wikis_dict
+available_wikis = []
+available_wikis_dict = {}
 
-def get_available_wikis():
+
+# import refresh wikis
+from wikichron.dash.apps.classic.app import refresh_wikis as refresh_wikis_classic
+from wikichron.dash.apps.networks.app import refresh_wikis as refresh_wikis_networks
+from wikichron.dash.apps.monowiki.app import refresh_wikis as refresh_wikis_monowiki
+
+
+def load_wikis():
     wikis_json_file = open(os.path.join(data_dir, 'wikis.json'))
     wikis = json.load(wikis_json_file)
     return wikis
+
+
+def refresh_wikis():
+    global available_wikis
+    global available_wikis_dict
+
+    available_wikis = load_wikis()
+    available_wikis_dict = {wiki['domain']: wiki for wiki in available_wikis}
+
+    refresh_wikis_classic()
+    refresh_wikis_networks()
+    refresh_wikis_monowiki()
+
+
+def get_available_wikis():
+    global available_wikis
+
+    if available_wikis:
+        return available_wikis
+    else:
+        refresh_wikis()
+        return available_wikis
 
 
 def get_max_wiki_stats():
