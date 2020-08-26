@@ -44,6 +44,8 @@ def refresh_wikis():
     available_wikis = load_wikis()
     available_wikis_dict = {wiki['domain']: wiki for wiki in available_wikis}
 
+    print('Refreshing wiki metadata...')
+
     refresh_wikis_classic()
     refresh_wikis_networks()
     refresh_wikis_monowiki()
