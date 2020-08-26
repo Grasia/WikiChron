@@ -41,9 +41,6 @@ def generate_metrics():
     metrics.append(Metric('users_active', 'Active users', MetricCategory.USERS, stats.users_active, 'Number of users who have made at least one contribution in a month.'))
     metrics.append(Metric('users_active_registered', 'Active registered users', MetricCategory.USERS, stats.users_registered_active, 'Number of registered users who have made at least one contribution in a month.'))
     metrics.append(Metric('users_active_anonymous', 'Active anonymous users', MetricCategory.USERS, stats.users_anonymous_active, 'Number of anonymous users who have made at least one contribution in a month.'))
-    metrics.append(Metric('users_active_more_than_4', 'Active users with > 4 edits', MetricCategory.USERS, stats.users_active_more_than_4_editions, 'Active users who have made more than 4 editions in a month.'))
-    metrics.append(Metric('users_active_more_than_24', 'Active users with > 24 edits', MetricCategory.USERS, stats.users_active_more_than_24_editions, 'Active users who have made more than 24 editions in a month.'))
-    metrics.append(Metric('users_active_more_than_99', 'Active users with > 99 edits', MetricCategory.USERS, stats.users_active_more_than_99_editions, 'Active users who have made more than 99 editions in a month.'))
 
     # RATIO
     metrics.append(Metric('edits_per_users_monthly', 'Edits per active user', MetricCategory.RATIOS, stats.edits_per_users_monthly, 'Number of edits for every month per number of active users that month'))
