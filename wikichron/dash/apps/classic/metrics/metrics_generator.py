@@ -46,8 +46,8 @@ def generate_metrics():
     metrics.append(Metric('users_active_more_than_99', 'Active users with > 99 edits', MetricCategory.USERS, stats.users_active_more_than_99_editions, 'Active users who have made more than 99 editions in a month.'))
 
     # RATIO
-    metrics.append(Metric('edits_per_users_monthly', 'Edits per users', MetricCategory.RATIOS, stats.edits_per_users_monthly, 'Number of edits for every month per number of active users that month'))
-    metrics.append(Metric('edits_in_articles_per_users_monthly', 'Article edits per user', MetricCategory.RATIOS, stats.edits_in_articles_per_users_monthly, 'Number of edits in articles per number of users for each month'))
+    metrics.append(Metric('edits_per_users_monthly', 'Edits per active user', MetricCategory.RATIOS, stats.edits_per_users_monthly, 'Number of edits for every month per number of active users that month'))
+    metrics.append(Metric('edits_in_articles_per_users_monthly', 'Article edits per active user', MetricCategory.RATIOS, stats.edits_in_articles_per_users_monthly, 'Number of edits in articles per number of users for each month'))
     metrics.append(Metric('edits_per_page_monthly', 'Edits per edited pages', MetricCategory.RATIOS, stats.edits_per_pages_monthly, 'Number of edits for every month per number of pages edited that month'))
     metrics.append(Metric('percentage_edits_by_anonymous_monthly', 'Anonymous edits (%)', MetricCategory.RATIOS, stats.percentage_edits_by_anonymous_monthly, 'Percentage of edits made by anonymous users of the total edits.'))
     metrics.append(Metric('edits_in_articles_per_users_accum', 'Total articles edits per user', MetricCategory.RATIOS, stats.edits_in_articles_per_users_accum, 'Number of total edits in articles per number of users until a given month'))

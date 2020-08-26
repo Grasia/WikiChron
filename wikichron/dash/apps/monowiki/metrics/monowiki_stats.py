@@ -75,6 +75,22 @@ def filter_anonymous(data):
     return data
 
 
+def calcultate_relative_proportion(list_of_category_series, list_of_column_names):
+    '''
+    Calculate the relative number of the data in each pd Series given in the list_of_category_series parameter.
+    Return a pd DataFrame in which:
+    -index = time index of the wiki.
+    -A column per category with its relative proportion regarding the total in the month is computed.
+    '''
+    df = pd.concat(list_of_category_series, axis = 1)
+    df['total'] = df[list_of_column_names].sum(axis=1)
+    
+    for i in range(len(list_of_column_names)):
+        df[str(list_of_column_names[i])] = (df[str(list_of_column_names[i])]/df['total'])*100
+    
+    return df
+
+
 def generate_list_of_dataframes(list_of_series, list_of_names):
     '''
     Return a list of pd DataFrames from the given list_of_series, using as column names the given list_of_names.
@@ -292,6 +308,11 @@ def current_streak(data, index):
     return [this_month, two_three_months, four_six_months, more_six, 1]
 
 
+def current_streak_only_mains(data, index):
+    data = data[data['page_ns']==0]
+    return current_streak(data, index)
+
+
 def edits_by_current_streak(data, index):
     data = filter_anonymous(data)
 
@@ -305,6 +326,11 @@ def edits_by_current_streak(data, index):
     set_category_name([this_month, two_three_months, four_six_months, more_six], ['1 month editing', 'Btw. 2 and 3 consecutive months', 'Btw. 4 and 6 consecutive months', 'More than 6 consecutive months'])
 
     return [this_month, two_three_months, four_six_months, more_six, 1]
+
+
+def edits_by_current_streak_only_mains(data, index):
+    data = data[data['page_ns']==0]
+    return edits_by_current_streak(data, index)
 
 
 def edition_on_type_pages(data, index):
@@ -348,6 +374,33 @@ def users_first_edit(data, index):
 
     return [this_month, one_three, four_six, six_twelve, more_twelve, 1]
 
+
+def users_first_edit_abs(data, index):
+    '''
+    Calculate the monthly percentage of users whose first edit was between 1 and 3, 4 and 6, 6 and 12, and more than 12 months ago
+    '''
+    data = filter_anonymous(data)
+    monthly_total_users = data.groupby([pd.Grouper(key='timestamp', freq='MS'), 'contributor_id']).size().reset_index()
+    monthly_total_users = monthly_total_users.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
+    format_data = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('medits').reset_index()
+    
+    mins = format_data.groupby('contributor_id')['timestamp'].transform('min')
+    format_data['months'] = format_data['timestamp'].sub(mins).div(pd.Timedelta(1, 'M')).round().astype(int)
+    
+    this_month = (users_new(data, index) / monthly_total_users) * 100
+    one_three = ((pd.Series(format_data[(format_data['months'] >= 1) & (format_data['months'] <= 3)].groupby(['timestamp']).size(), index).fillna(0)) / monthly_total_users) * 100
+    four_six = ((pd.Series(format_data[(format_data['months'] >= 4) & (format_data['months'] <= 6)].groupby(['timestamp']).size(), index).fillna(0)) / monthly_total_users) * 100
+    six_twelve = ((pd.Series(format_data[(format_data['months'] >= 7) & (format_data['months'] <= 12)].groupby(['timestamp']).size(), index).fillna(0)) / monthly_total_users) * 100
+    more_twelve = ((pd.Series(format_data[format_data['months'] >= 13].groupby(['timestamp']).size(), index).fillna(0)) / monthly_total_users) * 100
+
+    this_month.name = 'New users'
+    one_three.name = 'Btw. 1 and 3 months ago'
+    four_six.name = 'Btw. 4 and 6 months ago'
+    six_twelve.name = 'Btw. 6 and 12 months ago'
+    more_twelve.name = 'More than 12 months ago'
+    
+    return [this_month, one_three, four_six, six_twelve, more_twelve, 1]
+
 ############################ Users by the date of the last edit ###########################################################################
 
 def users_last_edit(data, index):
@@ -372,6 +425,29 @@ def users_last_edit(data, index):
 
     return [new_users, one_month, two_three_months, four_six_months, more_six_months, 1]
 
+def users_last_edit_abs(data, index):
+    '''
+    Get the monthly percentage of users whose last edit was less than 1, between 2 and 3, 4 and 6, and more than 6 months ago
+    '''
+    data = filter_anonymous(data)
+    monthly_total_users = data.groupby([pd.Grouper(key='timestamp', freq='MS'), 'contributor_id']).size().reset_index()
+    monthly_total_users = monthly_total_users.groupby(pd.Grouper(key='timestamp', freq='MS')).size()
+    format_data = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('medits').reset_index()
+    format_data['months'] = format_data.groupby('contributor_id')['timestamp'].diff().div(pd.Timedelta(days=30.44), fill_value=0).round().astype(int)
+
+    new_users = (users_new(data, index) / monthly_total_users) * 100
+    one_month = ((pd.Series((format_data[format_data['months'] == 1]).groupby(['timestamp']).size(), index).fillna(0)) / monthly_total_users)*100
+    two_three_months = ((pd.Series((format_data[(format_data['months'] == 2) | (format_data['months'] == 3)]).groupby(['timestamp']).size(), index).fillna(0)) / monthly_total_users)*100
+    four_six_months = ((pd.Series((format_data[(format_data['months'] >= 4) & (format_data['months'] <= 6)]).groupby(['timestamp']).size(), index).fillna(0)) / monthly_total_users)*100
+    more_six_months = ((pd.Series((format_data[format_data['months'] > 6]).groupby(['timestamp']).size(), index).fillna(0)) / monthly_total_users)*100
+
+    new_users.name = 'New users'
+    one_month.name = '1 month ago'
+    two_three_months.name = 'Btw. 2 and 3 months ago'
+    four_six_months.name = 'Btw. 4 and 6 months ago'
+    more_six_months.name = 'More than six months ago'
+
+    return [new_users, more_six_months, four_six_months, two_three_months, one_month, 1]
 
 ############################ Active editors by experience #####################################################################
 
@@ -399,6 +475,30 @@ def users_number_of_edits(data, index):
 
     return [new_users, one_four, between_5_24, between_25_99, highEq_100, 1]
 
+
+def users_number_of_edits_abs(data, index):
+    '''
+    Get the absolute proportion of users that belong to each category, in the Active editors by experience metric.
+    '''
+    users_num_edits = users_number_of_edits(data, index)
+
+    list_of_category_names = ['new_users', 'one_four', '5_24', '25_99', 'highEq_100']
+    list_of_categories = generate_list_of_dataframes(users_num_edits, list_of_category_names)
+    df = calcultate_relative_proportion(list_of_categories, list_of_category_names)
+
+    new_users = pd.Series(df['new_users'], index = index)
+    one_four = pd.Series(df['one_four'], index = index)
+    between_5_24 = pd.Series(df['5_24'], index = index)
+    between_25_99 = pd.Series(df['25_99'], index = index)
+    highEq_100 = pd.Series(df['highEq_100'], index = index)
+
+    new_users.name = 'New users'
+    one_four.name = 'Btw. 1 and 4 edits'
+    between_5_24.name = 'Btw. 5 and 24 edits'
+    between_25_99.name = 'Btw. 25 and 99 edits'
+    highEq_100.name = 'More than 99 edits'
+    
+    return [new_users, one_four, between_5_24, between_25_99, highEq_100, 1]
 
 ############################ Active editors by namespace #####################################################################################
 
@@ -478,10 +578,25 @@ def users_in_namespaces(data, index):
 
     return [main_page, articletalk_page, user_page, usertalk_page, template_page, other_page, 0]
 
+
+def users_in_namespaces_extends(data, index):
+    '''
+    Get the monthly number of users that belong to each category in the Active editors in namespaces metric
+    '''
+    data = filter_anonymous(data)
+
+    file = users_file_page(data, index)
+    mediaWiki = users_mediaWiki_page(data, index)
+    category = users_category_page(data, index)
+    other_page = users_other_page(data,index,1)
+    set_category_name([file,mediaWiki,category,other_page], ['File pages', 'Media wiki pages', 'Category pages','Other pages'])
+
+    return [file, mediaWiki, category, other_page, 0]
+    
 ############################ Edits by editor experience (absolute and relative) #########################################
 
 
-def number_of_edits_by_experience(data, index):
+def number_of_edits_by_experience_abs(data, index):
     '''
     Get the monthly number of edits by each user category in the Active editors by experience metric
     '''
@@ -510,6 +625,32 @@ def number_of_edits_by_experience(data, index):
 
     return [new_users, one_four, between_5_24, between_25_99, highEq_100, 1]
 
+
+def number_of_edits_by_experience_rel(data, index):
+    '''
+    Get the monthly proportion of edits done by each user category in the Active editors by experience metrics
+    '''
+    categories = number_of_edits_by_experience_abs(data, index)
+
+    data = filter_anonymous(data)
+    format_data = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('medits').reset_index()
+    format_data['nEdits'] = (format_data[['medits', 'contributor_id']].groupby(['contributor_id']))['medits'].cumsum()
+    format_data['nEdits_until_previous_month'] = (format_data[['nEdits','contributor_id']].groupby(['contributor_id']))['nEdits'].shift().fillna(-1)
+    monthly_total_edits = format_data.groupby(['timestamp'])['medits'].sum().reindex(index).fillna(0)
+
+    edits_new_users = ((categories[0] / monthly_total_edits)*100).fillna(0)
+    edits_beginners = ((categories[1] / monthly_total_edits)*100).fillna(0)
+    edits_advanced = ((categories[2] / monthly_total_edits)*100).fillna(0)
+    edits_experimented = ((categories[3] / monthly_total_edits)*100).fillna(0)
+    edits_H_experimented = ((categories[4] / monthly_total_edits)*100).fillna(0)
+
+    edits_new_users.name = "New users"
+    edits_beginners.name = "Btw. 1 and 4 edits"
+    edits_advanced.name = "Btw. 5 and 24 edits"
+    edits_experimented.name = "Btw. 24 and 99 edits"
+    edits_H_experimented.name = "More than 99 edits"
+
+    return [edits_new_users, edits_beginners, edits_advanced, edits_experimented, edits_H_experimented, 1]
 
 ############################ Edits by editor's tenure #########################################
 
@@ -545,6 +686,30 @@ def number_of_edits_by_tenure(data, index):
     return [new_users, one_three, four_six, six_twelve, more_twelve, 1]
 
 
+def number_of_edits_by_tenure_abs(data, index):
+    '''
+    Get the monthly proportion of edits done by each user category in the Users by tenure metric
+    '''
+    categories = number_of_edits_by_tenure(data, index)
+
+    data = filter_anonymous(data)
+    format_data = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('medits').reset_index()
+    monthly_total_edits = format_data.groupby(['timestamp'])['medits'].sum()
+
+    new_users = (categories[0]/monthly_total_edits)*100
+    one_three = (categories[1]/monthly_total_edits)*100
+    four_six = (categories[2]/monthly_total_edits)*100
+    six_twelve = (categories[3]/monthly_total_edits)*100
+    more_twelve = (categories[4]/monthly_total_edits)*100
+
+    new_users.name = 'New users'
+    one_three.name = 'Btw. 1 and 3 months ago'
+    four_six.name = 'Btw. 4 and 6 months ago'
+    six_twelve.name = 'Btw. 6 and 12 months ago'
+    more_twelve.name = 'More than 12 months ago'
+
+    return [new_users, one_three, four_six, six_twelve, more_twelve, 1]
+
 ############################ Edits by editor's last edit date #########################################
 
 def number_of_edits_by_last_edit(data, index):
@@ -570,6 +735,29 @@ def number_of_edits_by_last_edit(data, index):
     return [new_users, one_month, two_three_months, four_six_months, more_six_months, 1]
 
 
+def number_of_edits_by_last_edit_abs(data, index):
+    '''
+    Get the monthly proportion of edits done by each user category in the Users by the date of the last edit metric
+    '''
+    categories = number_of_edits_by_last_edit(data, index)
+    data = filter_anonymous(data)
+    format_data = data.groupby(['contributor_id',pd.Grouper(key = 'timestamp', freq = 'MS')]).size().to_frame('medits').reset_index()
+    monthly_total_edits = format_data.groupby(['timestamp'])['medits'].sum()
+
+    new_users = (categories[0] / monthly_total_edits) * 100
+    one_month = (categories[1] / monthly_total_edits) * 100
+    two_three_months = (categories[2] / monthly_total_edits) * 100
+    four_six_months = (categories[3] / monthly_total_edits) * 100
+    more_six_months = (categories[4] / monthly_total_edits) * 100
+
+    new_users.name = 'New users'
+    one_month.name = '1 month ago'
+    two_three_months.name = 'Btw. 2 and 3 months ago'
+    four_six_months.name = 'Btw. 4 and 6 months ago'
+    more_six_months.name = 'More than six months ago'
+
+    return [new_users, more_six_months, four_six_months, two_three_months, one_month, 1]
+    
 ########################### % Of edits by % of users (Total and monthly) ###########################################
 
 

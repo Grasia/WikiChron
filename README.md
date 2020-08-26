@@ -7,7 +7,7 @@ It analyzes the history dump of a wiki and give you nice graphs plotting that da
 
 ## Install
 ### Dependencies
-* Python 3.6.7 or later
+* Python 3.6.*
 * pip3
 * [Dash framework](https://plot.ly/dash)
 * [Grasia Dash Components](https://github.com/Grasia/grasia-dash-components)
