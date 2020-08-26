@@ -1,5 +1,21 @@
 # Change Log for WikiChron
 
+## 2.4.0 - 2020-08-26
+
+### Changed
+- Added some metrics from Wikichron TFG
+- Cleaned some metrics and code
+- Renamed some metrics
+- Fixed #93
+- Other minor improvements
+
+## 2.3.2 - 2019-11-06
+Added missing two commits.
+
+### Fixed
+- Hot fix when there's empty data for users_active_more_than_x_editions() function
+
+
 ## 2.3.1 - 2019-06-26
 Added missing two commits.
 
