@@ -1,0 +1,16 @@
+version: '2'
+services:
+    redis:
+        image: redis:latest
+        command: [ "redis-server"]
+    wikichron:
+        build:
+            context: .
+            dockerfile: ./Dockerfile
+        links:
+            - redis
+        ports:
+            - 8080:8080
+        volumes:
+            - .:/var/wikichron/
+

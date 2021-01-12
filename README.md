@@ -13,7 +13,7 @@ It analyzes the history dump of a wiki and give you nice graphs plotting that da
 * [Grasia Dash Components](https://github.com/Grasia/grasia-dash-components)
 * [pandas](pandas.pydata.org)
 * (Production only) [Redis Cache](https://redis.io/)
-* [python-igraph](https://igraph.org/python/) -> it's a c package so it depends on your OS
+* [python-igraph](https://igraph.org/python/) -> it's a C package so it depends on your OS
 * [tkinter](https://wiki.python.org/moin/TkInter)
 
 ### Install instructions
@@ -29,12 +29,19 @@ If you are using pyenv, you should follow the instructions posted in [this answe
 #### igraph
 The dependency `python-igraph` needs to compile some C code, so, in order to install it, you priorly need some dev libraries for python, xml, zlib and C compiler utilities.
 
-For Ubuntu 16.04/18.04 and derivatives, you can use the following command to install those:
+For Ubuntu 18.04 (bionic) or newer versions you can directly install igraph for python3 with:
+
+`sudo apt-get install python3-igraph`
+
+For older versions of Ubuntu (16.04 and derivatives), you need to install the following dependencies prior to be able to compile and install igraph with pip:
 
 `sudo apt-get install build-essential python3-dev libxml2 libxml2-dev zlib1g-dev`
 
 #### Other deps
-After that, simply run: `pip3 install -r requirements.txt`. pip will install (and build for the case of python-igraph) all the remaining dependencies you need.
+After that, simply run: `pip3 install -r requirements.txt`. pip will install all the remaining dependencies you need.
+
+In case of versions of linux where igraph for python3 is not available in your package manager, you need to use the requirements file which includes the igraph package in order to be built and installed with pip:
+`pip3 install -r requirements+igraph.txt`
 
 ### Using a virtual environment
 A good pratice is to use a virtual environment in order to isolate the development environment from your personal stuff. This skips issues about having different Python versions, pip packages in the wrong place or requiring sudo privileges and so on.
@@ -110,6 +117,11 @@ If you want to run WikiChron in production, you should setup a RedisDB server an
 
 Look at the [FlaskCaching documentation](https://pythonhosted.org/Flask-Caching/#rediscache) for more information about caching.
 
+## Flask deployment config
+
+This webapp use some configurable parameters related to the Flask instance underneath. Those paramenters are such as hostname, port and ip address for the cache and need to be set in a file called "production_config.cfg" which should be located inside the directory called "wikichron". An example of the values for those parameters are in the file called "sample_production_config.cfg". So simply copy that file and edit them accordingly:
+
+`cp wikichron/sample_production_config.cfg wikichron/production_config.cfg`
 
 # Third-party licenses
 
