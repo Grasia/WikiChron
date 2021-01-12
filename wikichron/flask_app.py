@@ -19,6 +19,7 @@ from flask import Blueprint, current_app, request, jsonify, url_for, redirect
 from werkzeug.utils import secure_filename
 import shutil
 import base64
+import redis
 
 # local imports
 import wikichron.utils.data_manager as data_manager
@@ -39,13 +40,40 @@ ALLOWED_IMG_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'svg'])
 server_bp = Blueprint('main', __name__)
 
 
+def is_redis_reacheable():
+
+    config = current_app.config;
+
+    redis_host = config['REDIS_HOST']
+    redis_port = config['REDIS_PORT']
+
+    r = redis.Redis(redis_host, redis_port, socket_connect_timeout=1) # short timeout for the test
+
+    try:
+        r.ping()
+    except (redis.exceptions.ConnectionError):
+        return False
+
+    print(f'Succesfully connected to redis "{redis_host}:{redis_port}"!')
+
+    return True
+
+
 @server_bp.route('/')
 @server_bp.route('/welcome')
 def index():
     config = current_app.config;
 
+    development = config['DEBUG'];
+
+    if not development and not is_redis_reacheable():
+        print("""---->
+!!!!ATTENTION: You are in production mode but the REDIS cache is
+not reachable from the WikiChron webserver.
+Make sure you have an instance of redis running and it's accessible from the WikiChron instance to the port set""")
+
     return flask.render_template("welcome.html",
-                                development = config["DEBUG"],
+                                development = development,
                                 title = 'WikiChron - Welcome')
 
 
