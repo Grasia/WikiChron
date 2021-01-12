@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y tzdata
 RUN apt-get install -y python3-pip
 RUN pip3 install --upgrade pip
 
-WORKDIR /var/wikichron/
+WORKDIR /wikichron/
 
 COPY ["./install.sh", "."]
 COPY ["./requirements.txt", "."]
