@@ -20,8 +20,8 @@ import re
 from is_wikia_wiki import is_wikia_wiki
 
 
-wikia_api_endpoint = 'api.php?action=query&list=groupmembers&gmgroups=bot|bot-global&gmlimit=500&format=json'
 mediawiki_api_endpoint = 'api.php?action=query&list=allusers&augroup=bot&aulimit=500&auprop=groups&format=json'
+wikia_api_endpoint = mediawiki_api_endpoint
 
 def mediawiki_get_bots(base_url):
    """
@@ -70,25 +70,30 @@ def mediawiki_get_bots(base_url):
    return bots
 
 
-def wikia_get_bots(base_url, offset=0):
+def wikia_get_bots(base_url):
    """
    Query the mediawiki enpoint for Wikia wikis and returns a list of bot userids
    """
    if base_url[:-1] != '/':
       base_url += ('/')
-   url = base_url + wikia_api_endpoint + '&gmoffset={}'.format(offset)
-   #~ print(url)
-   r = requests.get(url)
-   res = r.json()
+   url = base_url + wikia_api_endpoint
+
+   print('Making request to: {}'.format(url))
+   continue_query = True
    bots = []
-   for bot in res['users']:
-      botid = str(bot['userid'])
-      botname = str(bot['name'])
-      bots.append( {"id": botid, "name": botname} )
-   if 'query-continue' in res:
-      return bots + get_bots_ids(base_url, offset=res['query-continue']['groupmembers']['gmoffset'])
-   else:
-      return bots
+   while (continue_query):
+      r = requests.get(url)
+      res = r.json()
+      print(res)
+      for bot in res['query']['allusers']:
+         botid = str(bot['userid'])
+         botname = str(bot['name'])
+         bots.append( {"id": botid, "name": botname} )
+      continue_query = 'continue' in res
+      if (continue_query):
+         url += '&aufrom=' + res['continue']['aufrom']
+
+   return bots
 
 
 def write_outputfile(filename, bots):

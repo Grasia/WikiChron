@@ -23,7 +23,7 @@ from datetime import date
 import sys
 
 from query_bot_users import get_bots
-from get_wikia_images_base64 import get_wikia_wordmark_file
+from get_wikia_images_base64 import get_wikia_wordmark_api
 from is_wikia_wiki import is_wikia_wiki
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../wikichron'))
@@ -90,6 +90,7 @@ def main():
             raise Exception(f'Unable to get stats for wiki: {wiki["domain"]}.')
 
         try:
+            print(f'Getting bots info for wiki with url: {wiki["url"]}')
             wiki['bots'] = get_bots(wiki['url'])
         except:
             print(f'Unable to get bots for wiki: {wiki["url"]}')
@@ -126,7 +127,8 @@ def main():
             # get name and image only for new wiki entries
             wiki['name'] = get_name(wiki['url'])
             if (is_wikia_wiki(wiki['url'])):
-                b64 = get_wikia_wordmark_file(wiki['url'])
+                print(f"Getting image for wiki with url: {wiki['domain']}...")
+                b64 = get_wikia_wordmark_api(wiki['domain'])
                 if b64:
                     wiki['imageSrc'] = b64
                 else:
