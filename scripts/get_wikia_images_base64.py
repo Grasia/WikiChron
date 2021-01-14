@@ -68,24 +68,19 @@ def get_wikia_wordmark_api(domain):
     return None
 
 
-def get_wikia_wordmark_file(url): # needs to be updated
-    url = url + '/wiki/File:Wiki-wordmark.png'
+def get_wikia_wordmark_file(url):
+    #~ url = url + '/wiki/File:Wiki-wordmark.png' # not useful anymore with Python requests
     res = requests.get(url)
     status_code = res.status_code
     if status_code == 200:
 
         # Process HTML with bs4 to find img src="" value
         html = BeautifulSoup(res.text,"lxml")
-        img_link = html.select_one('.see-full-size-link')
-
-        print(img_link)
-
-        if not img_link:
+        img = html.select_one('.wds-community-header__wordmark > a > img')
+        if not img:
             return None
 
-        img_url = img_link.href
-
-        print(img_url)
+        img_url = img['src']
 
         img_res = requests.get(img_url, stream=True)
         status_code = img_res.status_code
