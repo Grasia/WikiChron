@@ -48,13 +48,19 @@ def get_wikia_wordmark_api(domain):
                     wiki_info = wiki
                     break;
 
-            if wiki_info and wiki_info['image']:
+            if wiki_info:
+                if wiki_info['wordmark']:
+                    img_url = wiki_info['wordmark']
+                elif wiki_info['image']:
                     img_url = wiki_info['image']
-                    img_res = requests.get(img_url, stream=True)
-                    status_code = img_res.status_code
-                    if status_code == 200:
-                        b64 = base64.encodebytes(img_res.content)
-                        return '"data:image/png;base64,{}"'.format(str(b64, encoding='utf-8'))
+                else:
+                    return None
+
+                img_res = requests.get(img_url, stream=True)
+                status_code = img_res.status_code
+                if status_code == 200:
+                    b64 = base64.encodebytes(img_res.content)
+                    return 'data:image/png;base64,{}'.format(str(b64, encoding='utf-8'))
 
     else:
         print (status_code)
@@ -103,12 +109,14 @@ def main():
         # using API
         if (is_wikia_wiki(row['url'])):
             domain = urlparse(row['url']).netloc
+            print(domain)
             b64 = get_wikia_wordmark_api(domain)
 
         if b64:
+            print('Found image!')
             print(b64)
         else:
-            print('')
+            print('Unable to get image :(')
 
         # using special:file
         if (is_wikia_wiki(row['url'])):

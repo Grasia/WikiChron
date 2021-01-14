@@ -54,7 +54,7 @@ def get_name(url):
         html = BeautifulSoup(req.text,"lxml")
         name = html.select_one('div.wds-community-header__sitename a').text
     except AttributeError:
-        print('Name could not be retrieved from html.')
+        print(f'Name for wiki: {url} could not be retrieved from html.')
         return 'Unknown'
 
     return name
@@ -127,10 +127,11 @@ def main():
             # get name and image only for new wiki entries
             wiki['name'] = get_name(wiki['url'])
             if (is_wikia_wiki(wiki['url'])):
-                print(f"Getting image for wiki with url: {wiki['domain']}...")
+                print(f"Getting image for wiki with url: {wiki['domain']}...", end = '')
                 b64 = get_wikia_wordmark_api(wiki['domain'])
                 if b64:
                     wiki['imageSrc'] = b64
+                    print('Success!')
                 else:
                     print(f'\n-->Failed to find image for wiki: {wiki["url"]}<--\n')
             # append to wikis.json
