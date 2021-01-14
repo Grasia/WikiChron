@@ -753,6 +753,7 @@
 		"url": "https://zelda.fandom.com",
 		"data": "zelda.csv",
 		"name": "Zeldapedia",
+		"color": "#70b370",
 		"articles": 10616,
 		"pages": 54196,
 		"edits": 472656,
@@ -921,6 +922,7 @@
 		"url": "https://undertale.fandom.com/de",
 		"data": "de.undertale.wikia.com.csv",
 		"name": "Undertale Wikia",
+		"color": "orange",
 		"articles": 418,
 		"pages": 3009,
 		"edits": 6267,
@@ -1059,6 +1061,7 @@
 	},
 	{
 		"url": "https://psychology.wikia.org",
+		"color": "#006cb0",
 		"data": "psychology.wikia.com.csv",
 		"edits": 170976,
 		"pages": 79091,
