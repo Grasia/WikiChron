@@ -20,7 +20,7 @@ import os
 import base64
 import shutil
 from bs4 import BeautifulSoup
-
+from urllib.parse import urlparse
 
 from is_wikia_wiki import is_wikia_wiki
 
@@ -33,8 +33,8 @@ else:
 input_wikis_fn = os.path.join(data_dir, 'wikis.csv')
 
 
-def get_wikia_wordmark_api(domain): # doesn't work properly :(
-    wikia_api_endpoint = 'http://www.wikia.com/api/v1/Wikis/ByString?expand=1&limit=25&batch=1&includeDomain=true&string='
+def get_wikia_wordmark_api(domain):
+    wikia_api_endpoint = 'http://community.fandom.com/api/v1/Wikis/ByString?expand=1&limit=25&batch=1&includeDomain=true&string='
 
     res = requests.get(wikia_api_endpoint + domain)
     status_code = res.status_code
@@ -48,13 +48,19 @@ def get_wikia_wordmark_api(domain): # doesn't work properly :(
                     wiki_info = wiki
                     break;
 
-            if wiki_info and wiki_info['wordmark']:
+            if wiki_info:
+                if wiki_info['wordmark']:
                     img_url = wiki_info['wordmark']
-                    img_res = requests.get(img_url, stream=True)
-                    status_code = img_res.status_code
-                    if status_code == 200:
-                        b64 = base64.encodebytes(img_res.content)
-                        return '"data:image/png;base64,{}"'.format(str(b64, encoding='utf-8'))
+                elif wiki_info['image']:
+                    img_url = wiki_info['image']
+                else:
+                    return None
+
+                img_res = requests.get(img_url, stream=True)
+                status_code = img_res.status_code
+                if status_code == 200:
+                    b64 = base64.encodebytes(img_res.content)
+                    return 'data:image/png;base64,{}'.format(str(b64, encoding='utf-8'))
 
     else:
         print (status_code)
@@ -63,18 +69,18 @@ def get_wikia_wordmark_api(domain): # doesn't work properly :(
 
 
 def get_wikia_wordmark_file(url):
-    url = url + '/wiki/File:Wiki-wordmark.png'
+    #~ url = url + '/wiki/File:Wiki-wordmark.png' # not useful anymore with Python requests
     res = requests.get(url)
     status_code = res.status_code
     if status_code == 200:
 
         # Process HTML with bs4 to find img src="" value
         html = BeautifulSoup(res.text,"lxml")
-        img = html.select_one('#file img')
+        img = html.select_one('.wds-community-header__wordmark > a > img')
         if not img:
             return None
 
-        img_url = img.attrs['data-src']
+        img_url = img['src']
 
         img_res = requests.get(img_url, stream=True)
         status_code = img_res.status_code
@@ -95,13 +101,22 @@ def main():
         print(row['url'], row['csvfile'])
 
         b64 = None
+        # using API
+        if (is_wikia_wiki(row['url'])):
+            domain = urlparse(row['url']).netloc
+            print(domain)
+            b64 = get_wikia_wordmark_api(domain)
+
+        if b64:
+            print('Found image!')
+            print(b64)
+        else:
+            print('Unable to get image :(')
+
+        # using special:file
         if (is_wikia_wiki(row['url'])):
             b64 = get_wikia_wordmark_file(row['url'])
 
-        if b64:
-            print(b64)
-        else:
-            print('')
 
         print('-------------------\n')
 

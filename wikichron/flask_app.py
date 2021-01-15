@@ -45,7 +45,7 @@ def index():
     config = current_app.config;
 
     return flask.render_template("welcome.html",
-                                development = config["DEBUG"],
+                                development = config['DEBUG'],
                                 title = 'WikiChron - Welcome')
 
 

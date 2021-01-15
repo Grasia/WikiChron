@@ -23,7 +23,7 @@ from datetime import date
 import sys
 
 from query_bot_users import get_bots
-from get_wikia_images_base64 import get_wikia_wordmark_file
+from get_wikia_images_base64 import get_wikia_wordmark_file, get_wikia_wordmark_api
 from is_wikia_wiki import is_wikia_wiki
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../wikichron'))
@@ -54,7 +54,7 @@ def get_name(url):
         html = BeautifulSoup(req.text,"lxml")
         name = html.select_one('div.wds-community-header__sitename a').text
     except AttributeError:
-        print('Name could not be retrieved from html.')
+        print(f'Name for wiki: {url} could not be retrieved from html.')
         return 'Unknown'
 
     return name
@@ -90,6 +90,7 @@ def main():
             raise Exception(f'Unable to get stats for wiki: {wiki["domain"]}.')
 
         try:
+            print(f'Getting bots info for wiki with url: {wiki["url"]}')
             wiki['bots'] = get_bots(wiki['url'])
         except:
             print(f'Unable to get bots for wiki: {wiki["url"]}')
@@ -126,11 +127,19 @@ def main():
             # get name and image only for new wiki entries
             wiki['name'] = get_name(wiki['url'])
             if (is_wikia_wiki(wiki['url'])):
+                print(f"Getting image for wiki with url: {wiki['url']}...", end = '')
                 b64 = get_wikia_wordmark_file(wiki['url'])
+
+                if not b64:
+                    print('[[Retrying using different approach]]', end = '')
+                    b64 = get_wikia_wordmark_api(wiki['domain'])
+
                 if b64:
                     wiki['imageSrc'] = b64
+                    print('Success!')
                 else:
                     print(f'\n-->Failed to find image for wiki: {wiki["url"]}<--\n')
+
             # append to wikis.json
             wikis_json.append(wiki)
 

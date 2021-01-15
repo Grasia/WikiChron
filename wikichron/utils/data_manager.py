@@ -25,12 +25,6 @@ available_wikis = []
 available_wikis_dict = {}
 
 
-# import refresh wikis
-from wikichron.dash.apps.classic.app import refresh_wikis as refresh_wikis_classic
-from wikichron.dash.apps.networks.app import refresh_wikis as refresh_wikis_networks
-from wikichron.dash.apps.monowiki.app import refresh_wikis as refresh_wikis_monowiki
-
-
 def load_wikis():
     wikis_json_file = open(os.path.join(data_dir, 'wikis.json'))
     wikis = json.load(wikis_json_file)
@@ -38,6 +32,14 @@ def load_wikis():
 
 
 def refresh_wikis():
+
+    # import refresh wikis
+    from wikichron.dash.apps.classic.app import refresh_wikis as refresh_wikis_classic
+    from wikichron.dash.apps.networks.app import refresh_wikis as refresh_wikis_networks
+    from wikichron.dash.apps.monowiki.app import refresh_wikis as refresh_wikis_monowiki
+
+
+
     global available_wikis
     global available_wikis_dict
 

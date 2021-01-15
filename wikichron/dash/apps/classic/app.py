@@ -36,6 +36,7 @@ import sd_material_ui
 # Other external imports:
 from flask import request, current_app, abort
 import pandas as pd
+import redis
 
 # Local imports:
 from .utils import get_mode_config
@@ -408,6 +409,21 @@ def _init_app_callbacks(app):
     return
 
 
+def is_redis_reacheable(config):
+
+    redis_host = config['REDIS_HOST']
+    redis_port = config['REDIS_PORT']
+
+    r = redis.Redis(redis_host, redis_port, socket_connect_timeout=1) # short timeout for the test
+
+    try:
+        r.ping()
+    except (redis.exceptions.ConnectionError):
+        return False
+
+    return True
+
+
 def set_up_app(app):
     # init global vars needed for building UI app components
     _init_global_vars()
@@ -431,6 +447,17 @@ def set_up_app(app):
     app.layout.children += set_external_imports()
 
     start_download_data_server(app, mode_config['DASH_DOWNLOAD_PATHNAME'])
+
+    if not debug and not is_redis_reacheable(server_config):
+        print("""----->
+¡!¡!¡!¡! ATTENTION: You are in production mode but the REDIS cache is
+not reachable from the WikiChron webserver.
+Make sure you have an instance of redis running and it's accessible
+from the WikiChron instance to the port set for redis
+<-----""")
+    else:
+        print('----->Succesfully connected to redis cache!!<-----')
+
 
     print('¡¡¡¡ Welcome to WikiChron ' + server_config['VERSION'] +' !!!!')
     print('Using version ' + dash.__version__ + ' of Dash.')
