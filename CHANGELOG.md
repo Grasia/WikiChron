@@ -1,5 +1,15 @@
 # Change Log for WikiChron
 
+## 2.5.0 - 2021-01-15
+
+### Added
+- Docker support (#87)
+- check if redis is available on start
+
+### Fixed
+- metadata and b64 image generator scripts
+
+
 ## 2.4.0 - 2020-08-26
 
 ### Changed
