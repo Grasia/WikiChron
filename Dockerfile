@@ -12,17 +12,14 @@ RUN pip3 install --upgrade pip
 
 WORKDIR /wikichron/
 
-COPY ["./install.sh", "."]
-COPY ["./requirements.txt", "."]
+# produccion only:
+COPY [".", "."]
+
+# dev only:
+#COPY ["./install.sh", "."]
+#COPY ["./requirements.txt", "."]
 
 RUN bash -x install.sh
 
 CMD ["gunicorn", "wikichron_launcher:server", "-c", "gunicorn_config.py"]
 
-# Falta por: * descargar los dumps con docker compose o un script a un directorio determinado y que se usen esos csvs desde ahí. Comprobar con docker antes si está el directorio con los csvs -> necesitaré linkarlos con volumes en docker-compose * traer redis.conf de antiguo servidor
-
-
-# Para PRODUCCION:
-# Acordarse de reestablecer gunicorn_config a los parámetros iniciales (workers) y /data?
-
-#COPY [".", "."] # <- Para produccion + docker ignore
