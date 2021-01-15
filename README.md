@@ -96,9 +96,9 @@ There is a simple but handy script called `run_develop.sh` which set the app for
 You can get more information on this in the [Flask documentation](http://flask.pocoo.org/docs/1.0/server/).
 
 # Deployment
-The easiest way is to follow the Dash instructions: https://plot.ly/dash/deployment
+The easiest way is to use [Docker](#Docker).
 
-There is a script called `deploy.sh` which launches the app with the latest code in master and provides the appropriate arguments. Check it out and modify to suit your needs.
+Otherwise, follow the Dash instructions: https://plot.ly/dash/deployment and inspect the `deploy.sh` script, which launches the app with the latest code in master and provides the appropriate arguments. Check it out and modify to suit your needs.
 
 ## gunicorn config
 
@@ -122,6 +122,20 @@ Look at the [FlaskCaching documentation](https://pythonhosted.org/Flask-Caching/
 This webapp use some configurable parameters related to the Flask instance underneath. Those paramenters are such as hostname, port and ip address for the cache and need to be set in a file called "production_config.cfg" which should be located inside the directory called "wikichron". An example of the values for those parameters are in the file called "sample_production_config.cfg". So simply copy that file and edit them accordingly:
 
 `cp wikichron/sample_production_config.cfg wikichron/production_config.cfg`
+
+## Docker
+
+You can use Docker to deploy WikiChron. The sample configurations are already set to use get the docker compose working smoothly.
+
+Just copy the sample config files to the appropriate names (as explained above) and run:
+
+`docker-compose up`
+
+This will start up the wikichron webserver as well as a redis instance to use for the cache.
+
+If, for any reason, you wanted to start a standalone docker instance for wikichron (without redis), you could use a command similar to this one:
+
+`docker run --mount type=bind,source=/var/data/wiki_dumps/csv,target=/var/data/wiki_dumps/csv -p 8080:8080 -it wikichron:latest`
 
 # Third-party licenses
 
