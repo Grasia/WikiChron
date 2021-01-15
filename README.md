@@ -11,7 +11,7 @@ It analyzes the history dump of a wiki and give you nice graphs plotting that da
 * pip3
 * [Dash framework](https://plot.ly/dash)
 * [Grasia Dash Components](https://github.com/Grasia/grasia-dash-components)
-* [pandas](pandas.pydata.org)
+* [pandas](https://pandas.pydata.org/)
 * (Production only) [Redis Cache](https://redis.io/)
 * [python-igraph](https://igraph.org/python/) -> it's a C package so it depends on your OS
 * [tkinter](https://wiki.python.org/moin/TkInter)
