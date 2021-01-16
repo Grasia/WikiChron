@@ -1,5 +1,11 @@
 # Change Log for WikiChron
 
+## 2.5.1 - 2021-01-16
+
+### Added
+- Set wiki color in upload form
+- .dockerignore
+
 ## 2.5.0 - 2021-01-15
 
 ### Added
