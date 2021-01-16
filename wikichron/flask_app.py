@@ -293,6 +293,10 @@ def upload_post():
             "uploadedBy": request.remote_addr,
             "verified": False
         }
+
+        if request.form['color']:
+            new_wiki["color"] = request.form['color']
+
         new_wiki.update(wiki_stats)
 
         if imageSrc:
