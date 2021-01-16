@@ -1,0 +1,18 @@
+# Common
+README.md
+CHANGELOG.md
+docker-compose.yml
+Dockerfile
+
+# git
+.git
+.gitattributes
+.gitignore
+
+# data
+data/
+
+# Python
+__pycache__
+venv/
+.python-version
