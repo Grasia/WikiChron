@@ -210,7 +210,7 @@ def upload_post():
         wikis = data_manager.get_available_wikis()
 
         # check wiki url if wiki is already there. if what's there is "verified" then cancel.
-        wiki_url = request.form['url']
+        wiki_url = request.form['url'].strip("/")
         try:
             wiki_domain = utils.get_domain_from_url(wiki_url)
         except:
