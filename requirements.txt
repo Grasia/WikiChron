@@ -38,7 +38,7 @@ MarkupSafe==1.0
 matplotlib==3.0.3
 mpmath==1.0.0
 nbformat==4.4.0
-numpy==1.15.1
+numpy==1.22.0
 pandas==0.24.2
 pexpect==4.6.0
 pickleshare==0.7.5
